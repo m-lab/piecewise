@@ -1,0 +1,2 @@
+---
+- shell: echo 'alias telescope="PYTHONPATH=/opt/telescope python /opt/telescope/main.py"' >> .profile

@@ -1,0 +1,34 @@
+---
+- name: Update apt database
+  apt: update_cache=yes
+- name: Install packages
+  apt: name={{ item }}
+  with_items:
+    - postgresql-9.3
+    - postgresql-client-9.3
+    - nginx
+    - uwsgi-plugin-python
+    - git
+    - python-pip
+- name: Fetch telescope
+  git: repo=https://github.com/m-lab-tools/telescope.git
+       dest=/opt/telescope/
+- name: Deploy piecewise
+  copy: src={{ item.src }} dest={{ item.dest }} mode=o+w
+  with_items:
+      - { src: piecewise, dest: /opt/ }
+      - { src: piecewise_web, dest: /opt/ }
+- name: Install required python modules
+  pip: requirements={{ item }} state=latest
+  with_items:
+    - /opt/telescope/requirements.txt
+    # - /opt/piecewise/requirements.txt
+- name: Install convenience python modules
+  pip: name=bigquery state=latest
+- name: Deploy configuration files (uwsgi, nginx)
+  copy: src=conf/etc/ dest=/etc/ owner=root group=root
+- name: Restart web server
+  service: name={{ item }} state=restarted
+  with_items: 
+    - uwsgi
+    - nginx

@@ -1,0 +1,7 @@
+---
+- hosts: all
+  tasks:
+    - include: system_tasks.yml
+      become: yes
+      become_method: sudo
+    - include: user_tasks.yml
