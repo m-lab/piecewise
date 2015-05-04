@@ -27,9 +27,13 @@ server {
 	# Make site accessible from http://localhost/
 	server_name localhost;
 
-        location /stats {
-          uwsgi_pass unix:///tmp/uwsgi.sock;
+        location = /stats { rewrite ^ /stats/; }
+        location /stats  { try_files $uri @stats; }
+        location @stats {
           include uwsgi_params;
+          uwsgi_param SCRIPT_NAME /stats;
+          uwsgi_modifier1 30;
+          uwsgi_pass unix:///tmp/uwsgi.sock;
         }
 
 	location / {

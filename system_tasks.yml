@@ -22,7 +22,7 @@
   pip: requirements={{ item }} state=latest
   with_items:
     - /opt/telescope/requirements.txt
-    # - /opt/piecewise/requirements.txt
+    - /opt/piecewise/requirements.txt
 - name: Install convenience python modules
   pip: name=bigquery state=latest
 - name: Deploy configuration files (uwsgi, nginx)
@@ -32,3 +32,4 @@
   with_items: 
     - uwsgi
     - nginx
+    - postgresql
