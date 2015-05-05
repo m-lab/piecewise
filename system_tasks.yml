@@ -2,7 +2,7 @@
 - name: Update apt database
   apt: update_cache=yes
 - name: Install packages
-  apt: name={{ item }}
+  apt: name={{ item }} state=latest
   with_items:
     - postgresql-9.3
     - postgresql-client-9.3
@@ -10,6 +10,7 @@
     - uwsgi-plugin-python
     - git
     - python-pip
+    - python-psycopg2
 - name: Fetch telescope
   git: repo=https://github.com/m-lab-tools/telescope.git
        dest=/opt/telescope/
@@ -27,7 +28,7 @@
   pip: name=bigquery state=latest
 - name: Deploy configuration files (uwsgi, nginx)
   copy: src=conf/etc/ dest=/etc/ owner=root group=root
-- name: Restart web server
+- name: Restart services
   service: name={{ item }} state=restarted
   with_items: 
     - uwsgi
