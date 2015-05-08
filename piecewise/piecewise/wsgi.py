@@ -10,7 +10,7 @@ records = Table('records', metadata,
 
 @app.route('/')
 def hello_world():
-    return "Hello World!"
+    return ("Goodbye World!", None, { 'Content-type' : 'text/plain' })
 
 @app.route('/list')
 def list_records():
