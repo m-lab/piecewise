@@ -26,11 +26,14 @@
     - /opt/piecewise/requirements.txt
 - name: Install convenience python modules
   pip: name=bigquery state=latest
-- name: Deploy configuration files (uwsgi, nginx)
+- name: Deploy configuration files
   copy: src=conf/etc/ dest=/etc/ owner=root group=root
+- name: Fix postgres configuration permissions
+  file: path=/etc/postgresql/9.3/main/pg_hba.conf state=file owner=postgres group=postgres mode=u=rw,g=r,o=
 - name: Restart services
   service: name={{ item }} state=restarted
   with_items: 
     - uwsgi
     - nginx
     - postgresql
+- postgresql_db: name=piecewise state=present
