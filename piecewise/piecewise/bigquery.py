@@ -4,11 +4,16 @@ from apiclient.discovery import build
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client import tools
+import os
 
 PROJECT_NUMBER = '422648324111'
-FLOW = flow_from_clientsecrets('client_secrets.json', scope='https://www.googleapis.com/auth/bigquery')
+PARENT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SECRETS_FILE = os.path.join(PARENT_PATH,  'client_secrets.json')
+CREDENTIALS_FILE = os.path.join(PARENT_PATH, 'bigquery_credentials.dat')
 
-storage = Storage('bigquery_credentials.dat')
+FLOW = flow_from_clientsecrets(SECRETS_FILE, scope='https://www.googleapis.com/auth/bigquery')
+
+storage = Storage(CREDENTIALS_FILE)
 credentials = storage.get()
 
 if credentials is None or credentials.invalid:

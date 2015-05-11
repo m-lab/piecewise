@@ -1,4 +1,8 @@
-from flask import Flask
+from flask import Flask, request
+from flask.json import dumps
+from piecewise.aggregate import AverageRTT
+from piecewise.ingest import parse_date
+from piecewise.query import query
 from sqlalchemy import create_engine, select, MetaData, Table, Column, String, Integer
 app = Flask(__name__)
 
@@ -14,9 +18,17 @@ def hello_world():
 
 @app.route('/list')
 def list_records():
-    with engine.begin() as conn:
-        result = conn.execute(select([records]))
-        return '\n'.join(row['value'] for row in result)
+    resolution = request.args.get('res', 60, type=int)
+    after = request.args.get('after', parse_date('Jan 1 2010 00:00:00'))
+    before = request.args.get('before', parse_date('Feb 1 2010 00:00:00'))
+    results = query(
+            start_date = after,
+            end_date = before,
+            resolution = resolution,
+            aggregates = [AverageRTT]
+    )
+    results = { 'success': True, 'results': [list(r) for r in results] }
+    return (dumps(results), None, { 'Content-type': 'application/json' })
 
 if __name__ == '__main__': 
-    app.run()
+    app.run(debug=True)

@@ -7,19 +7,33 @@ def make_table(metadata, columns):
             *columns)
 
 class Aggregate(object):
-    def __init__(self, bigquery_aggregates, postgres_columns, postgres_aggregates):
-        self.bigquery_aggregates = bigquery_aggregates
-        self.postgres_columns = postgres_columns
-        self.postgres_aggregates = postgres_aggregates
+    pass
 
-AverageRTT = Aggregate(
-    bigquery_aggregates = ['SUM(web100_log_entry.snap.SumRTT)', 'SUM(web100_log_entry.snap.CountRTT)'],
-    postgres_columns = [Column('sumrtt', Integer), Column('countrtt', Integer)],
-    postgres_aggregates = [func.sum(Column('sumrtt')) / func.sum(Column('countrtt'))]
-)
+class _AverageRTT(Aggregate):
+    @property
+    def bigquery_aggregates(self):
+        return ['SUM(web100_log_entry.snap.SumRTT)', 'SUM(web100_log_entry.snap.CountRTT)']
 
-MinRTT = Aggregate(
-    bigquery_aggregates = ['MIN(web100_log_entry.snap.MinRTT)'],
-    postgres_columns = [Column('minrtt', Integer)],
-    postgres_aggregates = [func.min(Column('minrtt'))]
-)
+    @property
+    def postgres_columns(self):
+        return [Column('sumrtt', Integer), Column('countrtt', Integer)]
+
+    @property
+    def postgres_aggregates(self):
+        return [func.sum(Column('sumrtt')) / func.sum(Column('countrtt'))]
+
+class _MinRTT(Aggregate):
+    @property
+    def bigquery_aggregates(self):
+        return ['MIN(web100_log_entry.snap.MinRTT)']
+
+    @property
+    def postgres_columns(self):
+        return [Column('minrtt', Integer)]
+
+    @property
+    def postgres_aggregates(self):
+        return [func.min(Column('minrtt'))]
+
+AverageRTT = _AverageRTT()
+MinRTT = _MinRTT()

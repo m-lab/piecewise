@@ -19,17 +19,19 @@ def query(start_date, end_date, resolution, aggregates):
                 .where(
                 (records.c.time_step > start_date) & 
                 (records.c.time_step < end_date)) \
-                .group_by(snapped_time)
+                .group_by(snapped_time) \
+                .order_by(snapped_time)
         results = conn.execute(q)
-        for r in results:
-            print '\t'.join([time.ctime(r[0])] + [str(c) for c in r[1:]])
+        return list(results)
 
 if __name__ == '__main__':
     from piecewise.ingest import parse_date
-    query(
+    results = query(
             start_date = parse_date('Jan 1 2010 00:00:00'),
             end_date = parse_date('Feb 1 2010 00:00:00'),
             resolution = 3600,
             aggregates = [AverageRTT]
     )
+    for r in results:
+        print '\t'.join([time.ctime(r[0])] + [str(c) for c in r[1:]])
 
