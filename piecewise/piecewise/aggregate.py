@@ -1,9 +1,11 @@
-from sqlalchemy import func, Column, Integer, Table
+from sqlalchemy import case, func, Column, Integer, Table
+from geoalchemy2 import Geometry
 
 def make_table(metadata, columns):
     return Table('statistics', metadata,
             Column('id', Integer, primary_key = True),
             Column('time_step', Integer),
+            Column('cell', Geometry('POINT')),
             *columns)
 
 class Aggregate(object):
@@ -20,7 +22,7 @@ class _AverageRTT(Aggregate):
 
     @property
     def postgres_aggregates(self):
-        return [func.sum(Column('sumrtt')) / func.sum(Column('countrtt'))]
+        return [case([(func.sum(Column('countrtt')) > 0, func.sum(Column('sumrtt')) / func.sum(Column('countrtt')))], else_= None)]
 
 class _MinRTT(Aggregate):
     @property
