@@ -33,111 +33,13 @@
     <h2>Piecewise</h2>
     <div>
     <select name='resolution' id='resolution'>
-        <option value='3600' selected>Hourly</option>
-        <option value='21600'>6-Hourly</option>
-        <option value='86400'>Daily</option>
-        <option value='604800'>Weekly</option>
+        <option value='10' selected>10&deg;</option>
+        <option value='2'>5&deg;</option>
+        <option value='1'>1&deg;</option>
     </select>
-    <input type="date" name="after" id="after" min="2010-01-01" max="2010-01-31" value="2010-01-01">
-    </input>
-    <input type="date" name="before" id="before" min="2010-01-01" max="2010-01-31" value="2010-01-31">
-    </input>
     </div>
 </body>
 <script>
-(function() {
-    var margin = { top: 50, bottom: 50, left: 50, right: 50 };
-    var width = 900 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
-    var svg = d3.select("body").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
-    var x = d3.time.scale()
-        .range([0, width]);
-    var y = d3.scale.linear()
-        .range([height, 0]);
-
-    var line = d3.svg.line();
-    var path, xAxisNode, yAxisNode;
-
-    var yAxis = d3.svg.axis().orient('left');
-    var xAxis = d3.svg.axis().orient('bottom'); //.ticks(5);
-
-    d3.json('/stats/list?res=3600', function(data) {
-        data = retype(data);
-        x.domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })]);
-        y.domain([0, d3.max(data, function(d) { return d[1]; })]);
-        xAxis.scale(x);
-        yAxis.scale(y);
-        yAxisNode = svg.append('g')
-            .attr('class', 'y axis')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-            .call(yAxis);
-        xAxisNode = svg.append('g')
-            .attr('class', "x axis")
-            .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
-            .call(xAxis);
-        line
-            .x(function(d) { return x(d[0]); })
-            .y(function(d) { return y(d[1]); })
-            .interpolate('basis');
-        path = svg.append("g")
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-            .append("path");
-        path.attr("d", line(data));
-    });
-
-    var resolutionPicker = document.getElementById('resolution');
-    resolutionPicker.onchange = function(el) {
-        d3.json('/stats/list?res=' + resolutionPicker.value, function(response) {
-            var data = retype(response);
-            x.domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })]);
-            y.domain([0, d3.max(data, function(d) { return d[1]; })]);
-            xAxis.scale(x);
-            yAxis.scale(y);
-            yAxisNode.call(yAxis);
-            xAxisNode.call(xAxis);
-            path.attr("d", line(data));
-        });
-    };
-
-    var resPicker = document.getElementById('resolution');
-    var afterPicker = document.getElementById('after');
-    var beforePicker = document.getElementById('before');
-
-    function update() {
-        var res = resPicker.value,
-            after = date(afterPicker.value),
-            before = date(beforePicker.value) + (24 * 60 * 60);
-        afterPicker.max = beforePicker.value;
-        beforePicker.min = afterPicker.value;
-        d3.json('/stats/list?res=' + res + '&after=' + after + '&before=' + before, function(response) {
-            var data = retype(response);
-            x.domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })]);
-            y.domain([0, d3.max(data, function(d) { return d[1]; })]);
-            xAxis.scale(x);
-            yAxis.scale(y);
-            yAxisNode.call(yAxis);
-            xAxisNode.call(xAxis);
-            path.attr("d", line(data));
-        });
-    }
-
-    function date(s) {
-        return (new Date(s)).getTime() / 1000;
-    }
-
-    function retype(d) {
-        d = d.results;
-        d.map(function(r) { r[0] = new Date(r[0] * 1000); return r }); 
-        return d;
-    }
-
-    resPicker.onchange = update;
-    afterPicker.onchange = update;
-    beforePicker.onchange = update;
-}); // ();
-
 (function() {
     var margin = { top: 0, bottom: 0, left: 0, right: 0 };
     var width = 900 - margin.left - margin.right,
@@ -145,26 +47,38 @@
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom);
-    var proj = d3.geo.equirectangular().scale(100);
+    var proj = d3.geo.equirectangular().scale(137).translate([415, 225]);
+    var land;
+
+    var zoom = d3.behavior.zoom()
+        .translate(proj.translate())
+        .scale(proj.scale())
+        .scaleExtent([proj.scale(), 8 * proj.scale()])
+        .on("zoom", zoomed);
+
+    var g = svg.append('g').call(zoom);
+
     var path = d3.geo.path().projection(proj);
 
     queue()
         .defer(d3.json, '/world-50m.json')
-        .defer(d3.json, '/stats/cells')
+        .defer(d3.json, '/stats/cells?res=10')
         .await(render);
     
+    var colorize = d3.scale.ordinal().range(['pink', 'salmon', 'red', 'black']);
+    var rttPathSelection;
     function render(error, world, rttResponse) {
-      var rtt = retype(rttResponse);
-      var colorize = d3.scale.ordinal().range(['pink', 'salmon', 'red', 'black'])
-          .domain([d3.min(rtt, rttProp), d3.max(rtt, rttProp)]);
+      var rtt = retype(rttResponse, 10);
+      colorize.domain([d3.min(rtt, rttProp), d3.max(rtt, rttProp)]);
 
-      svg.insert("path")
-        .datum(topojson.feature(world, world.objects.land))
+      land = topojson.feature(world, world.objects.land);
+
+      g.insert("path")
+        .datum(land)
         .attr("class", "land")
         .attr("d", path);
-      svg.append('g')
-         .selectAll('path')
-         .data(rtt)
+      rttPathSelection = g.append('g').selectAll('path');
+      rttPathSelection.data(rtt)
          .enter().append("path")
          .attr("d", path)
          .attr("style", function(d) { return 'fill:' + colorize(d.properties.rtt); });
@@ -172,7 +86,7 @@
 
     function rttProp(d) { return d.properties.rtt; }
 
-    function retype(d) {
+    function retype(d, resolution) {
         d = d['results'];
         d = d.map(function(r) {
             return {
@@ -182,11 +96,11 @@
                     'coordinates' : 
                         [
                             [
-                                [r[1],     r[0]],
-                                [r[1],     r[0] + 1],
-                                [r[1] + 1, r[0] + 1],
-                                [r[1] + 1, r[0]],
-                                [r[1],     r[0]]
+                                [r[1],              r[0]],
+                                [r[1],              r[0] + resolution],
+                                [r[1] + resolution, r[0] + resolution],
+                                [r[1] + resolution, r[0]],
+                                [r[1],              r[0]]
                             ]
                         ],
                 },
@@ -194,6 +108,47 @@
             };
         });
         return d;
+    }
+
+    var resPicker = document.getElementById('resolution');
+    resPicker.onchange = update;
+
+    function update() {
+        var res = resPicker.value;
+        d3.json('/stats/cells?res=' + res, function(response) {
+            var rtt = retype(response, +res);
+            colorize.domain([d3.min(rtt, rttProp), d3.max(rtt, rttProp)]);
+            var rttpaths = g.select("g").selectAll("path").data(rtt);
+            rttpaths.exit().remove();
+            rttpaths.enter().append("path")
+                .attr('d', path)
+                .attr('style', function(d) { return 'fill:' + colorize(d.properties.rtt); });
+            rttpaths
+                .attr("d", path)
+                .attr("style", function(d) { return 'fill:' + colorize(d.properties.rtt); });
+        });
+    }
+
+    var zoomTimer = null;
+
+    function hideLand() {
+        d3.select("path.land").datum(null).attr("d", "");
+    }
+
+    function showLand() {
+        d3.select("path.land").datum(land).attr("d", path);
+        zoomTimer = null;
+    }
+
+    function zoomed() {
+        if (zoomTimer) {
+            clearTimeout(zoomTimer);
+        } else {
+            hideLand();
+        }
+        zoomTimer = setTimeout(showLand, 100);
+        proj.translate(d3.event.translate).scale(d3.event.scale);
+        g.selectAll("path").attr("d", path);
     }
 })();
 

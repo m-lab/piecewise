@@ -32,7 +32,7 @@ def list_records():
 
 @app.route('/cells')
 def map_records():
-    resolution = request.args.get('res', 1, type=int)
+    resolution = request.args.get('res', 1, type=float)
     ll = request.args.get('ll', "-90,-180")
     ur = request.args.get('ur', "90,180")
     ll = tuple(float(s) for s in ll.split(",", 1))
@@ -42,7 +42,7 @@ def map_records():
         upper_right = ur,
         resolution = resolution,
         aggregates = [AverageRTT])
-    results = { 'success': True, 'results': [list(r) for r in results] }
+    results = { 'success': True, 'res': resolution, 'results': [list(r) for r in results] }
     return (dumps(results), None, { 'Content-type': 'application/json' })
 
 if __name__ == '__main__': 

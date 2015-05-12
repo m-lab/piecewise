@@ -45,8 +45,8 @@ def geoquery(lower_left, upper_right, resolution, aggregates):
     pg_aggregates = sum([[x for x in a.postgres_aggregates] for a in aggregates], [])
 
     with engine.connect() as conn:
-        snapped_x = func.floor(ST_X(records.c.cell) / resolution)
-        snapped_y = func.floor(ST_Y(records.c.cell) / resolution)
+        snapped_x = func.floor(ST_X(records.c.cell) / resolution) * resolution
+        snapped_y = func.floor(ST_Y(records.c.cell) / resolution) * resolution
         q = select([snapped_x, snapped_y] + pg_aggregates) \
                 .select_from(records) \
                 .group_by(snapped_x, snapped_y) \
