@@ -56,7 +56,8 @@
         .scaleExtent([proj.scale(), 8 * proj.scale()])
         .on("zoom", zoomed);
 
-    var g = svg.append('g').call(zoom);
+    var g = svg.append('g');
+    svg.call(zoom);
 
     var path = d3.geo.path().projection(proj);
 
