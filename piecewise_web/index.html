@@ -53,7 +53,7 @@
     var yAxis = d3.svg.axis().orient('left');
     var xAxis = d3.svg.axis().orient('bottom'); //.ticks(5);
 
-    d3.json('/stats/list?res=3600', function(data) {
+    d3.json('/stats/q?stats=AverageRTT&b.time_slices=3600', function(data) {
         data = retype(data);
         x.domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })]);
         y.domain([0, d3.max(data, function(d) { return d[1]; })]);
@@ -87,7 +87,7 @@
             before = date(beforePicker.value) + (24 * 60 * 60);
         afterPicker.max = beforePicker.value;
         beforePicker.min = afterPicker.value;
-        d3.json('/stats/list?res=' + res + '&after=' + after + '&before=' + before, function(response) {
+        d3.json('/stats/q?stats=AverageRTT&b.time_slices=' + res + '&f.time_slices=' + after + ',' + before, function(response) {
             var data = retype(response);
             x.domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })]);
             y.domain([0, d3.max(data, function(d) { return d[1]; })]);
@@ -104,8 +104,17 @@
     }
 
     function retype(d) {
+        var schema = {};
+        var i;
+        for (i = d['keys'].length; i >= 0; i--) {
+            schema[d['keys'][i]] = i;
+        }
         d = d.results;
-        d.map(function(r) { r[0] = new Date(r[0] * 1000); return r }); 
+        d.map(function(r) { 
+            var date = new Date(r[schema['time_slice']] * 1000);
+            var rtt = r[schema['AverageRTT']];
+            return [date, rtt];
+        }); 
         d.sort(function(a,b) { return b[0] - a[0]; })
         return d;
     }

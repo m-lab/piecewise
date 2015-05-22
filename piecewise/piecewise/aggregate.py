@@ -1,5 +1,6 @@
 from itertools import chain
 from sqlalchemy import case, func, Column, Integer, Table
+from sqlalchemy.sql.expression import label
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_Intersects, ST_X, ST_Y
 
@@ -123,11 +124,18 @@ class SpatialGridBins(Bins):
         return [Column('cell', Geometry('POINT'))]
 
     def postgres_aggregates(self, resolution):
+        if isinstance(resolution, basestring):
+            try:
+                resolution = float(resolution)
+            except ValueError:
+                resolution = self.resolution
         return [
-            func.floor(ST_X(Column('cell')) / resolution) * resolution,
-            func.floor(ST_Y(Column('cell')) / resolution) * resolution]
+            label('cell_x', func.floor(ST_X(Column('cell')) / resolution) * resolution),
+            label('cell_y', func.floor(ST_Y(Column('cell')) / resolution) * resolution)]
 
     def postgres_filters(self, params):
+        if isinstance(params, basestring):
+            params = map(float, params.split(","))
         xmin, ymin, xmax, ymax = params
         return [
             ST_Intersects(Column('cell'), ST_MakeBox2D(ST_Point(xmin, ymin), ST_Point(xmax, ymax)))]
@@ -156,9 +164,16 @@ class TemporalBins(Bins):
         return [Column('time_step', Integer)]
 
     def postgres_aggregates(self, resolution):
-        return [func.floor(Column("time_step") / resolution) * resolution]
+        if isinstance(resolution, basestring):
+            try:
+                resolution = int(resolution)
+            except ValueError:
+                resolution = self.resolution
+        return [label('time_slice', func.floor(Column("time_step") / resolution) * resolution)]
 
     def postgres_filters(self, params):
+        if isinstance(params, basestring):
+            params = map(int, params.split(","))
         after, before = params
         time = Column("time_step")
         return [time > after, time < before]
@@ -234,7 +249,7 @@ class _AverageRTT(Statistic):
 
     @property
     def postgres_aggregates(self):
-        return [case([(func.sum(Column('countrtt')) > 0, func.sum(Column('sumrtt')) / func.sum(Column('countrtt')))], else_= None)]
+        return [label('AverageRTT', case([(func.sum(Column('countrtt')) > 0, func.sum(Column('sumrtt')) / func.sum(Column('countrtt')))], else_= None))]
 
     def __repr__(self):
         return "AverageRTT"

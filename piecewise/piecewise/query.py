@@ -32,7 +32,7 @@ def query(config, aggregates, bins, filters):
         q = q.where(reduce(lambda x, y: x & y, filter_predicates))
 
     with engine.connect() as conn:
-        return list(conn.execute(q))
+        return conn.execute(q)
 
 if __name__ == '__main__':
     import sys, json

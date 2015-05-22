@@ -34,7 +34,7 @@
     <div>
     <select name='resolution' id='resolution'>
         <option value='10' selected>10&deg;</option>
-        <option value='2'>5&deg;</option>
+        <option value='3'>3&deg;</option>
         <option value='1'>1&deg;</option>
     </select>
     </div>
@@ -63,7 +63,7 @@
 
     queue()
         .defer(d3.json, '/world-50m.json')
-        .defer(d3.json, '/stats/cells?res=10')
+        .defer(d3.json, '/stats/q?stats=AverageRTT&b.spatial_grid=10')
         .await(render);
     
     var colorize = d3.scale.ordinal().range(['pink', 'salmon', 'red', 'black']);
@@ -88,8 +88,17 @@
     function rttProp(d) { return d.properties.rtt; }
 
     function retype(d, resolution) {
+        var schema = {};
+        var i;
+        for (i = d['keys'].length; i >= 0; i--) {
+            schema[d['keys'][i]] = i;
+        }
+
         d = d['results'];
         d = d.map(function(r) {
+            var x = r[schema['cell_x']],
+                y = r[schema['cell_y']],
+                rtt = r[schema['AverageRTT']];
             return {
                 'type': 'Feature',
                 'geometry': {
@@ -97,15 +106,15 @@
                     'coordinates' : 
                         [
                             [
-                                [r[1],              r[0]],
-                                [r[1],              r[0] + resolution],
-                                [r[1] + resolution, r[0] + resolution],
-                                [r[1] + resolution, r[0]],
-                                [r[1],              r[0]]
+                                [y,              x],
+                                [y,              x + resolution],
+                                [y + resolution, x + resolution],
+                                [y + resolution, x],
+                                [y,              x]
                             ]
                         ],
                 },
-                'properties' : { 'rtt' : r[2] }
+                'properties' : { 'rtt' : rtt }
             };
         });
         return d;
@@ -116,7 +125,7 @@
 
     function update() {
         var res = resPicker.value;
-        d3.json('/stats/cells?res=' + res, function(response) {
+        d3.json('/stats/q?stats=AverageRTT&b.spatial_grid=' + res, function(response) {
             var rtt = retype(response, +res);
             colorize.domain([d3.min(rtt, rttProp), d3.max(rtt, rttProp)]);
             var rttpaths = g.select("g").selectAll("path").data(rtt);
