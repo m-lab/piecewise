@@ -4,58 +4,17 @@ from sqlalchemy import create_engine, func, Column, Float, Integer, MetaData, St
 import calendar
 import time
 
-def build_query(start_date, end_date, resolution, aggregates):
-    query_template = """
-        SELECT
-           INTEGER(INTEGER(web100_log_entry.log_time / {resolution}) * {resolution}) AS time_step,
-           (FLOOR(connection_spec.client_geolocation.latitude * 10) + 0.5) / 10 as lat,
-           (FLOOR(connection_spec.client_geolocation.longitude * 10) + 0.5) / 10 as long,
-           {aggregates}
-        FROM [plx.google:m_lab.2010_01.all]
-        WHERE project == 0 AND
-              IS_EXPLICITLY_DEFINED(web100_log_entry.log_time) AND
-              web100_log_entry.log_time > {start_date} AND
-              web100_log_entry.log_time < {end_date} AND
-              web100_log_entry.is_last_entry == true AND
-              connection_spec.data_direction == 1
-        GROUP BY time_step, lat, long;
-    """
-    return query_template.format(
-            start_date = start_date,
-            end_date = end_date,
-            resolution = resolution,
-            aggregates = ', '.join(aggregates)
-        )
-
-def make_record(columns, row):
-    values = [f['v'] for f in row['f']]
-    timestep = ('time_step', values[0])
-    spatial_cell = ('cell', 'POINT({1} {2})'.format(*values))
-    field_names = [c.name for c in columns]
-    field_values = values[3:]
-    named_fields = zip(field_names, field_values)
-    return dict([timestep] + [spatial_cell] + named_fields)
-
 def make_request(query):
     return { 'configuration' : { 'query' : { 'query' : query } } }
 
-def parse_date(utc_time):
-    return calendar.timegm(time.strptime(utc_time, '%b %d %Y %H:%M:%S'))
-
-def ingest(start_date, end_date, resolution, aggregates):
-    pg_columns = sum([[c for c in a.postgres_columns] for a in aggregates], [])
+def ingest(config):
     db_uri = 'postgresql+psycopg2://postgres:@/piecewise'
     engine = create_engine(db_uri)
     metadata = MetaData()
-    records = make_table(metadata, pg_columns)
+    records = config.make_table(metadata)
     metadata.create_all(engine)
 
-    bq_aggregates = sum([[c for c in a.bigquery_aggregates] for a in aggregates], [])
-    query = build_query(
-            start_date = start_date,
-            end_date = end_date,
-            resolution = resolution,
-            aggregates = bq_aggregates)
+    query = config.ingest_bigquery_query()
 
     query_reference = bigquery_service.jobs().insert(
             projectId = PROJECT_NUMBER,
@@ -69,7 +28,7 @@ def ingest(start_date, end_date, resolution, aggregates):
         time.sleep(10)
         job_status = check_job.execute()
 
-    query_response = bigquery_service.jobs().getQueryResults(projectId = PROJECT_NUMBER, jobId = jobId).execute()
+    query_response = bigquery_service.jobs().getQueryResults(projectId = PROJECT_NUMBER, jobId = jobId, maxResults = 10000).execute()
     inserter = records.insert()
     page_count = 0
     record_count = 0
@@ -81,25 +40,18 @@ def ingest(start_date, end_date, resolution, aggregates):
         print 'Storing page {0} of results in postgres, total of {1}/{2} records'.format(page_count, record_count, total_rows)
 
         with engine.begin() as conn:
-            # TODO: Batch these up to reduce the number of db queries.  The
-            # batch size will need to be smaller than the pages we're getting
-            # from BigQuery, if we just do the whole page then we run into
-            # out-of-memory errors.
-            for row in query_response['rows']:
-                conn.execute(inserter, **make_record(pg_columns, row))
+            rows = [config.bigquery_row_to_postgres_row(r) for r in query_response['rows']]
+            conn.execute(inserter, rows)
             
         page_token = query_response.get('pageToken')
         del query_response
         if page_token is not None:
-            query_response = bigquery_service.jobs().getQueryResults(projectId = PROJECT_NUMBER, jobId = jobId, pageToken = page_token).execute()
+            query_response = bigquery_service.jobs().getQueryResults(projectId = PROJECT_NUMBER, jobId = jobId, maxResults = 1000, pageToken = page_token).execute()
         else:
             break
 
 if __name__ == '__main__':
-    ingest(
-            start_date = parse_date('Jan 1 2010 00:00:00'),
-            end_date = parse_date('Feb 1 2010 00:00:00'),
-            resolution = 60,
-            aggregates = [AverageRTT]
-    )
-
+    import sys, json
+    import piecewise.config
+    config = piecewise.config.read_config(json.load(open(sys.argv[1])))
+    ingest(config)
