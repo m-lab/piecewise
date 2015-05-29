@@ -36,6 +36,7 @@ def _read_bin(bin_spec):
 
 known_statistics = {
        'AverageRTT' : piecewise.aggregate.AverageRTT,
+       'MedianRTT' : piecewise.aggregate.MedianRTT,
        'MinRTT' : piecewise.aggregate.MinRTT
    }
 

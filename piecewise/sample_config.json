@@ -1,0 +1,32 @@
+{ 
+    "piecewise_version" : "1.0",
+    "database_uri" : "postgresql+psycopg2://postgres:@/piecewise",
+    "bins": [
+        { "type" : "time_slices", "resolution" : 3600 },
+        { "type" : "spatial_grid", "resolution" : 1 }
+    ],
+    "unsupported_bins" : [
+        { "type" : "spatial_hexes", "resolution" : 0.1 },
+        { "type" : "spatial_join", "table" : "boundaries", "geometry_column" : "geom", "key" : "id" }
+    ],
+    "statistics": [
+        { "type" : "AverageRTT" },
+        { "type" : "MedianRTT" }
+    ],
+    "unsupported_statistics": [
+        { "type" : "MinRTT" },
+        { "type" : "MedianRTT" }
+    ],
+    "filters": [
+        { "type": "temporal", "after": "Jan 1 2010 00:00:00", "before" : "Feb 1 2010 00:00:00" },
+        { "type": "raw", "query": "web100_log_entry.is_last_entry == true" },
+        { "type": "raw", "query": "connection_spec.data_direction == 1" },
+        { "type": "raw", "query": "project == 0" }
+    ], 
+    "unused_filters" : [
+        { "type": "bbox", "bbox": [-180, -90, 180, 90] }
+    ],
+    "unsupported_filters": [ 
+        { "type": "geojson", "geojson": "boundaries.json" }
+    ]
+}

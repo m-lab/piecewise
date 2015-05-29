@@ -25,6 +25,8 @@
   with_items:
     - /opt/telescope/requirements.txt
     - /opt/piecewise/requirements.txt
+- name: Create piecewise log directory
+  file: path=/var/log/piecewise/ state=directory
 - name: Install convenience python modules
   pip: name=bigquery state=latest
 - name: Deploy configuration files
@@ -38,3 +40,4 @@
     - nginx
     - postgresql
 - postgresql_db: name=piecewise state=present
+- command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql

@@ -1,5 +1,6 @@
 from itertools import chain
-from sqlalchemy import case, func, Column, Integer, Table
+from sqlalchemy import case, func, Column, Float, Integer, Table
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.sql.expression import label
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_Intersects, ST_X, ST_Y
@@ -270,5 +271,28 @@ class _MinRTT(Statistic):
     def __repr__(self):
         return "MinRTT"
 
+class _MedianRTT(Statistic):
+    @property
+    def bigquery_aggregates(self):
+        return ['GROUP_CONCAT(STRING(web100_log_entry.snap.SumRTT / web100_log_entry.snap.CountRTT))']
+
+    def bigquery_to_postgres(self, value):
+        if value:
+            return [('rtt_samples', (float(f) for f in value.split(",")))]
+        else:
+            return [('rtt_samples', None)]
+
+    @property
+    def postgres_columns(self):
+        return [Column('rtt_samples', ARRAY(Float))]
+
+    @property
+    def postgres_aggregates(self):
+        return [] # label('MedianRTT', ???)]
+
+    def __repr__(self):
+        return "MedianRTT"
+
 AverageRTT = _AverageRTT()
+MedianRTT = _MedianRTT()
 MinRTT = _MinRTT()
