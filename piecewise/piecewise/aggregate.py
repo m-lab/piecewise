@@ -1,9 +1,11 @@
 from itertools import chain
-from sqlalchemy import case, func, Column, Float, Integer, Table
+from sqlalchemy import case, func, Column, Float, Integer, String, Table
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.sql.expression import label
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_Intersects, ST_X, ST_Y
+import re
+import piecewise.maxmind
 
 class ST_MakeBox2D(GenericFunction):
     name = 'ST_MakeBox2D'
@@ -143,6 +145,59 @@ class SpatialGridBins(Bins):
 
     def __repr__(self):
         return """Grid(res={resolution})""".format(
+                resolution=self.resolution)
+
+class ISPBins(Bins):
+    label = "isp_bins"
+
+    def __init__(self, maxmind_file, rewrites):
+        self.maxmind_file = maxmind_file
+        self.rewrites = rewrites
+        self._regexes = None
+        self._maxmind_db = None
+
+    @property
+    def maxmind_db(self):
+        if self._maxmind_db is None:
+            self._maxmind_db = piecewise.maxmind.load(self.maxmind_file)
+        return self._maxmind_db
+
+    def rewrite(self, isp):
+        if isp is not None:
+            if self._regexes is None:
+                self._regexes = []
+                for alias, patterns in self.rewrites.iteritems():
+                    regex = re.compile('|'.join(re.escape(i) for i in patterns))
+                    self._regexes.append((alias, regex))
+            for (alias, regex) in self._regexes:
+                if regex.search(isp):
+                    return alias
+
+    def bigquery_selector(self):
+        return ['PARSE_IP(connection_spec.client_ip) AS ip_addr']
+
+    def bigquery_group(self):
+        return ["ip_addr"]
+
+    def bigquery_to_postgres(self, ip):
+        result = piecewise.maxmind.lookup(self.maxmind_db, int(ip))
+        return [('isp', self.rewrite(result))]
+
+    @property
+    def postgres_columns(self):
+        return [Column('isp', String)]
+
+    def postgres_aggregates(self, isps):
+        return [Column('isp')]
+
+    def postgres_filters(self, params):
+        if params:
+            return [Column('isp').in_(params.split(","))]
+        else:
+            return []
+
+    def __repr__(self):
+        return """ISPBins""".format(
                 resolution=self.resolution)
 
 class TemporalBins(Bins):

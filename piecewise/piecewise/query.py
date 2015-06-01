@@ -13,14 +13,15 @@ def query(config, aggregates, bins, filters):
     table = config.make_table(metadata)
 
     bin_keys = []
+    filter_predicates = []
+
     for b in config.bins:
         if b.label in bins:
-            bin_keys = bin_keys + b.postgres_aggregates(bins[b.label])
+            bin_keys.extend(b.postgres_aggregates(bins[b.label]))
 
-    filter_predicates = []
     for b in config.bins:
         if b.label in filters:
-            filter_predicates = filter_predicates + b.postgres_filters(filters[b.label])
+            filter_predicates.extend(b.postgres_filters(filters[b.label]))
 
     payload_aggregates = list(chain.from_iterable([x for x in a.postgres_aggregates] for a in aggregates))
 
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     config = piecewise.config.read_config(json.load(open(sys.argv[1])))
     results = query(config, 
             [AverageRTT],
-            bins = { 'spatial_grid' : 1 },
+            bins = { 'isp_bins' : 'level3' }, 
             filters = dict()) # { 'spatial_grid' : (0, 0, 10, 10) })
     for r in results:
         print '\t'.join(str(c) for c in r)
