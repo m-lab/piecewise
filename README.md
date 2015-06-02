@@ -1,32 +1,32 @@
-==Piecewise
+##Piecewise
 
 Piecewise is a tool for digesting and visualizing Measurement Lab data - user-volunteered Internet performance test results.
 It is based on the idea of composable statistics - ones for which we can combine results from multiple samples to get a valid result for the combination of the samples.
 For example, by tracking the sample count and total, we can compute a count and total for the overall population (which can then be trivially converted to an arithmetic mean.)
 The samples are selected along configurable dimensions such as time slices or a spatial grid, so Piecewise can support histogram and heatmap types visualizations at varying granularity.
 
-==Example
+##Example
 
 To be more clear about "composable" statistics, let's work through an example.
 Let's say we want to be able to query for average round trip times for tests submitted over time.
 We start with a full dataset contains timestamps and round trip times:
 
-|Timestamp (s)|RTT (ms)|
-|-:|-:|
-|1|30|
-|2|50|
-|25|40|
-|25|80|
-|28|90|
+| Timestamp (s) | RTT (ms) |
+| -------------:| --------:|
+|             1 |       30 |
+|             2 |       50 |
+|            25 |       40 | 
+|            25 |       80 |
+|            28 |       90 |
 
 And we bin the data by 10-second intervals, then there are two bins - a first bin containing seconds 0 through 9 and a second containing 20 through 29.
 (There are no values in the 10-19 bin so it is not tracked.)
 Piecewise will consolidate the data so that each timestamp is only represented once in the database, and track a count and total of the round-trip-time values so that the mean can be recovered.
 
-|Snapped timestamp (s)|Total RTT (ms)|Sample count|
-|-:|-:|-:|
-|0|80|2|
-|20|210|3|
+| Snapped timestamp (s) | Total RTT (ms) | Sample count |
+| ---------------------:| --------------:| ------------:|
+|                      0|              80|             2|
+|                     20|             210|             3|
 
 With this consolidated table we can get the mean round trip times over 10-second intervals by fetching only 1 row for each interval, something like this:
 
@@ -34,10 +34,10 @@ With this consolidated table we can get the mean round trip times over 10-second
     SELECT snapped_timestamp AS ts, rtt / sample_count AS AverageRTTFROM consolidated_statistics;
 ```
 
-|ts|AverageRTT|
-|-:|-:|
-|0|40|
-|20|70|
+| ts | AverageRTT |
+| --:| ----------:|
+|  0 |         40 |
+| 20 |         70 |
 
 Additionally we can create lower-granularity results by grouping the rows of the consolidated table.
 Dividing the timestamp by 30, taking the floor, and multiplying by 30 again gives 30-second granularity, with each cell bearing the timestamp of the first second in the bin.
@@ -45,11 +45,11 @@ Dividing the timestamp by 30, taking the floor, and multiplying by 30 again give
     SELECT (FLOOR(snapped_timestamp / 30) * 30) AS ts, SUM(rtt) / SUM(sample_count) AS AverageRTT from consolidated_statistics GROUP BY ts;
 ```
 
-|ts|AverageRTT|
-|-:|-:|
-|0|58|
+| ts | AverageRTT |
+| --:| ----------:|
+|  0 |         58 |
 
-==Organization
+##Organization
 
 Piecewise contains the folllowing Python modules:
 
@@ -63,7 +63,7 @@ Piecewise contains the folllowing Python modules:
 * `piecewise.wsgi` exposes the `query` functionality as a web service for consumption by JavaScript applications.
   The `piecewise_web` directory in this repository contains some sample visualizations using the d3 library.
 
-==Configuration
+##Configuration
 Piecewise supports configuration files that control the database connection details as well as allowing selection of the bin granularity and filtering out unneeded data.
 These configuration files use JSON according to a particular structure:
 
@@ -80,7 +80,7 @@ These configuration files use JSON according to a particular structure:
   Each filter is specified using a field named **type** and may have additional fields configuring the filter.
   See below for details about the types of filter and their configuration.
 
-===bin types
+###bin types
 
 * **time_slices** bins over the timestamps of test results.
   * **resolution** (required) configures the time_slices bin with a number of seconds determining the size of the slices.
@@ -93,14 +93,14 @@ These configuration files use JSON according to a particular structure:
   * **rewrites** (required) configures how the maxmind database names will be consolidated into shorter names.
     This is specified as an object where the keys are short names and the values are lists of strings that will be matched in the long names.
 
-===statistic types
+###statistic types
 
 * **AverageRTT** uses the total of round trip times and count of test results to compute the average round trip time.
 * **MedianRTT** uses a sample of test results stored in a PostgreSQL ARRAY column to compute the median round trip time.
   It is slower than AverageRTT but less sensitive to skew from outliers in the test results.
 * **MinRTT** gives the minimum round trip time.
 
-===filter types
+###filter types
 
 * **temporal** filters the test data by timestamp.
   * **after** (required) Specified as a string in the format "MMM dd HH:mm:ss" in the UTC time zone, timestamps must be at or after this time in order to be included.
@@ -110,7 +110,7 @@ These configuration files use JSON according to a particular structure:
 * **raw** filters the test data by an arbitrary BigQuery expression.
   * **query** (required) specifies the BigQuery expression that is to be included in WHERE clause of the query.
 
-==Web service
+###Web service
 
 The Piecewise web service consists of a single endpoint supporting several query parameters, depending on which bins and statistics are configured for the specific Piecewise installation.
 
