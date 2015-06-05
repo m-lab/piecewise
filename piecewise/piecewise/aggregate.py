@@ -4,7 +4,9 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.sql.expression import label
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_Intersects, ST_X, ST_Y
+import itertools
 import re
+import time
 import piecewise.maxmind
 
 class ST_MakeBox2D(GenericFunction):
@@ -44,31 +46,34 @@ class Aggregator(object):
         where_clause = list(chain.from_iterable(f.bigquery_filter() for f in self.filters))
 
         group_clause = list(chain.from_iterable(b.bigquery_group() for b in self.bins))
+        tables = self._tables_for(self.filters) # 
 
         return '\n'.join([
             'SELECT',
             ', '.join(select_clause),
-            'FROM [plx.google:m_lab.2010_01.all]',
+            'FROM ',
+            ', '.join('[%s]'% t for t in tables),
             'WHERE',
             ' AND '.join(where_clause),
             'GROUP BY',
             ', '.join(group_clause),
             ';'])
-        # """
-        # SELECT
-        #    INTEGER(INTEGER(web100_log_entry.log_time / {resolution}) * {resolution}) AS time_step,
-        #    (FLOOR(connection_spec.client_geolocation.latitude * 10) + 0.5) / 10 as lat,
-        #    (FLOOR(connection_spec.client_geolocation.longitude * 10) + 0.5) / 10 as long,
-        #    {aggregates}
-        # FROM [plx.google:m_lab.2010_01.all]
-        # WHERE project == 0 AND
-        #       IS_EXPLICITLY_DEFINED(web100_log_entry.log_time) AND
-        #       web100_log_entry.log_time > {start_date} AND
-        #       web100_log_entry.log_time < {end_date} AND
-        #       web100_log_entry.is_last_entry == true AND
-        #       connection_spec.data_direction == 1
-        # GROUP BY time_step, lat, long;
-        # """
+
+    def _tables_for(self, filters):
+        all_tables = []
+        current_year_month = time.gmtime()[:2] # first two fields are year and month, handy.
+        years = itertools.count(2010)
+        months = range(1, 12 + 1)
+        possible_year_months = ((year, month) for year in years for month in months)
+        valid_year_months = itertools.takewhile(lambda x: x < current_year_month, possible_year_months)
+
+        for f in filters:
+            if isinstance(f, TemporalFilter):
+                after = time.gmtime(f.after)[:2]
+                before = time.gmtime(f.before)[:2]
+                valid_year_months = itertools.ifilter(lambda x: after <= x < before, valid_year_months)
+
+        return ['plx.google:m_lab.%04d_%02d.all' % ym for ym in valid_year_months]
 
     def bigquery_row_to_postgres_row(self, bq_row):
         bq_row = [f['v'] for f in bq_row['f']]
@@ -180,8 +185,11 @@ class ISPBins(Bins):
         return ["ip_addr"]
 
     def bigquery_to_postgres(self, ip):
-        result = piecewise.maxmind.lookup(self.maxmind_db, int(ip))
-        return [('isp', self.rewrite(result))]
+        if ip is None:
+            return [('isp', None)]
+        else:
+            result = piecewise.maxmind.lookup(self.maxmind_db, int(ip))
+            return [('isp', self.rewrite(result))]
 
     @property
     def postgres_columns(self):
