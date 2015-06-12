@@ -1,13 +1,11 @@
 from itertools import chain
-from piecewise.aggregate import AverageRTT, make_table, ST_MakeBox2D, ST_Point, SpatialGridBins
-from sqlalchemy import create_engine, func, select, MetaData
+from piecewise.aggregate import AverageRTT
+from sqlalchemy import and_, create_engine, func, select, MetaData
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_X, ST_Y
 
 def query(config, aggregates, bins, filters):
-    pg_columns = list(chain.from_iterable([c for c in a.postgres_columns] for a in aggregates))
-    db_uri = 'postgresql+psycopg2://postgres:@/piecewise'
-    engine = create_engine(db_uri)
+    engine = create_engine(config.database_uri)
     metadata = MetaData()
     metadata.bind = engine
     table = config.make_table(metadata)
@@ -15,25 +13,17 @@ def query(config, aggregates, bins, filters):
     bin_keys = []
     filter_predicates = []
 
+    selection = table.select().with_only_columns([])
     for b in config.bins:
         if b.label in bins:
-            bin_keys.extend(b.postgres_aggregates(bins[b.label]))
-
-    for b in config.bins:
+            selection = b.build_query_to_report(selection, table, bins[b.label])
         if b.label in filters:
-            filter_predicates.extend(b.postgres_filters(filters[b.label]))
-
-    payload_aggregates = list(chain.from_iterable([x for x in a.postgres_aggregates] for a in aggregates))
-
-    q = select(bin_keys + payload_aggregates) \
-            .select_from(table)
-    if len(bin_keys) != 0:
-        q = q.group_by(*bin_keys)
-    if len(filter_predicates) != 0:
-        q = q.where(reduce(lambda x, y: x & y, filter_predicates))
+            selection = b.filter_query_to_report(selection, table, filters[b.label])
+    for a in aggregates:
+        selection = a.build_query_to_report(selection, table)
 
     with engine.connect() as conn:
-        return conn.execute(q)
+        return conn.execute(selection)
 
 if __name__ == '__main__':
     import sys, json
@@ -41,8 +31,8 @@ if __name__ == '__main__':
     config = piecewise.config.read_config(json.load(open(sys.argv[1])))
     results = query(config, 
             [AverageRTT],
-            bins = { 'isp_bins' : 'level3' }, 
-            filters = dict()) # { 'spatial_grid' : (0, 0, 10, 10) })
+            bins = { 'isp_bins' : "" , "time_slices" : str(3 * 3600) }, 
+            filters = {}) # { 'spatial_grid' : (0, 0, 10, 10) })
     for r in results:
         print '\t'.join(str(c) for c in r)
 

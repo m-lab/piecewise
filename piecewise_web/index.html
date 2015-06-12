@@ -28,9 +28,9 @@
         <option value='86400'>Daily</option>
         <option value='604800'>Weekly</option>
     </select>
-    <input type="date" name="after" id="after" min="2010-01-01" max="2010-01-31" value="2010-01-01">
+    <input type="date" name="after" id="after" min="2015-01-01" max="2015-01-31" value="2015-01-01">
     </input>
-    <input type="date" name="before" id="before" min="2010-01-01" max="2010-01-31" value="2010-01-31">
+    <input type="date" name="before" id="before" min="2015-01-01" max="2015-01-31" value="2015-01-31">
     </input>
     </div>
 </body>
@@ -53,10 +53,10 @@
     var yAxis = d3.svg.axis().orient('left');
     var xAxis = d3.svg.axis().orient('bottom'); //.ticks(5);
 
-    d3.json('/stats/q?stats=AverageRTT&b.time_slices=3600', function(data) {
+    d3.csv('/stats/q?format=csv&stats=MedianRTT&b.time_slices=3600', function(data) {
         data = retype(data);
-        x.domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })]);
-        y.domain([0, d3.max(data, function(d) { return d[1]; })]);
+        x.domain([d3.min(data, function(d) { return d.time_slice; }), d3.max(data, function(d) { return d.time_slice; })]);
+        y.domain([0, d3.max(data, function(d) { return d.MedianRTT; })]);
         xAxis.scale(x);
         yAxis.scale(y);
         yAxisNode = svg.append('g')
@@ -68,8 +68,8 @@
             .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
             .call(xAxis);
         line
-            .x(function(d) { return x(d[0]); })
-            .y(function(d) { return y(d[1]); })
+            .x(function(d) { return x(d.time_slice); })
+            .y(function(d) { return y(d.MedianRTT); })
             .interpolate('basis');
         path = svg.append("g")
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
@@ -87,10 +87,10 @@
             before = date(beforePicker.value) + (24 * 60 * 60);
         afterPicker.max = beforePicker.value;
         beforePicker.min = afterPicker.value;
-        d3.json('/stats/q?stats=AverageRTT&b.time_slices=' + res + '&f.time_slices=' + after + ',' + before, function(response) {
+        d3.csv('/stats/q?format=csv&stats=MedianRTT&b.time_slices=' + res + '&f.time_slices=' + after + ',' + before, function(response) {
             var data = retype(response);
-            x.domain([d3.min(data, function(d) { return d[0]; }), d3.max(data, function(d) { return d[0]; })]);
-            y.domain([0, d3.max(data, function(d) { return d[1]; })]);
+            x.domain([d3.min(data, function(d) { return d.time_slice; }), d3.max(data, function(d) { return d.time_slice; })]);
+            y.domain([0, d3.max(data, function(d) { return d.MedianRTT; })]);
             xAxis.scale(x);
             yAxis.scale(y);
             yAxisNode.call(yAxis);
@@ -104,18 +104,11 @@
     }
 
     function retype(d) {
-        var schema = {};
-        var i;
-        for (i = d['keys'].length; i >= 0; i--) {
-            schema[d['keys'][i]] = i;
-        }
-        d = d.results;
         d.map(function(r) { 
-            var date = new Date(r[schema['time_slice']] * 1000);
-            var rtt = r[schema['AverageRTT']];
-            return [date, rtt];
+            d.time_slice = new Date(d.time_slice * 1000);
+            d.MedianRTT = +d.MedianRTT
         }); 
-        d.sort(function(a,b) { return b[0] - a[0]; })
+        d.sort(function(a,b) { return b.time_slice - a.time_slice; })
         return d;
     }
 

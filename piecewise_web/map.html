@@ -68,9 +68,8 @@
     
     var colorize = d3.scale.ordinal().range(['pink', 'salmon', 'red', 'black']);
     var rttPathSelection;
-    function render(error, world, rttResponse) {
-      var rtt = retype(rttResponse, 10);
-      colorize.domain([d3.min(rtt, rttProp), d3.max(rtt, rttProp)]);
+    function render(error, world, rtt) {
+      colorize.domain([d3.min(rtt.features, rttProp), d3.max(rtt.features, rttProp)]);
 
       land = topojson.feature(world, world.objects.land);
 
@@ -79,63 +78,29 @@
         .attr("class", "land")
         .attr("d", path);
       rttPathSelection = g.append('g').selectAll('path');
-      rttPathSelection.data(rtt)
+      rttPathSelection.data(rtt.features)
          .enter().append("path")
          .attr("d", path)
-         .attr("style", function(d) { return 'fill:' + colorize(d.properties.rtt); });
+         .attr("style", function(d) { return 'fill:' + colorize(rttProp(d)); });
     }
 
-    function rttProp(d) { return d.properties.rtt; }
-
-    function retype(d, resolution) {
-        var schema = {};
-        var i;
-        for (i = d['keys'].length; i >= 0; i--) {
-            schema[d['keys'][i]] = i;
-        }
-
-        d = d['results'];
-        d = d.map(function(r) {
-            var x = r[schema['cell_x']],
-                y = r[schema['cell_y']],
-                rtt = r[schema['AverageRTT']];
-            return {
-                'type': 'Feature',
-                'geometry': {
-                    'type' : 'Polygon',
-                    'coordinates' : 
-                        [
-                            [
-                                [y,              x],
-                                [y,              x + resolution],
-                                [y + resolution, x + resolution],
-                                [y + resolution, x],
-                                [y,              x]
-                            ]
-                        ],
-                },
-                'properties' : { 'rtt' : rtt }
-            };
-        });
-        return d;
-    }
+    function rttProp(d) { return d.properties.AverageRTT; }
 
     var resPicker = document.getElementById('resolution');
     resPicker.onchange = update;
 
     function update() {
         var res = resPicker.value;
-        d3.json('/stats/q?stats=AverageRTT&b.spatial_grid=' + res, function(response) {
-            var rtt = retype(response, +res);
-            colorize.domain([d3.min(rtt, rttProp), d3.max(rtt, rttProp)]);
-            var rttpaths = g.select("g").selectAll("path").data(rtt);
+        d3.json('/stats/q?stats=AverageRTT&b.spatial_grid=' + res, function(rtt) {
+            colorize.domain([d3.min(rtt.features, rttProp), d3.max(rtt.features, rttProp)]);
+            var rttpaths = g.select("g").selectAll("path").data(rtt.features);
             rttpaths.exit().remove();
             rttpaths.enter().append("path")
                 .attr('d', path)
-                .attr('style', function(d) { return 'fill:' + colorize(d.properties.rtt); });
+                .attr('style', function(d) { return 'fill:' + colorize(rttProp(d)); });
             rttpaths
                 .attr("d", path)
-                .attr("style", function(d) { return 'fill:' + colorize(d.properties.rtt); });
+                .attr("style", function(d) { return 'fill:' + colorize(rttProp(d)); });
         });
     }
 

@@ -14,11 +14,13 @@ def read_config(config):
     assert config.get("piecewise_version") == "1.0", "Configuration must be for v1.0 of piecewise"
 
     database_uri = config['database_uri']
+    cache_table_name = config['cache_table_name']
+    statistics_table_name = config['statistics_table_name']
     bins = [_read_bin(b) for b in config['bins']]
     statistics = [_read_statistic(s) for s in config['statistics']]
     filters = [_read_filter(f) for f in config.get('filters', [])]
 
-    return Aggregator(database_uri, bins, statistics, filters)
+    return Aggregator(database_uri, cache_table_name, statistics_table_name, bins, statistics, filters)
 
 def _read_bin(bin_spec):
     typ = bin_spec['type']
@@ -28,7 +30,10 @@ def _read_bin(bin_spec):
     elif typ == 'spatial_hexes':
         raise Exception('Spatial hex bins not yet implemented')
     elif typ == 'spatial_join':
-        raise Exception('Spatial joins not yet implemented')
+        table = bin_spec['table']
+        geometry_column = bin_spec['geometry_column']
+        key = bin_spec['key']
+        return piecewise.aggregate.SpatialJoinBins(table, geometry_column, key)
     elif typ == 'time_slices':
         resolution = bin_spec['resolution']
         return piecewise.aggregate.TemporalBins(resolution)
@@ -40,8 +45,7 @@ def _read_bin(bin_spec):
 
 known_statistics = {
        'AverageRTT' : piecewise.aggregate.AverageRTT,
-       'MedianRTT' : piecewise.aggregate.MedianRTT,
-       'MinRTT' : piecewise.aggregate.MinRTT
+       'MedianRTT' : piecewise.aggregate.MedianRTT
    }
 
 def _read_statistic(stat_spec):

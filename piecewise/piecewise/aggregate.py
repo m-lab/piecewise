@@ -1,9 +1,10 @@
 from itertools import chain
-from sqlalchemy import case, func, Column, Float, Integer, String, Table
+from sqlalchemy import case, func, text, BigInteger, Column, DateTime, Float, Integer, String, Table
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.sql.expression import label
+from sqlalchemy.sql.expression import and_, or_, between, label
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_Intersects, ST_X, ST_Y
+import datetime
 import itertools
 import re
 import time
@@ -17,36 +18,51 @@ class ST_Point(GenericFunction):
     name = 'ST_Point'
     type = Geometry
 
-def make_table(metadata, columns):
-    return Table('statistics', metadata,
-            Column('id', Integer, primary_key = True),
-            Column('time_step', Integer),
-            Column('cell', Geometry('POINT')),
-            *columns)
+class ST_SnapToGrid(GenericFunction):
+    name = 'ST_SnapToGrid'
+    type = Geometry
 
 class Aggregator(object):
-    def __init__(self, database_uri, bins, statistics, filters):
+    def __init__(self, database_uri, cache_table_name, statistics_table_name, bins, statistics, filters):
         self.database_uri = database_uri
+        self.cache_table_name = cache_table_name
+        self.statistics_table_name = statistics_table_name
         self.bins = bins
         self.statistics = statistics
         self.filters = filters
 
+    def make_cache_table(self, metadata):
+        return Table(self.cache_table_name, metadata, 
+                Column('id', BigInteger, primary_key = True),
+                Column('time', DateTime),
+                Column('location', Geometry("POINT", srid=4326)),
+                Column('ip', BigInteger),
+                Column('countrtt', BigInteger),
+                Column('sumrtt', BigInteger))
+        # Column('bandwidth_up', BigInteger)
+        # Column('bandwidth_down', BigInteger)
+        # Column('ip', Integer)
+
     def make_table(self, metadata):
         bin_columns = chain.from_iterable(b.postgres_columns for b in self.bins)
         stat_columns = chain.from_iterable(b.postgres_columns for b in self.statistics)
-        # print list(chain(bin_columns, stat_columns))
 
-        return Table('statistics', metadata, Column('id', Integer, primary_key = True), *list(chain(bin_columns, stat_columns)))
+        return Table(self.statistics_table_name, metadata, Column('id', Integer, primary_key = True), *list(chain(bin_columns, stat_columns)))
 
     def ingest_bigquery_query(self):
         bin_selectors = chain.from_iterable(b.bigquery_selector() for b in self.bins)
         aggregate_selectors = chain.from_iterable(a.bigquery_aggregates for a in self.statistics)
-        select_clause = list(chain(bin_selectors, aggregate_selectors))
-
+        select_clause = [
+                "web100_log_entry.log_time AS time",
+                "connection_spec.client_geolocation.longitude AS longitude",
+                "connection_spec.client_geolocation.latitude AS latitude",
+                "PARSE_IP(connection_spec.client_ip) AS ip",
+                "web100_log_entry.snap.CountRTT AS countrtt",
+                "web100_log_entry.snap.SumRTT AS sumrtt"
+        ]
+        # select_clause = list(chain(bin_selectors, aggregate_selectors))
         where_clause = list(chain.from_iterable(f.bigquery_filter() for f in self.filters))
-
-        group_clause = list(chain.from_iterable(b.bigquery_group() for b in self.bins))
-        tables = self._tables_for(self.filters) # 
+        tables = self._tables_for(self.filters)
 
         return '\n'.join([
             'SELECT',
@@ -55,8 +71,6 @@ class Aggregator(object):
             ', '.join('[%s]'% t for t in tables),
             'WHERE',
             ' AND '.join(where_clause),
-            'GROUP BY',
-            ', '.join(group_clause),
             ';'])
 
     def _tables_for(self, filters):
@@ -71,32 +85,26 @@ class Aggregator(object):
             if isinstance(f, TemporalFilter):
                 after = time.gmtime(f.after)[:2]
                 before = time.gmtime(f.before)[:2]
-                valid_year_months = itertools.ifilter(lambda x: after <= x < before, valid_year_months)
+                valid_year_months = itertools.ifilter(lambda x: after <= x <= before, valid_year_months)
 
         return ['plx.google:m_lab.%04d_%02d.all' % ym for ym in valid_year_months]
 
     def bigquery_row_to_postgres_row(self, bq_row):
         bq_row = [f['v'] for f in bq_row['f']]
-        pg_row = dict()
-        i = 0
-        selectors = iter(self.bins)
-        try:
-            while i < len(bq_row):
-                s = selectors.next()
-                n = len(s.bigquery_selector())
-                fields = bq_row[i:(i + n)]
-                pg_row.update(s.bigquery_to_postgres(*fields))
-                i = i + n
-        except StopIteration, e:
-            pass
+        timestamp, longitude, latitude, ip, countrtt, sumrtt = bq_row
 
-        selectors = iter(self.statistics)
-        while i < len(bq_row):
-            s = selectors.next()
-            n = len(s.bigquery_aggregates)
-            fields = bq_row[i:(i + n)]
-            pg_row.update(s.bigquery_to_postgres(*fields))
-            i = i + n
+        timestamp = timestamp and datetime.datetime.utcfromtimestamp(float(timestamp))
+        location = longitude and latitude and "srid=4326;POINT(%f %f)" % (float(longitude), float(latitude))
+        ip = ip and int(ip)
+        countrtt = countrtt and int(countrtt)
+        sumrtt = sumrtt and int(sumrtt)
+
+        pg_row = dict(
+                time=timestamp,
+                location=location,
+                ip = ip,
+                countrtt=countrtt,
+                sumrtt = sumrtt)
 
         return pg_row
 
@@ -107,7 +115,8 @@ class Aggregator(object):
                 filters=self.filters)
 
 class Bins(object):
-    pass
+    def join_table(self, metadata):
+        pass
 
 class SpatialGridBins(Bins):
     label = "spatial_grid"
@@ -115,21 +124,27 @@ class SpatialGridBins(Bins):
     def __init__(self, resolution):
         self.resolution = resolution
 
-    def bigquery_selector(self):
-        return [
-            "(FLOOR(connection_spec.client_geolocation.latitude / {0}) + 0.5) * {0} AS lat".format(self.resolution),
-            "(FLOOR(connection_spec.client_geolocation.longitude / {0}) + 0.5) * {0} AS long".format(self.resolution)
-        ]
-
-    def bigquery_group(self):
-        return ['lat', 'long']
-
-    def bigquery_to_postgres(self, long, lat):
-        return [('cell', 'POINT({0} {1})'.format(long, lat))]
-
     @property
     def postgres_columns(self):
-        return [Column('cell', Geometry('POINT'))]
+        return [Column('cell', Geometry('POINT', srid=4326))]
+
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.cell]
+        snapped_geom = func.ST_SnapToGrid(full_table.c.location, self.resolution)
+        select_query = (query
+                .column(snapped_geom)
+                .group_by(snapped_geom))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table, res):
+        if isinstance(res, basestring):
+            try:
+                res = float(res)
+            except ValueError:
+                res = self.resolution
+        snapped_geom = func.ST_SnapToGrid(aggregate_table.c.cell, res)
+        grid_cell = func.ST_MakeBox2D(snapped_geom, func.ST_Translate(snapped_geom, res, res))
+        return query.column(label('cell', func.ST_AsGeoJSON(grid_cell))).group_by(snapped_geom)
 
     def postgres_aggregates(self, resolution):
         if isinstance(resolution, basestring):
@@ -152,6 +167,43 @@ class SpatialGridBins(Bins):
         return """Grid(res={resolution})""".format(
                 resolution=self.resolution)
 
+class SpatialJoinBins(Bins):
+    label = "spatial_join"
+
+    def __init__(self, table, geometry_column, key):
+        self.table = table
+        self.geometry_column = geometry_column
+        self.key = key
+
+    @property
+    def postgres_columns(self):
+        return [Column('join_key', Integer)]
+
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.join_key]
+        fk = Column(self.key, Integer)
+        geom = Column(self.geometry_column, Geometry())
+        join_table = Table(self.table, full_table.metadata, fk, geom)
+        select_query = (query.select_from(join_table)
+             .where(ST_Intersects(full_table.c.location, geom))
+             .column(fk)
+             .group_by(fk))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table, params):
+        fk = Column(self.key, Integer)
+        geom = Column(self.geometry_column, Geometry())
+        join_table = Table(self.table, aggregate_table.metadata, fk, geom)
+        if params == 'key':
+            query = query.column(aggregate_table.c.join_key)
+        else:
+            query = query.column(func.ST_AsGeoJSON(func.ST_Collect(geom)))
+
+        return (query
+                .select_from(join_table)
+                .where(aggregate_table.c.join_key == fk)
+                .group_by(aggregate_table.c.join_key))
+
 class ISPBins(Bins):
     label = "isp_bins"
 
@@ -162,6 +214,15 @@ class ISPBins(Bins):
         self._maxmind_db = None
 
     @property
+    def regexes(self):
+        if self._regexes is None:
+            self._regexes = []
+            for alias, patterns in self.rewrites.iteritems():
+                regex = re.compile('|'.join(re.escape(i) for i in patterns))
+                self._regexes.append((alias, regex))
+        return self._regexes
+
+    @property
     def maxmind_db(self):
         if self._maxmind_db is None:
             self._maxmind_db = piecewise.maxmind.load(self.maxmind_file)
@@ -169,27 +230,17 @@ class ISPBins(Bins):
 
     def rewrite(self, isp):
         if isp is not None:
-            if self._regexes is None:
-                self._regexes = []
-                for alias, patterns in self.rewrites.iteritems():
-                    regex = re.compile('|'.join(re.escape(i) for i in patterns))
-                    self._regexes.append((alias, regex))
-            for (alias, regex) in self._regexes:
+            for (alias, regex) in self.regexes:
                 if regex.search(isp):
                     return alias
 
-    def bigquery_selector(self):
-        return ['PARSE_IP(connection_spec.client_ip) AS ip_addr']
-
-    def bigquery_group(self):
-        return ["ip_addr"]
-
-    def bigquery_to_postgres(self, ip):
-        if ip is None:
-            return [('isp', None)]
-        else:
-            result = piecewise.maxmind.lookup(self.maxmind_db, int(ip))
-            return [('isp', self.rewrite(result))]
+    def postgres_aggregate_dimension(self, t):
+        labeled_ranges = [(label, piecewise.maxmind.ip_ranges(self.maxmind_db, pattern)) for (label, pattern) in self.regexes]
+        def ranges_to_sql_filter(ranges):
+            betweens = (between(t.c.ip, low, high) for (low, high) in ranges)
+            return and_(*betweens)
+        cases = [(ranges_to_sql_filter(ranges), label) for (label, ranges) in labeled_ranges]
+        return case(cases, else_=None)
 
     @property
     def postgres_columns(self):
@@ -204,6 +255,32 @@ class ISPBins(Bins):
         else:
             return []
 
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.isp]
+
+        t = full_table
+        labeled_ranges = [(shortname, piecewise.maxmind.ip_ranges(self.maxmind_db, pattern)) for (shortname, pattern) in self.regexes]
+        def ranges_to_sql_filter(ranges):
+            betweens = (between(t.c.ip, low, high) for (low, high) in ranges)
+            return or_(*betweens)
+        cases = [(ranges_to_sql_filter(ranges), shortname) for (shortname, ranges) in labeled_ranges]
+        shortname = case(cases, else_=None)
+
+        select_query = (query.column(label("isp", shortname)).group_by("isp"))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table, params):
+        return (query
+                .column(aggregate_table.c.isp)
+                .group_by(aggregate_table.c.isp))
+
+    def filter_query_to_report(self, query, aggregate_table, params):
+        if params:
+            isps = params.split(",")
+            return query.where(aggregate_table.c.isp.in_(isps))
+        else:
+            return query
+
     def __repr__(self):
         return """ISPBins""".format(
                 resolution=self.resolution)
@@ -214,37 +291,41 @@ class TemporalBins(Bins):
     def __init__(self, resolution):
         self.resolution = resolution
 
-    def bigquery_selector(self):
-        return ["INTEGER(INTEGER(web100_log_entry.log_time / {0}) * {0}) AS time_step".format(self.resolution)]
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        t = full_table
+        truncated_time = func.floor(func.extract("epoch", t.c.time) / self.resolution) * self.resolution
+        time = text("TIMESTAMP 'epoch'") + truncated_time * datetime.timedelta(seconds=1)
+        select_query = query.column(time).group_by(time)
+        insert_columns = [aggregate_table.c.time_step]
+        return insert_columns, select_query
 
-    def bigquery_group(self):
-        return ["time_step"]
-
-    def bigquery_to_postgres(self, time):
-        return [('time_step', time)]
-
-    @property
-    def postgres_columns(self):
-        return [Column('time_step', Integer)]
-
-    def postgres_aggregates(self, resolution):
-        if isinstance(resolution, basestring):
+    def build_query_to_report(self, query, aggregate_table, params):
+        if isinstance(params, basestring):
             try:
-                resolution = int(resolution)
+                res = int(params)
             except ValueError:
-                resolution = self.resolution
-        return [label('time_slice', func.floor(Column("time_step") / resolution) * resolution)]
+                res = self.resolution
+        else:
+            res = params
+        time = (res * 
+            func.floor(func.extract("epoch", aggregate_table.c.time_step) / res))
+        return (query
+                .column(label("time_slice", time))
+                .group_by(time))
 
-    def postgres_filters(self, params):
+    def filter_query_to_report(self, query, aggregate_table, params):
         if isinstance(params, basestring):
             params = map(int, params.split(","))
         after, before = params
-        time = Column("time_step")
-        return [time > after, time < before]
+        time = func.extract("epoch", aggregate_table.c.time_step)
+        return query.where(between(time, after, before))
+
+    @property
+    def postgres_columns(self):
+        return [Column('time_step', DateTime)]
 
     def __repr__(self):
-        return """Timeslices(res={resolution})""".format(
-                resolution=self.resolution)
+        return "Timeslices(res={resolution})".format(resolution=self.resolution)
 
 
 class Filter(object):
@@ -303,59 +384,46 @@ class Statistic(object):
 
 
 class _AverageRTT(Statistic):
-    @property
-    def bigquery_aggregates(self):
-        return ['SUM(web100_log_entry.snap.SumRTT)', 'SUM(web100_log_entry.snap.CountRTT)']
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.sumrtt, aggregate_table.c.countrtt]
+        select_query = (query
+              .column(func.sum(full_table.c.sumrtt))
+              .column(func.sum(full_table.c.countrtt)))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table):
+        a = aggregate_table
+        mean = func.sum(a.c.sumrtt) / func.sum(a.c.countrtt)
+        is_safe = func.sum(a.c.countrtt) > 0
+        safe_mean = (case([(is_safe, mean)], else_ = 0))
+        return query.column(label('AverageRTT', safe_mean))
 
     @property
     def postgres_columns(self):
         return [Column('sumrtt', Integer), Column('countrtt', Integer)]
 
-    @property
-    def postgres_aggregates(self):
-        return [label('AverageRTT', case([(func.sum(Column('countrtt')) > 0, func.sum(Column('sumrtt')) / func.sum(Column('countrtt')))], else_= None))]
-
     def __repr__(self):
         return "AverageRTT"
 
-class _MinRTT(Statistic):
-    @property
-    def bigquery_aggregates(self):
-        return ['MIN(web100_log_entry.snap.MinRTT)']
-
-    @property
-    def postgres_columns(self):
-        return [Column('minrtt', Integer)]
-
-    @property
-    def postgres_aggregates(self):
-        return [func.min(Column('minrtt'))]
-
-    def __repr__(self):
-        return "MinRTT"
-
 class _MedianRTT(Statistic):
-    @property
-    def bigquery_aggregates(self):
-        return ['GROUP_CONCAT(STRING(web100_log_entry.snap.SumRTT / web100_log_entry.snap.CountRTT))']
-
-    def bigquery_to_postgres(self, value):
-        if value:
-            return [('rtt_samples', (float(f) for f in value.split(",")))]
-        else:
-            return [('rtt_samples', None)]
-
     @property
     def postgres_columns(self):
         return [Column('rtt_samples', ARRAY(Float))]
 
-    @property
-    def postgres_aggregates(self):
-        return [] # label('MedianRTT', ???)]
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.rtt_samples]
+        mean = full_table.c.sumrtt / full_table.c.countrtt
+        is_safe = full_table.c.countrtt > 0
+        safe_mean = (case([(is_safe, mean)], else_ = None))
+        select_query = (query.column(func.array_agg(safe_mean)))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table):
+        median = func.median(aggregate_table.c.rtt_samples)
+        return query.column(label("MedianRTT", median))
 
     def __repr__(self):
         return "MedianRTT"
 
 AverageRTT = _AverageRTT()
 MedianRTT = _MedianRTT()
-MinRTT = _MinRTT()

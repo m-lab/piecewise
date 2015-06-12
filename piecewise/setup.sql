@@ -21,3 +21,10 @@ CREATE AGGREGATE median(float) (
   FINALFUNC=_final_median,
   INITCOND='{}'
 );
+
+CREATE AGGREGATE median(float[]) (
+    SFUNC=array_cat,
+    STYPE=float[],
+    FINALFUNC=_final_median,
+    INITCOND='{}'
+);
