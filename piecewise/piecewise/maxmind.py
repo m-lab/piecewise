@@ -22,8 +22,7 @@ if __name__ == '__main__':
     maxip = 3758096127
     table = load("/opt/telescope/resources/GeoIPASNum2-20140804.csv")
 
-     random.seed(72)
-     for i in xrange(100):
-         ip = random.randint(minip, maxip)
-         lookup(table, ip)
-        
+    random.seed(72)
+    for i in xrange(100):
+        ip = random.randint(minip, maxip)
+        lookup(table, ip)

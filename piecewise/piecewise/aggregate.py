@@ -1,6 +1,6 @@
 from itertools import chain
 from sqlalchemy import case, func, text, BigInteger, Column, DateTime, Float, Integer, String, Table
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, INT8RANGE
 from sqlalchemy.sql.expression import and_, or_, between, label
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_Intersects, ST_X, ST_Y
@@ -218,67 +218,34 @@ class SpatialJoinBins(Bins):
 class ISPBins(Bins):
     label = "isp_bins"
 
-    def __init__(self, maxmind_file, rewrites):
-        self.maxmind_file = maxmind_file
+    def __init__(self, maxmind_table, rewrites):
+        self.maxmind_table = maxmind_table
         self.rewrites = rewrites
-        self._regexes = None
         self._maxmind_db = None
 
     @property
-    def regexes(self):
-        if self._regexes is None:
-            self._regexes = []
-            for alias, patterns in self.rewrites.iteritems():
-                regex = re.compile('|'.join(re.escape(i) for i in patterns))
-                self._regexes.append((alias, regex))
-        return self._regexes
-
-    @property
-    def maxmind_db(self):
-        if self._maxmind_db is None:
-            self._maxmind_db = piecewise.maxmind.load(self.maxmind_file)
-        return self._maxmind_db
-
-    def rewrite(self, isp):
-        if isp is not None:
-            for (alias, regex) in self.regexes:
-                if regex.search(isp):
-                    return alias
-
-    def postgres_aggregate_dimension(self, t):
-        labeled_ranges = [(label, piecewise.maxmind.ip_ranges(self.maxmind_db, pattern)) for (label, pattern) in self.regexes]
-        def ranges_to_sql_filter(ranges):
-            betweens = (between(t.c.ip, low, high) for (low, high) in ranges)
-            return and_(*betweens)
-        cases = [(ranges_to_sql_filter(ranges), label) for (label, ranges) in labeled_ranges]
-        return case(cases, else_=None)
-
-    @property
     def postgres_columns(self):
-        return [Column('isp', String)]
-
-    def postgres_aggregates(self, isps):
-        return [Column('isp')]
-
-    def postgres_filters(self, params):
-        if params:
-            return [Column('isp').in_(params.split(","))]
-        else:
-            return []
+        return [Column("isp", String)]
 
     def build_query_to_populate(self, query, full_table, aggregate_table):
         insert_columns = [aggregate_table.c.isp]
+        ip_range = Column("ip_range", INT8RANGE)
+        isp_name = Column("label", String)
+        join_table = Table(self.maxmind_table, full_table.metadata, ip_range, isp_name)
+        isp_label = label('isp', self._sql_rewrite(isp_name))
+        select_query = (query.select_from(join_table)
+                .where(ip_range.contains(full_table.c.ip))
+                .column(isp_label)
+                .group_by('isp'))
 
-        t = full_table
-        labeled_ranges = [(shortname, piecewise.maxmind.ip_ranges(self.maxmind_db, pattern)) for (shortname, pattern) in self.regexes]
-        def ranges_to_sql_filter(ranges):
-            betweens = (between(t.c.ip, low, high) for (low, high) in ranges)
-            return or_(*betweens)
-        cases = [(ranges_to_sql_filter(ranges), shortname) for (shortname, ranges) in labeled_ranges]
-        shortname = case(cases, else_=None)
-
-        select_query = (query.column(label("isp", shortname)).group_by("isp"))
         return insert_columns, select_query
+
+    def _sql_rewrite(self, isp_name_col):
+        cases = []
+        for short_name, patterns in self.rewrites.iteritems():
+            tests = [isp_name_col.contains(pat) for pat in patterns]
+            cases.append((or_(*tests), short_name))
+        return case(cases, else_ = None)
 
     def build_query_to_report(self, query, aggregate_table, params):
         return (query

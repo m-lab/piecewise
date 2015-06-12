@@ -5,18 +5,18 @@
     "statistics_table_name": "statistics",
     "bins": [
         { "type" : "time_slices", "resolution" : 3600 },
-        { "type" : "spatial_grid", "resolution" : 1 }
-    ],
-    "unsupported_bins" : [
-        { "type" : "spatial_hexes", "resolution" : 0.1 },
-        { "type" : "spatial_join", "table" : "boundaries", "geometry_column" : "geom", "key" : "id" },
-        { "type" : "isp_bins", "maxmind_file" : "/opt/telescope/resources/GeoIPASNum2-20140804.csv", 
+        { "type" : "spatial_grid", "resolution" : 1 },
+        { "type" : "isp_bins", "maxmind_table" : "maxmind", 
             "rewrites" : {
                 "twc": ["Time Warner"],
                 "centurylink": ["Qwest", "Embarq", "Centurylink", "Centurytel"],
                 "level3": ["Level 3 Communications", "GBLX"],
                 "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"]
-            } },
+            } }
+    ],
+    "unsupported_bins" : [
+        { "type" : "spatial_hexes", "resolution" : 0.1 },
+        { "type" : "spatial_join", "table" : "boundaries", "geometry_column" : "geom", "key" : "id" },
         { "type" : "spatial_join", "table": "seattle_council_districts", "geometry_column" : "wkb_geometry", "key" : "district" }
     ],
     "statistics": [

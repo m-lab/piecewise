@@ -38,9 +38,9 @@ def _read_bin(bin_spec):
         resolution = bin_spec['resolution']
         return piecewise.aggregate.TemporalBins(resolution)
     elif typ == 'isp_bins':
-        maxmind_file = bin_spec['maxmind_file']
+        maxmind_table = bin_spec['maxmind_table']
         rewrites = bin_spec.get("rewrites", [])
-        return piecewise.aggregate.ISPBins(maxmind_file, rewrites)
+        return piecewise.aggregate.ISPBins(maxmind_table, rewrites)
     raise Exception("Unknown bin type {0}".format(typ))
 
 known_statistics = {
