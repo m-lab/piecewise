@@ -45,7 +45,11 @@ def _read_bin(bin_spec):
 
 known_statistics = {
        'AverageRTT' : piecewise.aggregate.AverageRTT,
-       'MedianRTT' : piecewise.aggregate.MedianRTT
+       'AverageDownload' : piecewise.aggregate.AverageDownload,
+       'AverageUpload' : piecewise.aggregate.AverageUpload,
+       'MedianRTT' : piecewise.aggregate.MedianRTT,
+       'MedianDownload' : piecewise.aggregate.MedianDownload,
+       'MedianUpload' : piecewise.aggregate.MedianUpload
    }
 
 def _read_statistic(stat_spec):

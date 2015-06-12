@@ -21,7 +21,11 @@
     ],
     "statistics": [
         { "type" : "AverageRTT" },
-        { "type" : "MedianRTT" }
+        { "type" : "MedianRTT" },
+        { "type" : "AverageDownload" },
+        { "type" : "MedianDownload" },
+        { "type" : "AverageUpload" },
+        { "type" : "MedianUpload" }
     ],
     "unsupported_statistics": [
         { "type" : "MinRTT" },
@@ -29,8 +33,8 @@
     ],
     "filters": [
         { "type": "temporal", "after": "Jan 1 2015 00:00:00", "before" : "Jan 2 2015 00:00:00" },
+        { "type": "raw", "query": "web100_log_entry.snap.CongSignals > 0" },
         { "type": "raw", "query": "web100_log_entry.is_last_entry == true" },
-        { "type": "raw", "query": "connection_spec.data_direction == 1" },
         { "type": "raw", "query": "project == 0" }
     ], 
     "unused_filters" : [
