@@ -1,5 +1,5 @@
 from itertools import chain
-from sqlalchemy import case, func, text, BigInteger, Column, DateTime, Float, Integer, String, Table
+from sqlalchemy import case, func, text, BigInteger, Boolean, Column, DateTime, Float, Integer, String, Table
 from sqlalchemy.dialects.postgresql import ARRAY, INT8RANGE
 from sqlalchemy.sql.expression import and_, or_, between, label
 from geoalchemy2 import Geometry
@@ -36,9 +36,11 @@ class Aggregator(object):
                 Column('id', BigInteger, primary_key = True),
                 Column('time', DateTime),
                 Column('location', Geometry("POINT", srid=4326)),
-                Column('ip', BigInteger),
+                Column('client_ip', BigInteger),
+                Column('server_ip', BigInteger),
                 Column('countrtt', BigInteger),
                 Column('sumrtt', BigInteger),
+                Column('download_flag', Boolean),
                 Column('download_time', BigInteger),
                 Column('download_octets', BigInteger),
                 Column('upload_time', BigInteger),
@@ -55,13 +57,15 @@ class Aggregator(object):
                 "web100_log_entry.log_time AS time",
                 "connection_spec.client_geolocation.longitude AS longitude",
                 "connection_spec.client_geolocation.latitude AS latitude",
-                "PARSE_IP(connection_spec.client_ip) AS ip",
+                "PARSE_IP(connection_spec.client_ip) AS client_ip",
+                "PARSE_IP(connection_spec.server_ip) AS server_ip",
                 "web100_log_entry.snap.CountRTT AS countrtt",
                 "web100_log_entry.snap.SumRTT AS sumrtt",
+                "connection_spec.data_direction AS data_direction",
                 "web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd AS download_time",
-                "web100_log_entry.snap.HCThruOctetsAcked AS download_octets",
+                "8 * web100_log_entry.snap.HCThruOctetsAcked AS download_octets",
                 "web100_log_entry.snap.Duration AS upload_time",
-                "web100_log_entry.snap.HCThruOctetsReceived AS upload_octets"
+                "8 * web100_log_entry.snap.HCThruOctetsReceived AS upload_octets"
         ]
 
         where_clause = list(chain.from_iterable(f.bigquery_filter() for f in self.filters))
@@ -94,13 +98,15 @@ class Aggregator(object):
 
     def bigquery_row_to_postgres_row(self, bq_row):
         bq_row = [f['v'] for f in bq_row['f']]
-        timestamp, longitude, latitude, ip, countrtt, sumrtt, dl_time, dl_octets, ul_time, ul_octets = bq_row
+        timestamp, longitude, latitude, client_ip, server_ip, countrtt, sumrtt, direction, dl_time, dl_octets, ul_time, ul_octets = bq_row
 
         timestamp = timestamp and datetime.datetime.utcfromtimestamp(float(timestamp))
         location = longitude and latitude and "srid=4326;POINT(%f %f)" % (float(longitude), float(latitude))
-        ip = ip and int(ip)
+        client_ip = client_ip and int(client_ip)
+        server_ip = server_ip and int(server_ip)
         countrtt = countrtt and int(countrtt)
         sumrtt = sumrtt and int(sumrtt)
+        direction = direction and bool(int(direction))
         dl_time = dl_time and float(dl_time)
         dl_octets = dl_octets and int(dl_octets)
         ul_time = ul_time and float(ul_time)
@@ -109,9 +115,11 @@ class Aggregator(object):
         pg_row = dict(
                 time=timestamp,
                 location=location,
-                ip = ip,
+                client_ip = client_ip,
+                server_ip = server_ip,
                 countrtt=countrtt,
                 sumrtt = sumrtt,
+                download_flag = direction,
                 download_time = dl_time,
                 download_octets = dl_octets,
                 upload_time = ul_time,
@@ -234,7 +242,7 @@ class ISPBins(Bins):
         join_table = Table(self.maxmind_table, full_table.metadata, ip_range, isp_name)
         isp_label = label('isp', self._sql_rewrite(isp_name))
         select_query = (query.select_from(join_table)
-                .where(ip_range.contains(full_table.c.ip))
+                .where(ip_range.contains(full_table.c.client_ip))
                 .column(isp_label)
                 .group_by('isp'))
 
@@ -286,8 +294,8 @@ class TemporalBins(Bins):
 
         truncated_time = func.date_trunc(res, aggregate_table.c.time_step)
         return (query
-                .column(label("time_slice", time))
-                .group_by(time))
+                .column(label("time_slice", func.extract("epoch", truncated_time)))
+                .group_by(truncated_time))
 
     def filter_query_to_report(self, query, aggregate_table, params):
         if isinstance(params, basestring):
@@ -372,7 +380,7 @@ class _AverageRTT(Statistic):
         mean = func.sum(a.c.sumrtt) / func.sum(a.c.countrtt)
         is_safe = func.sum(a.c.countrtt) > 0
         safe_mean = (case([(is_safe, mean)], else_ = 0))
-        return query.column(label('AverageRTT', safe_mean))
+        return query.column(label('rtt_avg', safe_mean))
 
     @property
     def postgres_columns(self):
@@ -401,6 +409,21 @@ class _MedianRTT(Statistic):
     def __repr__(self):
         return "MedianRTT"
 
+class _DownloadCount(Statistic):
+    @property
+    def postgres_columns(self):
+        return [Column('download_count', Integer)]
+
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.download_count]
+        tally = case([(full_table.c.download_flag == True, 1)], else_ = 0)
+        select_query = query.column(func.sum(tally))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table):
+        a = aggregate_table
+        return query.column(label("download_count", func.sum(a.c.download_count)))
+
 class _AverageDownload(Statistic):
     @property
     def postgres_columns(self):
@@ -418,7 +441,7 @@ class _AverageDownload(Statistic):
         mean = func.sum(a.c.download_octets) / func.sum(a.c.download_time)
         is_safe = func.sum(a.c.download_time) > 0
         safe_mean = case([(is_safe, mean)], else_ = None)
-        return query.column(label("AverageDownload", safe_mean))
+        return query.column(label("download_avg", safe_mean))
 
 class _MedianDownload(Statistic):
     @property
@@ -438,7 +461,22 @@ class _MedianDownload(Statistic):
         mean = func.sum(a.c.download_octets) / func.sum(a.c.download_time)
         is_safe = func.sum(a.c.download_time) > 0
         safe_mean = case([(is_safe, mean)], else_ = None)
-        return query.column(label("MedianDownload", safe_mean))
+        return query.column(label("download_median", safe_mean))
+
+class _UploadCount(Statistic):
+    @property
+    def postgres_columns(self):
+        return [Column('upload_count', Integer)]
+
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.upload_count]
+        tally = case([(full_table.c.download_flag == False, 1)], else_ = 0)
+        select_query = query.column(func.sum(tally))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table):
+        a = aggregate_table
+        return query.column(label("upload_count", func.sum(a.c.upload_count)))
 
 class _AverageUpload(Statistic):
     @property
@@ -457,7 +495,7 @@ class _AverageUpload(Statistic):
         mean = func.sum(a.c.upload_octets) / func.sum(a.c.upload_time)
         is_safe = func.sum(a.c.upload_time) > 0
         safe_mean = case([(is_safe, mean)], else_ = None)
-        return query.column(label("AverageUpload", safe_mean))
+        return query.column(label("upload_avg", safe_mean))
 
 class _MedianUpload(Statistic):
     @property
@@ -477,11 +515,13 @@ class _MedianUpload(Statistic):
         mean = func.sum(a.c.upload_octets) / func.sum(a.c.upload_time)
         is_safe = func.sum(a.c.upload_time) > 0
         safe_mean = case([(is_safe, mean)], else_ = None)
-        return query.column(label("MedianUpload", safe_mean))
+        return query.column(label("upload_median", safe_mean))
 
 AverageRTT = _AverageRTT()
 MedianRTT = _MedianRTT()
+DownloadCount = _DownloadCount()
 AverageDownload = _AverageDownload()
 MedianDownload = _MedianDownload()
+UploadCount = _UploadCount()
 AverageUpload = _AverageUpload()
 MedianUpload = _MedianUpload()

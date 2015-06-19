@@ -49,7 +49,9 @@ known_statistics = {
        'AverageUpload' : piecewise.aggregate.AverageUpload,
        'MedianRTT' : piecewise.aggregate.MedianRTT,
        'MedianDownload' : piecewise.aggregate.MedianDownload,
-       'MedianUpload' : piecewise.aggregate.MedianUpload
+       'MedianUpload' : piecewise.aggregate.MedianUpload,
+       'DownloadCount' : piecewise.aggregate.DownloadCount,
+       'UploadCount' : piecewise.aggregate.UploadCount
    }
 
 def _read_statistic(stat_spec):
