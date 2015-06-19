@@ -4,7 +4,7 @@
     "cache_table_name": "results",
     "statistics_table_name": "statistics",
     "bins": [
-        { "type" : "time_slices", "resolution" : 3600 },
+        { "type" : "time_slices", "resolution" : "hour" },
         { "type" : "spatial_grid", "resolution" : 1 },
         { "type" : "isp_bins", "maxmind_table" : "maxmind", 
             "rewrites" : {

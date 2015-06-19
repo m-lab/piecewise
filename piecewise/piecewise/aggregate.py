@@ -266,27 +266,25 @@ class ISPBins(Bins):
 class TemporalBins(Bins):
     label = "time_slices"
 
+    "time units supported by postgres date_trunc"
+    _known_units = { 'minute', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'decade', 'century', 'millennium' }
+
     def __init__(self, resolution):
+        assert resolution in self._known_units
         self.resolution = resolution
 
     def build_query_to_populate(self, query, full_table, aggregate_table):
         t = full_table
-        truncated_time = func.floor(func.extract("epoch", t.c.time) / self.resolution) * self.resolution
-        time = text("TIMESTAMP 'epoch'") + truncated_time * datetime.timedelta(seconds=1)
-        select_query = query.column(time).group_by(time)
+        truncated_time = func.date_trunc(self.resolution, t.c.time)
+        select_query = query.column(truncated_time).group_by(truncated_time)
         insert_columns = [aggregate_table.c.time_step]
         return insert_columns, select_query
 
     def build_query_to_report(self, query, aggregate_table, params):
-        if isinstance(params, basestring):
-            try:
-                res = int(params)
-            except ValueError:
-                res = self.resolution
-        else:
-            res = params
-        time = (res * 
-            func.floor(func.extract("epoch", aggregate_table.c.time_step) / res))
+        assert params in self._known_units
+        res = params
+
+        truncated_time = func.date_trunc(res, aggregate_table.c.time_step)
         return (query
                 .column(label("time_slice", time))
                 .group_by(time))
