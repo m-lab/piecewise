@@ -206,9 +206,9 @@ class SpatialJoinBins(Bins):
         geom = Column(self.geometry_column, Geometry())
         join_table = Table(self.table, aggregate_table.metadata, fk, geom)
         if params == 'key':
-            query = query.column(aggregate_table.c.join_key)
+            query = query.column(label(self.key, aggregate_table.c.join_key))
         else:
-            query = query.column(func.ST_AsGeoJSON(func.ST_Collect(geom)))
+            query = query.column(label('geometry', func.ST_AsGeoJSON(func.ST_Collect(geom))))
 
         return (query
                 .select_from(join_table)

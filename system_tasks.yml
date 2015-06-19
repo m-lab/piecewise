@@ -12,9 +12,13 @@
     - git
     - python-pip
     - python-psycopg2
+    - gdal-bin
 - name: Fetch telescope
   git: repo=https://github.com/m-lab-tools/telescope.git
        dest=/opt/telescope/
+- name: Fetch bq2geojson
+  git: repo=https://github.com/m-lab/bq2geojson.git
+       dest=/opt/bq2geojson/
 - name: Deploy piecewise
   copy: src={{ item.src }} dest={{ item.dest }} mode=o+w
   with_items:
