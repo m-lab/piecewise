@@ -16,11 +16,7 @@ if not app.debug:
 
 import json
 import piecewise.config
-config = piecewise.config.read_config(json.load(open('/vagrant/piecewise/sample_config.json')))
-
-@app.route('/')
-def hello_world():
-    return ("Goodbye World!", None, { 'Content-type' : 'text/plain' })
+config = piecewise.config.read_system_config()
 
 @app.route("/q")
 def query_statistics():

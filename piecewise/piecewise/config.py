@@ -2,12 +2,20 @@
 Configuration parser for Piecewise
 """
 
-import calendar, time
+import calendar
+import json
+import os
+import time
 import piecewise.aggregate
 from piecewise.aggregate import Aggregator, Bins, Statistic, Filter
 
 def parse_date(utc_time):
     return calendar.timegm(time.strptime(utc_time, '%b %d %Y %H:%M:%S'))
+
+def read_system_config():
+    config_file = os.getenv("PIECEWISE_CONFIG", "/etc/piecewise/config.json")
+    config_dict = json.load(open(config_file))
+    return read_config(config_dict)
 
 def read_config(config):
     "Construct an aggregator from a parsed JSON document"
@@ -33,7 +41,8 @@ def _read_bin(bin_spec):
         table = bin_spec['table']
         geometry_column = bin_spec['geometry_column']
         key = bin_spec['key']
-        return piecewise.aggregate.SpatialJoinBins(table, geometry_column, key)
+        join_custom_data = bin_spec.get('join_custom_data', False)
+        return piecewise.aggregate.SpatialJoinBins(table, geometry_column, key, join_custom_data)
     elif typ == 'time_slices':
         resolution = bin_spec['resolution']
         return piecewise.aggregate.TemporalBins(resolution)
@@ -70,7 +79,3 @@ def _read_filter(filter_spec):
     elif typ == 'raw':
         return piecewise.aggregate.RawFilter(filter_spec['query'])
     raise Exception("Unknown filter type {0}".format(typ))
-
-if __name__ == '__main__':
-    import sys, json
-    print read_config(json.load(open(sys.argv[1]))).ingest_bigquery_query()

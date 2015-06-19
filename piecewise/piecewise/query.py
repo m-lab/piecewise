@@ -26,9 +26,8 @@ def query(config, aggregates, bins, filters):
         return conn.execute(selection)
 
 if __name__ == '__main__':
-    import sys, json
     import piecewise.config
-    config = piecewise.config.read_config(json.load(open(sys.argv[1])))
+    config = piecewise.config.read_system_config()
     results = query(config, 
             [AverageRTT],
             bins = { 'isp_bins' : "" , "time_slices" : str(3 * 3600) }, 

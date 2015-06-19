@@ -1,7 +1,7 @@
 from itertools import chain
 from sqlalchemy import case, func, text, BigInteger, Boolean, Column, DateTime, Float, Integer, String, Table
 from sqlalchemy.dialects.postgresql import ARRAY, INT8RANGE
-from sqlalchemy.sql.expression import and_, or_, between, label
+from sqlalchemy.sql.expression import and_, or_, between, join, label
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_Intersects, ST_X, ST_Y
 import datetime
@@ -189,10 +189,11 @@ class SpatialGridBins(Bins):
 class SpatialJoinBins(Bins):
     label = "spatial_join"
 
-    def __init__(self, table, geometry_column, key):
+    def __init__(self, table, geometry_column, key, join_custom_data):
         self.table = table
         self.geometry_column = geometry_column
         self.key = key
+        self.join_custom_data = join_custom_data
 
     @property
     def postgres_columns(self):
@@ -202,9 +203,27 @@ class SpatialJoinBins(Bins):
         insert_columns = [aggregate_table.c.join_key]
         fk = Column(self.key, Integer)
         geom = Column(self.geometry_column, Geometry())
-        join_table = Table(self.table, full_table.metadata, fk, geom)
-        select_query = (query.select_from(join_table)
-             .where(ST_Intersects(full_table.c.location, geom))
+        bins_table = Table(self.table, full_table.metadata, fk, geom)
+
+        if self.join_custom_data: 
+            extra_data = Table("extra_data", full_table.metadata, 
+                    Column("verified", Boolean),
+                    Column("timestamp", DateTime),
+                    Column("client_ip", Integer),
+                    Column("server_ip", Integer),
+                    Column("location", Geometry("Point", srid=4326)))
+
+            joining = join(full_table, extra_data,
+                    and_(extra_data.c.client_ip == full_table.c.client_ip,
+                        extra_data.c.server_ip == full_table.c.server_ip,
+                        extra_data.c.timestamp == full_table.c.time))
+            query = query.select_from(joining)
+            location = case([(extra_data.c.verified, func.coalesce(extra_data.c.location, full_table.c.location))], else_ = full_table.c.location)
+        else:
+            location = full_table.c.location
+
+        select_query = (query.select_from(bins_table)
+             .where(ST_Intersects(location, geom))
              .column(fk)
              .group_by(fk))
         return insert_columns, select_query

@@ -1,0 +1,15 @@
+---
+- name: Copy geojson file to server
+  copy: src=seattle_council_districts.geojson dest=/opt/
+- pip: name=ipaddress state=latest
+- name: Ingest geojson to postgres
+  command: ogr2ogr -f 'PostgreSQL' 'PG:user=postgres dbname=piecewise' -nln seattle_council_districts /opt/seattle_council_districts.geojson
+- name: Install seattle piecewise configuration
+  copy: src=piecewise/seattle_config.json dest=/etc/piecewise/config.json
+- name: Restart uwsgi so piecewise config is detected
+  service: name=uwsgi state=restarted
+- command: python import_extra_data.py chdir=/opt/piecewise
+- name: Ingest bigquery data and aggregate it
+  command: python -m piecewise.ingest chdir=/opt/piecewise/
+- name: Put center.js where bq2geojson can find it
+  command: python seattle.py /opt/bq2geojson/html/js/center.js chdir=/opt/piecewise
