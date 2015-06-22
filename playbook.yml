@@ -5,3 +5,6 @@
       become: yes
       become_method: sudo
     - include: user_tasks.yml
+    - include: seattle_tasks.yml
+      become: yes
+      become_method: sudo

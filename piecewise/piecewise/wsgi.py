@@ -18,8 +18,8 @@ import json
 import piecewise.config
 config = piecewise.config.read_system_config()
 
-@app.route("/q")
-def query_statistics():
+@app.route("/q/<aggregation>")
+def query_statistics(aggregation):
     filters = dict()
     bins = dict()
     for k, v in request.args.iteritems():
@@ -30,7 +30,7 @@ def query_statistics():
     stats = request.args.get("stats","").split(",")
     stats = [piecewise.config.known_statistics[s] for s in stats]
 
-    results = query(config, stats, bins, filters)
+    results = query(config, aggregation, stats, bins, filters)
     if request.args.get("format", "json") == "csv":
         results = _rows_to_csv(results)
         return (results, None, { 'Content-type' : 'text/csv' })

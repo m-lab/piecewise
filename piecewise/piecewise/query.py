@@ -4,33 +4,29 @@ from sqlalchemy import and_, create_engine, func, select, MetaData
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import GenericFunction, ST_X, ST_Y
 
-def query(config, aggregates, bins, filters):
+def query(config, name, statistics, bins, filters):
     engine = create_engine(config.database_uri)
     metadata = MetaData()
     metadata.bind = engine
-    table = config.make_table(metadata)
 
-    bin_keys = []
-    filter_predicates = []
+    aggregation = None
+    for a in config.aggregations:
+        if a.name == name:
+            aggregation = a
 
-    selection = table.select().with_only_columns([])
-    for b in config.bins:
-        if b.label in bins:
-            selection = b.build_query_to_report(selection, table, bins[b.label])
-        if b.label in filters:
-            selection = b.filter_query_to_report(selection, table, filters[b.label])
-    for a in aggregates:
-        selection = a.build_query_to_report(selection, table)
+    if aggregation is None:
+        raise Exception("unknown aggregation: " + name)
 
-    with engine.connect() as conn:
-        return conn.execute(selection)
+    return aggregation.query(engine, metadata, bins, filters, statistics)
+
 
 if __name__ == '__main__':
     import piecewise.config
     config = piecewise.config.read_system_config()
     results = query(config, 
+            'by_census_block',
             [AverageRTT],
-            bins = { 'isp_bins' : "" , "time_slices" : str(3 * 3600) }, 
+            bins = { 'isp_bins' : "" , "time_slices" : 'hour' }, 
             filters = {}) # { 'spatial_grid' : (0, 0, 10, 10) })
     for r in results:
         print '\t'.join(str(c) for c in r)

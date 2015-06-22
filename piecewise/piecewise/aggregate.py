@@ -22,14 +22,62 @@ class ST_SnapToGrid(GenericFunction):
     name = 'ST_SnapToGrid'
     type = Geometry
 
-class Aggregator(object):
-    def __init__(self, database_uri, cache_table_name, statistics_table_name, bins, statistics, filters):
-        self.database_uri = database_uri
-        self.cache_table_name = cache_table_name
+class Aggregation(object):
+    def __init__(self, name, statistics_table_name, bins, statistics):
+        self.name = name
         self.statistics_table_name = statistics_table_name
         self.bins = bins
         self.statistics = statistics
+
+    def build_aggregate_table(self, engine, metadata, records):
+        statistics_table = self.make_table(metadata)
+        statistics_table.create(engine, checkfirst = True)
+
+        selection = records.select().with_only_columns([])
+        columns = []
+        for b in self.bins:
+            cols, selection = b.build_query_to_populate(selection, records, statistics_table)
+            columns += cols
+        for s in self.statistics:
+            cols, selection = s.build_query_to_populate(selection, records, statistics_table)
+            columns += cols
+
+        with engine.begin() as conn:
+            conn.execute(statistics_table.insert().from_select(columns, selection))
+
+    def make_table(self, metadata):
+        bin_columns = chain.from_iterable(b.postgres_columns for b in self.bins)
+        stat_columns = chain.from_iterable(b.postgres_columns for b in self.statistics)
+        return Table(self.statistics_table_name, metadata,
+                Column('id', Integer, primary_key = True),
+                *list(chain(bin_columns, stat_columns)),
+                keep_existing = True)
+
+    def query(self, engine, metadata, bins, filters, statistics):
+        table = self.make_table(metadata)
+
+        bin_keys = []
+        filter_predicates = []
+
+        selection = table.select().with_only_columns([])
+        for b in self.bins:
+            if b.label in bins:
+                selection = b.build_query_to_report(selection, table, bins[b.label])
+            if b.label in filters:
+                selection = b.filter_query_to_report(selection, table, filters[b.label])
+        for s in statistics:
+            selection = s.build_query_to_report(selection, table)
+
+        with engine.connect() as conn:
+            return conn.execute(selection)
+
+
+class Aggregator(object):
+    def __init__(self, database_uri, cache_table_name, filters, aggregations):
+        self.database_uri = database_uri
+        self.cache_table_name = cache_table_name
         self.filters = filters
+        self.aggregations = aggregations
 
     def make_cache_table(self, metadata):
         return Table(self.cache_table_name, metadata, 
@@ -45,12 +93,6 @@ class Aggregator(object):
                 Column('download_octets', BigInteger),
                 Column('upload_time', BigInteger),
                 Column('upload_octets', BigInteger))
-
-    def make_table(self, metadata):
-        bin_columns = chain.from_iterable(b.postgres_columns for b in self.bins)
-        stat_columns = chain.from_iterable(b.postgres_columns for b in self.statistics)
-
-        return Table(self.statistics_table_name, metadata, Column('id', Integer, primary_key = True), *list(chain(bin_columns, stat_columns)))
 
     def ingest_bigquery_query(self):
         select_clause = [
@@ -127,15 +169,8 @@ class Aggregator(object):
 
         return pg_row
 
-    def __repr__(self):
-        return """Aggregator(bins={bins}, statistics={statistics}, filters={filters})""".format(
-                bins=self.bins,
-                statistics=self.statistics,
-                filters=self.filters)
-
 class Bins(object):
-    def join_table(self, metadata):
-        pass
+    pass
 
 class SpatialGridBins(Bins):
     label = "spatial_grid"
@@ -189,15 +224,16 @@ class SpatialGridBins(Bins):
 class SpatialJoinBins(Bins):
     label = "spatial_join"
 
-    def __init__(self, table, geometry_column, key, join_custom_data):
+    def __init__(self, table, geometry_column, key, join_custom_data, key_type):
         self.table = table
         self.geometry_column = geometry_column
         self.key = key
+        self.key_type = key_type
         self.join_custom_data = join_custom_data
 
     @property
     def postgres_columns(self):
-        return [Column('join_key', Integer)]
+        return [Column('join_key', self.key_type)]
 
     def build_query_to_populate(self, query, full_table, aggregate_table):
         insert_columns = [aggregate_table.c.join_key]
@@ -211,12 +247,14 @@ class SpatialJoinBins(Bins):
                     Column("timestamp", DateTime),
                     Column("client_ip", Integer),
                     Column("server_ip", Integer),
-                    Column("location", Geometry("Point", srid=4326)))
+                    Column("location", Geometry("Point", srid=4326)),
+                    keep_existing = True)
 
             joining = join(full_table, extra_data,
                     and_(extra_data.c.client_ip == full_table.c.client_ip,
                         extra_data.c.server_ip == full_table.c.server_ip,
-                        extra_data.c.timestamp == full_table.c.time))
+                        extra_data.c.timestamp == full_table.c.time),
+                    isouter = True)
             query = query.select_from(joining)
             location = case([(extra_data.c.verified, func.coalesce(extra_data.c.location, full_table.c.location))], else_ = full_table.c.location)
         else:
@@ -258,7 +296,7 @@ class ISPBins(Bins):
         insert_columns = [aggregate_table.c.isp]
         ip_range = Column("ip_range", INT8RANGE)
         isp_name = Column("label", String)
-        join_table = Table(self.maxmind_table, full_table.metadata, ip_range, isp_name)
+        join_table = Table(self.maxmind_table, full_table.metadata, ip_range, isp_name, keep_existing = True)
         isp_label = label('isp', self._sql_rewrite(isp_name))
         select_query = (query.select_from(join_table)
                 .where(ip_range.contains(full_table.c.client_ip))

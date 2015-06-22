@@ -56,32 +56,11 @@ def aggregate(config):
     engine = create_engine(config.database_uri)
     metadata = MetaData()
     records = config.make_cache_table(metadata)
-    statistics = config.make_table(metadata)
-    metadata.create_all(engine)
-
-    # bins = [b for b in config.bins]
-    # join_tables = [b.join_table(metadata) for b in config.bins]
-    # bin_dimensions = [b.postgres_aggregate_dimension(records) for b in bins]
-    # aggregated_values = list(itertools.chain.from_iterable(
-    #     s.populate_aggregates(records) for s in config.statistics))
-    # bin_columns = [b.postgres_columns for b in config.bins]
-    # aggregate_columns = [s.postgres_columns for s in config.statistics]
-    # columns = list(itertools.chain.from_iterable(bin_columns + aggregate_columns))
-
-    selection = records.select().with_only_columns([])
-    columns = []
-    for b in config.bins:
-        cols, selection = b.build_query_to_populate(selection, records, statistics)
-        columns += cols
-    for s in config.statistics:
-        cols, selection = s.build_query_to_populate(selection, records, statistics)
-        columns += cols
-
-    with engine.begin() as conn:
-        conn.execute(statistics.insert().from_select(columns, selection))
+    for agg in config.aggregations:
+        agg.build_aggregate_table(engine, metadata, records)
 
 if __name__ == '__main__':
     import piecewise.config
     config = piecewise.config.read_system_config()
-    ingest(config)
+    # ingest(config)
     aggregate(config)
