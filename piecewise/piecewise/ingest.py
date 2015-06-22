@@ -62,5 +62,5 @@ def aggregate(config):
 if __name__ == '__main__':
     import piecewise.config
     config = piecewise.config.read_system_config()
-    # ingest(config)
+    ingest(config)
     aggregate(config)

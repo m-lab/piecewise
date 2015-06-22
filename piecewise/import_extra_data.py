@@ -8,12 +8,10 @@ import ipaddress
 import datetime
 
 aggregator = piecewise.config.read_config(json.load(open("seattle_config.json")))
-spatial_bin = filter(lambda x: x.label == 'spatial_join', aggregator.bins)[0]
 
 engine = create_engine(aggregator.database_uri)
 metadata = MetaData()
 metadata.bind = engine
-geom = Column(spatial_bin.geometry_column)
 extra_data = Table('extra_data', metadata, 
         Column('id', Integer, primary_key = True),
         Column('verified', Boolean, server_default = text("False")),
