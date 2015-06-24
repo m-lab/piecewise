@@ -2,45 +2,33 @@
     "piecewise_version" : "1.0",
     "database_uri" : "postgresql+psycopg2://postgres:@/piecewise",
     "cache_table_name": "results",
-    "statistics_table_name": "statistics",
-    "bins": [
-        { "type" : "time_slices", "resolution" : "hour" },
-        { "type" : "spatial_grid", "resolution" : 1 },
-        { "type" : "isp_bins", "maxmind_table" : "maxmind", 
-            "rewrites" : {
-                "twc": ["Time Warner"],
-                "centurylink": ["Qwest", "Embarq", "Centurylink", "Centurytel"],
-                "level3": ["Level 3 Communications", "GBLX"],
-                "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"]
-            } }
-    ],
-    "unsupported_bins" : [
-        { "type" : "spatial_hexes", "resolution" : 0.1 },
-        { "type" : "spatial_join", "table" : "boundaries", "geometry_column" : "geom", "key" : "id" },
-        { "type" : "spatial_join", "table": "seattle_council_districts", "geometry_column" : "wkb_geometry", "key" : "district" }
-    ],
-    "statistics": [
-        { "type" : "AverageRTT" },
-        { "type" : "MedianRTT" },
-        { "type" : "AverageDownload" },
-        { "type" : "MedianDownload" },
-        { "type" : "AverageUpload" },
-        { "type" : "MedianUpload" }
-    ],
-    "unsupported_statistics": [
-        { "type" : "MinRTT" },
-        { "type" : "MedianRTT" }
-    ],
     "filters": [
         { "type": "temporal", "after": "Jan 1 2015 00:00:00", "before" : "Jan 2 2015 00:00:00" },
         { "type": "raw", "query": "web100_log_entry.snap.CongSignals > 0" },
         { "type": "raw", "query": "web100_log_entry.is_last_entry == true" },
         { "type": "raw", "query": "project == 0" }
-    ], 
-    "unused_filters" : [
-        { "type": "bbox", "bbox": [-180, -90, 180, 90] }
     ],
-    "unsupported_filters": [ 
-        { "type": "geojson", "geojson": "boundaries.json" }
-    ]
+    "aggregations": [{
+        "name" : "all",
+        "statistics_table_name": "statistics",
+        "bins": [
+            { "type" : "time_slices", "resolution" : "hour" },
+            { "type" : "spatial_grid", "resolution" : 1 },
+            { "type" : "isp_bins", "maxmind_table" : "maxmind", 
+                "rewrites" : {
+                    "twc": ["Time Warner"],
+                    "centurylink": ["Qwest", "Embarq", "Centurylink", "Centurytel"],
+                    "level3": ["Level 3 Communications", "GBLX"],
+                    "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"]
+                } }
+        ],
+        "statistics": [
+            { "type" : "AverageRTT" },
+            { "type" : "MedianRTT" },
+            { "type" : "AverageDownload" },
+            { "type" : "MedianDownload" },
+            { "type" : "AverageUpload" },
+            { "type" : "MedianUpload" }
+        ]
+    }]
 }

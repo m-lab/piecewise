@@ -70,26 +70,51 @@ These configuration files use JSON according to a particular structure:
 * **piecewise_version** must be ``"1.0"`` for Piecewise version 1.0
 * **database_uri** should be a connection string for a database using python's DBI.
   Although DBI may specify any database type, Piecewise currently requires the PostgreSQL database.
-* **bins** contains an array of objects specifying the binning dimensions.
-  Each bin is specified using a field named **type** and may have additional fields configuring the binning.
-  See below for details about the types of bin and their configuration.
-* **statistics** contains an array of objects specifying the statistics that should be queryable from the consolidated table.
-  Each statistic is specified using a field named **type** and may have additional fields configuring the statistic.
-  See below for details about the types of statistic and their configuration.
-* **filters** contains an array of objects specifying additional criteria that are required for each row that is to be consolidated into the piecewise consolidated table.
+* **cache_table_name** specifies a database table where individual test records are stored.
+  This table is queried to generate the aggregate tables, BigQuery will only be needed to add data to this table.
+* **filters** contains an array of objects specifying criteria to be applied to the BigQuery table before ingestion into postgres.
   Each filter is specified using a field named **type** and may have additional fields configuring the filter.
   See below for details about the types of filter and their configuration.
+* **aggregations** defines a list of named configurations of aggregate statistics.
+  * **name** sets a name that will be used to select the aggregation for queries.
+  * **statistics_table_name** sets the name of the database table used to store the aggregated statistics
+  * **bins** contains an array of objects specifying the binning dimensions.
+    Each bin is specified using a field named **type** and may have additional fields configuring the binning.
+    See below for details about the types of bin and their configuration.
+  * **statistics** contains an array of objects specifying the statistics that should be queryable from the consolidated table.
+    Each statistic is specified using a field named **type** and may have additional fields configuring the statistic.
+    See below for details about the types of statistic and their configuration.
 
 ###bin types
 
 * **time_slices** bins over the timestamps of test results.
-  * **resolution** (required) configures the time_slices bin with a number of seconds determining the size of the slices.
-    Since the Measurement Lab data uses timestamps with second resolution, this must be a whole number of seconds.
+  * **resolution** (required) specifies a time unit by name.
+    The timestamps are defined by truncating any time information of lower granularity by this unit (so truncating 2015-06-15T05:37:34 to hours gives 2015-06-15T05:00:00.)
+    The time units supported are those defined by Postgres: 
+    * minute
+    * hour
+    * day
+    * week
+    * month
+    * quarter
+    * year
+    * decade
+    * century
+    * millennium
 * **spatial_grid** bins over the GeoIP locations from test results.
   * **resolution** (required) configures the spatial_grid bin with a number of degrees determining the size of the (square) grid cells.
     This may be fractional.
+* **spatial_join** bins by joining the GeoIP locations with a spatial table in postgres.
+  * **table** (required) specifies the name of the geometry table.
+  * **geometry_column** (required) specifies the name of the geometry table.
+  * **key** (required) specifies the name of the column that identifies features in the geometry table.
+    This will be stored in the aggregate table rather than the full geometry.
+    Regardless of the name in the geometry table the column in the aggregate table will always be named 'key.'
+  * **key_type** (optional, default 'integer') specifies the type of the key column.
+    This currently accepts a string whose value can be either "string" or "integer".
 * **isp_bins** bins over the ISP names associated with each IP according to the Maxmind database.
-  * **maxmind_file** (required) configures the isp_bins bin with a CSV file containing the Maxmind database.
+  * **maxmind_file** (required) configures the isp_bins bin with the name of a postgres table used containing the Maxmind database.
+    The 'setup.sql' script included with the Piecewise sources includes a COPY command that can ingest this table from the Maxmind CSV.
   * **rewrites** (required) configures how the maxmind database names will be consolidated into shorter names.
     This is specified as an object where the keys are short names and the values are lists of strings that will be matched in the long names.
 
@@ -99,24 +124,38 @@ These configuration files use JSON according to a particular structure:
 * **MedianRTT** uses a sample of test results stored in a PostgreSQL ARRAY column to compute the median round trip time.
   It is slower than AverageRTT but less sensitive to skew from outliers in the test results.
 * **MinRTT** gives the minimum round trip time.
+* **AverageUpload** computes the average bandwidth for client-to-server tests in bits per second.
+* **MedianUpload** computes the median of the upload bandwidth.
+* **UploadCount** computes the total number of trials in each bin for client-to-server tests.
+* **AverageDownload** computes the average bandwidth for server-to-client tests in bits per second.
+* **MedianDownload** computes the median of the download bandwidth.
+* **DownloadCount** computes the total number of trials in each bin for server-to-client tests.
 
 ###filter types
 
 * **temporal** filters the test data by timestamp.
   * **after** (required) Specified as a string in the format "MMM dd HH:mm:ss" in the UTC time zone, timestamps must be at or after this time in order to be included.
   * **before** (required) Specified as a string in the format "MMM dd HH:mm:ss" in the UTC time zone, timestamps must be before this time in order to be included.
+  * Example: `{ "type": "temporal", "after": "Jan 1 2015 00:00:00", "before" : "Jan 2 2015 00:00:00" }`
 * **bbox** filters the test data by geoip location.
-  * **bbox** (required) specified as a list of four numbers, provides the bounding box in latitude/longitude defining the area that must contain the points.
+  * **bbox** (required) specified as a list of four numbers, provides the bounding box in longitude/latgitude defining the area that must contain the points.
+    This must be in West, South, East, North order.
+  * Example: `{ "type": "bbox", "bbox": [-122.6733398438,47.3630134401,-121.9509887695,47.8076208172] }`
 * **raw** filters the test data by an arbitrary BigQuery expression.
   * **query** (required) specifies the BigQuery expression that is to be included in WHERE clause of the query.
+  * Example: `{ "type": "raw", "query": "project == 0" }`
 
 ###Web service
 
 The Piecewise web service consists of a single endpoint supporting several query parameters, depending on which bins and statistics are configured for the specific Piecewise installation.
 
-The path is ``/stats/q``.
+The path is ``/stats/q/<aggregation>``.
+The ``<aggregation>`` placeholder must be replaced with the name of one of the aggregations from the configuration.
 
 ``&stats=`` contains a comma-separated list of the statistics to be returned, using the same names as in the configuration file.
+
+``&format=`` may be 'csv' or 'geojson' to specify the output format.
+GeoJSON is the default, even when no spatial information is included.
 
 Each configured bin may be used as a bin or a filter, or both, over the consolidated data for the computed statistics.
 When specifying a rebinning, prefix the bin name with ``b.`` to get the query parameter name.
@@ -129,11 +168,18 @@ Multiple binning and filtering parameters may be used simultaneously.
 
 The interpretation of the rebinning and filter parameters varies by bin type.
 
-* **``f.time_slices``** contains the after and before timestamps as raw numeric values separated by a comma.
-* **``b.time_slices``** takes a single numeric value specifying the resolution to rebin at, in seconds.
+* **``f.time_slices``** contains the after and before timestamps as simple numbers separated by a comma.
+  This represents the time in seconds since the Unix epoch.
+* **``b.time_slices``** takes a string specifying a resolution (as used in the time_slices configuration) to rebin at.
+  Note that although rebinning to a finer resolution succeeds, it will only produce values at the first cell of each time slice.
 * **``f.spatial_grid``** takes four numeric values separated by commas.
   These specify a bounding box limiting the area for which statistics are computed.
+  As with the 'bbox' filter, this must be in West, South, East, North order.
 * **``b.spatial_grid``** takes a single numeric value specifying the resolution to rebin at, in degrees.
 * **``f.isp_bins``** takes a list of the ISP names to be included in the results, separated by commas.
 * **``b.isp_bins``** simply activates ISP binning.
   It does not require a value.
+* **``b.spatial_join``** activates the spatial_join binning.
+  If the parameter value is 'key' then the key will be returned in the results.
+  Otherwise it will be the full geometries represented as GeoJSON.
+* **``f.spatial_join``** has no effect - the spatial join bins cannot be used for filtering.
