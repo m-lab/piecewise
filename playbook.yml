@@ -2,9 +2,7 @@
 - hosts: all
   tasks:
     - include: system_tasks.yml
-      become: yes
-      become_method: sudo
+      sudo: True
     - include: user_tasks.yml
     - include: seattle_tasks.yml
-      become: yes
-      become_method: sudo
+      sudo: True
