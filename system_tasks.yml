@@ -4,20 +4,21 @@
 - name: Install packages
   apt: name={{ item }} state=latest
   with_items:
-    - postgresql-9.3
-    - postgresql-9.3-postgis-2.1
-    - postgresql-client-9.3
+    - postgresql
+    - postgis
+    - postgresql-client
     - nginx
     - uwsgi-plugin-python
     - git
     - python-pip
     - python-psycopg2
+    - python-dev
     - gdal-bin
 - name: Fetch telescope
   git: repo=https://github.com/m-lab-tools/telescope.git
        dest=/opt/telescope/
 - name: Deploy piecewise
-  copy: src={{ item.src }} dest={{ item.dest }} mode=o+w
+  copy: src={{ item.src }} dest={{ item.dest }}
   with_items:
       - { src: piecewise, dest: /opt/ }
       - { src: piecewise_web, dest: /opt/ }
@@ -33,9 +34,9 @@
 - name: Install convenience python modules
   pip: name=bigquery state=latest
 - name: Deploy configuration files
-  copy: src=conf/etc/ dest=/etc/ owner=root group=root
+  copy: src=conf/ dest=/ owner=root group=root
 - name: Fix postgres configuration permissions
-  file: path=/etc/postgresql/9.3/main/pg_hba.conf state=file owner=postgres group=postgres mode=u=rw,g=r,o=
+  file: path=/etc/postgresql/9.4/main/pg_hba.conf state=file owner=postgres group=postgres mode=0640
 - name: Restart services
   service: name={{ item }} state=restarted
   with_items: 
