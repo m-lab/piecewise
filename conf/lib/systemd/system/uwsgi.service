@@ -1,0 +1,11 @@
+[Unit]
+Description=uWSGI Emperor
+After=syslog.target
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/uwsgi --emperor /etc/uwsgi
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.targe
