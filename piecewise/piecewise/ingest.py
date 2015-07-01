@@ -15,6 +15,8 @@ def ingest(config):
     records = config.make_cache_table(metadata)
     metadata.create_all(engine)
 
+    engine.execute(records.delete())
+
     query = config.ingest_bigquery_query()
 
     query_reference = bigquery_service.jobs().insert(
