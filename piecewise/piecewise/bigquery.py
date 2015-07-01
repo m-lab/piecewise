@@ -16,9 +16,12 @@ FLOW = flow_from_clientsecrets(SECRETS_FILE, scope='https://www.googleapis.com/a
 storage = Storage(CREDENTIALS_FILE)
 credentials = storage.get()
 
+class FlowFlags(): 
+    noauth_local_webserver = True
+
 if credentials is None or credentials.invalid:
     # Run oauth2 flow with default arguments.
-    credentials = tools.run_flow(FLOW, storage, tools.argparser.parse_args())
+    credentials = tools.run_flow(FLOW, storage, FlowFlags())
 
 http = httplib2.Http()
 http = credentials.authorize(http)
