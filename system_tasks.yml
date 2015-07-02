@@ -17,13 +17,19 @@
 - name: Fetch telescope
   git: repo=https://github.com/m-lab-tools/telescope.git
        dest=/opt/telescope/
+- name: Fetch piecewise
+  git: repo=https://github.com/nkinkade/piecewise.git
+       dest=/opt/piecewise.git/
+- name: Fetch bq2geojson 
+  git: repo=https://github.com/m-lab/bq2geojson.git
+       dest=/opt/bq2geojson/
+       version=piecewise
 - name: Deploy piecewise
-  copy: src={{ item.src }} dest={{ item.dest }}
+  file: src=/opt/piecewise.git/{{ item.src }} dest=/opt/{{ item.dest }} state=link
   with_items:
-      - { src: piecewise, dest: /opt/ }
-      - { src: piecewise_web, dest: /opt/ }
-      - { src: collector, dest: /opt/ }
-      - { src: ../bq2geojson, dest: /opt/ }
+      - { src: piecewise, dest: piecewise }
+      - { src: piecewise_web, dest: piecewise_web }
+      - { src: collector, dest: collector }
 - name: Install required python modules
   pip: requirements={{ item }} state=latest
   with_items:
