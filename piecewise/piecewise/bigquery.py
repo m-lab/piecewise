@@ -18,6 +18,7 @@ credentials = storage.get()
 
 class FlowFlags(): 
     noauth_local_webserver = True
+    logging_level = 'ERROR'
 
 if credentials is None or credentials.invalid:
     # Run oauth2 flow with default arguments.
