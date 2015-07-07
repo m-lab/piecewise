@@ -1,5 +1,12 @@
 ##Deploying a Piecewise server
 
+### Install Prerequisites
+Text describing pre-requisites....
+
+  * Ansible
+  * Vagrant
+  * Virtualbox 
+
 To facilitate server deployment, the Piecewise repository includes an [Ansible](http://ansible.com/) playbook that can be used to deploy Piecewise to an Ubuntu server.
 Ansible must be installed on a control machine but the server that is being configured needs only to allow SSH access.
 Assuming that SSH is configured not to require an interactive password prompt, the steps to configure a Piecewise server with the hostname piecewise-server are as follows.
