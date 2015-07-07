@@ -30,7 +30,7 @@
         "name": "by_census_block",
         "statistics_table_name": "block_statistics",
         "bins": [
-            { "type" : "spatial_join", "table" : "tl_2014_53_tabblock10", "geometry_column" : "wkb_geometry", "key" : "blockce10", "join_custom_data" : true, "key_type" : "string" },
+            { "type" : "spatial_join", "table" : "seattle_blkgrpce10", "geometry_column" : "wkb_geometry", "key" : "objectid", "join_custom_data" : true, "key_type" : "string" },
             { "type" : "time_slices", "resolution" : "month" },
             { "type" : "isp_bins", "maxmind_table" : "maxmind", 
                 "rewrites" : {
