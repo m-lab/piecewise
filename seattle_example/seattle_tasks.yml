@@ -1,0 +1,17 @@
+---
+- name: Copy geo data to server
+  copy: src=seattle_example/{{ item }} dest=/opt/bq2geojson/html/
+  with_items:
+      - seattle_council_districts.geojson
+      - seattle_census10_blockgroups.topojson
+      - seattle_blkgrpce10
+- pip: name=ipaddress state=latest
+- name: Ingest council districts to postgres
+  command: ogr2ogr -f PostgreSQL 'PG:user=postgres dbname=piecewise' -nln seattle_council_districts /opt/bq2geojson/html/seattle_council_districts.geojson
+- name: Ingest census blocks to postgres
+  command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln seattle_blkgrpce10 -nlt MultiPolygon 'PG:user=postgres dbname=piecewise' /opt/bq2geojson/html/seattle_blkgrpce10/CENSUS10_blkgrp_WGS.shp
+- name: Install seattle piecewise configuration
+  copy: src=seattle_example/piecewise_config.json dest=/etc/piecewise/config.json
+- name: Restart uwsgi so piecewise config is detected
+  service: name=uwsgi state=restarted
+- command: python import_extra_data.py chdir=/opt/piecewise
