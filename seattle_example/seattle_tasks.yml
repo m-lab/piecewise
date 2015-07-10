@@ -1,10 +1,11 @@
 ---
 - name: Copy geo data to server
-  copy: src=seattle_example/{{ item }} dest=/opt/bq2geojson/html/
+  copy: src=seattle_example/{{ item.src }} dest=/opt/bq2geojson/html/{{ item.dest }}
   with_items:
-      - seattle_council_districts.geojson
-      - seattle_census10_blockgroups.topojson
-      - seattle_blkgrpce10
+      - { src: seattle_council_districts.geojson, dest: seattle_council_districts.geojson }
+      - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
+      - { src: seattle_blkgrpce10, dest: '' }
+      - { src: center.js, dest: js/center.js }
 - pip: name=ipaddress state=latest
 - name: Ingest council districts to postgres
   command: ogr2ogr -f PostgreSQL 'PG:user=postgres dbname=piecewise' -nln seattle_council_districts /opt/bq2geojson/html/seattle_council_districts.geojson
