@@ -3,7 +3,7 @@ from sqlalchemy import MetaData, Table, Column, create_engine, func, select
 from sqlalchemy.sql.expression import label
 import json
 
-aggregator = piecewise.config.read_config(json.load(open("seattle_config.json")))
+aggregator = piecewise.config.read_config(json.load(open("piecewise_config.json")))
 spatial_bin = filter(lambda x: x.label == 'spatial_join', aggregator.bins)[0]
 
 engine = create_engine(aggregator.database_uri)

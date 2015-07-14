@@ -7,7 +7,8 @@ import csv
 import ipaddress
 import datetime
 
-aggregator = piecewise.config.read_config(json.load(open("seattle_config.json")))
+aggregator =
+piecewise.config.read_config(json.load(open("../seattle_example/piecewise_config.json")))
 
 engine = create_engine(aggregator.database_uri)
 metadata = MetaData()
