@@ -1,6 +1,6 @@
 from flask import Flask, Response, request
 from flask.json import dumps
-from sqlalchemy import create_engine, select, text, MetaData, Table, BigInteger, Boolean, Column, DateTime, String, Integer
+from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, Numeric, BigInteger, Boolean, Column, DateTime, String, Integer
 from geoalchemy2 import Geometry
 import ipaddress
 import datetime
@@ -20,27 +20,37 @@ engine = create_engine("postgresql+psycopg2://postgres:@/piecewise")
 metadata.bind = engine
 extra_data = Table('extra_data', metadata, 
         Column('id', Integer, primary_key = True),
-        Column('verified', Boolean, server_default = text("False")),
         Column('timestamp', DateTime),
-        Column('client_ip', BigInteger),
-        Column('server_ip', BigInteger),
-        Column('location', Geometry('POINT', srid=4326)))
+        Column('verified', Boolean),
+        Column('latitude', Numeric),
+        Column('longitude', Numeric),
+        Column('connection_type', String),
+        Column('advertised_download', Integer),
+        Column('advertised_upload', Integer),
+        Column('location_type', String),
+        Column('cost_of_service', Integer))
 metadata.create_all()
 
 @app.route("/collect", methods=['POST'])
 def append_extra_data():
     try:
-        timestamp = datetime.datetime.utcfromtimestamp(float(request.form['timestamp']))
-        client_ip = int(ipaddress.ip_address(request.form['client_ip']))
-        server_ip = int(ipaddress.ip_address(request.form['server_ip']))
         latitude = float(request.form['latitude'])
         longitude = float(request.form['longitude'])
+        connection_type = request.form['connection_type']
+        advertised_download = int(request.form['advertised_download'])
+        advertised_upload = int(request.form['advertised_upload'])
+        location_type = request.form['location_type']
+        cost_of_service = int(request.form['cost_of_service'])
+
         with engine.begin() as conn:
             query = extra_data.insert(dict(
-                timestamp = timestamp,
-                client_ip = client_ip,
-                server_ip = server_ip,
-                location = "srid=4326; POINT(%f %f)" % (longitude, latitude)))
+                latitude = latitude,
+                longitude = longitude,
+                connection_type = connection_type,
+                advertised_download = advertised_download,
+                advertised_upload = advertised_upload,
+                location_type = location_type,
+                cost_of_service = cost_of_service))
             conn.execute(query)
         return ("", 201, {})
     except Exception, e:
