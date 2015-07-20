@@ -22,6 +22,7 @@ extra_data = Table('extra_data', metadata,
         Column('id', Integer, primary_key = True),
         Column('timestamp', DateTime),
         Column('verified', Boolean),
+        Column('bigquery_key', String),
         Column('latitude', Numeric),
         Column('longitude', Numeric),
         Column('connection_type', String),
@@ -34,6 +35,7 @@ metadata.create_all()
 @app.route("/collect", methods=['POST'])
 def append_extra_data():
     try:
+        bigquery_key = request.form['bigquery_key']
         latitude = float(request.form['latitude'])
         longitude = float(request.form['longitude'])
         connection_type = request.form['connection_type']
@@ -44,6 +46,7 @@ def append_extra_data():
 
         with engine.begin() as conn:
             query = extra_data.insert(dict(
+                bigquery_key = bigquery_key,
                 latitude = latitude,
                 longitude = longitude,
                 connection_type = connection_type,
