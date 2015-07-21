@@ -92,7 +92,8 @@ class Aggregator(object):
                 Column('download_time', BigInteger),
                 Column('download_octets', BigInteger),
                 Column('upload_time', BigInteger),
-                Column('upload_octets', BigInteger))
+                Column('upload_octets', BigInteger),
+                Column('bigquery_key', String))
 
     def ingest_bigquery_query(self):
         select_clause = [
@@ -107,7 +108,8 @@ class Aggregator(object):
                 "web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd AS download_time",
                 "8 * web100_log_entry.snap.HCThruOctetsAcked AS download_octets",
                 "web100_log_entry.snap.Duration AS upload_time",
-                "8 * web100_log_entry.snap.HCThruOctetsReceived AS upload_octets"
+                "8 * web100_log_entry.snap.HCThruOctetsReceived AS upload_octets",
+                "CONCAT(String(web100_log_entry.snap.Duration), String(web100_log_entry.snap.CountRTT), String(web100_log_entry.snap.SegsIn) , String(web100_log_entry.snap.SegsOut)) AS bigquery_key"
         ]
 
         where_clause = list(chain.from_iterable(f.bigquery_filter() for f in self.filters))
@@ -243,17 +245,21 @@ class SpatialJoinBins(Bins):
 
         if self.join_custom_data: 
             extra_data = Table("extra_data", full_table.metadata, 
-                    Column("verified", Boolean),
                     Column("timestamp", DateTime),
-                    Column("client_ip", Integer),
-                    Column("server_ip", Integer),
+                    Column("verified", Boolean),
+                    Column("bigquery_key", String),
+                    Column("latitude", Numeric),
+                    Column("longitude", Numeric),
+                    Column("connection_type", String),
+                    Column("advertised_download", Integer),
+                    Column("advertised_upload", Integer),
+                    Column("location_type", String),
+                    Column("cost_of_service", Integer),
                     Column("location", Geometry("Point", srid=4326)),
                     keep_existing = True)
 
             joining = join(full_table, extra_data,
-                    and_(extra_data.c.client_ip == full_table.c.client_ip,
-                        extra_data.c.server_ip == full_table.c.server_ip,
-                        extra_data.c.timestamp == full_table.c.time),
+                    and_(extra_data.c.bigquery_key == full_table.c.bigquery_key),
                     isouter = True)
             query = query.select_from(joining)
             location = case([(extra_data.c.verified, func.coalesce(extra_data.c.location, full_table.c.location))], else_ = full_table.c.location)
