@@ -22,4 +22,5 @@ extra_data = Table('extra_data', metadata,
         Column('advertised_upload', Integer),
         Column('location_type', String),
         Column('cost_of_service', Integer))
+metadata.drop_all()
 metadata.create_all()
