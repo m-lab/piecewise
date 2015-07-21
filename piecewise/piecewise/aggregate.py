@@ -142,7 +142,7 @@ class Aggregator(object):
 
     def bigquery_row_to_postgres_row(self, bq_row):
         bq_row = [f['v'] for f in bq_row['f']]
-        timestamp, longitude, latitude, client_ip, server_ip, countrtt, sumrtt, direction, dl_time, dl_octets, ul_time, ul_octets = bq_row
+        timestamp, longitude, latitude, client_ip, server_ip, countrtt, sumrtt, direction, dl_time, dl_octets, ul_time, ul_octets, bigquery_key = bq_row
 
         timestamp = timestamp and datetime.datetime.utcfromtimestamp(float(timestamp))
         location = longitude and latitude and "srid=4326;POINT(%f %f)" % (float(longitude), float(latitude))
@@ -155,6 +155,7 @@ class Aggregator(object):
         dl_octets = dl_octets and int(dl_octets)
         ul_time = ul_time and float(ul_time)
         ul_octets = ul_octets and int(ul_octets)
+        bigquery_key = bigquery_key
 
         pg_row = dict(
                 time=timestamp,
@@ -167,7 +168,8 @@ class Aggregator(object):
                 download_time = dl_time,
                 download_octets = dl_octets,
                 upload_time = ul_time,
-                upload_octets = ul_octets)
+                upload_octets = ul_octets,
+                bigquery_key = bigquery_key)
 
         return pg_row
 
@@ -248,8 +250,6 @@ class SpatialJoinBins(Bins):
                     Column("timestamp", DateTime),
                     Column("verified", Boolean),
                     Column("bigquery_key", String),
-                    Column("latitude", Numeric),
-                    Column("longitude", Numeric),
                     Column("connection_type", String),
                     Column("advertised_download", Integer),
                     Column("advertised_upload", Integer),

@@ -1,6 +1,6 @@
 from flask import Flask, Response, request
 from flask.json import dumps
-from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, Numeric, BigInteger, Boolean, Column, DateTime, String, Integer
+from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer
 from geoalchemy2 import Geometry
 import ipaddress
 import datetime
@@ -23,8 +23,7 @@ extra_data = Table('extra_data', metadata,
         Column('timestamp', DateTime),
         Column('verified', Boolean),
         Column('bigquery_key', String),
-        Column('latitude', Numeric),
-        Column('longitude', Numeric),
+        Column('location', Geometry("Point", srid=4326)),
         Column('connection_type', String),
         Column('advertised_download', Integer),
         Column('advertised_upload', Integer),
@@ -36,8 +35,7 @@ metadata.create_all()
 def append_extra_data():
     try:
         bigquery_key = request.form['bigquery_key']
-        latitude = float(request.form['latitude'])
-        longitude = float(request.form['longitude'])
+        location = request.form['longitude'] and request.form['latitude'] and "srid=4326;POINT(%f %f)" % (float(request.form['longitude']), float(request.form['latitude']))
         connection_type = request.form['connection_type']
         advertised_download = int(request.form['advertised_download'])
         advertised_upload = int(request.form['advertised_upload'])
@@ -47,8 +45,7 @@ def append_extra_data():
         with engine.begin() as conn:
             query = extra_data.insert(dict(
                 bigquery_key = bigquery_key,
-                latitude = latitude,
-                longitude = longitude,
+                location = location,
                 connection_type = connection_type,
                 advertised_download = advertised_download,
                 advertised_upload = advertised_upload,
