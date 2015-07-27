@@ -33,15 +33,52 @@ metadata.create_all()
 
 @app.route("/collect", methods=['POST'])
 def append_extra_data():
-    try:
-        bigquery_key = request.form['bigquery_key']
-        location = request.form['longitude'] and request.form['latitude'] and "srid=4326;POINT(%f %f)" % (float(request.form['longitude']), float(request.form['latitude']))
-        connection_type = request.form['connection_type']
-        advertised_download = int(request.form['advertised_download'])
-        advertised_upload = int(request.form['advertised_upload'])
-        location_type = request.form['location_type']
-        cost_of_service = int(request.form['cost_of_service'])
+    location_types = ['residence', 'workplace', 'business', 'public', 'other']
+    connection_types = ['cable', 'dsl', 'fiber', 'mobile', 'other']
 
+    try:
+        if request.form['longitude'] and request.form['latitude']:
+            longitude = float(request.form['longitude'])
+            latitude = float(request.form['latitude'])
+            location = 'srid=4326;POINT(%f %f)' % (longitude, latitude)
+    except Exception, e:
+        location = None
+        app.logger.exception(e)
+
+    if request.form['connection_type'] in connection_types:
+        connection_type = request.form['connection_type']
+    else:
+        connection_type = None
+
+    if request.form['location_type'] in location_types:
+        location_type = request.form['location_type']
+    else:
+        location_type = None
+
+    try:
+        advertised_download = int(request.form['advertised_download'])
+    except Exception, e:
+        advertised_download = None
+        app.logger.exception(e)
+
+    try:
+        advertised_upload = int(request.form['advertised_upload'])
+    except Exception, e:
+        advertised_upload = None
+        app.logger.exception(e)
+
+    try:
+        cost_of_service = float(request.form['cost_of_service'])
+    except Exception, e:
+        cost_of_service = None
+        app.logger.exception(e)
+
+    if len(request.form['bigquery_key']) < 100:
+        bigquery_key = request.form['bigquery_key']
+    else:
+        bigquery_key = None
+
+    try:
         with engine.begin() as conn:
             query = extra_data.insert(dict(
                 bigquery_key = bigquery_key,
