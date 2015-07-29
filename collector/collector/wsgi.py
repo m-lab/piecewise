@@ -16,8 +16,8 @@ if not app.debug:
     handler.setLevel(logging.WARNING)
     app.logger.addHandler(handler)
 
-Base = declarative_base()
 db_engine = create_engine("postgresql+psycopg2://postgres:@/piecewise")
+Base = declarative_base()
 Session = sessionmaker(bind=db_engine)
 db_session = Session()
 
@@ -49,7 +49,42 @@ class ExtraData(Base):
     location_type = Column('location_type', String)
     cost_of_service = Column('cost_of_service', Integer)
 
-@app.route("/retrieve", methods=['GET','POST'])
+@app.route("/unverify", methods=['GET'])
+def unverify_extra_data():
+    if not request.args.get('id'):
+        return ('', 400, {})
+
+    try:
+        result = db_session.query(ExtraData).filter_by(
+            id=request.args.get('id')).update({"verified": "f"})
+        db_session.commit()
+    except:
+        db_session.rollback()
+
+    if result:
+        return ('', 200, {})
+    else:
+        return ('', 500, {})
+
+
+@app.route("/verify", methods=['GET'])
+def verify_extra_data():
+    if not request.args.get('id'):
+        return ('', 400, {})
+
+    try:
+        result = db_session.query(ExtraData).filter_by(
+            id=request.args.get('id')).update({"verified": "t"})
+        db_session.commit()
+    except:
+        db_session.rollback()
+
+    if result:
+        return ('', 200, {})
+    else:
+        return ('', 500, {})
+
+@app.route("/retrieve", methods=['GET'])
 def retrieve_extra_data():
     if request.args.get('limit'):
        limit = int(request.args.get('limit'))
@@ -62,13 +97,15 @@ def retrieve_extra_data():
         offset = 0
 
     results = db_session.query(ExtraData, ST_X(ExtraData.location).label('lon'),
-            ST_Y(ExtraData.location).label('lat')).limit(limit).offset(offset).all()
+            ST_Y(ExtraData.location).label('lat')).order_by(
+            ExtraData.id.desc()).limit(limit).offset(offset).all()
     
     records = []
     for row in results:
         record = {}
         record['id'] = row[0].id
         record['bigquery_key'] = row[0].bigquery_key
+        record['verified'] = row[0].verified
         record['timestamp'] = int(row[0].timestamp.strftime('%s')) * 1000
         record['connection_type'] = row[0].connection_type
         record['location_type'] = row[0].location_type
