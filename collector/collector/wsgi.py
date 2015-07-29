@@ -52,12 +52,12 @@ class ExtraData(Base):
 @app.route("/retrieve", methods=['GET','POST'])
 def retrieve_extra_data():
     if request.args.get('limit'):
-       limit = request.args.get('limit')
+       limit = int(request.args.get('limit'))
     else:
         limit = 50
 
     if request.args.get('page'):
-        offset = request.args.get('page') * limit
+        offset = (int(request.args.get('page')) - 1) * limit
     else:
         offset = 0
 
