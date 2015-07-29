@@ -1,10 +1,11 @@
-from flask import Flask, Response, request
-from flask.json import dumps
+from flask import Flask, Response, request, jsonify
 from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from geoalchemy2 import Geometry
+from geoalchemy2.functions import ST_X, ST_Y
 import ipaddress
 import datetime
-
 
 app = Flask(__name__)
 
@@ -15,21 +16,70 @@ if not app.debug:
     handler.setLevel(logging.WARNING)
     app.logger.addHandler(handler)
 
+Base = declarative_base()
+db_engine = create_engine("postgresql+psycopg2://postgres:@/piecewise")
+Session = sessionmaker(bind=db_engine)
+db_session = Session()
+
 metadata = MetaData()
-engine = create_engine("postgresql+psycopg2://postgres:@/piecewise")
-metadata.bind = engine
+metadata.bind = db_engine
 extra_data = Table('extra_data', metadata, 
-        Column('id', Integer, primary_key = True),
-        Column('timestamp', DateTime),
-        Column('verified', Boolean),
-        Column('bigquery_key', String),
-        Column('location', Geometry("Point", srid=4326)),
-        Column('connection_type', String),
-        Column('advertised_download', Integer),
-        Column('advertised_upload', Integer),
-        Column('location_type', String),
-        Column('cost_of_service', Integer))
+    Column('id', Integer, primary_key = True),
+    Column('timestamp', DateTime),
+    Column('verified', Boolean),
+    Column('bigquery_key', String),
+    Column('location', Geometry("Point", srid=4326)),
+    Column('connection_type', String),
+    Column('advertised_download', Integer),
+    Column('advertised_upload', Integer),
+    Column('location_type', String),
+    Column('cost_of_service', Integer))
 metadata.create_all()
+
+class ExtraData(Base):
+    __tablename__ = 'extra_data'
+    id = Column('id', Integer, primary_key = True)
+    timestamp = Column('timestamp', DateTime)
+    verified = Column('verified', Boolean)
+    bigquery_key = Column('bigquery_key', String)
+    location = Column('location', Geometry("Point", srid=4326))
+    connection_type = Column('connection_type', String)
+    advertised_download = Column('advertised_download', Integer)
+    advertised_upload = Column('advertised_upload', Integer)
+    location_type = Column('location_type', String)
+    cost_of_service = Column('cost_of_service', Integer)
+
+@app.route("/retrieve", methods=['GET','POST'])
+def retrieve_extra_data():
+    if request.args.get('limit'):
+       limit = request.args.get('limit')
+    else:
+        limit = 50
+
+    if request.args.get('page'):
+        offset = request.args.get('page') * limit
+    else:
+        offset = 0
+
+    results = db_session.query(ExtraData, ST_X(ExtraData.location).label('lon'),
+            ST_Y(ExtraData.location).label('lat')).limit(limit).offset(offset).all()
+    
+    records = []
+    for row in results:
+        record = {}
+        record['id'] = row[0].id
+        record['bigquery_key'] = row[0].bigquery_key
+        record['timestamp'] = int(row[0].timestamp.strftime('%s')) * 1000
+        record['connection_type'] = row[0].connection_type
+        record['location_type'] = row[0].location_type
+        record['advertised_download'] = row[0].advertised_download
+        record['advertised_upload'] = row[0].advertised_upload
+        record['cost_of_service'] = row[0].cost_of_service
+        record['latitude'] = row.lat
+        record['longitude'] = row.lon
+        records.append(record)
+
+    return (jsonify(custom_data=records), 200, {})
 
 @app.route("/collect", methods=['POST'])
 def append_extra_data():
