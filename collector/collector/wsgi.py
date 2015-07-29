@@ -121,7 +121,7 @@ def retrieve_extra_data():
 @app.route("/collect", methods=['POST'])
 def append_extra_data():
     location_types = ['residence', 'workplace', 'business', 'public', 'other']
-    connection_types = ['cable', 'dsl', 'fiber', 'mobile', 'other']
+    connection_types = ['cable', 'dsl', 'fiber', 'cellular', 'other']
 
     try:
         if request.form['longitude'] and request.form['latitude']:
@@ -143,13 +143,13 @@ def append_extra_data():
         location_type = None
 
     try:
-        advertised_download = int(request.form['advertised_download'])
+        advertised_download = int(float(request.form['advertised_download']))
     except Exception, e:
         advertised_download = None
         app.logger.exception(e)
 
     try:
-        advertised_upload = int(request.form['advertised_upload'])
+        advertised_upload = int(float(request.form['advertised_upload']))
     except Exception, e:
         advertised_upload = None
         app.logger.exception(e)
@@ -166,7 +166,7 @@ def append_extra_data():
         bigquery_key = None
 
     try:
-        with engine.begin() as conn:
+        with db_engine.begin() as conn:
             query = extra_data.insert(dict(
                 bigquery_key = bigquery_key,
                 location = location,
