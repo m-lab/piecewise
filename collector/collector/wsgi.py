@@ -96,6 +96,7 @@ def retrieve_extra_data():
     else:
         offset = 0
 
+    record_count = int(db_session.query(ExtraData).count())
     results = db_session.query(ExtraData, ST_X(ExtraData.location).label('lon'),
             ST_Y(ExtraData.location).label('lat')).order_by(
             ExtraData.id.desc()).limit(limit).offset(offset).all()
@@ -116,7 +117,11 @@ def retrieve_extra_data():
         record['longitude'] = row.lon
         records.append(record)
 
-    return (jsonify(custom_data=records), 200, {})
+    if len(records):
+        return (jsonify(record_count=record_count, records=records), 200, {})
+    else:
+        return ('', 500, {})
+
 
 @app.route("/collect", methods=['POST'])
 def append_extra_data():
