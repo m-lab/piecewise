@@ -96,10 +96,29 @@ def retrieve_extra_data():
     else:
         offset = 0
 
+    order_by = ExtraData.id.desc()
+    sort_fields = ['id', 'timestamp', 'advertised_download', 'advertised_upload',
+            'cost_of_service', 'location_type', 'connection_type', 'verified']
+
+    if request.args.get('sort'):
+        if request.args.get('sort') in sort_fields:
+            if request.args.get('order'):
+                if request.args.get('order') in ['desc', 'asc']:
+                    order_by = eval('ExtraData.%s.%s()' % (request.args.get('sort'),\
+                            request.args.get('order')), {"__builtins__": None},\
+                            {"ExtraData": ExtraData})
+                else:
+                    order_by = eval('ExtraData.%s.%s()' % (request.args.get('sort'),\
+                            request.args.get('order')), {"__builtins__": None},\
+                            {"ExtraData": ExtraData})
+            else:
+                order_by = eval('ExtraData.%s.desc()' % request.args.get('sort'),\
+                        {"__builtins__": None}, {"ExtraData": ExtraData})
+
     record_count = int(db_session.query(ExtraData).count())
     results = db_session.query(ExtraData, ST_X(ExtraData.location).label('lon'),
             ST_Y(ExtraData.location).label('lat')).order_by(
-            ExtraData.id.desc()).limit(limit).offset(offset).all()
+            order_by).limit(limit).offset(offset).all()
     
     records = []
     for row in results:
