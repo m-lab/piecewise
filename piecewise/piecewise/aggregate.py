@@ -514,7 +514,7 @@ class _MedianDownload(Statistic):
     def build_query_to_populate(self, query, full_table, aggregate_table):
         insert_columns = [aggregate_table.c.download_samples]
         mean = full_table.c.download_octets / full_table.c.download_time
-        is_safe = full_table.c.download_time > 0
+        is_safe = and_(full_table.c.download_time > 0, full_table.c.download_flag == 't')
         safe_mean = case([(is_safe, mean)], else_ = None)
         select_query = (query.column(func.array_agg(safe_mean)))
         return insert_columns, select_query
@@ -565,7 +565,7 @@ class _MedianUpload(Statistic):
     def build_query_to_populate(self, query, full_table, aggregate_table):
         insert_columns = [aggregate_table.c.upload_samples]
         mean = full_table.c.upload_octets / full_table.c.upload_time
-        is_safe = full_table.c.upload_time > 0
+        is_safe = and_(full_table.c.upload_time > 0, full_table.c.download_flag == 'f')
         safe_mean = case([(is_safe, mean)], else_ = None)
         select_query = (query.column(func.array_agg(safe_mean)))
         return insert_columns, select_query
