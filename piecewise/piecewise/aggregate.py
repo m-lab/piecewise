@@ -520,11 +520,8 @@ class _MedianDownload(Statistic):
         return insert_columns, select_query
 
     def build_query_to_report(self, query, aggregate_table):
-        a = aggregate_table
-        mean = func.sum(a.c.download_octets) / func.sum(a.c.download_time)
-        is_safe = func.sum(a.c.download_time) > 0
-        safe_mean = case([(is_safe, mean)], else_ = None)
-        return query.column(label("download_median", safe_mean))
+        median = func.median(aggregate_table.c.download_samples)
+        return query.column(label("download_median", median))
 
 class _UploadCount(Statistic):
     @property
@@ -574,11 +571,8 @@ class _MedianUpload(Statistic):
         return insert_columns, select_query
 
     def build_query_to_report(self, query, aggregate_table):
-        a = aggregate_table
-        mean = func.sum(a.c.upload_octets) / func.sum(a.c.upload_time)
-        is_safe = func.sum(a.c.upload_time) > 0
-        safe_mean = case([(is_safe, mean)], else_ = None)
-        return query.column(label("upload_median", safe_mean))
+        median = func.median(aggregate_table.c.upload_samples)
+        return query.column(label("upload_median", median))
 
 AverageRTT = _AverageRTT()
 MedianRTT = _MedianRTT()
