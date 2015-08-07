@@ -18,7 +18,7 @@
   git: repo=https://github.com/m-lab-tools/telescope.git
        dest=/opt/telescope/
 - name: Fetch piecewise
-  git: repo=https://github.com/nkinkade/piecewise.git
+  git: repo=https://github.com/opentechinstitute/piecewise.git
        dest=/opt/piecewise.git/
 - name: Fetch bq2geojson 
   git: repo=https://github.com/m-lab/bq2geojson.git
