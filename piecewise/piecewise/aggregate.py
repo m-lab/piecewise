@@ -447,7 +447,7 @@ class _AverageRTT(Statistic):
 
     @property
     def postgres_columns(self):
-        return [Column('sumrtt', Integer), Column('countrtt', Integer)]
+        return [Column('sumrtt', BigInteger), Column('countrtt', Integer)]
 
     def __repr__(self):
         return "AverageRTT"
