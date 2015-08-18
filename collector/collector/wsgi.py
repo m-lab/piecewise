@@ -142,50 +142,50 @@ def retrieve_extra_data():
         return ('', 500, {})
 
 
-@app.route("/collect", methods=['POST'])
+@app.route("/collect", methods=['GET'])
 def append_extra_data():
     location_types = ['residence', 'workplace', 'business', 'public', 'other']
     connection_types = ['cable', 'dsl', 'fiber', 'cellular', 'other']
 
     try:
-        if request.form['longitude'] and request.form['latitude']:
-            longitude = float(request.form['longitude'])
-            latitude = float(request.form['latitude'])
+        if request.args.get('longitude') and request.args.get('latitude'):
+            longitude = float(request.args.get('longitude'))
+            latitude = float(request.args.get('latitude'))
             location = 'srid=4326;POINT(%f %f)' % (longitude, latitude)
     except Exception, e:
         location = None
         app.logger.exception(e)
 
-    if request.form['connection_type'] in connection_types:
-        connection_type = request.form['connection_type']
+    if request.args.get('connection_type') in connection_types:
+        connection_type = request.args.get('connection_type')
     else:
         connection_type = None
 
-    if request.form['location_type'] in location_types:
-        location_type = request.form['location_type']
+    if request.args.get('location_type') in location_types:
+        location_type = request.args.get('location_type')
     else:
         location_type = None
 
     try:
-        advertised_download = int(float(request.form['advertised_download']))
+        advertised_download = int(float(request.args.get('advertised_download')))
     except Exception, e:
         advertised_download = None
         app.logger.exception(e)
 
     try:
-        advertised_upload = int(float(request.form['advertised_upload']))
+        advertised_upload = int(float(request.args.get('advertised_upload')))
     except Exception, e:
         advertised_upload = None
         app.logger.exception(e)
 
     try:
-        cost_of_service = float(request.form['cost_of_service'])
+        cost_of_service = float(request.args.get('cost_of_service'))
     except Exception, e:
         cost_of_service = None
         app.logger.exception(e)
 
-    if len(request.form['bigquery_key']) < 100:
-        bigquery_key = request.form['bigquery_key']
+    if len(request.args.get('bigquery_key')) < 100:
+        bigquery_key = request.args.get('bigquery_key')
     else:
         bigquery_key = None
 
