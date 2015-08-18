@@ -130,7 +130,7 @@ class Aggregator(object):
         years = itertools.count(2010)
         months = range(1, 12 + 1)
         possible_year_months = ((year, month) for year in years for month in months)
-        valid_year_months = itertools.takewhile(lambda x: x < current_year_month, possible_year_months)
+        valid_year_months = itertools.takewhile(lambda x: x <= current_year_month, possible_year_months)
 
         for f in filters:
             if isinstance(f, TemporalFilter):
