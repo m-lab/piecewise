@@ -44,7 +44,7 @@ class ExtraData(Base):
     verified = Column('verified', Boolean)
     bigquery_key = Column('bigquery_key', String)
     location = Column('location', Geometry("Point", srid=4326))
-    isp = Column('isp', String),
+    isp = Column('isp', String)
     connection_type = Column('connection_type', String)
     advertised_download = Column('advertised_download', Integer)
     advertised_upload = Column('advertised_upload', Integer)
