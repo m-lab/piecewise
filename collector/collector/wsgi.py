@@ -148,7 +148,7 @@ def retrieve_extra_data():
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
     location_types = ['residence', 'workplace', 'business', 'public', 'other']
-    isps = ['at&t', 'century_link', 'comcast', 'direct_tv', 'dish_network', 'frontier', 'hughes', 'sprint', 'tmobile', 'verizon', 'wave', 'other']
+    isps = ['at&t', 'century_link', 'comcast', 'direct_tv', 'dish_network', 'sprint', 'tmobile', 'verizon', 'wave', 'other']
     connection_types = ['cable', 'dsl', 'fiber', 'cellular', 'other']
 
     try:
