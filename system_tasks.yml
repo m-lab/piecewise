@@ -15,7 +15,7 @@
     - python-dev
     - gdal-bin
 - name: Fetch telescope
-  git: repo=https://github.com/m-lab-tools/telescope.git
+  git: repo=https://github.com/m-lab/telescope.git
        dest=/opt/telescope/
 - name: Get latest MaxMind CSV
   get_url: url=http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
