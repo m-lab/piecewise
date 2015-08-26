@@ -304,11 +304,11 @@ class ISPBins(Bins):
         ip_range = Column("ip_range", INT8RANGE)
         isp_name = Column("label", String)
         join_table = Table(self.maxmind_table, full_table.metadata, ip_range, isp_name, keep_existing = True)
-        isp_label = label('isp', self._sql_rewrite(isp_name))
+        isp_label = label('maxmind_isp', self._sql_rewrite(isp_name))
         select_query = (query.select_from(join_table)
                 .where(ip_range.contains(full_table.c.client_ip))
                 .column(isp_label)
-                .group_by('isp'))
+                .group_by('maxmind_isp'))
 
         return insert_columns, select_query
 
