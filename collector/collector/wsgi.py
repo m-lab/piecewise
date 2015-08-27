@@ -147,9 +147,9 @@ def retrieve_extra_data():
 
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
-    location_types = ['residence', 'workplace', 'business', 'public', 'other']
-    isps = ['at&t', 'century_link', 'comcast', 'direct_tv', 'dish_network', 'sprint', 'tmobile', 'verizon', 'wave', 'other']
-    connection_types = ['cable', 'dsl', 'fiber', 'cellular', 'other']
+    location_types = ['default', 'residence', 'workplace', 'business', 'public', 'other']
+    isps = ['default', 'at&t', 'century_link', 'comcast', 'direct_tv', 'dish_network', 'sprint', 'tmobile', 'verizon', 'wave', 'other']
+    connection_types = ['default', 'cable', 'dsl', 'fiber', 'cellular', 'other']
 
     try:
         if request.args.get('longitude') and request.args.get('latitude'):
