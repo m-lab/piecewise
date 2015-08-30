@@ -42,3 +42,26 @@ Once the deployment script finishes without errors, Piecewise and some accompany
      This server can be restarted with the `service nginx restart` command.
 
 Piecewise itself reads configuration from a file in `/etc/piecewise/config.json` and the web API logs errors to `/var/log/piecewise/wsgi.log` .
+
+##Notes on Deploying to any machine (or VM) without Vagrant
+It is possible to deploy a piecewise server to any machine. These notes were taken during an installation on RHEL 7.1/Centos 7.1. Note that there is a piecewise branch for rhel7 that can be used to deploy to Red Hat or Centos machines.
+  * Spin up a VM with the standard specs (2 core CPU, 4GB RAM, 40GB disk were used in our initial testing). It can be running pretty much any recent version of just about any Linux distro (RHEL 7.1 is fine).
+  * If you don't already have one, create an SSH key pair to be used on the machine from which deployment to the VM will happen. This could easily just be your personal workstation or any other Linux machine. When you've created the key pair open the public key and copy it to your clipboard.
+  * Login to the VM as root and add the public key from the previous step to /root/.ssh/authorized_keys. This will allow the user on the deployment workstation to do things via pubkey authentication on the VM as root without needing a password.
+  * On the deployment workstation, install Ansible... probably something as easy as '$ yum install ansible'. I happen to be using v 1.9.2, but you can probably use whichever version as long as it is reasonably recent.
+  * On the deployment workstation make a git clone of the Piecewise repository:
+
+    $ git clone https://github.com/opentechinstitute/piecewise.git
+
+  * Enter the cloned directory and edit playbook.yml, removing the 2 lines referencing sudo.
+  * Create a file named "hosts" with the following content, where, of course, you replace "<ip or name of VM>" with either the domain name or IP address of the VM:
+
+    <ip or name of VM> ansible_ssh_user=root
+
+  * Run Ansible with:
+
+    $ ansible-playbook -i hosts playbook.yml
+
+You'll see Ansible do it's thing, printing information to the screen. It should complete within a few minutes, and (assuming your terminal supports color) you shouldn't see any red in the information printed. If this is the case, then the basic deployment went fine and should be done.
+
+The next steps are actually getting M-Lab data into the deployment, and is less of an ops/sysadmin thing than a application level thing. This document outlines the entire setup process one of our fellows went through while deploying to an Ubuntu box. See steps #8-#15 on populating your piecewise instance with M-Lab data.
