@@ -20,7 +20,7 @@ if __name__ == '__main__':
     import random, sys
     minip = 16777216
     maxip = 3758096127
-    table = load("/opt/telescope/resources/GeoIPASNum2-20140804.csv")
+    table = load("/tmp/GeoIPASNum2.csv")
 
     random.seed(72)
     for i in xrange(100):
