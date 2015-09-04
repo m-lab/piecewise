@@ -65,3 +65,9 @@ It is possible to deploy a piecewise server to any machine. These notes were tak
 You'll see Ansible do it's thing, printing information to the screen. It should complete within a few minutes, and (assuming your terminal supports color) you shouldn't see any red in the information printed. If this is the case, then the basic deployment went fine and should be done.
 
 The next steps are actually getting M-Lab data into the deployment, and is less of an ops/sysadmin thing than a application level thing. This document outlines the entire setup process one of our fellows went through while deploying to an Ubuntu box. See steps #8-#15 on populating your piecewise instance with M-Lab data.
+
+## Notes on customizing
+Files you need to edit to add tables to extra_data table and web form:
+
+piecewise/piecewise/aggregate.py
+collector/collector/wsgi.py
