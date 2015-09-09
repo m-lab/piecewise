@@ -156,6 +156,8 @@ def append_extra_data():
             longitude = float(request.args.get('longitude'))
             latitude = float(request.args.get('latitude'))
             location = 'srid=4326;POINT(%f %f)' % (longitude, latitude)
+        else:
+            location = None
     except Exception, e:
         location = None
         app.logger.exception(e)
