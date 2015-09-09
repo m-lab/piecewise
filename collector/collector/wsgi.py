@@ -51,6 +51,59 @@ class ExtraData(Base):
     location_type = Column('location_type', String)
     cost_of_service = Column('cost_of_service', Integer)
 
+class results(Base):
+    __tablename__ = 'results'
+    id = Column('id', BigInteger, primary_key = True)
+    datetime = Column('time', DateTime)
+    location = Column('location', Geometry("POINT", srid=4326))
+    client_ip = Column('client_ip', BigInteger)
+    server_ip = Column('server_ip', BigInteger)
+    countrtt = Column('countrtt', BigInteger)
+    sumrtt = Column('sumrtt', BigInteger)
+    download_flag = Column('download_flag', Boolean)
+    download_time = Column('download_time', BigInteger)
+    download_octets = Column('download_octets', BigInteger)
+    upload_time =  Column('upload_time', BigInteger)
+    upload_octets = Column('upload_octets', BigInteger)
+    bigquery_key = Column('bigquery_key', String)
+
+@app.route("/datadump", methods=['GET'])
+def retrieve_raw_extra():
+    results = db_session.query(ExtraData, rawPlusExtra)
+        .join(ExtraData)
+        .join(results)
+        .filter(ExtraData.bigquery_key == results.bigquery_key)
+        .all()
+    
+    records = []
+    for row in results:
+        record = {}
+        record['id'] = row[0].id
+        record['bigquery_key'] = row[0].bigquery_key
+        record['verified'] = row[0].verified
+        record['timestamp'] = int(row[0].timestamp.strftime('%s')) * 1000
+        record['isp'] = row[0].isp
+        record['connection_type'] = row[0].connection_type
+        record['location_type'] = row[0].location_type
+        record['advertised_download'] = row[0].advertised_download
+        record['advertised_upload'] = row[0].advertised_upload
+        record['cost_of_service'] = row[0].cost_of_service
+        record['latitude'] = row.lat
+        record['longitude'] = row.lon
+        record['datetime'] = row[0].datetime
+        record['countrtt'] = row[0].countrtt
+        record['sumrtt'] = row[0].sumrtt
+        record['download_flag'] = row[0].download_flag
+        record['download_time'] = row[0].download_time    
+        records.append(record)
+
+    if len(records):
+        return (jsonify(record_count=record_count, records=records), 200, {})
+    else:
+        return ('', 500, {})
+
+
+
 @app.route("/unverify", methods=['GET'])
 def unverify_extra_data():
     if not request.args.get('id'):
