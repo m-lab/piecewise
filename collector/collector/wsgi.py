@@ -28,7 +28,6 @@ extra_data = Table('extra_data', metadata,
     Column('timestamp', DateTime),
     Column('verified', Boolean),
     Column('bigquery_key', String),
-    Column('isp', String),
     Column('location', Geometry("Point", srid=4326)),
     Column('connection_type', String),
     Column('advertised_download', Integer),
@@ -44,7 +43,6 @@ class ExtraData(Base):
     verified = Column('verified', Boolean)
     bigquery_key = Column('bigquery_key', String)
     location = Column('location', Geometry("Point", srid=4326))
-    isp = Column('isp', String)
     connection_type = Column('connection_type', String)
     advertised_download = Column('advertised_download', Integer)
     advertised_upload = Column('advertised_upload', Integer)
@@ -69,14 +67,14 @@ class results(Base):
 
 @app.route("/datadump", methods=['GET'])
 def retrieve_raw_extra():
-    results = (db_session.query(ExtraData, rawPlusExtra)
+    result = db_session.query(ExtraData, results)
         .join(ExtraData)
         .join(results)
         .filter(ExtraData.bigquery_key == results.bigquery_key)
-        .all())
+        .all()
     
     records = []
-    for row in results:
+    for row in result:
         record = {}
         record['id'] = row[0].id
         record['bigquery_key'] = row[0].bigquery_key
@@ -153,7 +151,7 @@ def retrieve_extra_data():
 
     order_by = ExtraData.id.desc()
     sort_fields = ['id', 'timestamp', 'advertised_download', 'advertised_upload',
-            'cost_of_service', 'location_type', 'isp', 'connection_type', 'verified']
+            'cost_of_service', 'location_type', 'connection_type', 'verified']
 
     if request.args.get('sort'):
         if request.args.get('sort') in sort_fields:
@@ -182,7 +180,6 @@ def retrieve_extra_data():
         record['bigquery_key'] = row[0].bigquery_key
         record['verified'] = row[0].verified
         record['timestamp'] = int(row[0].timestamp.strftime('%s')) * 1000
-        record['isp'] = row[0].isp
         record['connection_type'] = row[0].connection_type
         record['location_type'] = row[0].location_type
         record['advertised_download'] = row[0].advertised_download
@@ -201,7 +198,6 @@ def retrieve_extra_data():
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
     location_types = ['default', 'residence', 'workplace', 'business', 'public', 'other']
-    isps = ['default', 'at&t', 'century_link', 'comcast', 'direct_tv', 'dish_network', 'sprint', 'tmobile', 'verizon', 'wave', 'other']
     connection_types = ['default', 'cable', 'dsl', 'fiber', 'cellular', 'other']
 
     try:
@@ -259,7 +255,6 @@ def append_extra_data():
                 bigquery_key = bigquery_key,
                 location = location,
                 connection_type = connection_type,
-		isp = isp,
                 advertised_download = advertised_download,
                 advertised_upload = advertised_upload,
                 location_type = location_type,

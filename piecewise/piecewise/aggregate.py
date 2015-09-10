@@ -250,7 +250,6 @@ class SpatialJoinBins(Bins):
                     Column("timestamp", DateTime),
                     Column("verified", Boolean),
                     Column("bigquery_key", String),
-		    Column('isp', String),
                     Column("connection_type", String),
                     Column("advertised_download", Integer),
                     Column("advertised_upload", Integer),
