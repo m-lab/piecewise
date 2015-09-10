@@ -44,6 +44,11 @@ server {
       uwsgi_modifier1 30;
       uwsgi_pass unix:///tmp/uwsgi-collector.sock;
     }
+	location /collector/retrieve {
+		try_files $uri @collector;
+		auth_basic "Custom Data";
+		auth_basic_user_file /opt/bq2geojson/htpasswd;
+	}
 
 	location / {
 		# First attempt to serve request as file, then
