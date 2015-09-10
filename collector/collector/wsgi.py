@@ -69,11 +69,11 @@ class results(Base):
 
 @app.route("/datadump", methods=['GET'])
 def retrieve_raw_extra():
-    results = db_session.query(ExtraData, rawPlusExtra)
+    results = (db_session.query(ExtraData, rawPlusExtra)
         .join(ExtraData)
         .join(results)
         .filter(ExtraData.bigquery_key == results.bigquery_key)
-        .all()
+        .all())
     
     records = []
     for row in results:
