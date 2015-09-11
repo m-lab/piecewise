@@ -63,36 +63,28 @@ class results(Base):
     download_octets = Column('download_octets', BigInteger)
     upload_time =  Column('upload_time', BigInteger)
     upload_octets = Column('upload_octets', BigInteger)
-    bigquery_key = Column('bigquery_key', String)
 
 @app.route("/datadump", methods=['GET'])
-def retrieve_raw_extra():
-    result = db_session.query(ExtraData, results)
-        .join(ExtraData)
-        .join(results)
-        .filter(ExtraData.bigquery_key == results.bigquery_key)
-        .all()
+def retrieve_datadump():
+    r_count = int(db_session.query(results).count())
+    results = db_session.query(ExtraData, ST_X(ExtraData.location).label('lon'),
+            ST_Y(ExtraData.location).label('lat')).order_by(
+            order_by).limit(limit).offset(offset).all()
+
+    result = db_session.query(results).all()
     
     records = []
     for row in result:
         record = {}
         record['id'] = row[0].id
-        record['bigquery_key'] = row[0].bigquery_key
-        record['verified'] = row[0].verified
-        record['timestamp'] = int(row[0].timestamp.strftime('%s')) * 1000
-        record['isp'] = row[0].isp
-        record['connection_type'] = row[0].connection_type
-        record['location_type'] = row[0].location_type
-        record['advertised_download'] = row[0].advertised_download
-        record['advertised_upload'] = row[0].advertised_upload
-        record['cost_of_service'] = row[0].cost_of_service
-        record['latitude'] = row.lat
-        record['longitude'] = row.lon
         record['datetime'] = row[0].datetime
+        record['client_ip'] = row[0].client_ip
+        record['server_ip'] = row[0].server_ip
         record['countrtt'] = row[0].countrtt
         record['sumrtt'] = row[0].sumrtt
         record['download_flag'] = row[0].download_flag
-        record['download_time'] = row[0].download_time    
+        record['download_time'] = row[0].download_time
+        record['download_octets'] = row[0].download_octets
         records.append(record)
 
     if len(records):
