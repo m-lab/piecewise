@@ -67,10 +67,6 @@ class results(Base):
 @app.route("/datadump", methods=['GET'])
 def retrieve_datadump():
     r_count = int(db_session.query(results).count())
-    results = db_session.query(ExtraData, ST_X(ExtraData.location).label('lon'),
-            ST_Y(ExtraData.location).label('lat')).order_by(
-            order_by).limit(limit).offset(offset).all()
-
     result = db_session.query(results).all()
     
     records = []
@@ -91,8 +87,6 @@ def retrieve_datadump():
         return (jsonify(record_count=record_count, records=records), 200, {})
     else:
         return ('', 500, {})
-
-
 
 @app.route("/unverify", methods=['GET'])
 def unverify_extra_data():
