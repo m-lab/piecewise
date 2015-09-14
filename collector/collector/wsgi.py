@@ -31,7 +31,10 @@ extra_data = Table('extra_data', metadata,
     Column('location', Geometry("Point", srid=4326)),
     Column('connection_type', String),
     Column('advertised_download', Integer),
+    Column('actual_download', Float),
     Column('advertised_upload', Integer),
+    Column('actual_upload', Float),
+    Column('min_rtt', Integer),
     Column('location_type', String),
     Column('cost_of_service', Integer))
 metadata.create_all()
@@ -45,7 +48,10 @@ class ExtraData(Base):
     location = Column('location', Geometry("Point", srid=4326))
     connection_type = Column('connection_type', String)
     advertised_download = Column('advertised_download', Integer)
+    actual_download = Column('actual_download', Float)
     advertised_upload = Column('advertised_upload', Integer)
+    actual_upload = Column('actual_upload', Float)
+    min_rtt = Column('min_rtt', Integer)
     location_type = Column('location_type', String)
     cost_of_service = Column('cost_of_service', Integer)
 
@@ -136,8 +142,9 @@ def retrieve_extra_data():
         offset = 0
 
     order_by = ExtraData.id.desc()
-    sort_fields = ['id', 'timestamp', 'advertised_download', 'advertised_upload',
-            'cost_of_service', 'location_type', 'connection_type', 'verified']
+    sort_fields = ['id', 'timestamp', 'advertised_download', 'actual_download',
+            'advertised_upload', 'actual_upload', 'min_rtt', 'cost_of_service',
+            'location_type', 'connection_type', 'verified']
 
     if request.args.get('sort'):
         if request.args.get('sort') in sort_fields:
@@ -169,7 +176,10 @@ def retrieve_extra_data():
         record['connection_type'] = row[0].connection_type
         record['location_type'] = row[0].location_type
         record['advertised_download'] = row[0].advertised_download
+        record['actual_download'] = row[0].actual_download
         record['advertised_upload'] = row[0].advertised_upload
+        record['actual_upload'] = row[0].actual_upload
+        record['min_rtt'] = row[0].min_rtt
         record['cost_of_service'] = row[0].cost_of_service
         record['latitude'] = row.lat
         record['longitude'] = row.lon
@@ -219,9 +229,27 @@ def append_extra_data():
         app.logger.exception(e)
 
     try:
+        actual_download = float(request.args.get('actual_download'))
+    except Exception, e:
+        actual_download = None
+        app.logger.exception(e)
+
+    try:
         advertised_upload = int(float(request.args.get('advertised_upload')))
     except Exception, e:
         advertised_upload = None
+        app.logger.exception(e)
+
+    try:
+        actual_upload = float(request.args.get('actual_upload'))
+    except Exception, e:
+        actual_upload = None
+        app.logger.exception(e)
+
+    try:
+        min_rtt = int(float(request.args.get('min_rtt')))
+    except Exception, e:
+        min_rtt = None
         app.logger.exception(e)
 
     try:
@@ -242,7 +270,10 @@ def append_extra_data():
                 location = location,
                 connection_type = connection_type,
                 advertised_download = advertised_download,
+                actual_download = actual_download,
                 advertised_upload = advertised_upload,
+                actual_upload = actual_upload,
+                min_rtt = min_rtt,
                 location_type = location_type,
                 cost_of_service = cost_of_service))
             conn.execute(query)

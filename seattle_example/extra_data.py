@@ -19,7 +19,10 @@ extra_data = Table('extra_data', metadata,
         Column('isp', String),
         Column('connection_type', String),
         Column('advertised_download', Integer),
+        Column('actual_download', Float),
         Column('advertised_upload', Integer),
+        Column('actual_upload', Float),
+        Column('min_rtt', Integer),
         Column('location_type', String),
         Column('cost_of_service', Integer))
 metadata.drop_all()
