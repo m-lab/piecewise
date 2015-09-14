@@ -314,7 +314,7 @@ class ISPBins(Bins):
     def _sql_rewrite(self, isp_name_col):
         cases = []
         for short_name, patterns in self.rewrites.iteritems():
-            tests = [isp_name_col.contains(pat) for pat in patterns]
+            tests = [isp_name_col.ilike('%{}%'.format(pat)) for pat in patterns]
             cases.append((or_(*tests), short_name))
         return case(cases, else_ = None)
 
