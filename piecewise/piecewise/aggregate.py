@@ -316,7 +316,7 @@ class ISPBins(Bins):
         for short_name, patterns in self.rewrites.iteritems():
             tests = [isp_name_col.ilike('%{}%'.format(pat)) for pat in patterns]
             cases.append((or_(*tests), short_name))
-        return case(cases, else_ = None)
+        return case(cases, else_ = isp_name_col)
 
     def build_query_to_report(self, query, aggregate_table, params):
         return (query
