@@ -1,6 +1,6 @@
 import piecewise.config
 from geoalchemy2 import Geometry
-from sqlalchemy import MetaData, Table, Column, String, BigInteger, Integer, DateTime, Boolean, create_engine, func, select, text
+from sqlalchemy import MetaData, Table, Column, String, BigInteger, Integer, DateTime, Boolean, Float, create_engine, func, select, text
 from sqlalchemy.sql.expression import label
 import json
 import datetime
