@@ -207,11 +207,6 @@ def append_extra_data():
         location = None
         app.logger.exception(e)
 
-    if request.args.get('isp') in isps:
-	isp = request.args.get('isp')
-    else:
-	isp = request.args.get('other')
-
     if request.args.get('connection_type') in connection_types:
         connection_type = request.args.get('connection_type')
     else:
