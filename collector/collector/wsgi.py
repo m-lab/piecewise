@@ -224,7 +224,7 @@ def append_extra_data():
         app.logger.exception(e)
 
     try:
-        actual_download = float(request.args.get('s2cRate'))
+        actual_download = float(request.args.get('actual_download'))
     except Exception, e:
         actual_download = None
         app.logger.exception(e)
@@ -236,13 +236,13 @@ def append_extra_data():
         app.logger.exception(e)
 
     try:
-        actual_upload = float(request.args.get('c2sRate'))
+        actual_upload = float(request.args.get('actual_upload'))
     except Exception, e:
         actual_upload = None
         app.logger.exception(e)
 
     try:
-        min_rtt = int(float(request.args.get('MinRTT')))
+        min_rtt = int(float(request.args.get('min_rtt')))
     except Exception, e:
         min_rtt = None
         app.logger.exception(e)
