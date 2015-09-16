@@ -35,6 +35,7 @@ extra_data = Table('extra_data', metadata,
     Column('advertised_upload', Integer),
     Column('actual_upload', Float),
     Column('min_rtt', Integer),
+    Column('client_ip', BigInteger),
     Column('location_type', String),
     Column('cost_of_service', Integer))
 metadata.create_all()
@@ -52,6 +53,7 @@ class ExtraData(Base):
     advertised_upload = Column('advertised_upload', Integer)
     actual_upload = Column('actual_upload', Float)
     min_rtt = Column('min_rtt', Integer)
+    client_ip = Column('client_ip', BigInteger)
     location_type = Column('location_type', String)
     cost_of_service = Column('cost_of_service', Integer)
 
@@ -270,6 +272,7 @@ def append_extra_data():
                 actual_upload = actual_upload,
                 min_rtt = min_rtt,
                 location_type = location_type,
+                client_ip = int(ipaddress.ip_address(unicode(request.remote_addr))),
                 cost_of_service = cost_of_service))
             conn.execute(query)
         return ("", 201, {})
