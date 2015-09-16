@@ -1,11 +1,17 @@
 from flask import Flask, Response, request, jsonify
-from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float
+from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float, ForeignKey
+from sqlalchemy.dialects.postgresql import INT8RANGE
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from geoalchemy2 import Geometry
 from geoalchemy2.functions import ST_X, ST_Y
 import ipaddress
 import datetime
+import sys
+import re
+sys.path.append('/opt/piecewise')
+import piecewise.config
+config = piecewise.config.read_system_config()
 
 app = Flask(__name__)
 
@@ -15,6 +21,8 @@ if not app.debug:
     handler = logging.handlers.RotatingFileHandler("/var/log/piecewise/collector.log", maxBytes = 10 * 1000 * 1000, backupCount = 5)
     handler.setLevel(logging.WARNING)
     app.logger.addHandler(handler)
+
+isp_rewrites = [x.rewrites for x in config.aggregations[0].bins if hasattr(x, 'rewrites')]
 
 db_engine = create_engine("postgresql+psycopg2://postgres:@/piecewise")
 Base = declarative_base()
@@ -57,44 +65,60 @@ class ExtraData(Base):
     location_type = Column('location_type', String)
     cost_of_service = Column('cost_of_service', Integer)
 
-class results(Base):
-    __tablename__ = 'results'
-    id = Column('id', BigInteger, primary_key = True)
-    datetime = Column('time', DateTime)
-    location = Column('location', Geometry("POINT", srid=4326))
-    client_ip = Column('client_ip', BigInteger)
-    server_ip = Column('server_ip', BigInteger)
-    countrtt = Column('countrtt', BigInteger)
-    sumrtt = Column('sumrtt', BigInteger)
-    download_flag = Column('download_flag', Boolean)
-    download_time = Column('download_time', BigInteger)
-    download_octets = Column('download_octets', BigInteger)
-    upload_time =  Column('upload_time', BigInteger)
-    upload_octets = Column('upload_octets', BigInteger)
+class Maxmind(Base):
+    __tablename__ = 'maxmind'
+    ip_range = Column('ip_range', INT8RANGE, primary_key = True)
+    ip_low = Column('ip_low', BigInteger)
+    ip_high = Column('ip_high', BigInteger)
+    label = Column('label', String)
 
 @app.route("/datadump", methods=['GET'])
 def retrieve_datadump():
-    r_count = int(db_session.query(results).count())
-    result = db_session.query(results).all()
-    
+    if request.args.get('limit'):
+       limit = int(request.args.get('limit'))
+    else:
+        limit = 50
+
+    if request.args.get('page'):
+        offset = (int(request.args.get('page')) - 1) * limit
+    else:
+        offset = 0
+
+    record_count = int(db_session.query(ExtraData).count())
+    results = db_session.query(ExtraData, Maxmind.label).outerjoin(Maxmind, Maxmind.ip_range.contains(ExtraData.client_ip)).limit(limit).offset(offset).all() 
+
     records = []
-    for row in result:
+    for row in results:
         record = {}
-        record['id'] = row[0].id
-        record['datetime'] = row[0].datetime
-        record['client_ip'] = row[0].client_ip
-        record['server_ip'] = row[0].server_ip
-        record['countrtt'] = row[0].countrtt
-        record['sumrtt'] = row[0].sumrtt
-        record['download_flag'] = row[0].download_flag
-        record['download_time'] = row[0].download_time
-        record['download_octets'] = row[0].download_octets
+        record['id'] = row.ExtraData.id
+        record['timestamp'] = row.ExtraData.timestamp
+        record['client_ip'] = row.ExtraData.client_ip
+        record['min_rtt'] = row.ExtraData.min_rtt
+        record['advertised_download'] = row.ExtraData.advertised_download
+        record['actual_download'] = row.ExtraData.actual_download
+        record['advertised_upload'] = row.ExtraData.advertised_upload
+        record['actual_upload'] = row.ExtraData.actual_upload
+        record['location_type'] = row.ExtraData.location_type
+        record['connection_type'] = row.ExtraData.connection_type
+        record['cost_of_service'] = row.ExtraData.cost_of_service
+        record['isp'] = rewrite_isp(row.label)
         records.append(record)
 
     if len(records):
         return (jsonify(record_count=record_count, records=records), 200, {})
     else:
         return ('', 500, {})
+
+def rewrite_isp(maxmind_label):
+    if not maxmind_label:
+        return None
+    for short_name, patterns in isp_rewrites[0].iteritems():
+        for pattern in patterns:
+            pattern = re.compile(pattern, re.IGNORECASE)
+            match = re.search(pattern, maxmind_label)
+            if match:
+                return short_name
+    return maxmind_label
 
 @app.route("/unverify", methods=['GET'])
 def unverify_extra_data():
