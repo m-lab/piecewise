@@ -85,8 +85,8 @@ class Maxmind(Base):
     ip_high = Column('ip_high', BigInteger)
     label = Column('label', String)
 
-@app.route("/datadump", methods=['GET'])
-def retrieve_datadump():
+@app.route("/extra_data", methods=['GET'])
+def retrieve_extra_data():
     if request.args.get('limit'):
        limit = int(request.args.get('limit'))
     else:
