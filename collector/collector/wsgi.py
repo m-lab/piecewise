@@ -1,10 +1,11 @@
 from flask import Flask, Response, request, jsonify
-from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float, ForeignKey
+from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float
 from sqlalchemy.dialects.postgresql import INT8RANGE
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker
 from geoalchemy2 import Geometry
-from geoalchemy2.functions import ST_X, ST_Y
+from geoalchemy2.functions import ST_X, ST_Y, ST_Intersects
 import ipaddress
 import datetime
 import sys
@@ -26,8 +27,20 @@ isp_rewrites = [x.rewrites for x in config.aggregations[0].bins if hasattr(x, 'r
 
 db_engine = create_engine("postgresql+psycopg2://postgres:@/piecewise")
 Base = declarative_base()
+Base_automap = automap_base()
+Base_automap.prepare(db_engine, reflect=True)
 Session = sessionmaker(bind=db_engine)
 db_session = Session()
+
+aggregations = []
+for aggregation in config.aggregations:
+    for bin in (b for b in aggregation.bins if hasattr(b, 'geometry_column')):
+	aggregations.append({
+            'table': bin.table,
+            'geometry_column': bin.geometry_column,
+            'key': bin.key,
+            'orm': eval('Base_automap.classes.%s' % bin.table)
+        })
 
 metadata = MetaData()
 metadata.bind = db_engine
@@ -85,7 +98,17 @@ def retrieve_datadump():
         offset = 0
 
     record_count = int(db_session.query(ExtraData).count())
-    results = db_session.query(ExtraData, Maxmind.label).outerjoin(Maxmind, Maxmind.ip_range.contains(ExtraData.client_ip)).limit(limit).offset(offset).all() 
+
+    query = db_session.query(ExtraData)
+
+    query = query.outerjoin(Maxmind, Maxmind.ip_range.contains(ExtraData.client_ip))
+    query = query.add_columns(Maxmind.label)
+
+    for aggregation in aggregations:
+        query = query.outerjoin(aggregation['orm'], ST_Intersects(ExtraData.location, eval('aggregation["orm"].%s' % aggregation['geometry_column'])))
+        query = query.add_columns(eval('aggregation["orm"].%s' % aggregation['key']))
+
+    results = query.limit(limit).offset(offset).all()
 
     records = []
     for row in results:
@@ -102,6 +125,8 @@ def retrieve_datadump():
         record['connection_type'] = row.ExtraData.connection_type
         record['cost_of_service'] = row.ExtraData.cost_of_service
         record['isp'] = rewrite_isp(row.label)
+        for aggregation in aggregations:
+            record[aggregation['table']] = eval('row.%s' % aggregation['key'])
         records.append(record)
 
     if len(records):
