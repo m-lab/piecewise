@@ -181,7 +181,7 @@ def verify_extra_data():
         return ('', 500, {})
 
 @app.route("/retrieve", methods=['GET'])
-def retrieve_extra_data():
+def admin_extra_data():
     if request.args.get('limit'):
        limit = int(request.args.get('limit'))
     else:
