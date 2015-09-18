@@ -15,8 +15,6 @@ def ingest(config):
     records = config.make_cache_table(metadata)
     metadata.create_all(engine)
 
-    engine.execute(records.delete())
-
     query = config.ingest_bigquery_query()
 
     query_reference = bigquery_service.jobs().insert(
@@ -35,6 +33,8 @@ def ingest(config):
     inserter = records.insert()
     page_count = 0
     record_count = 0
+
+    engine.execute(records.delete())
 
     while query_response['totalRows'] > 0:
         page_count = page_count + 1
