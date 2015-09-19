@@ -44,31 +44,42 @@ This section details how to install the prerequisite components that your server
 
 1. Add the contrib repo to your apt sources in **/etc/apt/sources.list**:
 
-deb http://ftp.us.debian.org/debian/ stretch main contrib
-
- 
+        deb http://ftp.us.debian.org/debian/ stretch main contrib
 
 2. Install virtualbox, vagrant, ansible, git
 
-	$ sudo apt-get install vagrant ansible virtualbox git
+        sudo apt-get install vagrant ansible virtualbox git
 
 3. Clone the piecewise repo
 
-	$ git clone https://github.com/m-lab/piecewise.git
+        git clone https://github.com/m-lab/piecewise.git
 
-4. Change into the piecewise directory$ cd piecewise/
+4. Change into the piecewise directory
+        cd piecewise/
 
 ### Installation for Ubuntu 14.04
 
-1. Download and install ansible:$ sudo apt-get install software-properties-common$ sudo apt-add-repository ppa:ansible/ansible$ sudo apt-get update$ sudo apt-get install ansible
+1. Download and install ansible:
+        sudo apt-get install software-properties-common
+        sudo apt-add-repository ppa:ansible/ansible
+        sudo apt-get update
+        sudo apt-get install ansible
 
-2. Download and install virtual-box: $ sudo apt-get install virtualbox
+2. Download and install virtual-box: 
+        sudo apt-get install virtualbox
 
-3. Download and install vagrant: $ sudo apt-get install vagrant
+3. Download and install vagrant: 
+        sudo apt-get install vagrant
 
-4. Download and add the jessie64 box for piecewise:$ vagrant box add jessie64[ http://static.gender-api.com/debian-8-jessie-rc2-x64-slim.box](http://static.gender-api.com/debian-8-jessie-rc2-x64-slim.box)$ vagrant box listjessie64  (virtualbox)
+4. Download and add the jessie64 box for piecewise:
+        vagrant box add jessie64
+      <http://static.gender-api.com/debian-8-jessie-rc2-x64-slim.box>
+        vagrant box list
+      jessie64  (virtualbox)
 
-5. Clone the git repository for piecewise:$ git clone[ https://github.com/nkinkade/piecewise.git](https://github.com/nkinkade/piecewise.git)$ cd piecewise
+5. Clone the git repository for piecewise:
+        git clone[ https://github.com/nkinkade/piecewise.git](https://github.com/nkinkade/piecewise.git)
+        cd piecewise
 
 ### Installation for RHEL 7 / CentOS 7
 
@@ -120,7 +131,7 @@ Piecewise requires a Google Account to be configured for ingesting M-Lab data fr
 
 The purpose of the Piecewise server is to consume M-Lab data from a particular geographic region and to aggregate it by sub-regions within that area. On your server, navigate to your Piecewise directory and check-out the **examples** branch of Piecewise:
 
-	$ git checkout examples
+        git checkout examples
 
 The examples branch contains several examples of Piecewise customizations for different geographic areas. There are several directories ending with **_example** which you can use, copy or customize. For this documentation, we’ll be using the **baltimore_example** folder.
 
@@ -128,39 +139,41 @@ The examples branch contains several examples of Piecewise customizations for di
 
 You can copy one of these example folders to start your own configuration. For example, to create Baltimore example we used these steps:
 
-1. Copy the folder, and rename key files:$ cp -rf seattle_example baltimore_example$ mv seattle_tasks.yml baltimore_tasks.yml$ mv seattle_center.py baltimore_center.py
+1. Copy the folder, and rename key files:
+        cp -rf seattle_example baltimore_example
+        mv seattle_tasks.yml baltimore_tasks.yml
+        mv seattle_center.py baltimore_center.py
 
-2. Remove unneeded files:$ rm seattle_council_districts.geojson$ rm seattle_census10_blockgroups.topojson$ rm -rf seattle_blkgrpce10/$ rm seattle_bigquery_results.sql.gz
+2. Remove unneeded files:
+        rm seattle_council_districts.geojson
+        rm seattle_census10_blockgroups.topojson
+        rm -rf seattle_blkgrpce10/
+        rm seattle_bigquery_results.sql.gz
 
-3. Import your shapefiles and topojson files:$ mkdir maryland_blkgrps$ scp critzo@192.168.4.181:maryland_shape_files/* ./maryland_blkgrps/$ scp critzo@192.168.4.181:Downloads/cb_2014_24_bg_500k.json ./maryland_blkgrps_2014.json
+3. Import your shapefiles and topojson files:
+        mkdir maryland_blkgrps
+        scp critzo@192.168.4.181:maryland_shape_files/* ./maryland_blkgrps/
+        scp critzo@192.168.4.181:Downloads/cb_2014_24_bg_500k.json ./maryland_blkgrps_2014.json
 
 We end with this list of files:
+```
+ls
+```
 
-$ ls
-
+```
 baltimore_center.py            	
-
 baltimore_tasks.yml         	
-
 center.js        	
-
 extra_data.py
-
 maryland_blkgrps/
-
-	cb_2014_24_bg_500k.cpg  	cb_2014_24_bg_500k.shp.ea.iso.xml
-
-cb_2014_24_bg_500k.dbf  	cb_2014_24_bg_500k.shp.iso.xml
-
-cb_2014_24_bg_500k.prj  	cb_2014_24_bg_500k.shp.xml
-
-cb_2014_24_bg_500k.shp  	cb_2014_24_bg_500k.shx
-
+  	cb_2014_24_bg_500k.cpg  	cb_2014_24_bg_500k.shp.ea.iso.xml
+    cb_2014_24_bg_500k.dbf  	cb_2014_24_bg_500k.shp.iso.xml
+    cb_2014_24_bg_500k.prj  	cb_2014_24_bg_500k.shp.xml
+    cb_2014_24_bg_500k.shp  	cb_2014_24_bg_500k.shx
 maryland_blkgrps_2014.json
-
 piecewise_config.json
-
 README.md
+```
 
 #### Gather your map files and coordinates
 
@@ -189,15 +202,15 @@ The map front-end to Piecewise requires a topojson file based on the same shapef
 Gather the info below and modify your Piecewise config files:
 
 **piecewise/baltimore_example/center.js** 
-
 Provides the geographic center of your map. Find the center of your map on Google Maps and enter the latitude and longitude.
 
-var center = [39.2847064,-76.620486];
+    var center = [39.2847064,-76.620486];
 
 **piecewise/baltimore_example/baltimore_tasks.yml**
-
 This is the Ansible tasklist for the Baltimore example. The highlighted areas were modified from a previous example after we copied the folder, and correspond to the folder and file names we made above.
 
+```yml
+---
 - name: Copy geo data to server
 
   copy: src=baltimore_example/{{ item.src }} dest=/opt/bq2geojson/html/{{ item.dest }}
@@ -230,10 +243,14 @@ This is the Ansible tasklist for the Baltimore example. The highlighted areas we
 
 - command: python extra_data.py chdir=/opt/piecewise
 
+```
+
+
 **piecewise/baltimore_example/piecewise_config.json**
 
 This is the main configuration file for your Piecewise deployment. You will be updating some sections of this file for your deployment, most importantly information about the aggregations you desire. We’ll use the Baltimore, MD example here and highlight what was changed.
 
+```json
 	"aggregations": [{
 
     	"name": "by_census_block",	
@@ -245,19 +262,24 @@ This is the main configuration file for your Piecewise deployment. You will be u
         	{ "type" : "spatial_join", "table" : "baltimore_census_blocks", "geometry_column" : "wkb_geometry", "key" : "district", "join_custom_data" : true },
 
         	{ "type" : "time_slices", "resolution" : "month" },
+```
+since we are
+	
 
-	since we are 
-
+```yml
 	"filters": [
 
     	{ "type": "temporal", "after": "Jan 1 2014 00:00:00", "before" : "Jan 1 2050 00:00:00" },
 
     	{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },
+```
 
 **piecewise/playbook.yml**
 
 Lastly, we’ll modify the main Ansible playbook YAML file to point at our new Baltimore example tasks file.
 
+```yml
+---
 - hosts: all
 
   tasks:
@@ -271,13 +293,14 @@ Lastly, we’ll modify the main Ansible playbook YAML file to point at our new B
 	- include: baltimore_example/baltimore_tasks.yml
 
   	sudo: True
-
+```
          	
 
 #### Set the time range for ingesting data
 
 - in the piecewise_config.json you will find the options used for Seattle example, here the aggregation is done for council districts and census blocks, you can delete one of them and the other can look like this:
 
+```
 "aggregations": [{
 
        "name": "by_county", <- here add any name that is significant to you
@@ -291,6 +314,7 @@ Lastly, we’ll modify the main Ansible playbook YAML file to point at our new B
 	...]
 
    }]
+```
 
 - in piecewise_config.json file in the filters section replace the bbox attribute with the CSV values for your location saved from[ http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/)  
 
@@ -310,11 +334,14 @@ First, gather the following information:
 
 5. In the file piecewise/piecewise/bigquery.py replace PROJECT_NUMBER with your project number from Google Developers Console.
 
-6. Bring up the piecewise VM using Vagrant:$ vagrant up
+6. Bring up the piecewise VM using Vagrant:
+$ vagrant up
 
-7. SSH into the Vagrant VM:$ vagrant ssh
+7. SSH into the Vagrant VM:
+$ vagrant ssh
 
-8. Confirm the correct PROJECT NUMBER inside the deployed vagrant VM:$ sudo vi /opt/piecewise/piecewise/bigquery.py
+8. Confirm the correct PROJECT NUMBER inside the deployed vagrant VM:
+$ sudo vi /opt/piecewise/piecewise/bigquery.py
 
 9. Run the piecewise ingest routine:
 
@@ -334,27 +361,31 @@ When deploying, the bq2geojson repo is pulled in and deployed: [https://github.c
 
 Therefore, to prototype changes to the Seattle map example that is a frontend to piecewise, we can use the following workflow:
 
-* Within the vagrant VM environment change to the web directory for bq2geojson:# cd /opt/bq2geojson/html
+* Within the vagrant VM environment change to the web directory for bq2geojson:
+# cd /opt/bq2geojson/html
 
 * Make changes, preview on the localhost server, track changes with git (the directory above is a git repo)
 
 ### Managing a Deployed Instance of Piecewise
 
 * pulling in new changes to piecewise backend
+```
+cd /opt/piecewise.git
+sudo git pull
+```
 
-    * in /opt/piecewise.git	sudo git pull
-
-    * updates collector, piecewise and piecewise web
+* updates collector, piecewise and piecewise web
 
 * cron jobs 
 
 * restarting web services
 
-    * sudo service uwsgi restart
+        sudo service uwsgi restart
 
-    * sudo service nginx restart
+        sudo service nginx restart
 
 * pulling in new frontend changes
 
-    * in /opt/bq2geojson: 	sudo git pull
+        cd /opt/bq2geojson
+        sudo git pull
 
