@@ -1,10 +1,12 @@
-from piecewise.bigquery import bigquery_service, PROJECT_NUMBER
+import piecewise.bigquery
+import piecewise.aggregate
 from sqlalchemy import create_engine, func, text, Column, Float, Integer, MetaData, String, Table
 from sqlalchemy.sql.expression import label
 import calendar
 import datetime
 import itertools
 import time
+import sys
 
 def make_request(query):
     return { 'configuration' : { 'query' : { 'query' : query } } }
@@ -16,20 +18,27 @@ def ingest(config):
     metadata.create_all(engine)
 
     query = config.ingest_bigquery_query()
+    bigquery_service = piecewise.bigquery.client()
 
+    start_time = time.time()
     query_reference = bigquery_service.jobs().insert(
-            projectId = PROJECT_NUMBER,
+            projectId = piecewise.bigquery.PROJECT_NUMBER,
             body = make_request(query)).execute()
     jobId = query_reference['jobReference']['jobId']
 
-    check_job = bigquery_service.jobs().get(projectId = PROJECT_NUMBER, jobId = jobId)
+    check_job = bigquery_service.jobs().get(projectId = piecewise.bigquery.PROJECT_NUMBER, jobId = jobId)
     job_status = check_job.execute()
+    print 'Waiting for BigQuery, this could take several minutes.'
     while job_status['status']['state'] != 'DONE':
-        print 'Waiting 10s for BigQuery result'
+        print '.',
+        sys.stdout.flush()
         time.sleep(10)
         job_status = check_job.execute()
+    finish_time = time.time()
+    print ''
+    print 'Took %d s to complete'.format(finish_time - start_time)
 
-    query_response = bigquery_service.jobs().getQueryResults(projectId = PROJECT_NUMBER, jobId = jobId, maxResults = 10000).execute()
+    query_response = bigquery_service.jobs().getQueryResults(projectId = piecewise.bigquery.PROJECT_NUMBER, jobId = jobId, maxResults = 10000).execute()
     inserter = records.insert()
     page_count = 0
     record_count = 0
@@ -49,20 +58,12 @@ def ingest(config):
         page_token = query_response.get('pageToken')
         del query_response
         if page_token is not None:
-            query_response = bigquery_service.jobs().getQueryResults(projectId = PROJECT_NUMBER, jobId = jobId, maxResults = 1000, pageToken = page_token).execute()
+            query_response = bigquery_service.jobs().getQueryResults(projectId = piecewise.bigquery.PROJECT_NUMBER, jobId = jobId, maxResults = 1000, pageToken = page_token).execute()
         else:
             break
-
-def aggregate(config):
-    from sqlalchemy.schema import CreateTable
-    engine = create_engine(config.database_uri)
-    metadata = MetaData()
-    records = config.make_cache_table(metadata)
-    for agg in config.aggregations:
-        agg.build_aggregate_table(engine, metadata, records)
 
 if __name__ == '__main__':
     import piecewise.config
     config = piecewise.config.read_system_config()
     ingest(config)
-    aggregate(config)
+    piecewise.aggregate.aggregate(config)
