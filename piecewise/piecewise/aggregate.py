@@ -70,7 +70,7 @@ class Aggregation(object):
                 *list(chain(bin_columns, stat_columns)),
                 keep_existing = True)
 
-    def query(self, engine, metadata, bins, filters, statistics):
+    def selection(self, engine, metadata, bins, filters, statistics):
         table = self.make_table(metadata)
 
         bin_keys = []
@@ -84,6 +84,11 @@ class Aggregation(object):
                 selection = b.filter_query_to_report(selection, table, filters[b.label])
         for s in statistics:
             selection = s.build_query_to_report(selection, table)
+
+        return selection
+
+    def query(self, engine, metadata, bins, filters, statistics):
+        selection = self.selection(engine, metadata, bins, filters, statistics)
 
         with engine.connect() as conn:
             return conn.execute(selection)

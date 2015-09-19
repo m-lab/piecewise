@@ -1,8 +1,10 @@
 import argparse
 
+from sqlalchemy import create_engine, MetaData
+import piecewise.aggregate
 import piecewise.config
 import piecewise.ingest
-import piecewise.aggregate
+import piecewise.query
 
 def refine(config, args):
     modified_aggregations = []
@@ -52,8 +54,42 @@ def do_aggregate(args):
         print "Displaying Postgres SQL instead of performing query"
         piecewise.aggregate.aggregate(config, args.debug)
 
-def do_reset(args):
-    print 'Reset'
+def do_query(args):
+    from piecewise.aggregate import AverageRTT
+    config = piecewise.config.read_system_config()
+    config = refine(config, args)
+    aggregation = None
+    for agg in config.aggregations:
+        if agg.name == args.aggregation:
+            aggregation = agg
+
+    if args.stats is not None:
+        statistics = [piecewise.config.known_statistics[s] for s in args.stats]
+    else:
+        statistics = aggregation.statistics
+
+    if args.bins is not None:
+        bins = args.bins
+    else:
+        bins = dict()
+
+    if args.filters is not None:
+        filters = args.filters
+    else:
+        filters = dict()
+
+    if not args.debug:
+        results = piecewise.query.query(config, name, statistics, bins, filters)
+        for row in results:
+            print row
+    else:
+        print args
+        engine = create_engine(config.database_uri)
+        metadata = MetaData()
+        engine.metadata = metadata
+
+        selection = aggregation.selection(engine, metadata, bins, filters, statistics)
+        print selection.compile(engine)
 
 def do_load(args):
     do_ingest(args)
@@ -87,24 +123,46 @@ def add_aggregate_args(parser):
 def split_string(string):
     return string.split(',')
 
+def colon_dict(string):
+    pairs = string.split(',')
+    def as_pair(s):
+        if ':' in s:
+            return tuple(s.split(':', 1))
+        else:
+            return (s, '')
+    return dict(as_pair(p) for p in pairs)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog="piecewise", description="Download and aggregate m-lab internet performance data")
     parser.add_argument("--debug", action='store_true', help = 'Display rather than execute queries')
     parser.add_argument("--only-compute", type=split_string, help='Use only the named aggregations for this run')
     parser.add_argument("--only-bins", type=split_string, help='Use only the named bin dimensions for this run')
     parser.add_argument("--only-statistics", type=split_string, help='Use only the named statistics for this run')
+
     subparsers = parser.add_subparsers(help="Operation")
+
     ingest_parser = subparsers.add_parser('ingest', help='Pull data from BigQuery into postgres database')
     add_ingest_args(ingest_parser)
     ingest_parser.set_defaults(func=do_ingest)
+
     aggregate_parser = subparsers.add_parser('aggregate', help='Compute statistics from ingested internet performance data')
     add_aggregate_args(aggregate_parser)
     aggregate_parser.set_defaults(func=do_aggregate)
+
     display_config_parser = subparsers.add_parser("display-config", help='Display parsed configuration')
     display_config_parser.set_defaults(func=do_display_config)
+
+    query_parser = subparsers.add_parser("query", help='Query statistics tables')
+    query_parser.add_argument("-b", "--bins", help="Select and configure bins for query", type=colon_dict)
+    query_parser.add_argument("-s", "--stats", help="Select statistics for query", type=split_string)
+    query_parser.add_argument("-f", "--filters", help="Select and configure filters for query", type=colon_dict)
+    query_parser.add_argument("aggregation", help="Select aggregation for query")
+    query_parser.set_defaults(func=do_query)
+
     load_parser = subparsers.add_parser('load', help='Ingest and aggregate data in one run')
     add_ingest_args(load_parser)
     add_aggregate_args(load_parser)
     load_parser.set_defaults(func=do_load)
+
     args = parser.parse_args()
     args.func(args)
