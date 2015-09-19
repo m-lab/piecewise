@@ -15,6 +15,17 @@ However there are some problems with the interaction between nginx and virtualbo
 Nginx will still serve files but this works around a bug.
 It would be a really nice enhancement to have a switch that automates setting this up for development instead of requiring those manual tweaks.
 
+## Load Database
+
+If you want to quickly get started developing with an example dataset, you can load a database dump.
+
+Load database dump:
+    wget https://github.com/mchelen/piecewise-db-dump/raw/master/piecewise.seattle.db.tar.gz
+    gunzip -c piecewise.seattle.db.tar.gz | pg_restore -U postgres -d piecewise -O --clean
+
+Create database dump:
+    pg_dump -Ft -U postgres piecewise --clean -t results -t district_statistics -t block_statistics | gzip > dump.tar.gz
+
 ## Code layout
 
 Piecewise is largely driven by instances of the `piecewise.aggregate.Aggregator` class.
