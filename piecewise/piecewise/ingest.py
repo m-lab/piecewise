@@ -5,6 +5,7 @@ import calendar
 import datetime
 import itertools
 import time
+import sys
 
 def make_request(query):
     return { 'configuration' : { 'query' : { 'query' : query } } }
@@ -19,6 +20,7 @@ def ingest(config):
 
     query = config.ingest_bigquery_query()
 
+    start_time = time.time()
     query_reference = bigquery_service.jobs().insert(
             projectId = PROJECT_NUMBER,
             body = make_request(query)).execute()
@@ -27,9 +29,13 @@ def ingest(config):
     check_job = bigquery_service.jobs().get(projectId = PROJECT_NUMBER, jobId = jobId)
     job_status = check_job.execute()
     while job_status['status']['state'] != 'DONE':
-        print 'Waiting 10s for BigQuery result'
+        print '.',
+        sys.stdout.flush()
         time.sleep(10)
         job_status = check_job.execute()
+    finish_time = time.time()
+    print ''
+    print 'Took %d s to complete'.format(finish_time - start_time)
 
     query_response = bigquery_service.jobs().getQueryResults(projectId = PROJECT_NUMBER, jobId = jobId, maxResults = 10000).execute()
     inserter = records.insert()
