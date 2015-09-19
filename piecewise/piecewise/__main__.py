@@ -83,7 +83,6 @@ def do_query(args):
         for row in results:
             print row
     else:
-        print args
         engine = create_engine(config.database_uri)
         metadata = MetaData()
         engine.metadata = metadata
