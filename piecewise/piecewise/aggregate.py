@@ -1,5 +1,5 @@
 from itertools import chain
-from sqlalchemy import case, func, text, BigInteger, Boolean, Column, DateTime, Float, Integer, String, Table
+from sqlalchemy import case, create_engine, func, text, BigInteger, Boolean, Column, DateTime, Float, Integer, MetaData, String, Table
 from sqlalchemy.dialects.postgresql import ARRAY, INT8RANGE
 from sqlalchemy.sql.expression import and_, or_, between, join, label
 from geoalchemy2 import Geometry
@@ -9,6 +9,18 @@ import itertools
 import re
 import time
 import piecewise.maxmind
+
+def aggregate(config, debug=False):
+    from sqlalchemy.schema import CreateTable
+    engine = create_engine(config.database_uri)
+    metadata = MetaData()
+    records = config.make_cache_table(metadata)
+    for agg in config.aggregations:
+        if not debug:
+            agg.build_aggregate_table(engine, metadata, records)
+        else:
+            query = agg.build_aggregate_query(engine, metadata, records)
+            print query.compile(engine)
 
 class ST_MakeBox2D(GenericFunction):
     name = 'ST_MakeBox2D'
@@ -29,7 +41,7 @@ class Aggregation(object):
         self.bins = bins
         self.statistics = statistics
 
-    def build_aggregate_table(self, engine, metadata, records):
+    def build_aggregate_query(self, engine, metadata, records):
         statistics_table = self.make_table(metadata)
         statistics_table.create(engine, checkfirst = True)
 
@@ -42,8 +54,13 @@ class Aggregation(object):
             cols, selection = s.build_query_to_populate(selection, records, statistics_table)
             columns += cols
 
+        return statistics_table.insert().from_select(columns, selection)
+
+    def build_aggregate_table(self, engine, metadata, records):
+        query = self.build_aggregate_query(self, engine, metadata, records)
+
         with engine.begin() as conn:
-            conn.execute(statistics_table.insert().from_select(columns, selection))
+            conn.execute(query)
 
     def make_table(self, metadata):
         bin_columns = chain.from_iterable(b.postgres_columns for b in self.bins)
@@ -70,6 +87,9 @@ class Aggregation(object):
 
         with engine.connect() as conn:
             return conn.execute(selection)
+
+    def __repr__(self):
+        return "{name}: table={table} bins={bins} stats={stats}".format(name=self.name, table=self.statistics_table_name, bins=self.bins, stats=self.statistics)
 
 
 class Aggregator(object):
@@ -286,6 +306,10 @@ class SpatialJoinBins(Bins):
                 .where(aggregate_table.c.join_key == fk)
                 .group_by(aggregate_table.c.join_key))
 
+    def __repr__(self):
+        return 'SpatialJoinBins(table={table} geom={geom} key={key} join_custom_data={join}, key_type={key_type})'.format(
+                table=self.table, geom=self.geometry_column, key=self.key, join=self.join_custom_data, key_type=self.key_type)
+
 class ISPBins(Bins):
     label = "isp_bins"
 
@@ -331,8 +355,7 @@ class ISPBins(Bins):
             return query
 
     def __repr__(self):
-        return """ISPBins""".format(
-                resolution=self.resolution)
+        return """ISPBins(maxmind_table={})""".format(self.maxmind_table)
 
 class TemporalBins(Bins):
     label = "time_slices"
@@ -429,8 +452,12 @@ class Statistic(object):
     def bigquery_to_postgres(self, *fields):
         return zip(map(lambda c: c.name, self.postgres_columns), fields)
 
+    def __repr__(self):
+        return self.label
+
 
 class _AverageRTT(Statistic):
+    label = "AverageRTT"
     def build_query_to_populate(self, query, full_table, aggregate_table):
         insert_columns = [aggregate_table.c.sumrtt, aggregate_table.c.countrtt]
         select_query = (query
@@ -449,10 +476,9 @@ class _AverageRTT(Statistic):
     def postgres_columns(self):
         return [Column('sumrtt', BigInteger), Column('countrtt', Integer)]
 
-    def __repr__(self):
-        return "AverageRTT"
-
 class _MedianRTT(Statistic):
+    label = "MedianRTT"
+
     @property
     def postgres_columns(self):
         return [Column('rtt_samples', ARRAY(Float))]
@@ -469,10 +495,9 @@ class _MedianRTT(Statistic):
         median = func.median(aggregate_table.c.rtt_samples)
         return query.column(label("MedianRTT", median))
 
-    def __repr__(self):
-        return "MedianRTT"
-
 class _DownloadCount(Statistic):
+    label = "DownloadCount"
+
     @property
     def postgres_columns(self):
         return [Column('download_count', Integer)]
@@ -488,6 +513,8 @@ class _DownloadCount(Statistic):
         return query.column(label("download_count", func.sum(a.c.download_count)))
 
 class _AverageDownload(Statistic):
+    label = "AverageDownload"
+
     @property
     def postgres_columns(self):
         return [Column('download_octets', BigInteger), Column('download_time', Float)]
@@ -507,6 +534,8 @@ class _AverageDownload(Statistic):
         return query.column(label("download_avg", safe_mean))
 
 class _MedianDownload(Statistic):
+    label = "MedianDownload"
+
     @property
     def postgres_columns(self):
         return [Column('download_samples', ARRAY(Float))]
@@ -524,6 +553,8 @@ class _MedianDownload(Statistic):
         return query.column(label("download_median", median))
 
 class _UploadCount(Statistic):
+    label = "UploadCount"
+
     @property
     def postgres_columns(self):
         return [Column('upload_count', Integer)]
@@ -539,6 +570,8 @@ class _UploadCount(Statistic):
         return query.column(label("upload_count", func.sum(a.c.upload_count)))
 
 class _AverageUpload(Statistic):
+    label = "AverageUpload"
+
     @property
     def postgres_columns(self):
         return [Column('upload_octets', BigInteger), Column('upload_time', Float)]
@@ -558,6 +591,8 @@ class _AverageUpload(Statistic):
         return query.column(label("upload_avg", safe_mean))
 
 class _MedianUpload(Statistic):
+    label = "MedianUpload"
+
     @property
     def postgres_columns(self):
         return [Column('upload_samples', ARRAY(Float))]
