@@ -71,5 +71,8 @@ Vagrant.configure(2) do |config|
     ansible.groups = {
       "group1" => "machine1"
     }
+    ansible.extra_vars = {
+      :piecewise_env => "dev"
+    }
   end
 end
