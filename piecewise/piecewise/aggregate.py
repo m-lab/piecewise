@@ -57,7 +57,7 @@ class Aggregation(object):
         return statistics_table.insert().from_select(columns, selection)
 
     def build_aggregate_table(self, engine, metadata, records):
-        query = self.build_aggregate_query(self, engine, metadata, records)
+        query = self.build_aggregate_query(engine, metadata, records)
 
         with engine.begin() as conn:
             conn.execute(query)
