@@ -108,7 +108,11 @@ def retrieve_extra_data():
         query = query.outerjoin(aggregation['orm'], ST_Intersects(ExtraData.location, eval('aggregation["orm"].%s' % aggregation['geometry_column'])))
         query = query.add_columns(eval('aggregation["orm"].%s' % aggregation['key']))
 
-    results = query.limit(limit).offset(offset).all()
+    try:
+        results = query.limit(limit).offset(offset).all()
+        db_session.commit()
+    except:
+        db_session.rollback()
 
     records = []
     for row in results:
@@ -212,10 +216,14 @@ def admin_extra_data():
                 order_by = eval('ExtraData.%s.desc()' % request.args.get('sort'),\
                         {"__builtins__": None}, {"ExtraData": ExtraData})
 
-    record_count = int(db_session.query(ExtraData).count())
-    results = db_session.query(ExtraData, ST_X(ExtraData.location).label('lon'),
+    try:
+        record_count = int(db_session.query(ExtraData).count())
+        results = db_session.query(ExtraData, ST_X(ExtraData.location).label('lon'),
             ST_Y(ExtraData.location).label('lat')).order_by(
             order_by).limit(limit).offset(offset).all()
+        db_session.commit()
+    except:
+        db_session.rollback()
     
     records = []
     for row in results:
@@ -325,6 +333,8 @@ def append_extra_data():
                 cost_of_service = cost_of_service))
             conn.execute(query)
         return ("", 201, {})
+        conn.commit()
     except Exception, e:
+        conn.rollback()
         app.logger.exception(e)
         return ("Failed due to error: " + str(e), 400, {})
