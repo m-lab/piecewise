@@ -23,8 +23,8 @@ body {
 <script>
 
 var margin = {top: 8, right: 10, bottom: 2, left: 10},
-    width = 960 - margin.left - margin.right,
-    height = 69 - margin.top - margin.bottom;
+    width = 600 - margin.left - margin.right,
+    height = 50 - margin.top - margin.bottom;
 
 var parsetime_slice = d3.time.format("%b %Y").parse;
 
@@ -55,6 +55,7 @@ d3.csv("chartdata.csv", type, function(error, data) {
   // Compute the maximum price per symbol, needed for the y-domain.
   isps.forEach(function(s) {
     s.maxDL = d3.max(s.values, function(d) { return d.download_median; });
+    s.maxUL = d3.max(s.values, function(d) { return d.upload_median; });
   });
 
   // Compute the minimum and maximum time_slice across isps.
@@ -92,7 +93,7 @@ d3.csv("chartdata.csv", type, function(error, data) {
 });
 
 function type(d) {
-  d.price = +d.price;
+  d.download_median = +d.download_median;
   d.time_slice = d.time_slice;
   return d;
 }

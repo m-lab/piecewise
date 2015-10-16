@@ -28,8 +28,8 @@ path {
 
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 20, bottom: 30, left: 50},
-    width = 800 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 500 - margin.left - margin.right,
+    height = 250 - margin.top - margin.bottom;
 
 // Parse the date / time
 var parseDate = d3.time.format("%b %Y").parse; 
@@ -60,12 +60,15 @@ var svg = d3.select("body")
               "translate(" + margin.left + "," + margin.top + ")");
 
 // Get the data
+//d3.json("chartdata.js", function(error, data) {
 d3.csv("chartdata.csv", function(error, data) {
+//    var data = "http://45.79.197.214/stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload&b.isp_bins&b.spatial_join=key&b.isp_bins&b.time_slices=month";
+
     data.forEach(function(d) {
       d.time_slice = +d.time_slice;
       d.download_median = +d.download_median;
       //d.isp = +d.isp;
-    });
+  });
 
     data = data.sort(function (a,b) {return d3.ascending(a.time_slice, b.time_slice); });
 
@@ -101,6 +104,7 @@ d3.csv("chartdata.csv", function(error, data) {
         .attr("class", "y axis")
         .call(yAxis);
 
+    //});
 });
 
 </script>

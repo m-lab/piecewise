@@ -3,15 +3,31 @@
 <style>
 
 body {
-  font: 20px sans-serif;
+  font: 16px sans-serif;
 }
 
 </style>
 <body>
-<ul>
-  <li><a href="example.html">Line Chart</a></li>
-  <li><a href="example2.html">Bar Chart</a></li>
-  <li><a href="example3.html">Small Multiples</a></li>
-</ul>
+<div id="bigBoard">
+	<div></div>
+	<div></div>
+	<div></div>
+</div>
+
+<div id="charts">
+<div id="isps-medians"><a href="example.html">Median Download</a><br />
+  <iframe src="example.html" width="550" height="250" scrolling="no"></iframe>
+  </div>
+
+<div id="isp-mult"><a href="example3.html">Median Downloads by ISP</a><br />
+  <iframe src="example3.html" width="650" height="400" scrolling="yes"></iframe>
+  </div>
+
+  <div id="histogram"><a href="example2.html">Median Downloads by Day</a><br />
+<iframe src="example2.html" width="850" height="250" scrolling="no"></iframe>
+  </div>
+
+ </div>
+  
 
 </body>
