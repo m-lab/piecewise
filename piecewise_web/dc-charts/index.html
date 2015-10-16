@@ -101,7 +101,7 @@ d3.csv("chartdata.csv", function (data) {
   var dtgFormat = d3.time.format("%Y-%m-%dT%H:%M:%S");
   
   data.forEach(function(d) { 
-    d.time_slice   = +d.time_slice;//dtgFormat.parse(d.origintime.substr(0,19)); 
+    d.time_slice   = new Date(d.time_slice*1000); 
     //d.lat   = +d.latitude;
     //d.long  = +d.longitude;
     d.download_median   = +d.download_median;
@@ -240,8 +240,8 @@ d3.csv("chartdata.csv", function (data) {
     .group(volumeByDayGroup)
     .transitionDuration(500)
 	.elasticY(true)
-    //.x(d3.time.scale().domain([new Date(2013, 6, 18), new Date(2013, 6, 24)])) // scale and domain of the graph
-    .x(d3.scale.linear().domain([d3.min(data, function(d){ return d.time_slice;}), d3.max(data, function(d) { return d.time_slice; })]))
+    .x(d3.time.scale().domain([new Date(2013, 12, 01), new Date(2015, 12, 31)])) // scale and domain of the graph
+    //.x(d3.scale.linear().domain([d3.min(data, function(d){ return d.time_slice;}), d3.max(data, function(d) { return d.time_slice; })]))
     .xAxis();
 
   // Table of earthquake data
