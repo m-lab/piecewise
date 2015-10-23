@@ -292,7 +292,7 @@ class SpatialJoinBins(Bins):
                     keep_existing = True)
 
             joining = join(full_table, extra_data,
-                    and_(extra_data.c.bigquery_key == full_table.c.bigquery_key),
+                    and_(extra_data.c.bigquery_test_id == func.left(full_table.c.test_id, func.length(extra_data.c.bigquery_test_id))),
                     isouter = True)
             query = query.select_from(joining)
             location = case([(extra_data.c.verified, func.coalesce(extra_data.c.location, full_table.c.location))], else_ = full_table.c.location)
