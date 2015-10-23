@@ -118,7 +118,8 @@ class Aggregator(object):
                 Column('download_octets', BigInteger),
                 Column('upload_time', BigInteger),
                 Column('upload_octets', BigInteger),
-                Column('bigquery_key', String))
+                Column('bigquery_key', String),
+                Column('test_id', String))
 
     def ingest_bigquery_query(self):
         select_clause = [
@@ -134,7 +135,8 @@ class Aggregator(object):
                 "8 * web100_log_entry.snap.HCThruOctetsAcked AS download_octets",
                 "web100_log_entry.snap.Duration AS upload_time",
                 "8 * web100_log_entry.snap.HCThruOctetsReceived AS upload_octets",
-                "CONCAT(String(web100_log_entry.snap.Duration), String(web100_log_entry.snap.CountRTT), String(web100_log_entry.snap.SegsIn) , String(web100_log_entry.snap.SegsOut)) AS bigquery_key"
+                "CONCAT(String(web100_log_entry.snap.Duration), String(web100_log_entry.snap.CountRTT), String(web100_log_entry.snap.SegsIn), String(web100_log_entry.snap.SegsOut)) AS bigquery_key",
+                "test_id"
         ]
 
         where_clause = list(chain.from_iterable(f.bigquery_filter() for f in self.filters))
@@ -167,7 +169,7 @@ class Aggregator(object):
 
     def bigquery_row_to_postgres_row(self, bq_row):
         bq_row = [f['v'] for f in bq_row['f']]
-        timestamp, longitude, latitude, client_ip, server_ip, countrtt, sumrtt, direction, dl_time, dl_octets, ul_time, ul_octets, bigquery_key = bq_row
+        timestamp, longitude, latitude, client_ip, server_ip, countrtt, sumrtt, direction, dl_time, dl_octets, ul_time, ul_octets, bigquery_key, test_id = bq_row
 
         timestamp = timestamp and datetime.datetime.utcfromtimestamp(float(timestamp))
         location = longitude and latitude and "srid=4326;POINT(%f %f)" % (float(longitude), float(latitude))
@@ -181,6 +183,7 @@ class Aggregator(object):
         ul_time = ul_time and float(ul_time)
         ul_octets = ul_octets and int(ul_octets)
         bigquery_key = bigquery_key
+        test_id = test_id
 
         pg_row = dict(
                 time=timestamp,
@@ -194,7 +197,8 @@ class Aggregator(object):
                 download_octets = dl_octets,
                 upload_time = ul_time,
                 upload_octets = ul_octets,
-                bigquery_key = bigquery_key)
+                bigquery_key = bigquery_key,
+                test_id = test_id)
 
         return pg_row
 
