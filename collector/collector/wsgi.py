@@ -49,6 +49,7 @@ extra_data = Table('extra_data', metadata,
     Column('timestamp', DateTime),
     Column('verified', Boolean),
     Column('bigquery_key', String),
+    Column('bigquery_test_id', String),
     Column('location', Geometry("Point", srid=4326)),
     Column('connection_type', String),
     Column('advertised_download', Integer),
@@ -67,6 +68,7 @@ class ExtraData(Base):
     timestamp = Column('timestamp', DateTime)
     verified = Column('verified', Boolean)
     bigquery_key = Column('bigquery_key', String)
+    bigquery_test_id = Column('bigquery_test_id', String)
     location = Column('location', Geometry("Point", srid=4326))
     connection_type = Column('connection_type', String)
     advertised_download = Column('advertised_download', Integer)
@@ -230,6 +232,7 @@ def admin_extra_data():
         record = {}
         record['id'] = row[0].id
         record['bigquery_key'] = row[0].bigquery_key
+        record['bigquery_test_id'] = row[0].bigquery_test_id
         record['verified'] = row[0].verified
         record['timestamp'] = int(row[0].timestamp.strftime('%s')) * 1000
         record['connection_type'] = row[0].connection_type
