@@ -338,6 +338,6 @@ def append_extra_data():
         return ("", 201, {})
         conn.commit()
     except Exception, e:
-        conn.rollback()
+        db_session.rollback()
         app.logger.exception(e)
         return ("Failed due to error: " + str(e), 400, {})
