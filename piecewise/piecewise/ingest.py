@@ -1,12 +1,13 @@
 import piecewise.bigquery
 import piecewise.aggregate
-from sqlalchemy import create_engine, func, text, Column, Float, Integer, MetaData, String, Table
-from sqlalchemy.sql.expression import label
+from sqlalchemy import create_engine, func, select, text, Column, Float, Integer, MetaData, String, Table
+from sqlalchemy.sql.expression import join, and_
 import calendar
 import datetime
 import itertools
 import time
 import sys
+import re
 
 def make_request(query):
     return { 'configuration' : { 'query' : { 'query' : query } } }
@@ -62,8 +63,28 @@ def ingest(config):
         else:
             break
 
+# Extracts the unique portion of results.test_id and populates
+# extra_data.bigquery_test_id which will be used to associate both the S2C and
+# C2S records in results with a single row in the extra_data table
+def associate(config):
+    engine = create_engine(config.database_uri)
+    metadata = MetaData()
+    records = config.make_cache_table(metadata)
+    extra_data = config.make_extra_data_table(metadata)
+    metadata.create_all(engine)
+
+    joining = join(records, extra_data, and_(extra_data.c.bigquery_key == records.c.bigquery_key))
+    query = select([joining, extra_data.c.id.label('extra_data_id')])
+    results = engine.execute(query)
+    p = re.compile('^(.*):[0-9]{4,5}\.[cs]2[cs]_snaplog\.gz$')
+    for result in results.fetchall():
+        test_id = p.match(result.test_id).group(1)
+        query = extra_data.update().where(extra_data.c.id == result.extra_data_id).values(bigquery_test_id = test_id)
+        engine.execute(query)
+
 if __name__ == '__main__':
     import piecewise.config
     config = piecewise.config.read_system_config()
     ingest(config)
     piecewise.aggregate.aggregate(config)
+    associate(config)
