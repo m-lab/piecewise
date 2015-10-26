@@ -136,6 +136,7 @@ class Aggregator(object):
                 Column("min_rtt", Integer),
                 Column("location_type", String),
                 Column("cost_of_service", Integer),
+                Column('client_ip', BigInteger),
                 Column("location", Geometry("Point", srid=4326)))
 
     def ingest_bigquery_query(self):
