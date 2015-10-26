@@ -121,6 +121,23 @@ class Aggregator(object):
                 Column('bigquery_key', String),
                 Column('test_id', String))
 
+    def make_extra_data_table(self, metadata):
+        return Table("extra_data", metadata,
+                Column('id', BigInteger, primary_key = True),
+                Column("timestamp", DateTime),
+                Column("verified", Boolean),
+                Column("bigquery_key", String),
+                Column("bigquery_test_id", String),
+                Column("connection_type", String),
+                Column("advertised_download", Integer),
+                Column("actual_download", Float),
+                Column("advertised_upload", Integer),
+                Column("actual_upload", Float),
+                Column("min_rtt", Integer),
+                Column("location_type", String),
+                Column("cost_of_service", Integer),
+                Column("location", Geometry("Point", srid=4326)))
+
     def ingest_bigquery_query(self):
         select_clause = [
                 "web100_log_entry.log_time AS time",
