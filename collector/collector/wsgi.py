@@ -1,5 +1,5 @@
 from flask import Flask, Response, request, jsonify
-from sqlalchemy import create_engine, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float
+from sqlalchemy import create_engine, func, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float
 from sqlalchemy.dialects.postgresql import INT8RANGE
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.automap import automap_base
@@ -101,7 +101,7 @@ def retrieve_extra_data():
 
     record_count = int(db_session.query(ExtraData).count())
 
-    query = db_session.query(ExtraData)
+    query = db_session.query(ExtraData, func.extract('epoch', ExtraData.timestamp).label('epoch'))
 
     query = query.outerjoin(Maxmind, Maxmind.ip_range.contains(ExtraData.client_ip))
     query = query.add_columns(Maxmind.label)
@@ -120,7 +120,8 @@ def retrieve_extra_data():
     for row in results:
         record = {}
         record['id'] = row.ExtraData.id
-        record['timestamp'] = row.ExtraData.timestamp
+        record['date_pretty'] = row.ExtraData.timestamp
+        record['timestamp'] = int(row.epoch)
         record['client_ip'] = row.ExtraData.client_ip
         record['min_rtt'] = row.ExtraData.min_rtt
         record['advertised_download'] = row.ExtraData.advertised_download
