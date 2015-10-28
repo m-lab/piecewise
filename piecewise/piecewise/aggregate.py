@@ -45,6 +45,10 @@ class Aggregation(object):
         statistics_table = self.make_table(metadata)
         statistics_table.create(engine, checkfirst = True)
 
+        # Delete all records from stats table before aggregating, since
+        # subsequent runs append rather than overwite.
+        engine.execute(statistics_table.delete())
+
         selection = records.select().with_only_columns([])
         columns = []
         for b in self.bins:
