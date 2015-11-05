@@ -76,7 +76,7 @@ This section details how to install the prerequisite components that your server
 
 4. Download and add the jessie64 box for piecewise:
 
-        vagrant box add jessie64 <http://static.gender-api.com/debian-8-jessie-rc2-x64-slim.box>
+        vagrant box add jessie64 http://static.gender-api.com/debian-8-jessie-rc2-x64-slim.box
         vagrant box list
         jessie64  (virtualbox)
 
