@@ -60,24 +60,29 @@ This section details how to install the prerequisite components that your server
 ### Installation for Ubuntu 14.04
 
 1. Download and install ansible:
+
         sudo apt-get install software-properties-common
         sudo apt-add-repository ppa:ansible/ansible
         sudo apt-get update
         sudo apt-get install ansible
 
 2. Download and install virtual-box: 
+
         sudo apt-get install virtualbox
 
 3. Download and install vagrant: 
+
         sudo apt-get install vagrant
 
 4. Download and add the jessie64 box for piecewise:
+
         vagrant box add jessie64
       <http://static.gender-api.com/debian-8-jessie-rc2-x64-slim.box>
         vagrant box list
       jessie64  (virtualbox)
 
 5. Clone the git repository for piecewise:
+
         git clone[ https://github.com/nkinkade/piecewise.git](https://github.com/nkinkade/piecewise.git)
         cd piecewise
 
@@ -104,8 +109,6 @@ Configuring and deploying Piecewise will involve the following steps:
 ### Whitelist a Google Account to use with your Piecewise instance
 
 Piecewise requires a Google Account to be configured for ingesting M-Lab data from BigQuery. We recommend creating a separate account to use specifically for this purpose, rather than a personal account.
-
- 
 
 1. Create/Identify a Google account to use for your instance of Piecewise.
 
@@ -140,17 +143,20 @@ The examples branch contains several examples of Piecewise customizations for di
 You can copy one of these example folders to start your own configuration. For example, to create Baltimore example we used these steps:
 
 1. Copy the folder, and rename key files:
+
         cp -rf seattle_example baltimore_example
         mv seattle_tasks.yml baltimore_tasks.yml
         mv seattle_center.py baltimore_center.py
 
 2. Remove unneeded files:
+
         rm seattle_council_districts.geojson
         rm seattle_census10_blockgroups.topojson
         rm -rf seattle_blkgrpce10/
         rm seattle_bigquery_results.sql.gz
 
 3. Import your shapefiles and topojson files:
+
         mkdir maryland_blkgrps
         scp critzo@192.168.4.181:maryland_shape_files/* ./maryland_blkgrps/
         scp critzo@192.168.4.181:Downloads/cb_2014_24_bg_500k.json ./maryland_blkgrps_2014.json
@@ -202,6 +208,7 @@ The map front-end to Piecewise requires a topojson file based on the same shapef
 Gather the info below and modify your Piecewise config files:
 
 **piecewise/baltimore_example/center.js** 
+
 Provides the geographic center of your map. Find the center of your map on Google Maps and enter the latitude and longitude.
 
     var center = [39.2847064,-76.620486];
@@ -332,22 +339,24 @@ First, gather the following information:
 
 5. Prepare piecewise configuration files with this information and deploy
 
-5. In the file piecewise/piecewise/bigquery.py replace PROJECT_NUMBER with your project number from Google Developers Console.
+6. In the file _piecewise/piecewise/bigquery.py_ replace **PROJECT_NUMBER** with your project number from Google Developers Console.
 
-6. Bring up the piecewise VM using Vagrant:
-$ vagrant up
+7. Bring up the piecewise VM using Vagrant:
 
-7. SSH into the Vagrant VM:
-$ vagrant ssh
+        $ vagrant up
 
-8. Confirm the correct PROJECT NUMBER inside the deployed vagrant VM:
-$ sudo vi /opt/piecewise/piecewise/bigquery.py
+8. SSH into the Vagrant VM:
 
-9. Run the piecewise ingest routine:
+        $ vagrant ssh
 
-$ cd /opt/piecewise
+9. Confirm the correct PROJECT NUMBER inside the deployed vagrant VM:
 
-$ sudo python -m piecewise.ingest
+        $ sudo vi /opt/piecewise/piecewise/bigquery.py
+
+10. Run the piecewise ingest routine:
+
+        $ cd /opt/piecewise
+        $ sudo python -m piecewise.ingest
 
 On the first run of **piecewise.ingest**, you will be prompted with a URL to authenticate your piecewise instance with the Google account that M-Lab whitelisted. Open the URL provided, authenticate and allow access, then copy verification code onto the command line.
 
@@ -355,14 +364,17 @@ If successful, you will see a number of messages about BigQuery jobs running. On
 
 ### Customizing the front-end 
 
-When we use vagrant to deploy a VM, the web server on the VM hosts files here: /opt/bq2geojson/html/
+When we use vagrant to deploy a VM, the web server on the VM hosts files here:
+
+         /opt/bq2geojson/html/
 
 When deploying, the bq2geojson repo is pulled in and deployed: [https://github.com/m-lab/bq2geojson](https://github.com/m-lab/bq2geojson) 
 
 Therefore, to prototype changes to the Seattle map example that is a frontend to piecewise, we can use the following workflow:
 
 * Within the vagrant VM environment change to the web directory for bq2geojson:
-# cd /opt/bq2geojson/html
+
+        # cd /opt/bq2geojson/html
 
 * Make changes, preview on the localhost server, track changes with git (the directory above is a git repo)
 
