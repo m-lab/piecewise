@@ -52,7 +52,7 @@ This section details how to install the prerequisite components that your server
 
 3. Clone the piecewise repo
 
-        git clone https://github.com/m-lab/piecewise.git
+        git clone https://github.com/opentechinstitute/piecewise.git
 
 4. Change into the piecewise directory
         cd piecewise/
@@ -83,7 +83,7 @@ This section details how to install the prerequisite components that your server
 
 5. Clone the git repository for piecewise:
 
-        git clone[ https://github.com/nkinkade/piecewise.git](https://github.com/nkinkade/piecewise.git)
+        git clone https://github.com/opentechinstitute/piecewise.git
         cd piecewise
 
 ### Installation for RHEL 7 / CentOS 7
@@ -381,10 +381,9 @@ Therefore, to prototype changes to the Seattle map example that is a frontend to
 ### Managing a Deployed Instance of Piecewise
 
 * pulling in new changes to piecewise backend
-```
-cd /opt/piecewise.git
-sudo git pull
-```
+
+        cd /opt/piecewise.git
+        sudo git pull
 
 * updates collector, piecewise and piecewise web
 
