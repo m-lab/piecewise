@@ -18,3 +18,6 @@
 - name: Restart uwsgi so piecewise config is detected
   service: name=uwsgi state=restarted
 - command: python extra_data.py chdir=/opt/piecewise
+- name: Load example results table
+  shell: gunzip -c /opt/piecewise.git/seattle_example/seattle_bigquery_results.sql.gz | psql -U postgres piecewise
+  when: piecewise_env == "dev"

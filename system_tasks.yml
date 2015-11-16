@@ -60,6 +60,3 @@
     - postgresql
 - postgresql_db: name=piecewise state=present
 - command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
-- name: Load example results table
-  shell: gunzip -c /opt/piecewise.git/seattle_example/seattle_bigquery_results.sql.gz | pg_restore -U postgres -d piecewise -O
-  when: piecewise_env == "dev"
