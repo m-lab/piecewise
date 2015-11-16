@@ -60,9 +60,6 @@
     - postgresql
 - postgresql_db: name=piecewise state=present
 - command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
-- name: Download example database
-  get_url: url=https://github.com/mchelen/piecewise-db-dump/raw/master/piecewise.seattle.db.tar.gz dest=/home/vagrant/piecewise.seattle.db.tar.gz
-  when: piecewise_env == "dev"
-- name: Load example database
-  shell: gunzip -c /home/vagrant/piecewise.seattle.db.tar.gz | pg_restore -U postgres -d piecewise -O
+- name: Load example results table
+  shell: gunzip -c /opt/piecewise.git/seattle_example/seattle_bigquery_results.sql.gz | pg_restore -U postgres -d piecewise -O
   when: piecewise_env == "dev"
