@@ -72,7 +72,7 @@ Vagrant.configure(2) do |config|
       "group1" => "machine1"
     }
     ansible.extra_vars = {
-      :piecewise_env => "dev"
+      :piecewise_env => "live"
     }
   end
 end
