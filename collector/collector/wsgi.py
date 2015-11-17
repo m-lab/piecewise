@@ -116,7 +116,14 @@ def retrieve_bq_results():
     else:
         offset = 0
 
-    record_count = int(db_session.query(Results).count())
+    if request.args.get('range'):
+        try:
+            range_start,range_end = request.args.get('range').split(',')
+        except:
+            pass
+    else:
+        range_start = None
+        range_end = None
 
     query = db_session.query(Results)
     query = db_session.query(Results, func.extract('epoch', Results.time).label('timestamp'))
@@ -124,9 +131,15 @@ def retrieve_bq_results():
     query = query.outerjoin(Maxmind, Maxmind.ip_range.contains(Results.client_ip))
     query = query.add_columns(Maxmind.label)
 
+    if range_start and range_end:
+        query = query.filter(func.extract('epoch', Results.time) >= range_start)
+        query = query.filter(func.extract('epoch', Results.time) <= range_end)
+
     for aggregation in aggregations:
         query = query.outerjoin(aggregation['orm'], ST_Intersects(Results.location, eval('aggregation["orm"].%s' % aggregation['geometry_column'])))
         query = query.add_columns(eval('aggregation["orm"].%s' % aggregation['key']))
+
+    record_count = query.count()
 
     try:
         results = query.limit(limit).offset(offset).all()
