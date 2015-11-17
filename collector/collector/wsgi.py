@@ -62,6 +62,23 @@ extra_data = Table('extra_data', metadata,
     Column('cost_of_service', Integer))
 metadata.create_all()
 
+class Results(Base):
+    __tablename__ = 'results'
+    id = Column('id', Integer, primary_key = True)
+    time = Column('time', DateTime)
+    location = Column('location', Geometry("Point", srid=4326))
+    client_ip = Column('client_ip', BigInteger)
+    server_ip = Column('server_ip', BigInteger)
+    countrtt = Column('countrtt', BigInteger)
+    sumrtt = Column('sumrtt', BigInteger)
+    download_flag = Column('download_flag', Boolean)
+    download_time = Column('download_time', BigInteger)
+    download_octets = Column('download_octets', BigInteger)
+    upload_time = Column('upload_time', BigInteger)
+    upload_octets = Column('upload_octets', BigInteger)
+    bigquery_key = Column('bigquery_key', String)
+    test_id = Column('test_id', String)
+
 class ExtraData(Base):
     __tablename__ = 'extra_data'
     id = Column('id', Integer, primary_key = True)
@@ -86,6 +103,62 @@ class Maxmind(Base):
     ip_low = Column('ip_low', BigInteger)
     ip_high = Column('ip_high', BigInteger)
     label = Column('label', String)
+
+@app.route("/bq_results", methods=['GET'])
+def retrieve_bq_results():
+    if request.args.get('limit'):
+       limit = int(request.args.get('limit'))
+    else:
+        limit = 50
+
+    if request.args.get('page'):
+        offset = (int(request.args.get('page')) - 1) * limit
+    else:
+        offset = 0
+
+    record_count = int(db_session.query(Results).count())
+
+    query = db_session.query(Results)
+    query = db_session.query(Results, func.extract('epoch', Results.time).label('timestamp'))
+
+    query = query.outerjoin(Maxmind, Maxmind.ip_range.contains(Results.client_ip))
+    query = query.add_columns(Maxmind.label)
+
+    for aggregation in aggregations:
+        query = query.outerjoin(aggregation['orm'], ST_Intersects(Results.location, eval('aggregation["orm"].%s' % aggregation['geometry_column'])))
+        query = query.add_columns(eval('aggregation["orm"].%s' % aggregation['key']))
+
+    try:
+        results = query.limit(limit).offset(offset).all()
+        db_session.commit()
+    except:
+        db_session.rollback()
+
+    records = []
+    for row in results:
+        record = {}
+        record['id'] = row.Results.id
+        record['timestamp'] = int(row.timestamp)
+        record['client_ip'] = row.Results.client_ip
+        record['server_ip'] = row.Results.server_ip
+        record['count_rtt'] = row.Results.countrtt
+        record['sum_rtt'] = row.Results.sumrtt
+        record['download_flag'] = row.Results.download_flag
+        record['download_time'] = row.Results.download_time
+        record['download_octets'] = row.Results.download_octets
+        record['upload_time'] = row.Results.download_time
+        record['upload_octets'] = row.Results.download_octets
+        record['bigquery_key'] = row.Results.bigquery_key
+        record['test_id'] = row.Results.test_id
+        record['isp'] = rewrite_isp(row.label)
+        for aggregation in aggregations:
+            record[aggregation['table']] = eval('row.%s' % aggregation['key'])
+        records.append(record)
+
+    if len(records):
+        return (jsonify(record_count=record_count, records=records), 200, {})
+    else:
+        return ('', 500, {})
 
 @app.route("/extra_data", methods=['GET'])
 def retrieve_extra_data():
