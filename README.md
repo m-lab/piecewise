@@ -1,11 +1,18 @@
 ##Piecewise
 
-Piecewise is a tool for digesting and visualizing Measurement Lab data - user-volunteered Internet performance test results.
-It is based on the idea of composable statistics - ones for which we can combine results from multiple samples to get a valid result for the combination of the samples.
-For example, by tracking the sample count and total, we can compute a count and total for the overall population (which can then be trivially converted to an arithmetic mean.)
-The samples are selected along configurable dimensions such as time slices or a spatial grid, so Piecewise can support histogram and heatmap types visualizations at varying granularity.
+Piecewise is a tool for digesting and visualizing Measurement Lab data - user-volunteered Internet performance test results. It is based on the idea of composable statistics - ones for which we can combine results from multiple samples to get a valid result for the combination of the samples. For example, by tracking the sample count and total, we can compute a count and total for the overall population (which can then be trivially converted to an arithmetic mean.) The samples are selected along configurable dimensions such as time slices or a spatial grid, so Piecewise can support histogram and heatmap types visualizations at varying granularity.
 
-##Example
+### Code
+
+Piecewise can be found on Github: [https://github.com/opentechinstitute/piecewise](https://github.com/opentechinstitute/piecewise) 
+
+### Support and Community
+
+Piecewise is considered beta software and is not supported by the Open Technology Institute, New America or M-Lab. "Supported" in this documentation refers only to known working implementations or configurations, and not a level of support for installations of piecewise. 
+
+Questions, comments, contributions, etc. about Piecewise should be addressed via Github comments or issues, or by emailing M-Lab staff at the Open Technology Institute at support@opentechinstitute.org
+
+## Example
 
 To be more clear about "composable" statistics, let's work through an example.
 Let's say we want to be able to query for average round trip times for tests submitted over time.

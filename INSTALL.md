@@ -1,46 +1,27 @@
-## Piecewise
+## Installing Piecewise
 
-Piecewise is a tool for digesting and visualizing Measurement Lab data - user-volunteered Internet performance test results. It is based on the idea of composable statistics - ones for which we can combine results from multiple samples to get a valid result for the combination of the samples. For example, by tracking the sample count and total, we can compute a count and total for the overall population (which can then be trivially converted to an arithmetic mean.) The samples are selected along configurable dimensions such as time slices or a spatial grid, so Piecewise can support histogram and heatmap types visualizations at varying granularity.
-
-Piecewise is considered beta software and is not supported by the Open Technology Institute, New America or M-Lab. "Supported" in this documentation refers to known working implementations or configurations, and not a level of support for installations of piecewise. 
-
-### Code
-
-Piecewise can be found on Github: [https://github.com/opentechinstitute/piecewise](https://github.com/opentechinstitute/piecewise) 
-
-### Community
-
-Questions, comments, contributions, etc. about Piecewise should be addressed via Github or ??email alias??
-
-[[TOC]]
-
-## Server Requirements
+### Server Requirements
 
 Piecewise should install and run on any Linux server, either within a virtual machine or on bare metal. Installation instructions here will focus on the default installation method to deploy inside a VM provisioned by Vagrant and Ansible. 
 
 As of September 2015, Piecewise has been successfully deployed on the following platforms:
 
 * Debian Jessie
-
 * Debian Stretch 
-
-* Ubuntu 14.04.
-
+* Ubuntu 14.04
 * RHEL 7
 
 Server specs and requirements will vary based on implementation parameters like the size of the geographic region being ingested from M-Lab, but generally we have used these specs for a city-wide metro area:
 
 * 2.8GHz dual core processor
-
 * 2GB RAM
-
 * ~40GB of storage (SSD drive preferred)
 
-## Installing Piecewise Pre-requisites
+### Installing Piecewise Pre-requisites
 
 This section details how to install the prerequisite components that your server will need and obtaining the Piecewise software. At the end of this section you should have all the necessary software components for deploying your Piecewise server and will be ready to configure and deploy it. 
 
-### Installation for Debian Jessie, Stretch
+#### Installation for Debian Jessie, Stretch
 
 1. Add the contrib repo to your apt sources in **/etc/apt/sources.list**:
 
@@ -89,8 +70,5 @@ This section details how to install the prerequisite components that your server
 
 TBD - using piecewise RHEL7 branch
 
-### Installation without Vagrant in a VM or not in a VM
-
-TBD
 
 Next move on to [Configuring your instance for your location](CONFIG.md)
