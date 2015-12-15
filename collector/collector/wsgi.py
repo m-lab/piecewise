@@ -139,7 +139,7 @@ def retrieve_bq_results():
         query = query.outerjoin(aggregation['orm'], ST_Intersects(Results.location, eval('aggregation["orm"].%s' % aggregation['geometry_column'])))
         query = query.add_columns(eval('aggregation["orm"].%s' % aggregation['key']))
 
-    record_count = query.count()
+    record_count = db_session.query(Results.id).count()
 
     try:
         results = query.limit(limit).offset(offset).all()
