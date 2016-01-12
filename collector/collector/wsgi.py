@@ -159,8 +159,8 @@ def retrieve_bq_results():
         record['download_flag'] = row.Results.download_flag
         record['download_time'] = row.Results.download_time
         record['download_octets'] = row.Results.download_octets
-        record['upload_time'] = row.Results.download_time
-        record['upload_octets'] = row.Results.download_octets
+        record['upload_time'] = row.Results.upload_time
+        record['upload_octets'] = row.Results.upload_octets
         record['bigquery_key'] = row.Results.bigquery_key
         record['test_id'] = row.Results.test_id
         record['isp'] = rewrite_isp(row.label)
