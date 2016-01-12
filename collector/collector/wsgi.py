@@ -1,5 +1,5 @@
 from flask import Flask, Response, request, jsonify
-from sqlalchemy import create_engine, func, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float
+from sqlalchemy import create_engine, func, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float, desc
 from sqlalchemy.dialects.postgresql import INT8RANGE
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.automap import automap_base
@@ -142,7 +142,7 @@ def retrieve_bq_results():
     record_count = db_session.query(Results.id).count()
 
     try:
-        results = query.limit(limit).offset(offset).all()
+        results = query.order_by(desc(Results.time)).limit(limit).offset(offset).all()
         db_session.commit()
     except:
         db_session.rollback()
