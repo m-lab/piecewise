@@ -14,6 +14,7 @@
     - python-psycopg2
     - python-dev
     - gdal-bin
+    - unzip
 - name: Fetch telescope
   git: repo=https://github.com/m-lab/telescope.git
        dest=/opt/telescope/

@@ -1,5 +1,6 @@
 from flask import Flask, Response, request, jsonify
 from sqlalchemy import create_engine, func, select, text, MetaData, Table, String, Integer, BigInteger, Boolean, Column, DateTime, String, Integer, Float, desc
+import sqlalchemy.dialects.postgresql as postgresql
 from sqlalchemy.dialects.postgresql import INT8RANGE
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.automap import automap_base
@@ -125,24 +126,25 @@ def retrieve_bq_results():
         range_start = None
         range_end = None
 
-    query = db_session.query(Results)
     query = db_session.query(Results, func.extract('epoch', Results.time).label('timestamp'))
-
-    query = query.outerjoin(Maxmind, Maxmind.ip_range.contains(Results.client_ip))
-    query = query.add_columns(Maxmind.label)
 
     if range_start and range_end:
         query = query.filter(func.extract('epoch', Results.time) >= range_start)
         query = query.filter(func.extract('epoch', Results.time) <= range_end)
 
+    query = query.order_by(desc(Results.time)).limit(limit).offset(offset).from_self()
+
+    query = query.outerjoin(Maxmind, Maxmind.ip_range.contains(Results.client_ip))
+    query = query.add_columns(Maxmind.label)
+
     for aggregation in aggregations:
         query = query.outerjoin(aggregation['orm'], ST_Intersects(Results.location, eval('aggregation["orm"].%s' % aggregation['geometry_column'])))
         query = query.add_columns(eval('aggregation["orm"].%s' % aggregation['key']))
 
-    record_count = db_session.query(Results.id).count()
+    # record_count = db_session.query(Results.id).count()
 
     try:
-        results = query.order_by(desc(Results.time)).limit(limit).offset(offset).all()
+        results = query.all()
         db_session.commit()
     except:
         db_session.rollback()
@@ -169,7 +171,7 @@ def retrieve_bq_results():
         records.append(record)
 
     if len(records):
-        return (jsonify(record_count=record_count, records=records), 200, {})
+        return (jsonify(records=records), 200, {})
     else:
         return ('', 500, {})
 
