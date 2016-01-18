@@ -342,8 +342,9 @@ def admin_extra_data():
 
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
-    location_types = ['default', 'residence', 'workplace', 'business', 'public', 'other']
-    connection_types = ['default', 'cable', 'dsl', 'fiber', 'cellular', 'other']
+    location_types = ['default', 'comcast', 'centurylink', 'wave', 'other']
+    connection_types = ['default', 'wired', 'wireless-single', 'wireless-multiple']
+    cost_of_service_types = ['default', 'less_than_25', '25_50', '50_75', '75_100', '100_or_above', 'dont_know']
 
     try:
         if request.args.get('longitude') and request.args.get('latitude'):
@@ -397,7 +398,11 @@ def append_extra_data():
         app.logger.exception(e)
 
     try:
-        cost_of_service = float(request.args.get('cost_of_service'))
+    	if request.args.get('cost_of_service') in cost_of_service_types:
+        	cost_of_service = request.args.get('cost_of_service')
+    	else:
+        	cost_of_service = None
+
     except Exception, e:
         cost_of_service = None
         app.logger.exception(e)
