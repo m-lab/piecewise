@@ -342,7 +342,7 @@ def admin_extra_data():
 
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
-    location_types = ['default', 'comcast', 'centurylink', 'wave', 'other']
+    isp_types = ['default', 'comcast', 'centurylink', 'wave', 'other']
     connection_types = ['default', 'wired', 'wireless-single', 'wireless-multiple']
     cost_of_service_types = ['default', 'less_than_25', '25_50', '50_75', '75_100', '100_or_above', 'dont_know']
 
@@ -362,10 +362,13 @@ def append_extra_data():
     else:
         connection_type = None
 
-    if request.args.get('isp_user') in location_types:
-        location_type = request.args.get('isp_user')
+    if request.args.get('isp_user') in isp_types:
+        if request.args.get('isp_user') == 'other':
+            isp_user = request.args.get('isp_user_text')
+        else:
+            isp_user = request.args.get('isp_user')
     else:
-        location_type = None
+        isp_user = None
 
     try:
         advertised_download = int(float(request.args.get('advertised_download')))
@@ -423,7 +426,7 @@ def append_extra_data():
                 advertised_upload = advertised_upload,
                 actual_upload = actual_upload,
                 min_rtt = min_rtt,
-                isp_user = location_type,
+                isp_user = isp_user,
                 client_ip = int(ipaddress.ip_address(unicode(request.remote_addr))),
                 cost_of_service = cost_of_service))
             conn.execute(query)
