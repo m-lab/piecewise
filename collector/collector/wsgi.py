@@ -364,7 +364,7 @@ def append_extra_data():
 
     if request.args.get('isp_user') in isp_types:
         if request.args.get('isp_user') == 'other':
-            isp_user = request.args.get('isp_user_text')
+            isp_user = request.args.get('other')
         else:
             isp_user = request.args.get('isp_user')
     else:
