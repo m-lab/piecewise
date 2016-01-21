@@ -95,7 +95,7 @@ class ExtraData(Base):
     min_rtt = Column('min_rtt', Integer)
     client_ip = Column('client_ip', BigInteger)
     isp_user = Column('isp_user', String)
-    cost_of_service = Column('cost_of_service', Integer)
+    cost_of_service = Column('cost_of_service', String)
 
 class Maxmind(Base):
     __tablename__ = 'maxmind'
@@ -423,7 +423,7 @@ def append_extra_data():
                 advertised_upload = advertised_upload,
                 actual_upload = actual_upload,
                 min_rtt = min_rtt,
-                isp_user = isp_user,
+                isp_user = location_type,
                 client_ip = int(ipaddress.ip_address(unicode(request.remote_addr))),
                 cost_of_service = cost_of_service))
             conn.execute(query)
