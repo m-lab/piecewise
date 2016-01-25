@@ -59,7 +59,7 @@ extra_data = Table('extra_data', metadata,
     Column('actual_upload', Float),
     Column('min_rtt', Integer),
     Column('client_ip', BigInteger),
-    Column('location_type', String),
+    Column('isp_user', String),
     Column('cost_of_service', Integer))
 metadata.create_all()
 
@@ -95,8 +95,8 @@ class ExtraData(Base):
     actual_upload = Column('actual_upload', Float)
     min_rtt = Column('min_rtt', Integer)
     client_ip = Column('client_ip', BigInteger)
-    location_type = Column('location_type', String)
-    cost_of_service = Column('cost_of_service', Integer)
+    isp_user = Column('isp_user', String)
+    cost_of_service = Column('cost_of_service', String)
 
 class Maxmind(Base):
     __tablename__ = 'maxmind'
@@ -165,7 +165,7 @@ def retrieve_bq_results():
         record['upload_octets'] = row.Results.upload_octets
         record['bigquery_key'] = row.Results.bigquery_key
         record['test_id'] = row.Results.test_id
-        record['isp'] = rewrite_isp(row.label)
+        record['isp_user'] = rewrite_isp(row.label)
         for aggregation in aggregations:
             record[aggregation['table']] = eval('row.%s' % aggregation['key'])
         records.append(record)
@@ -216,7 +216,7 @@ def retrieve_extra_data():
         record['actual_download'] = row.ExtraData.actual_download
         record['advertised_upload'] = row.ExtraData.advertised_upload
         record['actual_upload'] = row.ExtraData.actual_upload
-        record['location_type'] = row.ExtraData.location_type
+        record['isp_user'] = row.ExtraData.isp_user
         record['connection_type'] = row.ExtraData.connection_type
         record['cost_of_service'] = row.ExtraData.cost_of_service
         record['isp'] = rewrite_isp(row.label)
@@ -290,7 +290,7 @@ def admin_extra_data():
     order_by = ExtraData.id.desc()
     sort_fields = ['id', 'timestamp', 'advertised_download', 'actual_download',
             'advertised_upload', 'actual_upload', 'min_rtt', 'cost_of_service',
-            'location_type', 'connection_type', 'verified']
+            'isp_user', 'connection_type', 'verified']
 
     if request.args.get('sort'):
         if request.args.get('sort') in sort_fields:
@@ -325,7 +325,7 @@ def admin_extra_data():
         record['verified'] = row[0].verified
         record['timestamp'] = int(row[0].timestamp.strftime('%s')) * 1000
         record['connection_type'] = row[0].connection_type
-        record['location_type'] = row[0].location_type
+        record['isp_user'] = row[0].isp_user
         record['advertised_download'] = row[0].advertised_download
         record['actual_download'] = row[0].actual_download
         record['advertised_upload'] = row[0].advertised_upload
@@ -344,8 +344,9 @@ def admin_extra_data():
 
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
-    location_types = ['default', 'residence', 'workplace', 'business', 'public', 'other']
-    connection_types = ['default', 'cable', 'dsl', 'fiber', 'cellular', 'other']
+    isp_types = ['default', 'comcast', 'centurylink', 'wave', 'other']
+    connection_types = ['default', 'wired', 'wireless-single', 'wireless-multiple']
+    cost_of_service_types = ['default', 'less_than_25', '25_50', '50_75', '75_100', '100_or_above', 'dont_know']
 
     try:
         if request.args.get('longitude') and request.args.get('latitude'):
@@ -363,10 +364,13 @@ def append_extra_data():
     else:
         connection_type = None
 
-    if request.args.get('location_type') in location_types:
-        location_type = request.args.get('location_type')
+    if request.args.get('isp_user') in isp_types:
+        if request.args.get('isp_user') == 'other':
+            isp_user = request.args.get('other')
+        else:
+            isp_user = request.args.get('isp_user')
     else:
-        location_type = None
+        isp_user = None
 
     try:
         advertised_download = int(float(request.args.get('advertised_download')))
@@ -399,7 +403,11 @@ def append_extra_data():
         app.logger.exception(e)
 
     try:
-        cost_of_service = float(request.args.get('cost_of_service'))
+    	if request.args.get('cost_of_service') in cost_of_service_types:
+        	cost_of_service = request.args.get('cost_of_service')
+    	else:
+        	cost_of_service = None
+
     except Exception, e:
         cost_of_service = None
         app.logger.exception(e)
@@ -420,7 +428,7 @@ def append_extra_data():
                 advertised_upload = advertised_upload,
                 actual_upload = actual_upload,
                 min_rtt = min_rtt,
-                location_type = location_type,
+                isp_user = isp_user,
                 client_ip = int(ipaddress.ip_address(unicode(request.remote_addr))),
                 cost_of_service = cost_of_service))
             conn.execute(query)
