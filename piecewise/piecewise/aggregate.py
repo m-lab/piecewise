@@ -644,6 +644,82 @@ class _MedianUpload(Statistic):
         median = func.median(aggregate_table.c.upload_samples)
         return query.column(label("upload_median", median))
 
+class _DownloadMin(Statistic):
+    label = "DownloadMin"
+
+    @property
+    def postgres_columns(self):
+        return [Column('download_min', Integer)]
+
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.download_min]
+        mean = full_table.c.download_octets / full_table.c.download_time
+        is_safe = and_(full_table.c.download_time > 0, full_table.c.download_flag == 't')
+        safe_mean = case([(is_safe, mean)], else_ = None)
+        select_query = (query.column(func.min(safe_mean)))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table):
+        a = aggregate_table
+        return query.column(label("download_min", func.min(a.c.download_min)))
+
+class _DownloadMax(Statistic):
+    label = "DownloadMax"
+
+    @property
+    def postgres_columns(self):
+        return [Column('download_max', Integer)]
+
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.download_max]
+        mean = full_table.c.download_octets / full_table.c.download_time
+        is_safe = and_(full_table.c.download_time > 0, full_table.c.download_flag == 't')
+        safe_mean = case([(is_safe, mean)], else_ = None)
+        select_query = (query.column(func.max(safe_mean)))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table):
+        a = aggregate_table
+        return query.column(label("download_max", func.max(a.c.download_max)))
+
+class _UploadMin(Statistic):
+    label = "UploadMin"
+
+    @property
+    def postgres_columns(self):
+        return [Column('upload_min', Integer)]
+
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.upload_min]
+        mean = full_table.c.upload_octets / full_table.c.upload_time
+        is_safe = and_(full_table.c.upload_time > 0, full_table.c.download_flag == 'f')
+        safe_mean = case([(is_safe, mean)], else_ = None)
+        select_query = (query.column(func.min(safe_mean)))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table):
+        a = aggregate_table
+        return query.column(label("upload_min", func.min(a.c.upload_min)))
+
+class _UploadMax(Statistic):
+    label = "UploadMin"
+
+    @property
+    def postgres_columns(self):
+        return [Column('upload_max', Integer)]
+
+    def build_query_to_populate(self, query, full_table, aggregate_table):
+        insert_columns = [aggregate_table.c.upload_max]
+        mean = full_table.c.upload_octets / full_table.c.upload_time
+        is_safe = and_(full_table.c.upload_time > 0, full_table.c.download_flag == 'f')
+        safe_mean = case([(is_safe, mean)], else_ = None)
+        select_query = (query.column(func.max(safe_mean)))
+        return insert_columns, select_query
+
+    def build_query_to_report(self, query, aggregate_table):
+        a = aggregate_table
+        return query.column(label("upload_max", func.max(a.c.upload_max)))
+
 AverageRTT = _AverageRTT()
 MedianRTT = _MedianRTT()
 DownloadCount = _DownloadCount()
@@ -652,3 +728,7 @@ MedianDownload = _MedianDownload()
 UploadCount = _UploadCount()
 AverageUpload = _AverageUpload()
 MedianUpload = _MedianUpload()
+DownloadMin = _DownloadMin()
+DownloadMax = _DownloadMax()
+UploadMin = _UploadMin()
+UploadMax = _UploadMax()
