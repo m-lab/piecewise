@@ -68,7 +68,11 @@ known_statistics = {
        'MedianDownload' : piecewise.aggregate.MedianDownload,
        'MedianUpload' : piecewise.aggregate.MedianUpload,
        'DownloadCount' : piecewise.aggregate.DownloadCount,
-       'UploadCount' : piecewise.aggregate.UploadCount
+       'UploadCount' : piecewise.aggregate.UploadCount,
+       'DownloadMin' : piecewise.aggregate.DownloadMin,
+       'DownloadMax' : piecewise.aggregate.DownloadMax,
+       'UploadMin' : piecewise.aggregate.UploadMin,
+       'UploadMax' : piecewise.aggregate.UploadMax
    }
 
 known_key_types = {
