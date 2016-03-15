@@ -1,120 +1,435 @@
+<!DOCTYPE html>
+
 <html>
+
 <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <style>
-    path {
-        stroke: #000;
-        fill: none;
-    }
-
-    .tick line {
-        stroke: #000;
-    }
-
-    .domain path {
-        stroke: #000;
-    }
-    </style>
+	<meta charset='utf-8' />
+	<title>Seattle Broadband Map</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link href='css/ndt_d3.css' rel='stylesheet' />
+	<link href="css/jquery-ui-slider-pips.css" rel="stylesheet" />
+	<link href='css/jquery-ui.min.css' rel='stylesheet' />
+	<link href='css/mlab.css' rel='stylesheet' />
+	<script src='//api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.js'></script>
+	<script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src='js/mlab.js'></script>
+	<script src='js/ndt.js'></script>
+	<script src='js/ndt_d3.js'></script>
+	<script src='js/d3.v3.min.js'></script>
+	<script src='js/center.js'></script>
+	<script src="js/jquery-ui.min.js"></script>
+	<script src="js/jquery-ui-slider-pips.min.js"></script>
 </head>
+
 <body>
-    <h2>Piecewise</h2>
-    <div>
-    <select name='resolution' id='resolution'>
-        <option value='3600' selected>Hourly</option>
-        <option value='21600'>6-Hourly</option>
-        <option value='86400'>Daily</option>
-        <option value='604800'>Weekly</option>
-    </select>
-    <input type="date" name="after" id="after" min="2015-01-01" max="2015-01-31" value="2015-01-01">
-    </input>
-    <input type="date" name="before" id="before" min="2015-01-01" max="2015-01-31" value="2015-01-31">
-    </input>
-    </div>
-</body>
+
+<div id="spinner">
+	<div id="spin">&nbsp;</div>
+	<div id="loading">LOADING</div>
+</div>
+
+<div id="welcome-container">
+	<div id="header">
+		<div id="intro">
+			<h3>The City of Seattle is collecting information from residents about broadband experiences across the City. To contribute, please answer the following questions and then take our Broadband Speed Test:</h3>
+		</div>
+	</div>
+	<div id="sidebar">
+		<form action="/collector/collect" method="get" id="collector">
+			<div id="extra-data" class="ndt-related">
+				<div class="container">
+						<p><span class="required">*</span> Who is your Internet Service Provider?</p>
+						<p>
+							<select id="isp_user" name="isp_user" class="form-control">
+								<option value="default">------</option>
+								<option value="comcast">Comcast</option>
+								<option value="centurylink">CenturyLink</option>
+								<option value="wave">Wave</option>
+								<option value="other">Other</option>
+							</select>
+							<input type="text" name="other" id="isp_user_text" class="form-control" style="display:none;"/>
+						</p>
+				</div>
+				<div class="container">
+						<p><span class="required">*</span> How do you connect to the Internet?</p>
+						<p>
+							<select id="connection_type" name="connection_type" class="form-control">
+								<option value="default">------</option>
+								<option value="wired">Wired connection</option>
+								<option value="wireless-single">Wireless connection - 1 device</option>
+								<option value="wireless-multiple">Wireless connection - shared among multiple devices or households</option>
+							</select>
+						</p>
+				</div>
+				<div class="container">
+						<p><span class="required">*</span> How much do you pay, per month?</p>
+						<p>
+							<select id="cost_of_service" name="cost_of_service" class="form-control">
+								<option value="default">------</option>
+								<option value="less_than_25">Less than $25</option>
+								<option value="25_50">$25-$50</option>
+								<option value="50_75">$50-$75</option>
+								<option value="75_100">$75-$100</option>
+								<option value="100_or_above">$100+</option>
+								<option value="dont_know">Don't know</option>
+							</select>
+						</p>
+				</div>
+				<div class="container textboxes">
+						<p>What are your advertised upload and download speeds? <strong>(Optional)</strong></p>
+						<div class='expected-values'>
+						<p>Upload:</p>
+						<input name="advertised_upload" size="3"/><small> mbps</small>
+					</div><div class="expected-values">
+						<p>Download:</p>
+						<input name="advertised_download" size="3"/><small> mbps</small>
+						</div>
+				</div>
+				<div class="container" id="consent-text">
+					<p>
+						<span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> I understand that the data collected from this test will be anonymized and aggregated for publication to the Broadband Map and <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.
+					</p>
+				</div>
+				<input name="latitude" id="latitude" type="hidden" />
+				<input name="longitude" id="longitude" type="hidden" />
+				<input name="actual_download" id="actual_download" type="hidden" />
+				<input name="actual_upload" id="actual_upload" type="hidden" />
+				<input name="min_rtt" id="min_rtt" type="hidden" />
+				<input name="bigquery_key" id="bigquery_key" type="hidden" />
+			</div>
+			<div id="test-container">
+				<div id="ndt-div">
+					<div id="ndt-svg"></div>
+				</div>
+				<div id="approx-loc">
+					<h3 class="league-gothic">Test your speed!</h3>
+					<div id="ndt-status"></div>
+				</div>
+			</div>
+			<div id="ndt-results" class="ndt-related">
+				<div class="container">
+					<div id="your-results">
+						<h3 class="league-gothic">Your test results</h3>
+						<p>Download speed: <span id="s2cRate"></span> mbps</p>
+						<p>Upload speed: <span id="c2sRate"></span> mbps</p>
+						<p>Minimum Round Trip Time: <span id="MinRTT"></span> ms</p>
+					</div>
+					<div id="thankyou">
+						<h3 class="league-gothic">Thank you!</h3>
+						<strong>Your test results will be combined with others and will appear on the map at the end of the month.</strong><br /><br />
+						<strong>What do you want to do next?</strong>
+						<ul>
+						  <li><a href="#" onclick="showMap()">View all results to-date on a map of Seattle</a></li>
+						  <li><a href="http://www.seattle.gov/broadband-speed-test-about" target="_parent">Learn more about this test and how to improve your speed</a></li>
+						  <li><a href="#" onclick="showSocialShare()">Share this test with your friends, colleagues, and neighbors</a></li>
+						</ul>
+						<div id="socialshare">
+						  	<!-- Social Button HTML -->
+
+							<!-- Twitter -->
+							<a href="http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea" target="_blank" class="share-btn twitter">
+							    <i class="fa fa-twitter"></i>
+							</a>
+
+							<!-- Google Plus -->
+							<a href="https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn google-plus">
+							    <i class="fa fa-google-plus"></i>
+							</a>
+
+							<!-- Facebook -->
+							<a href="http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn facebook">
+							    <i class="fa fa-facebook"></i>
+							</a>
+
+							<!-- StumbleUpon (url, title) -->
+							<a href="http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test" target="_blank" class="share-btn stumbleupon">
+							    <i class="fa fa-stumbleupon"></i>
+							</a>
+
+							<!-- Reddit (url, title) -->
+							<a href="http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test" target="_blank" class="share-btn reddit">
+							    <i class="fa fa-reddit"></i>
+							</a>
+
+							<!-- LinkedIn -->
+							<a href="http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn linkedin">
+							    <i class="fa fa-linkedin"></i>
+							</a>
+
+							<!-- Email -->
+							<a href="mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn email">
+							    <i class="fa fa-envelope"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div id="icons">
+			<div id="take-test" onclick="runTest()">
+				<img src="images/speed.svg" id="test-icon" alt="Take the Speed Test" title="Take the Speed Test" /><span class="button-label">Take the Speed Test</span>
+			</div>
+			<div id="explore-map" onclick="showMap()">
+				<img src="images/compass.png" id="exploreMap" alt="Browse the Broadband Map" title="Browse the Broadband Map" /><span class="button-label">Browse the Broadband Map</span>
+			</div>
+			<div id="learn-more">
+				<a href="http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test" target="_parent" ><img src="images/about.svg" alt="Learn more about this test." title="Learn more about this test." /><span class="button-label">Learn More</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script>
-(function() {
-    var margin = { top: 50, bottom: 50, left: 50, right: 50 };
-    var width = 900 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
-    var svg = d3.select("body").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
-    var x = d3.time.scale()
-        .range([0, width]);
-    var y = d3.scale.linear()
-        .range([height, 0]);
+	var ndtServer,
+		ndtPort = "3001",
+		ndtPath = "/ndt_protocol",
+		ndtUpdateInterval = 1000,
+		c2sRate,
+		s2cRate,
+		MinRTT;
 
-    var line = d3.svg.line();
-    var path, xAxisNode, yAxisNode;
+	getNdtServer();
 
-    var yAxis = d3.svg.axis().orient('left');
-    var xAxis = d3.svg.axis().orient('bottom'); //.ticks(5);
+	uncheckAcknowledgement();
 
-    d3.csv('/stats/q?format=csv&stats=MedianRTT&b.time_slices=3600', function(data) {
-        data = retype(data);
-        x.domain([d3.min(data, function(d) { return d.time_slice; }), d3.max(data, function(d) { return d.time_slice; })]);
-        y.domain([0, d3.max(data, function(d) { return d.MedianRTT; })]);
-        xAxis.scale(x);
-        yAxis.scale(y);
-        yAxisNode = svg.append('g')
-            .attr('class', 'y axis')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-            .call(yAxis);
-        xAxisNode = svg.append('g')
-            .attr('class', "x axis")
-            .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
-            .call(xAxis);
-        line
-            .x(function(d) { return x(d.time_slice); })
-            .y(function(d) { return y(d.MedianRTT); })
-            .interpolate('basis');
-        path = svg.append("g")
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-            .append("path");
-        path.attr("d", line(data));
-    });
+	NDT_meter = new NDTmeter('#ndt-svg');
+	NDT_meter.meter.on("click", function () {
+		NDT_client = new NDTjs(ndtServer, ndtPort, ndtPath, NDT_meter, ndtUpdateInterval);
+		NDT_client.startTest();
+	});
 
-    var resPicker = document.getElementById('resolution');
-    var afterPicker = document.getElementById('after');
-    var beforePicker = document.getElementById('before');
+	if ("geolocation" in navigator) {
+		navigator.geolocation.getCurrentPosition(success, error);
+	}
 
-    function update() {
-        var res = resPicker.value,
-            after = date(afterPicker.value),
-            before = date(beforePicker.value) + (24 * 60 * 60);
-        afterPicker.max = beforePicker.value;
-        beforePicker.min = afterPicker.value;
-        d3.csv('/stats/q?format=csv&stats=MedianRTT&b.time_slices=' + res + '&f.time_slices=' + after + ',' + before, function(response) {
-            var data = retype(response);
-            x.domain([d3.min(data, function(d) { return d.time_slice; }), d3.max(data, function(d) { return d.time_slice; })]);
-            y.domain([0, d3.max(data, function(d) { return d.MedianRTT; })]);
-            xAxis.scale(x);
-            yAxis.scale(y);
-            yAxisNode.call(yAxis);
-            xAxisNode.call(xAxis);
-            path.attr("d", line(data));
-        });
-    }
+	function success(position) {
 
-    function date(s) {
-        return (new Date(s)).getTime() / 1000;
-    }
+		document.getElementById('latitude').value = position.coords.latitude;
+		document.getElementById('longitude').value = position.coords.longitude;
 
-    function retype(d) {
-        d.map(function(r) { 
-            d.time_slice = new Date(d.time_slice * 1000);
-            d.MedianRTT = +d.MedianRTT
-        }); 
-        d.sort(function(a,b) { return b.time_slice - a.time_slice; })
-        return d;
-    }
+		var xhr = new XMLHttpRequest(),
+		currentLocationURL = "http://nominatim.openstreetmap.org/reverse?format=json&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&zoom=18&addressdetails=1";
 
-    resPicker.onchange = update;
-    afterPicker.onchange = update;
-    beforePicker.onchange = update;
-})();
+		var currentLoc;
+		xhr.open('GET', currentLocationURL, true);
+		xhr.send();
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+					currentLoc = JSON.parse(xhr.responseText);
+					console.log("Location received");
+
+					// currentLocText.text(currentLoc.address.road + currentLoc.address.neighbourhood + currentLoc.address.suburb + currentLoc.address.city + currentLoc.address.state);
+					$('#mobile-container').append('<div id="mobile-approx-loc"></div>')
+					$('#approx-loc, #mobile-approx-loc').append("<p>Searching from:</p><p>" + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state + "</p>");
+				} else {
+					console.log('Location lookup failed');
+				}
+			}
+		};
+	}
+
+	function error(error) {
+		document.getElementById('msg').innerHTML = 'ERROR(' + error.code + '): ' + error.message;
+	}
+
+	function getNdtServer () {
+		var xhr = new XMLHttpRequest(),
+			mlabNsUrl = 'http://mlab-ns.appspot.com/ndt?format=json';
+
+		xhr.open('GET', mlabNsUrl, true);
+		xhr.send();
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState === 4) {
+				if (xhr.status === 200) {
+					ndtServer = JSON.parse(xhr.responseText).fqdn;
+					console.log('Using M-Lab Server ' + ndtServer);
+				} else {
+					console.log('M-Lab NS lookup failed.');
+				}
+			}
+		};
+	};
 </script>
+
+<div id='map'>
+<div id="mapview-icons">
+	<a href="index.html" alt="Take the Speed test" title="Take the Speed Test"><img src="images/speed.svg" id="mapview-test-icon" alt="Take the Speed test" title="Take the Speed Test" /></a>
+	<a href="http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test" target="_parent" ><img src="images/about.svg" alt="Learn more  about this test." title="Learn more about this test." /></a>
+</div>
+</div>
+<script>
+
+// If set to 'hex' then GeoJSON files are assumed to be named like
+// 'YYYY_MM-<resolution>.json', where 3 files exist for each of resolutions
+// 'low', 'medium', 'high'.  If anything other than 'hex', then this value is
+// the MMMM_YY- suffix to look for. For example:
+// If set to 'city_council_districts', then the system will look for
+// GeoJSON files like 'MMMM_YY-city_council_districts.geojson'.
+var polygonType = 'census_block_groups';
+
+// Either 'topojson' or 'geojson'.  The Node.js script creates both TopoJSON and
+// GeoJSON files.  TopoJSON files are significantly smaller in size, but need to
+// be converted to GeoJSON by the browser.  There may be some balance between
+// loading a smaller file across the network and the processing time on the
+// client-side to convert the TopJSON to GeoJSON.  I would conjecture that
+// the network is the most limiting factor and that generally TopoJSON will be
+// the right choice.  TODO: prove this theory.
+var jsonType = "topojson";
+
+
+// The minimum number of data points in any given polygon for a it to be
+// considered statistically relevant.  These cells will either not be displayed
+// or will be displayed with a different styling.
+var minDataPoints = 5;
+
+// Defines how each overlay is treated on load.  If an overlay is enabled, then
+// there will be a checkbox for it in the layers control. 'defaultOn' determines
+// whether it will be displayed by default. NOTE: If only a single overlay is
+// enabled, then no checkbox will be displayed, since it doesn't make much sense
+// to disable the only meaningful layer that exists.
+var overlays = {
+	'polygon': {
+		'enabled': true,
+		'defaultOn': true
+	},
+	'plot': {
+		'enabled': false,
+		'defaultOn': false
+	}
+};
+
+// Defines the layers that are going to be added to the map.
+var geoLayers = {
+	'census_block_groups': {
+		'name': 'Census block groups',
+		'polygonFile': 'seattle_census10_blockgroups.topojson',
+		'dataUrl': 'stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
+		'dbKey': 'geoid10',
+		'geoKey': 'GEOID10',
+		'cache': null,
+		'layer': null
+	},
+};
+
+// Which of the geoLayers should be the one added to the map by default
+var defaultLayer = 'census_block_groups';
+
+// If set to true, then prefetch the GeoJSON files into a local cache.  WARNING:
+// You may not want to enable if you expect mobile, low bandwidth, or otherwise
+// bandwidth restricted users, as this can pull in many megabytes of data.
+var seedCache = false;
+
+// The inteval (in milliseconds) to use when animating the map.
+var animateInterval = 1500;
+
+// Center and zoom level of map.  center may be pulled in via js/center.js, but
+// if not then just set it to the center of the USA.
+if ( typeof center == 'undefined' ) {
+	var center = [38.8961302513129,-99.04025268554688]; //USA
+}
+var zoom = 11;
+
+// These are the labels that will be used for the month slider in the control
+// box in the lower left corner.
+var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct',
+	'Nov','Dec'];
+
+// An object which will hold cached GeoJSON files so that we don't have to fetch
+// them from the server more than once.  This could potentially be problematic
+// if there are many files and they are large.
+var geoJsonCache = {};
+var geometryCache = null;
+
+// The oldest year and month for which we have data.
+var startYear = 2014;
+var startMonth = 1;
+
+// Get current year/month into variables
+var currentYear = new Date().getFullYear();
+var currentMonth = new Date().getMonth() + 1;
+// Zero pad the front of the month
+currentMonth = currentMonth < 10 ? '0' + currentMonth : currentMonth;
+
+// Be sure that we actually have data for the current month.  If not, then fall
+// back to the previous month.
+var start = Date.UTC(currentYear, currentMonth - 1, 1) / 1000;
+var end = Math.floor(Date.now() / 1000);
+var dataUrl = geoLayers[defaultLayer]['dataUrl'] + start + ',' + end;
+$.ajax({
+	url: dataUrl,
+	dataType: 'json',
+	async: false,
+	success: function(resp) {
+		if ( ! resp.features.length ) {
+			if ( currentMonth == '01' ) {
+				currentMonth = 12;
+				currentYear = currentYear - 1;
+			} else {
+				currentMonth = currentMonth - 1;
+				currentMonth = currentMonth < 10 ?
+					'0' + currentMonth : currentMonth;
+			}
+			console.log("No data for current year/month, using last" +
+				" month instead.");
+		}
+	}
+});
+
+// An object with the years and months we have data for.  This will be used to
+// auto-generate various form controls.
+var dates = {};
+var thisYear = startYear;
+while (thisYear <= currentYear) {
+	if (thisYear == currentYear) {
+		var months = [];
+		for (i = 1; i <= currentMonth; i++) { months.push(i) };
+		dates[thisYear] = months
+	} else {
+		dates[thisYear] = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+	}
+	thisYear++;
+}
+
+// Create the map
+var map = L.map('map', {zoomControl: false}).setView(center, zoom);
+map.scrollWheelZoom.disable();
+var control = L.control.zoom({position: 'topright'});
+map.addControl(control);
+var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
+		'contributors'
+});
+
+var mapboxLayer = L.tileLayer(
+		'https://{s}.tiles.mapbox.com/v3/newamerica.lcl1jan5/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
+});
+
+// Set the default base tile layer
+map.addLayer(mapboxLayer);
+
+// Add other base tile layer providers as needed
+var baseLayers = {
+	 'Mapbox': mapboxLayer
+};
+
+var layerCtrl = L.control.layers(baseLayers, null, { collapsed: false, position: 'bottomleft' });
+addControls();
+layerCtrl.addTo(map);
+addLegend();
+
+for (var geoLayer in geoLayers) {
+	setupLayer(geoLayer);
+}
+
+
+
+</script>
+
+</body>
+
 </html>

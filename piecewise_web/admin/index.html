@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Custom Data Admin</title>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<style>
+		#pagination { text-align: center; }
+		#page-previous, #page-next { display: none; }
+	</style>
+</head>
+
+<body>
+
+<div>
+	<span id="viewing-records"></span>
+</div>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th><a id="sort-id" href="/admin/?sort=id&order=asc">ID</a></th>
+			<th><a id="sort-verified" href="/admin/?sort=verified&order=desc">Verified</a></th>
+			<th><a id="sort-location_type" href="/admin/?sort=isp_user&order=desc">User Reported ISP</a></th>
+			<th><a id="sort-connection_type" href="/admin/?sort=connection_type&order=desc">Connection Type</a></th>
+			<th><a id="sort-advertised_download" href="/admin/?sort=advertised_download&order=desc">Advertised Download</a></th>
+			<th><a id="sort-advertised_upload" href="/admin/?sort=advertised_upload&order=desc">Advertised Upload</a></th>
+			<th><a id="sort-cost_of_service" href="/admin/?sort=cost_of_service&order=desc">Cost of Service</a></th>
+			<th><a id="sort-timestamp" href="/admin/?sort=timestamp&order=desc">Date</a></th>
+			<th>Latitude</th>
+			<th>Longitude</th>
+			<th>BigQuery Key</th>
+		</tr>
+	</thead>
+	<tbody id="custom-data">
+	</tbody>
+</table>
+
+<div id="pagination">
+	<a id="page-previous" href='#'>Previous</a>&nbsp;
+	<a id="page-next" href='#'>Next</a>
+</div>
+
+<script>
+var fields = [
+	'id',
+	'verified',
+	'isp_user',
+	'connection_type',
+	'advertised_download',
+	'advertised_upload',
+	'cost_of_service',
+	'timestamp',
+	'latitude',
+	'longitude',
+	'bigquery_key',
+];
+var page = Number(getQueryParam('page'));
+if (!page) {
+	page = 1;
+}
+var limit = 50;
+var queryString = window.location.search;
+setSortLinks();
+if (queryString) {
+	var	url = '/collector/retrieve' + queryString + '&limit=' + limit;
+} else {
+	var	url = '/collector/retrieve?limit=' + limit;
+}
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function () {
+	if (xhr.readyState === 4) {
+		if (xhr.status === 200) {
+ 			var response = JSON.parse(xhr.responseText);
+			if (response['record_count']) {
+				createRows(response);
+			}
+		}
+	}
+};
+xhr.open("GET", url, true);
+xhr.send();
+
+function createRows(resp) {
+	var records = resp['records'];
+	var record_count = resp['record_count'];
+	for (var r = 0; r < records.length; r++) {
+		var tr = document.createElement('tr')
+		for (var f = 0; f < fields.length; f++) {
+			var td = document.createElement('td');
+			if (fields[f] == 'timestamp') {
+				td.innerHTML = new Date(records[r][fields[f]]);
+			} else if (fields[f] == 'verified') {
+				var cb = document.createElement('input');
+				cb.type = 'checkbox';
+				cb.value = records[r]['id'];
+				cb.addEventListener('change', changeVerification);
+				if (records[r][fields[f]]) {
+					cb.checked = true;
+				}
+				td.appendChild(cb);
+			} else {
+				td.innerHTML = records[r][fields[f]];
+			}
+			tr.appendChild(td);
+		}
+		document.getElementById('custom-data').appendChild(tr);
+	}
+	if (record_count > limit) {
+		var pagePrev = document.getElementById('page-previous');
+		var pageNext = document.getElementById('page-next');
+		if (page > 1) {
+			pagePrev.setAttribute('href', '/admin/' + queryString.replace(/page=\d+/,
+					'page=' + (page - 1)));
+			pageNext.setAttribute('href', '/admin/' + queryString.replace(/page=\d+/,
+					'page=' + (page + 1)));
+			pagePrev.style.display = 'inline';
+			if (page * limit > record_count) {
+				pageNext.style.display = 'none';
+				document.getElementById('viewing-records').innerHTML = 'Viewing ' +
+						((page - 1) * limit + 1) + ' to ' + record_count + ' of ' +
+						record_count + ' records.';
+			} else {
+				pageNext.style.display = 'inline';
+				document.getElementById('viewing-records').innerHTML = 'Viewing ' +
+						((page - 1) * limit + 1) + ' to ' + (page * limit) + ' of ' +
+						record_count + ' records.';
+			}
+		} else {
+			if (queryString.search('page')) {
+				pageNext.setAttribute('href', '/admin/' + queryString.replace(/page=\d+/,
+						'page=' + (page + 1)));
+			} else {
+				pageNext.setAttribute('href', '/admin/' + queryString + '&page=2');
+			}
+			pagePrev.style.display = 'none';
+			pageNext.style.display = 'inline';
+			document.getElementById('viewing-records').innerHTML = 'Viewing 1 to ' +
+					limit + ' of ' + record_count + ' records.';
+		}
+	} else {
+		document.getElementById('viewing-records').innerHTML = 'Viewing 1 to ' +
+				record_count + ' of ' + record_count + ' records.';
+	}
+}
+
+function changeVerification() {
+	var that = this;
+	if (this.checked === true) {
+		var url = '/collector/verify?id=' + this.value;
+	} else {
+		var url = '/collector/unverify?id=' + this.value;
+	}
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState === 4) {
+			if (xhr.status !== 200) {
+				alert('Failed to update record with ID ' + that.value +
+						' (' + xhr.status + ').');
+				that.checked = that.checked ? false : true;
+			}
+		}
+	}
+	xhr.open("GET", url, true);
+	xhr.send();
+}
+
+function getQueryParam(p) {
+	var parts = window.location.search.substr(1).split('&');
+  var params = {};
+	for (var i = 0; i < parts.length; i++) {
+		var param = parts[i].split('=')[0];
+		var value = parts[i].split('=')[1];
+		params[param] = value;
+	}
+	return params[p];
+}
+
+function setSortLinks() {
+	var sort = getQueryParam('sort');
+	var order = getQueryParam('order');
+	if (sort) {
+		var sortLink = document.getElementById('sort-' + sort);
+		if (order && order == 'desc') {
+				sortLink.setAttribute('href', '/admin/?sort=' + sort + '&order=asc');
+		} else {
+				sortLink.setAttribute('href', '/admin/?sort=' + sort + '&order=desc');
+		}
+	}
+}
+
+</script>
+
+</body>
+
+</html>
