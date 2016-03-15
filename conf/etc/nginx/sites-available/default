@@ -47,7 +47,7 @@ server {
 	location /collector/retrieve {
 		try_files $uri @collector;
 		auth_basic "Custom Data";
-		auth_basic_user_file /opt/bq2geojson/htpasswd;
+		auth_basic_user_file /opt/piecewise/htpasswd;
 	}
 
 	location / {

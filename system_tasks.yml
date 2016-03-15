@@ -37,6 +37,7 @@
       - { src: piecewise, dest: piecewise }
       - { src: piecewise_web, dest: piecewise_web }
       - { src: collector, dest: collector }
+      - { src: htpasswd, dest: htpasswd }
 - name: Install required python modules
   pip: requirements={{ item }} state=latest
   with_items:
