@@ -60,7 +60,7 @@ server {
 
 	location /admin {
 		auth_basic "Custom Data Admin";
-		auth_basic_user_file /opt/bq2geojson/htpasswd;
+		auth_basic_user_file /opt/piecewise/htpasswd;
 	}
 
 	# Only for nginx-naxsi used with nginx-naxsi-ui : process denied requests
