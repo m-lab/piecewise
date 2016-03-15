@@ -47,7 +47,7 @@ server {
 	location /collector/retrieve {
 		try_files $uri @collector;
 		auth_basic "Custom Data";
-		auth_basic_user_file /opt/piecewise/htpasswd;
+		auth_basic_user_file /opt/piecewise.git/htpasswd;
 	}
 
 	location / {
@@ -60,7 +60,7 @@ server {
 
 	location /admin {
 		auth_basic "Custom Data Admin";
-		auth_basic_user_file /opt/piecewise/htpasswd;
+		auth_basic_user_file /opt/piecewise.git/htpasswd;
 	}
 
 	# Only for nginx-naxsi used with nginx-naxsi-ui : process denied requests
