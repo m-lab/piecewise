@@ -1,0 +1,20 @@
+---
+- name: Copy geo data to server
+  copy: src=seattle_example/{{ item.src }} dest=/opt/piecewise_web/{{ item.dest }}
+  with_items:
+      - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
+      - { src: seattle_blkgrpce10, dest: '' }
+      - { src: center.js, dest: js/center.js }
+- name: Copy extra_data.py to server
+  copy: src=seattle_example/extra_data.py dest=/opt/piecewise/
+- pip: name=ipaddress state=latest
+- name: Ingest census blocks to postgres
+  command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln seattle_blkgrpce10 -nlt MultiPolygon 'PG:user=postgres dbname=piecewise' /opt/piecewise_web/seattle_blkgrpce10/CENSUS10_blkgrp_WGS.shp
+- name: Install seattle piecewise configuration
+  copy: src=seattle_example/piecewise_config.json dest=/etc/piecewise/config.json
+- name: Restart uwsgi so piecewise config is detected
+  service: name=uwsgi state=restarted
+- command: python extra_data.py chdir=/opt/piecewise
+- name: Load example results table
+  shell: gunzip -c /opt/piecewise.git/seattle_example/seattle_bigquery_results.sql.gz | psql -U postgres piecewise
+  when: piecewise_env == "dev"
