@@ -96,7 +96,7 @@
     }],
     "filters": [
         { "type": "temporal", "after": "Jan 1 2014 00:00:00", "before" : "Jan 1 2050 00:00:00" },
-        { "type": "bbox", "bbox": [-122.6733398438,47.3630134401,-121.9509887695,47.8076208172] },
+        { "type": "bbox", "bbox": [-122.30,45.25,-123.25,45.76] },
         { "type": "raw", "query": "connection_spec.data_direction IS NOT NULL" },
         { "type": "raw", "query": "web100_log_entry.is_last_entry == true" },
         { "type": "raw", "query": "project == 0" },
