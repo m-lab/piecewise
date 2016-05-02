@@ -140,7 +140,7 @@ Piecewise will consolidate the data so that each timestamp is only represented o
 With this consolidated table we can get the mean round trip times over 10-second intervals by fetching only 1 row for each interval, something like this:
 
 ```
-    SELECT snapped_timestamp AS ts, rtt / sample_count AS AverageRTTFROM consolidated_statistics;
+SELECT snapped_timestamp AS ts, rtt / sample_count AS AverageRTTFROM consolidated_statistics;
 ```
 
 | ts | AverageRTT |
