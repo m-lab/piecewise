@@ -157,7 +157,7 @@ class Aggregator(object):
                 "8 * web100_log_entry.snap.HCThruOctetsAcked AS download_octets",
                 "web100_log_entry.snap.Duration AS upload_time",
                 "8 * web100_log_entry.snap.HCThruOctetsReceived AS upload_octets",
-                "CONCAT(String(web100_log_entry.snap.Duration), String(web100_log_entry.snap.CountRTT), String(web100_log_entry.snap.SegsIn), String(web100_log_entry.snap.SegsOut)) AS bigquery_key",
+                "CONCAT(String(web100_log_entry.snap.StartTimeStamp % 1000000), String(web100_log_entry.snap.LocalAddress)) AS bigquery_key",
                 "test_id"
         ]
 
