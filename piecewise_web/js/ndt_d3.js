@@ -144,9 +144,8 @@ NDTmeter.prototype.onfinish = function (passed_results) {
     'MinRTT': 'Latency'
   };
 
-  document.getElementById('bigquery_key').value = passed_results['Duration'] +
-      passed_results['CountRTT'] + passed_results['PktsIn'] +
-      passed_results['PktsOut'];
+  document.getElementById('bigquery_key').value =
+      passed_results['StartTimeUsec'] + window.ndtServerIp
 
   for (metric_name in results_to_display) {
     if (results_to_display.hasOwnProperty(metric_name)  &&
