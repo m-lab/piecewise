@@ -187,7 +187,7 @@ class Aggregator(object):
                 before = time.gmtime(f.before)[:2]
                 valid_year_months = itertools.ifilter(lambda x: after <= x <= before, valid_year_months)
 
-        return ['plx.google:m_lab.%04d_%02d.all' % ym for ym in valid_year_months]
+        return ['plx.google:m_lab.ndt.all']
 
     def bigquery_row_to_postgres_row(self, bq_row):
         bq_row = [f['v'] for f in bq_row['f']]
