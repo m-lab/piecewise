@@ -184,6 +184,7 @@
 
 <script>
 	var ndtServer,
+		ndtServerIp,
 		ndtPort = "3001",
 		ndtPath = "/ndt_protocol",
 		ndtUpdateInterval = 1000,
@@ -246,6 +247,7 @@
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {
 					ndtServer = JSON.parse(xhr.responseText).fqdn;
+					ndtServerIp = JSON.parse(xhr.responseText).ip;
 					console.log('Using M-Lab Server ' + ndtServer);
 				} else {
 					console.log('M-Lab NS lookup failed.');
