@@ -32,28 +32,29 @@ Once subscribed to M-Lab Discuss, your account will be whitelisted to query the 
 1. Go to Google Developers console and log in using the account that was whitelisted by M-Lab:[ https://console.developers.google.com/project]
 
 2. Create a Google-API project (or choose an already existing project) and turn on permissions for the BigQuery API
-(https://console.developers.google.com/project)![Create a project](docs/images/dev-console-1.png)
+(https://console.developers.google.com/project)![Create a project](images/dev-console-1.png)
 
-![New project details](docs/images/dev-console-2.png)
+![New project details](images/dev-console-2.png)
 
 If you are using an account maintained by an organization, use of Google Apps APIs may need to be enabled by the organization's Google Apps domain administrator. If this is the case, you may see notification errors to this effect.
 
-![Notification errors](docs/images/dev-console-4.png)
+![Notification errors](images/dev-console-4.png)
 
 If the project was created successfully, a notification should appear like the one below.
 
-![Successful notification](docs/images/dev-console-5.png)
+![Successful notification](images/dev-console-5.png)
 
 
 3. Turn on billing for the project in Google console (you will not be billed because your account is whitelisted, but Big Query requires API applications to have billing enabled)
 
-![Enable billing image 1](docs/images/dev-console-6.png)
-![Enable billing image 2](docs/images/dev-console-7.png)
+![Enable billing image 1](images/dev-console-6.png)
+![Enable billing image 2](images/dev-console-7.png)
 
 4. Lastly, view your Project's Information details and make note the Project ID number. You'll use it later to configure your instance of Piecewise.
 
-![View Project Information image 1](docs/images/dev-console-8.png)
-![View Project Information image 2](docs/images/dev-console-9.png)
+![View Project Information image 1](images/dev-console-8.png)
+![View Project Information image 2](images/dev-console-9.png)
+
 ### Configure Piecewise for your location
 
 The purpose of the Piecewise server is to consume M-Lab data from a particular geographic region and to aggregate it by sub-regions within that area. In its current state (Nov.2015), configuring a new Piecewise server for a new region will require you to gather some information, modify a few files, and then run the Piecewise ingest and aggregate scripts.
