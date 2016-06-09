@@ -1,6 +1,6 @@
 ## Deploying a Piecewise server
 
-If you have completed the [Install](INSTALL.md) and [Configure](CONFIG.md) documents, you should be ready to deploy your Piecewise server. 
+If you have completed the [Install](INSTALL.md) and [Configure](CONFIG.md) documents, you should be ready to deploy your Piecewise server.
 
 By default, Piecewise uses [Vagrant](http://www.vagrantup.com) to deploy a virtual machines using an [Ansible](http://ansible.com/) playbook.
 
@@ -22,9 +22,9 @@ At this point you should be at a terminal inside the VM. The files for your Piec
 ```
 /opt/piecewise
 
-and 
+and
 
-/opt/bq2geojson
+/opt/piecewise_web
 ```
 
 3. Next, edit the file _piecewise/piecewise/bigquery.py_ and replace the value for **PROJECT_NUMBER** with the project number from Google Developers Console.
@@ -40,18 +40,28 @@ $ sudo python -m piecewise.ingest
 
 On the first run of **piecewise.ingest**, you will be prompted with a URL to authenticate your piecewise instance with the Google account that M-Lab whitelisted. Open the URL provided, authenticate and allow access, then copy verification code onto the command line.
 
-If successful, you will see a number of messages about BigQuery jobs running. If you get an error, it may be due to a misconfiguration or if you used a different account than the one associated with your project in the Google Developer Console. 
+If successful, you will see a number of messages about BigQuery jobs running. If you get an error, it may be due to a misconfiguration or if you used a different account than the one associated with your project in the Google Developer Console.
 
 Once the last command above completes with no errors, load [http://localhost:8080](http://localhost:8080) in the web browser of the vagrant host machine. The host machine also provides the same web service on its own IP address. You should see a map centered around the region you specified previously, with data aggregated by the shapes you provided.
 
-##Testing changes
+## Providing Authentication to /admin
+
+By default, Piecewise provides a basic administrative interface to view, verify and unverify results submitted by users. After running the Piecewise setup script, you should **protect the /admin directory using htaccess or other means of authentication**.
+
+SSH into your VM and add htaccess-based or other permissions for the directory: **/opt/piecewise_web/admin**
+
+In our sample directory, we put our htaccess file here:
+
+      /opt/piecewise.git/htaccess
+
+## Testing changes
 
 The virtual machine management tool [Vagrant](http://vagrantup.com/) has convenient integration with Ansible which makes testing changes to the deployment script easier to do without potentially causing problems on a public server.
 When the virtual machine is running, `vagrant provision` will re-run the Ansible script.
 You can also destroy the virtual machine in order to test the deployment in a default setup using `vagrant destroy -f && vagrant up`.
 The `vagrant up` command will automatically run the provisioning tool the first time the virtual machine is used after `vagrant destroy`.
 
-##How the deployment script sets things up
+## How the deployment script sets things up
 
 Once the deployment script finishes without errors, Piecewise and some accompanying software will be deployed on the system.
 
@@ -70,23 +80,28 @@ Once the deployment script finishes without errors, Piecewise and some accompany
 
 Piecewise itself reads configuration from a file in `/etc/piecewise/config.json` and the web API logs errors to `/var/log/piecewise/wsgi.log` .
 
-### Customizing the Front-end 
+### Customizing the Front-end
 
 When we use vagrant to deploy a VM, the web server on the VM hosts files here:
 ```
-/opt/bq2geojson/html/
+/opt/piecewise_web/
 ```
-When deploying, the bq2geojson repo is pulled in and deployed: [https://github.com/m-lab/bq2geojson](https://github.com/m-lab/bq2geojson) 
 
-Therefore, to prototype changes to the map example that is a front-end to piecewise, we can use the following workflow:
+To prototype changes to the map example that is a front-end to piecewise, you have two options:
 
-* Within the Vagrant VM environment change to the web directory for bq2geojson:
+1. Prototype changes within the Vagrant VM environment, or with web browser based developer tools.
+
+* If you're inside the VM, change to the website directory and make changes directly:
 ```
-# cd /opt/bq2geojson/html
+# cd /opt/piecewise_web
 ```
-* Make changes, preview on the localhost server, track changes with git (the directory above is a git repo)
+
+2. Make edits to files in the **piecewise_web** folder before deploying Piecewise with Vagrant.
+
+* Note that changes you make inside the VM must be replicated in the repository outside the VM to take effect for future deployments.
 
 ### Managing a Deployed Instance of Piecewise
+
 The following are some useful notes and commands for managing your Piecewise server after deployment.
 
 * Pulling in new changes to piecewise backend
@@ -98,7 +113,7 @@ sudo git pull
 * Updates collector, piecewise and piecewise web
 TBD
 
-* Cron jobs 
+* Cron jobs
 TBD
 
 * Restarting web services
@@ -107,11 +122,6 @@ sudo service uwsgi restart
 sudo service nginx restart
 ```
 
-* pulling in new frontend changes
-```
-cd /opt/bq2geojson
-sudo git pull
-```
  * Customizing database tables or post-test web form
    * Files you need to edit to add tables to extra_data table and web form:
 ```
@@ -126,7 +136,9 @@ The playbook included should allow redeployment - with pending updates in the pi
 Code will be replaced but the database will not be modified, so you may need to re-ingest the data to complete the update.
 
 ## Notes on Deploying to any machine (or VM) without Vagrant
+
 It is possible to deploy a piecewise server to any machine. These notes were taken during an installation on RHEL 7.1/Centos 7.1. Note that there is a piecewise branch for rhel7 that can be used to deploy to Red Hat or Centos machines.
+
   * Spin up a VM with the standard specs (2 core CPU, 4GB RAM, 40GB disk were used in our initial testing). It can be running pretty much any recent version of just about any Linux distro (RHEL 7.1 is fine).
   * If you don't already have one, create an SSH key pair to be used on the machine from which deployment to the VM will happen. This could easily just be your personal workstation or any other Linux machine. When you've created the key pair open the public key and copy it to your clipboard.
   * Login to the VM as root and add the public key from the previous step to /root/.ssh/authorized_keys. This will allow the user on the deployment workstation to do things via pubkey authentication on the VM as root without needing a password.
@@ -146,5 +158,14 @@ $ git clone https://github.com/opentechinstitute/piecewise.git
 
 You'll see Ansible do it's thing, printing information to the screen. It should complete within a few minutes, and (assuming your terminal supports color) you shouldn't see any red in the information printed. If this is the case, then the basic deployment went fine and should be done.
 
-The next steps are actually getting M-Lab data into the deployment, and is less of an ops/sysadmin thing than a application level thing. This document outlines the entire setup process one of our fellows went through while deploying to an Ubuntu box. See steps #8-#15 on populating your piecewise instance with M-Lab data.
+## Exporting Data from Postgres, Loading Data Into Postgres
+
+If you want to quickly get started developing with an example dataset, you can load a database dump. Note that the example below are from a running Seattle-based example. Your table names will likely be different, so please adjust as needed.
+
+  # Create database dump:
+     pg_dump -Ft -U postgres piecewise --clean -t results -t district_statistics -t block_statistics | gzip > dump.tar.gz
+
+  # Load database dump:
+      wget https://github.com/mchelen/piecewise-db-dump/raw/master/piecewise.seattle.db.tar.gz
+      gunzip -c piecewise.seattle.db.tar.gz | pg_restore -U postgres -d piecewise -O --clean
 
