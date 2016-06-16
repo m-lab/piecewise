@@ -12,6 +12,14 @@ Questions, comments, contributions, etc. about Piecewise should be addressed via
 
 Piecewise code can be found on Github: [https://github.com/opentechinstitute/piecewise](https://github.com/opentechinstitute/piecewise)
 
+## Get Started Documentation
+
+To get started with installing and configuring Piecewise, please review the links below to our current documentation. We suggest that you read all the documents in the order below.
+
+* [Installing Piecewise](docs/INSTALL.md)
+* [Configuring your instance for your location](docs/CONFIG.md)
+* [Deploying your Piecewise instance](docs/DEPLOY.md)
+
 ## Organization
 
 Piecewise contains the following Python modules:
@@ -25,7 +33,6 @@ Piecewise contains the following Python modules:
   These may resample the data dynamically.
 * `piecewise.wsgi` exposes the `query` functionality as a web service for consumption by JavaScript applications.
   The `piecewise_web` directory in this repository contains some sample visualizations using the d3 library.
-
 
 ## Contributions
 

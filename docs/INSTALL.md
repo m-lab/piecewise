@@ -2,12 +2,12 @@
 
 ### Server Requirements
 
-Piecewise should install and run on any Linux server, either within a virtual machine or on bare metal. Installation instructions here will focus on the default installation method to deploy inside a VM provisioned by Vagrant and Ansible. 
+Piecewise should install and run on any Linux server, either within a virtual machine or on bare metal. Installation instructions here will focus on the default installation method to deploy inside a VM provisioned by Vagrant and Ansible.
 
-As of September 2015, Piecewise has been successfully deployed on the following platforms:
+Piecewise has been successfully deployed on the following platforms:
 
 * Debian Jessie
-* Debian Stretch 
+* Debian Stretch
 * Ubuntu 14.04
 * RHEL 7
 
@@ -19,7 +19,7 @@ Server specs and requirements will vary based on implementation parameters like 
 
 ### Installing Piecewise Pre-requisites
 
-This section details how to install the prerequisite components that your server will need and obtaining the Piecewise software. At the end of this section you should have all the necessary software components for deploying your Piecewise server and will be ready to configure and deploy it. 
+This section details how to install the prerequisite components that your server will need and obtaining the Piecewise software. At the end of this section you should have all the necessary software components for deploying your Piecewise server and will be ready to configure and deploy it.
 
 #### Installation for Debian Jessie, Stretch
 
@@ -47,11 +47,11 @@ This section details how to install the prerequisite components that your server
         sudo apt-get update
         sudo apt-get install ansible
 
-2. Download and install virtual-box: 
+2. Download and install virtual-box:
 
         sudo apt-get install virtualbox
 
-3. Download and install vagrant: 
+3. Download and install vagrant:
 
         sudo apt-get install vagrant
 
