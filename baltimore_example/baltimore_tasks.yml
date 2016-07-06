@@ -11,7 +11,7 @@
 - name: Ingest census blocks to postgres
   command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln maryland_blkgrps -nlt MultiPolygon 'PG:user=postgres dbname=piecewise' /opt/piecewise_web/maryland_blkgrps/cb_2015_24_bg_500k.shp
 - name: Install Baltimore piecewise configuration
-  copy: src=baltimore_example/piecewise_config.json dest=/etc/piecewise/config.json
+  copy: src=baltimore_example/piecewise_config.json dest=/opt/piecewise/config.json
 - name: Restart uwsgi so piecewise config is detected
   service: name=uwsgi state=restarted
 - command: python extra_data.py chdir=/opt/piecewise
