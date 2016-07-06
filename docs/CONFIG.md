@@ -29,10 +29,11 @@ Once subscribed to M-Lab Discuss, your account will be whitelisted to query the 
 
 ### Configure an API project in the Google Developers console
 
-1. Go to Google Developers console and log in using the account that was whitelisted by M-Lab:[ https://console.developers.google.com/project]
+1. Go to [Google Developers console](https://console.developers.google.com/project) and log in using the account that was whitelisted by M-Lab.
 
 2. Create a Google-API project (or choose an already existing project) and turn on permissions for the BigQuery API
-(https://console.developers.google.com/project)![Create a project](images/dev-console-1.png)
+
+![Create a project](images/dev-console-1.png)
 
 ![New project details](images/dev-console-2.png)
 
@@ -65,9 +66,9 @@ Piecewise code in its current state is customized for its original use in the Se
 
 1. Copy the **seattle_example** folder, and rename key files:
 
-        cp -rf seattle_example baltimore_example
+        cp -rf seattle_example baltimore_example && cd baltimore_example
         mv seattle_tasks.yml baltimore_tasks.yml
-        mv seattle_center.py baltimore_center.py
+        mv seattle_center.py baltimore_center.py && cd ../
 
 2. Remove unneeded files:
 
@@ -234,15 +235,6 @@ This is the Ansible tasklist for the Baltimore example. The lines below preceded
 
 - command: python extra_data.py chdir=/opt/piecewise
 
-# The last four lines in this file can be safely deleted.
-# They were used in the development of the Seattle map to
-# load an exported set of M-Lab data into postgres upon install
-
-- name: Load example results table
-  shell: gunzip -c /opt/piecewise.git/seattle_example/seattle_bigquery_results.sql.gz | psql -U postgres piecewise
-  when: piecewise_env == "dev"
-
-
 ```
 
 3) **piecewise/baltimore_example/piecewise_config.json**
@@ -252,39 +244,21 @@ This is the main configuration file for your Piecewise deployment. You will be u
 We’ll use the Baltimore, MD example here and highlight what was changed. At the bottom of this file, in the **filters** json section, you'll edit the beginning and end dates, telling Piecewise the date range of M-Lab data to be consumed, as well as the geographic area from which to pull, using the bounding box coordinates you gathered earlier.
 
 When you first open it, you will find the options used for Seattle example, where the aggregation is done for council districts and census blocks. You can delete one of the "aggregations" blocks:
-```
-"aggregations": [{
-# DELETE from this line
-        "name": "by_council_district",
-        "statistics_table_name": "district_statistics",
-        "bins": [
-            { "type" : "spatial_join", "table" : "seattle_council_districts", "geometry_column" : "wkb_geometry", "key" : "district", "join_custom_data" : true },
-            { "type" : "time_slices", "resolution" : "month" },
-            { "type" : "isp_bins", "maxmind_table" : "maxmind",
-                "rewrites" : {
-...
-            { "type" : "AverageUpload" },
-            { "type" : "MedianUpload" }
-        ]
-    }, {
-# DELETE to the line above
-```
-
 Define the remaining "aggregations" block for your instance:
 
 ```
 "aggregations": [{
 
-      # change "by_county" to any name that is significant for
+      # change "by_census_block" to any name that is significant for
       #     the shapefile areas that you downloaded earlier
 
-       "name": "by_county",
+       "name": "by_census_block",
 
-      # change "county_statistics" to a table name significant
+      # change "block_statistics" to a table name significant
       #     to your project. This defines the table name to store
       #     aggregated statistics for your Piecewise server.
 
-       "statistics_table_name": "county_statistics",
+       "statistics_table_name": "block_statistics",
 
 
       # the bins section defines a field in your shapefile areas

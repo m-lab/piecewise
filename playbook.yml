@@ -4,5 +4,5 @@
     - include: system_tasks.yml
       sudo: True
     - include: user_tasks.yml
-    - include: seattle_example/seattle_tasks.yml
+    - include: baltimore_example/baltimore_tasks.yml
       sudo: True

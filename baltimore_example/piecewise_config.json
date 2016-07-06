@@ -1,0 +1,44 @@
+{ 
+    "piecewise_version" : "1.0",
+    "database_uri" : "postgresql+psycopg2://postgres:@/piecewise",
+    "cache_table_name": "results",
+    "aggregations": [{
+
+        # change by_census_block to any name that is significant for
+        # the shapefile areas that you downloaded earlier
+
+        # change "block_statistics" to a table name significant
+        # to your project. This defines the table name to store
+        # aggregated statistics for your Piecewise server.
+
+        "name": "by_census_block",
+        "statistics_table_name": "block_statistics",
+        "bins": [
+            { "type" : "spatial_join", "table" : "maryland_blkgrps", "geometry_column" : "wkb_geometry", "key" : "geoid", "key_type": "string", "join_custom_data" : true },
+            { "type" : "time_slices", "resolution" : "month" },
+            { "type" : "isp_bins", "maxmind_table" : "maxmind", 
+                "rewrites" : {
+                    
+                } }
+        ],
+        "statistics": [
+            { "type" : "AverageRTT" },
+            { "type" : "MedianRTT" },
+            { "type" : "DownloadCount" },
+            { "type" : "AverageDownload" },
+            { "type" : "MedianDownload" },
+            { "type" : "UploadCount" },
+            { "type" : "AverageUpload" },
+            { "type" : "MedianUpload" }
+        ]
+    }],
+    "filters": [
+        { "type": "temporal", "after": "Jan 1 2014 00:00:00", "before" : "Jan 1 2050 00:00:00" },
+        { "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },
+        { "type": "raw", "query": "connection_spec.data_direction IS NOT NULL" },
+        { "type": "raw", "query": "(web100_log_entry.snap.HCThruOctetsAcked >= 8192 OR web100_log_entry.snap.HCThruOctetsReceived >= 8192)" },
+        { "type": "raw", "query": "(web100_log_entry.snap.State == 1 OR (web100_log_entry.snap.State >= 5 AND web100_log_entry.snap.State <= 11))" },
+        { "type": "raw", "query": "((web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) >= 9000000 OR web100_log_entry.snap.Duration >= 9000000)" },
+        { "type": "raw", "query": "((web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) < 3600000000 OR web100_log_entry.snap.Duration < 3600000000)" }
+    ]
+}
