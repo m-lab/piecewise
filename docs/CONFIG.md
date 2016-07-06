@@ -45,7 +45,6 @@ If the project was created successfully, a notification should appear like the o
 
 ![Successful notification](images/dev-console-5.png)
 
-
 3. Turn on billing for the project in Google console (you will not be billed because your account is whitelisted, but Big Query requires API applications to have billing enabled)
 
 ![Enable billing image 1](images/dev-console-6.png)
@@ -93,12 +92,12 @@ Next, we need to gather some information to configure your Piecewise server:
 
 First, we need to tell Piecewise the geographic area for which it should ingest M-Lab data. This will be in the form of four  coordinates.
 
-Use the tool of your choice to select the geographic area you’re interested in. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/) and searched for Baltimore, MD. You can also draw an arbitrary bounding box. After selecting an area, copy/paste the coordinates at the bottom of the page to use as the coordinates of your bounding box.
+Use the tool of your choice to select the geographic area you’re interested in. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/) and searched for Baltimore, MD. You can also draw an arbitrary bounding box. After selecting an area, change the settings in the lower left menu to CSV, then copy/paste the coordinates at the bottom of the page to use as the coordinates of your bounding box.
 
 Your coordinates should be in a format that looks like this:
 -76.711519,39.197207,-76.529453,39.372206
 
-Save these values to use a bit later.
+Open the file ```baltimore_example/piecewise_config.json```, and replace the bounding box coordinates with your coordinates on this line: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
 
 ###### Find the coordinates for the center of your map
 
