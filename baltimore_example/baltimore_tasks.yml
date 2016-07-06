@@ -14,4 +14,4 @@
   copy: src=baltimore_example/piecewise_config.json dest=/etc/piecewise/config.json
 - name: Restart uwsgi so piecewise config is detected
   service: name=uwsgi state=restarted
-- command: sudo python extra_data.py chdir=/opt/piecewise
+- command: python extra_data.py chdir=/opt/piecewise

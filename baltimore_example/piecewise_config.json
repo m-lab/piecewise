@@ -7,7 +7,7 @@
         # change by_census_block to any name that is significant for
         # the shapefile areas that you downloaded earlier
 
-        # change "block_statistics" to a table name significant
+        # change block_statistics to a table name significant
         # to your project. This defines the table name to store
         # aggregated statistics for your Piecewise server.
 
