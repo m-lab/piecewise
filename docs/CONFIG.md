@@ -383,21 +383,15 @@ This JSON file is arranged in sections with sub-elements. The relevant sections 
 ...
 ```
 
-1. Change "by_census_block" to any name that is significant for the shapefile areas that you downloaded earlier.
+1. Change ```"by_census_block"``` to any name that is significant for the shapefile areas that you downloaded earlier.
 
-2. Change "block_statistics" to a table name significant to your project. This defines the table name to store aggregated statistics for your Piecewise server.
+2. Change ```"block_statistics"``` to a table name significant to your project. This defines the table name to store aggregated statistics for your Piecewise server.
 
-3. In the sub-section labelled "bins", change:   "table" : "seattle_blkgrpce10"  
-                                           to:   "table" : "maryland_blkgrps"
-
-This table name is the same as the folder where you saved your geodata files.
+3. In the sub-section labeled ```"bins"```, change ```"table" : "seattle_blkgrpce10"``` to:   ```"table" : "maryland_blkgrps"```. This table name is the same as the folder where you saved your geodata files.
       
-                                  also change:   "key" : "geoid"
-                                           to:   "key" : "<unique key field name>"
+4. Also in the ```"bins"``` section, change: ```"key" : "geoid"``` to: ```"key" : "<unique key field name>"```. The key name is the unique field in your geodata file which is used to join aggregated M-Lab data to geodata regions.
 
-The key name is the unique field in your geodata file which is used to join aggregated M-Lab data to geodata regions.
-
-4. Optionally, you may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. 
+Optionally, you may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. 
 
 When it ingests and aggregates M-Lab data, Piecewise looks up the IP address from test results in the [Maxmind Geolite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) to find the [Autonmous System](https://en.wikipedia.org/wiki/Autonomous_system_%28Internet%29) (AS) associated with that IP address. These names are aggregated by Piecewise, but may not reflect the public names of ISPs which consumers in your region recognize. Additionally, ISPs often have multiple AS's. 
 
@@ -426,9 +420,9 @@ The "rewrites" section allows you to map recognizable ISP names to one or more A
 ...
 ```
 
-5. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
+1. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
 
-6. Replace the coordinates below with the bounding box coordinates you obtained earlier.
+2. Replace the coordinates below with the bounding box coordinates you obtained earlier.
 
 ```
 ...
@@ -444,7 +438,7 @@ At this point, we have customized all of the Piecewise backend components for a 
 
 ##### Update the map script to use your new location files and settings
 
-1. Open ```piecewise_web/index.html``` and find the JavaScript near the end of the file that begins with:
+Open ```piecewise_web/index.html``` and find the JavaScript near the end of the file that begins with:
 
 ``` 
     <script>
@@ -454,9 +448,9 @@ At this point, we have customized all of the Piecewise backend components for a 
     </script>
 ```
 
-Follow the instructions in the code comments to customize the map. Relevant code sections to change are pasted below, to result in a basic Piecewise instance for a new region.
+Follow the instructions in the code comments to customize the map. Relevant code sections to change are pasted below.
 
-1. Change the polygonType variable name to reflect the type of aggregation you're using if needed.
+**Change the polygonType variable name to reflect the type of aggregation you're using if needed**
 
 ```
 // polygonType is a variable name defining your aggregation regions. 
@@ -464,7 +458,7 @@ Follow the instructions in the code comments to customize the map. Relevant code
 var polygonType = 'census_block_groups';
 ```
 
-2. Change the minimum number of data points for a region to show aggregate M-Lab data.
+**Define the minimum number of data points for a region to show aggregate M-Lab data**
 
 ```
 // The minimum number of data points in any given polygon for a it to be
@@ -473,20 +467,7 @@ var polygonType = 'census_block_groups';
 var minDataPoints = 5;
 ```
 
-3. Define the layers that are going to be added to the map. 
-
-  * Change ```'census_block_groups'``` to match the value of ```var polygonType = ``` that you set in step #1.
-  * Change ```'name': 'Census block groups',``` to a more relevant name if needed.
-  * Change ```'polygonFile': 'seattle_census10_blockgroups.topojson',``` to the name of your topojson file. For example: ```'polygonFile': 'maryland_blkgrps_2015.json',``` 
-  * In the previous section of these instructions when editing ```piecewise_config.json```, if you changed the value in the **aggregation** section from  ```"name": "by_census_block",``` to something else, change the corresponding text in the line below:
-  ```
-    'dataUrl': 'stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
-  ```
-  * Change the dbKey and geoKey values to the key names used in your geofiles:
-  ```
-  'dbKey': 'geoid',
-  'geoKey': 'GEOID',
-  ```
+**Define the layers that are going to be added to the map**
 
 ```   
 var geoLayers = {
@@ -502,10 +483,22 @@ var geoLayers = {
 };
 ```
 
-4. Define your base tile layer 
+* Change ```'census_block_groups'``` to match the value of ```var polygonType = ``` that you set in step #1.
+* Change ```'name': 'Census block groups',``` to a more relevant name if needed.
+* Change ```'polygonFile': 'seattle_census10_blockgroups.topojson',``` to the name of your topojson file. For example: ```'polygonFile': 'maryland_blkgrps_2015.json',``` 
+* In the previous section of these instructions when editing ```piecewise_config.json```, if you changed the value in the **aggregation** section from  ```"name": "by_census_block",``` to something else, change the corresponding text in the line below:
+```
+  'dataUrl': 'stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
+```
+* Change the dbKey and geoKey values to the key names used in your geofiles:
+```
+'dbKey': 'geoid',
+'geoKey': 'GEOID',
+```
 
-To use Open Street Maps tiles, uncomment the lines below that start with ```var osmLayer ...``` by 
-removing "//" from the beginning of the line.
+**Define your base tile layer**
+
+To use Open Street Maps tiles, uncomment the lines below that start with ```var osmLayer ...``` by removing "//" from the beginning of the line.
 
 ```
 // Use Open Street Maps as a base tile layer
@@ -526,13 +519,13 @@ var mapboxLayer = L.tileLayer(
 });
 ```
 
-5. Set the default base layer
+**Set the default base layer**
 
-With the default base layer defined, we add it to the map.
+With the default base layer defined, we can now add it to the map.
 
 ```
 // Set the default base tile layer. 
-// If using Open Street Mapsr fe: map.addLayer(osmLayer);
+// If using Open Street Maps: map.addLayer(osmLayer);
 // If using Mapbox: map.addLayer(mapboxLayer);
 map.addLayer(mapboxLayer);
 ```
