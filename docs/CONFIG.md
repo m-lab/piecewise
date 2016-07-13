@@ -2,19 +2,19 @@
 
 We’re now ready to customize your copy of Piecewise for the region you care about. We recommend starting a text file to document information about your application that you’ll need to configure Piecewise, and that you might want to have on hand for your own documentation.
 
-### Steps to Configure and Deploy Piecewise
-
-Configuring and deploying Piecewise will involve the following steps:
+### Steps to configure and deploy Piecewise
 
   * Subscribe to M-Lab Discuss to whitelist a Google Developer account
   * Setup a project in Google Developer Console
   * Configure Piecewise for your location
 
-and will require the following information:
+You will need the following information:
+
   * Geographic coordinates forming a bounding box, for example: [-122.6733398438,47.3630134401,-121.9509887695,47.8076208172]
   * Shapefile(s) containing the sub-geographic areas by which the consumed raw data will be aggregated
-  * Topojson or geojson file(s) containing the same sub-geographic areas for the map front-end.
+  * Topojson or geojson file(s) created from your shapefile for the map front-end
   * A time range for which data should be consumed from M-Lab in format: Jan 1 2014 00:00:00
+  * A Google account
   * A [MapBox](https://www.mapbox.com/) account if you intend to use MapBox base maps
 
 ### Subscribe to M-Lab Discuss to Whitelist a Google Account to use with your Piecewise instance
@@ -69,7 +69,7 @@ When you first clone the Piecewise code, it is customized for its original use i
 
 In this example, we'll configure Piecewise for the city of Baltimore, Maryland, to aggregate M-Lab data by US Census Blocks.
 
-**Please note that all commands below assume you are using linux, unix or MacOS command line from inside the main piecewise folder cloned from Github.**
+**Please note that all commands below assume you are using linux or MacOS command line from inside the main ```piecewise``` folder cloned from Github.**
 
 
 ##### Rename key folders and files
@@ -95,7 +95,6 @@ rm seattle_bigquery_results.sql.gz
 Create a folder for the geodata file(s) to be used by your Piecewise server:
 
 ```mkdir baltimore_example/maryland_blkgrps```
-
 
 ##### Obtain and save geodata for your desired location
 
@@ -133,7 +132,8 @@ Find the latitude and longitude coordinates for your desired location.
 We obtained the latitude and longitude coordinates by copying them from the URL:
 
 ```
-https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
+https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/
+data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
 ```
 
 The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```
@@ -201,11 +201,9 @@ Now we have all the information we need to configure your Piecewise server. This
 
 ###### Edit the primary Ansible playbook
 
-```piecewise/playbook.yml```
+The main Ansible playbook YAML file, ```piecewise/playbook.yml```, must be edited to include our new Baltimore example Ansible playbook. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
 
-The main Ansible playbook YAML file must be edited to include our new Baltimore example Ansible plabook. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
-
-```yml
+```
 ---
 # This is main Ansible playbook that configures your Piecewise server. You don't 
 # need to be an Ansible expert to use Piecewise. Follow the instructions in the 
@@ -235,14 +233,11 @@ The main Ansible playbook YAML file must be edited to include our new Baltimore 
 
 ###### Edit the system tasks Ansible playbook
 
-```piecewise/system_tasks.yml```
-
-This is the Ansible playbook that installs and configure software needed to run Piecewise. For most customizations of Piecewise, a small change is needed to tell Ansible where your customized code is hosted. 
+The Ansible playbook, ```piecewise/system_tasks.yml```, installs and configures the software needed to run Piecewise. For most customizations of Piecewise, only a small change is needed to tell Ansible where your customized code is hosted. 
 
 Open ```piecewise/system_tasks.yml``` and look for the section below:
 
-```yml
-
+```
 # The command below tells Ansible where to download or copy your customized Piecewise files
 # when it deploys your VM. Change the **repo** to match your fork and **version** to match 
 # your branch.
@@ -266,11 +261,9 @@ Open ```piecewise/system_tasks.yml``` and look for the section below:
 
 ###### Edit the Ansible playlist containing local specific information
 
-```baltimore_example/baltimore_tasks.yml```
+The Ansible tasklist, ```baltimore_example/baltimore_tasks.yml```, configures the location specific aspects of your Piecewise server. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
 
-This is the Ansible tasklist that configures the location specific aspects of your Piecewise server. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
-
-```yml
+```
 ---
 # This is the Ansible playbook that configures the location specific 
 # aspects of your Piecewise server. You don't need to be an Ansible expert
@@ -369,11 +362,9 @@ This is the Ansible tasklist that configures the location specific aspects of yo
 
 ###### Edit the main Piecewise configuration file
 
-```baltimore_example/piecewise_config.json```
+The main configuration file for your Piecewise deployment is ```baltimore_example/piecewise_config.json```. You will be updating some sections of this file for your deployment, most importantly the information about the aggregations you want to be applied.
 
-This is the main configuration file for your Piecewise deployment. You will be updating some sections of this file for your deployment, most importantly the information about the aggregations you want to be applied.
-
-This JSON file is arranged in sections with sub-elements. The relevant sections we will change are "aggregations" and "filters". Each section below begins with a code block from the relevant section, followed by instructions on what to change, and ending with the edited section of code. In our examples, we are using the folder and file names for our Baltimore example. Your folder and file names will likely differ.
+This JSON file is arranged in sections with sub-elements. The relevant sections we will change begin with **"aggregations"** and **"filters"**. Each section below begins with a code block from the relevant section, followed by instructions on what to change, and ending with the edited section of code. In our examples, we are using the folder and file names for our Baltimore example. Your folder and file names will likely differ.
 
 **Aggregations Section Changes:**
 
