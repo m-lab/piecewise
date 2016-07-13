@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/runpy.py", line 162, in _run_module_as_main
+    "__main__", fname, loader, pkg_name)
+  File "/usr/lib/python2.7/runpy.py", line 72, in _run_code
+    exec code in run_globals
+  File "/opt/piecewise.git/piecewise/piecewise/ingest.py", line 89, in <module>
+    piecewise.aggregate.aggregate(config)
+  File "piecewise/aggregate.py", line 20, in aggregate
+    agg.build_aggregate_table(engine, metadata, records)
+  File "piecewise/aggregate.py", line 64, in build_aggregate_table
+    query = self.build_aggregate_query(engine, metadata, records)
+  File "piecewise/aggregate.py", line 55, in build_aggregate_query
+    cols, selection = b.build_query_to_populate(selection, records, statistics_table)
+  File "piecewise/aggregate.py", line 365, in build_query_to_populate
+    isp_label = label('maxmind_isp', self._sql_rewrite(isp_name))
+  File "piecewise/aggregate.py", line 375, in _sql_rewrite
+    for short_name, patterns in self.rewrites.iteritems():
+AttributeError: 'list' object has no attribute 'iteritems'
+vagrant@jessie:/opt/piecewise$ 
