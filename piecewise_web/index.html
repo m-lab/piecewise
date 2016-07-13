@@ -312,10 +312,10 @@ var overlays = {
 var geoLayers = {
 	'census_block_groups': {
 		'name': 'Census block groups',
-		'polygonFile': 'seattle_census10_blockgroups.topojson',
+		'polygonFile': 'maryland_blkgrps.json',
 		'dataUrl': 'stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
-		'dbKey': 'geoid10',
-		'geoKey': 'GEOID10',
+		'dbKey': 'GEOID',
+		'geoKey': 'GEOID',
 		'cache': null,
 		'layer': null
 	},
@@ -424,7 +424,9 @@ var mapboxLayer = L.tileLayer(
 	attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
 });
 
-// Set the default base tile layer
+// Set the default base tile layer. 
+// If using Open Street Maps: map.addLayer(osmLayer);
+// If using Mapbox: map.addLayer(mapboxLayer);
 map.addLayer(mapboxLayer);
 
 // Add other base tile layer providers as needed
