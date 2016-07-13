@@ -27,6 +27,10 @@ This section details how to install the prerequisite components that your server
 
         sudo apt-get install vagrant ansible virtualbox virtualbox-dkms git
 
+   Also install the Virtualbox kernel modules and Guest Additions:
+
+        sudo apt-get install virtualbox-dkms virtualbox-guest-dkms virtualbox-guest-additions-iso virtualbox-guest-utils virtualbox-guest-x11
+
 2. Clone the piecewise repo
 
         git clone https://github.com/opentechinstitute/piecewise.git

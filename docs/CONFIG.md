@@ -25,7 +25,7 @@ Piecewise requires a Google Account to be configured for ingesting M-Lab data fr
 
 2. Subscribe that account to the [M-Lab Discuss Group](https://groups.google.com/a/measurementlab.net/forum/#!forum/discuss)
 
-Once subscribed to M-Lab Discuss, your account will be whitelisted to query the M-Lab dataset at no charge.
+Once subscribed to M-Lab Discuss, **your account will be whitelisted to query the M-Lab dataset at no charge**.
 
 ### Configure an API project in the Google Developers console
 
@@ -73,7 +73,7 @@ In this example, we'll configure Piecewise for the city of Baltimore, Maryland, 
 
 ##### Rename key folders and files
 
-1. Rename the **seattle_example** folder and two configuration files inside it: 
+  1. Rename the **seattle_example** folder and two configuration files inside it: 
 
 ```
 mv seattle_example baltimore_example
@@ -81,7 +81,7 @@ mv baltimore_example/seattle_tasks.yml baltimore_example/baltimore_tasks.yml
 mv baltimore_example/seattle_center.py baltimore_example/baltimore_center.py
 ```
 
-2. Remove Seattle specific files:
+  2. Remove Seattle specific files:
 
 ```
 cd baltimore_example
@@ -91,7 +91,7 @@ rm -rf seattle_blkgrpce10
 rm seattle_bigquery_results.sql.gz
 ```
 
-3. Create a folder for the geodata file(s) to be used by your Piecewise server:
+  3. Create a folder for the geodata file(s) to be used by your Piecewise server:
 
 ```mkdir baltimore_example/maryland_blkgrps```
 
@@ -105,6 +105,7 @@ Next, we need to gather some information to configure your Piecewise server:
   * A shapefile containing the regions by which raw data will be aggregated by piecewise
   * A topojson file **created from the shapefile**, to be used by the map visualization
 
+
 ###### Select a geographic bounding box
 
 First, we need to tell Piecewise the geographic area for which it should ingest M-Lab data. This will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
@@ -115,13 +116,12 @@ First, we need to tell Piecewise the geographic area for which it should ingest 
 
 3. Copy the coordinates at the bottom of the page to use as the coordinates of your bounding box. They should like this: ```-76.711519,39.197207,-76.529453,39.372206```
 
-4. Open the file ```baltimore_example/piecewise_config.json```, and find the line near the end of the file in the ```"filters"``` section:
-
-```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
+4. Open the file ```baltimore_example/piecewise_config.json```, and find the line near the end of the file in the ```"filters"``` section: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
 
 5. Replace the existing coordinates in the file by pasting the bounding box coordinates you copied above in step #3.
 
-6. Save your changes. Later you will make additional changes to this file. 
+6. Save your changes. You will make additional changes to this file later. 
+
 
 ###### Find the coordinates for the center of your map
 
@@ -130,7 +130,10 @@ Piecewise needs to know the coordinates for the center of your map. Again, there
 1. Find the latitude and longitude coordinates for your desired location.
 
 We obtained the latitude and longitude coordinates by copying them from the URL:
-```https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758```
+
+```
+https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
+```
 
 The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```
 
