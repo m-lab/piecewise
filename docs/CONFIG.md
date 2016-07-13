@@ -375,21 +375,15 @@ This JSON file is arranged in sections with sub-elements. The relevant sections 
 ...
 ```
 
-1. Change "by_census_block" to any name that is significant for the shapefile areas that you downloaded earlier.
+1. Change ```"by_census_block"``` to any name that is significant for the shapefile areas that you downloaded earlier.
 
-2. Change "block_statistics" to a table name significant to your project. This defines the table name to store aggregated statistics for your Piecewise server.
+2. Change ```"block_statistics"``` to a table name significant to your project. This defines the table name to store aggregated statistics for your Piecewise server.
 
-3. In the sub-section labelled "bins", change:   "table" : "seattle_blkgrpce10"  
-                                           to:   "table" : "maryland_blkgrps"
-
-This table name is the same as the folder where you saved your geodata files.
+3. In the sub-section labeled ```"bins"```, change ```"table" : "seattle_blkgrpce10"``` to:   ```"table" : "maryland_blkgrps"```. This table name is the same as the folder where you saved your geodata files.
       
-                                  also change:   "key" : "geoid"
-                                           to:   "key" : "<unique key field name>"
+4. Also in the ```"bins"``` section, change: ```"key" : "geoid"``` to: ```"key" : "<unique key field name>"```. The key name is the unique field in your geodata file which is used to join aggregated M-Lab data to geodata regions.
 
-The key name is the unique field in your geodata file which is used to join aggregated M-Lab data to geodata regions.
-
-4. Optionally, you may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. 
+Optionally, you may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. 
 
 When it ingests and aggregates M-Lab data, Piecewise looks up the IP address from test results in the [Maxmind Geolite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) to find the [Autonmous System](https://en.wikipedia.org/wiki/Autonomous_system_%28Internet%29) (AS) associated with that IP address. These names are aggregated by Piecewise, but may not reflect the public names of ISPs which consumers in your region recognize. Additionally, ISPs often have multiple AS's. 
 
@@ -418,9 +412,9 @@ The "rewrites" section allows you to map recognizable ISP names to one or more A
 ...
 ```
 
-5. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
+1. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
 
-6. Replace the coordinates below with the bounding box coordinates you obtained earlier.
+2. Replace the coordinates below with the bounding box coordinates you obtained earlier.
 
 ```
 ...
