@@ -23,6 +23,7 @@ server {
 
 	root /opt/piecewise_web;
 	index index.html index.htm;
+	sendfile off;
 
 	# Make site accessible from http://localhost/
 	server_name localhost;

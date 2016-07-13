@@ -264,6 +264,7 @@
 </div>
 </div>
 <script>
+// This is the Piecewise mapping script.
 
 // If set to 'hex' then GeoJSON files are assumed to be named like
 // 'YYYY_MM-<resolution>.json', where 3 files exist for each of resolutions
@@ -271,6 +272,9 @@
 // the MMMM_YY- suffix to look for. For example:
 // If set to 'city_council_districts', then the system will look for
 // GeoJSON files like 'MMMM_YY-city_council_districts.geojson'.
+
+// polygonType is a variable name defining your aggregation regions. 
+// Change the name to reflect the aggregated regions you are using if needed.
 var polygonType = 'census_block_groups';
 
 // Either 'topojson' or 'geojson'.  The Node.js script creates both TopoJSON and
@@ -401,11 +405,20 @@ var map = L.map('map', {zoomControl: false}).setView(center, zoom);
 map.scrollWheelZoom.disable();
 var control = L.control.zoom({position: 'topright'});
 map.addControl(control);
-var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
-		'contributors'
-});
 
+// Use Open Street Maps as a base tile layer
+// var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
+//		'contributors'
+// });
+
+// Use Mapbox as a base tile layer
+// var mapboxLayer = L.tileLayer(
+//		'https://{s}.tiles.mapbox.com/v3/newamerica.lcl1jan5/{z}/{x}/{y}.png', {
+//	attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
+// });
+ 
+// Use Mapbox as a base tile layer
 var mapboxLayer = L.tileLayer(
 		'https://{s}.tiles.mapbox.com/v3/newamerica.lcl1jan5/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
