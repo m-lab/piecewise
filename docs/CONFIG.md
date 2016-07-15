@@ -188,7 +188,7 @@ maryland_blkgrps/
   	cb_2015_24_bg_500k.cpg  	cb_2015_24_bg_500k.shp.ea.iso.xml
     cb_2015_24_bg_500k.dbf  	cb_2015_24_bg_500k.shp.iso.xml
     cb_2015_24_bg_500k.prj  	cb_2015_24_bg_500k.shp.xml
-    cb_2015_24_bg_500k.shp  	cb_2015_24_bg_500k.shx
+    cb_2015_24_bg_500k.shp  	cb_2an015_24_bg_500k.shx
 maryland_blkgrps_2015.json
 piecewise_config.json
 README.md
