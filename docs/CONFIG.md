@@ -8,7 +8,7 @@ We’re now ready to customize your copy of Piecewise for the region you care ab
   * Setup a project in Google Developer Console
   * Configure Piecewise for your location
 
-You will need the following information:
+**You will need the following information:**
 
   * Geographic coordinates forming a bounding box, for example: [-122.6733398438,47.3630134401,-121.9509887695,47.8076208172]
   * Shapefile(s) containing the sub-geographic areas by which the consumed raw data will be aggregated
@@ -90,11 +90,8 @@ rm seattle_council_districts.geojson
 rm seattle_census10_blockgroups.topojson
 rm -rf seattle_blkgrpce10
 rm seattle_bigquery_results.sql.gz
+cd ../
 ```
-
-Create a folder for the geodata file(s) to be used by your Piecewise server:
-
-```mkdir baltimore_example/maryland_blkgrps```
 
 ##### Obtain and save geodata for your desired location
 
@@ -105,8 +102,7 @@ Next, we need to gather some information to configure your Piecewise server:
   * A shapefile containing the regions by which raw data will be aggregated by piecewise
   * A topojson file **created from the shapefile**, to be used by the map visualization
 
-
-###### Select a geographic bounding box
+**Select a geographic bounding box**
 
 First, we need to tell Piecewise the geographic area for which it should ingest M-Lab data. This will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
 
@@ -122,8 +118,7 @@ First, we need to tell Piecewise the geographic area for which it should ingest 
 
 6. Save your changes. You will make additional changes to this file later. 
 
-
-###### Find the coordinates for the center of your map
+**Find the coordinates for the center of your map**
 
 Piecewise needs to know the coordinates for the center of your map. Again, there are many ways to find this information. We searched [Google Maps](https://www.google.com/maps) for Baltimore, MD, which shows us [a map with Baltimore at the center](https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758).
 
@@ -140,7 +135,7 @@ The map center is the two coordinates after the @ sign in the URL: ```39.2848182
 
 Open the file ```baltimore_example/center.js```, and replace the latitude and longitude coordinates between the brackets on this line: ```var center = [39.2847064,-76.620486];``` with your map center coordinates.
 
-###### Obtain shapefiles for your data aggregation areas
+**Obtain shapefiles for your data aggregation areas**
 
 Piecewise will download raw test data from M-Lab that was submitted from within the four coordinates you gathered in the previous step. Its real power, however, is that Piecewise will aggregate the raw data into smaller shaped areas within that bounding box. You can define multiple aggregations and use them as different layers in the same map or visualization. For example, we might use city council districts, counties, countries, census blocks or other shapes to aggregate M-Lab data.
 
@@ -154,7 +149,11 @@ The US Census Bureau provides downloadable shapefiles for a variety of boundarie
 
 Once you locate the shapefile(s) you need, it's good practice to open the shapefile in [QGIS](http://www.qgis.org/en/site/) or another program to confirm it's ok.
 
-Save your shapefiles to the folder we created above:  **baltimore_example/maryland_blkgrps**:
+**Create a folder for your geodata file(s)**
+
+```mkdir baltimore_example/maryland_blkgrps```
+
+Save/copy your shapefiles to the folder:
 
 ```
 maryland_blkgrps/
@@ -164,7 +163,7 @@ maryland_blkgrps/
     cb_2015_24_bg_500k.shp    cb_2015_24_bg_500k.shx
 ```
 
-###### Create a topojson file from your shapefile
+**Create a topojson file from your shapefile**
 
 The shapefile(s) above will be used by Piecewise to aggregate raw M-Lab data, but you also want to use a map or other visualization to display your data.
 
