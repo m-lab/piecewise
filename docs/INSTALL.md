@@ -21,22 +21,27 @@ Server specs and requirements will vary based on implementation parameters like 
 
 This section details how to install the prerequisite components that your server will need and obtaining the Piecewise software. At the end of this section you should have all the necessary software components for deploying your Piecewise server and will be ready to configure and deploy it.
 
-#### Installation for Debian Jessie, Stretch
+#### Installation for Debian Jessie
+
+1. Install virtualbox, virtualbox-dkms, vagrant, ansible, git
+
+        sudo apt-get install vagrant ansible virtualbox virtualbox-dkms git
+
+2. Clone the piecewise repo
+
+        git clone https://github.com/opentechinstitute/piecewise.git
+
+3. Change into the piecewise directory
+        cd piecewise/
+
+#### Installation for Debian Stretch
 
 1. Add the contrib repo to your apt sources in **/etc/apt/sources.list**:
 
         deb http://ftp.us.debian.org/debian/ stretch main contrib
 
-2. Install virtualbox, vagrant, ansible, git
+2. Follow steps #2-3 in the instructions for Debian Jessie above.
 
-        sudo apt-get install vagrant ansible virtualbox git
-
-3. Clone the piecewise repo
-
-        git clone https://github.com/opentechinstitute/piecewise.git
-
-4. Change into the piecewise directory
-        cd piecewise/
 
 ### Installation for Ubuntu 14.04
 
