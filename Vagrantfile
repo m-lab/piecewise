@@ -75,5 +75,4 @@ Vagrant.configure(2) do |config|
       :piecewise_env => "live"
     }
   end
-  config.vm.synced_folder "piecewise_web/", "/opt/piecewise_web"
 end
