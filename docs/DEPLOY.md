@@ -13,6 +13,10 @@ If you prefer to install Piecewise without Vagrant, see the last section of this
 $ vagrant up
 ```
 
+If this command completes without error, load [http://localhost:8080](http://localhost:8080) in the web browser of the vagrant host machine. The host machine also provides the same web service on its own IP address. You should see a map centered around the region you specified previously, but no data will be aggregated yet. 
+
+If there were errors in the Vagrant/Ansible provisioning process, they will be shown in your terminal. These must be resolved before proceeding.
+
 2. SSH into the Vagrant VM:
 ```
 $ vagrant ssh
@@ -42,7 +46,7 @@ On the first run of **piecewise.ingest**, you will be prompted with a URL to aut
 
 If successful, you will see a number of messages about BigQuery jobs running. If you get an error, it may be due to a misconfiguration or if you used a different account than the one associated with your project in the Google Developer Console.
 
-Once the last command above completes with no errors, load [http://localhost:8080](http://localhost:8080) in the web browser of the vagrant host machine. The host machine also provides the same web service on its own IP address. You should see a map centered around the region you specified previously, with data aggregated by the shapes you provided.
+Once the last command above completes with no errors, again load [http://localhost:8080](http://localhost:8080). You should now see your map with data aggregated by the shapes you provided in the configuration section.
 
 ## Providing Authentication to /admin
 
