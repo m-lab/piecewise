@@ -6,7 +6,7 @@
         "name": "by_census_block",
         "statistics_table_name": "block_statistics",
         "bins": [
-            { "type" : "spatial_join", "table" : "maryland_blkgrps", "geometry_column" : "wkb_geometry", "key" : "GEOID", "key_type": "string", "join_custom_data" : true },
+            { "type" : "spatial_join", "table" : "maryland_blkgrps", "geometry_column" : "wkb_geometry", "key" : "geoid", "key_type": "string", "join_custom_data" : true },
             { "type" : "time_slices", "resolution" : "month" },
             { "type" : "isp_bins", "maxmind_table" : "maxmind",
                 "rewrites" : {
