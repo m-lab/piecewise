@@ -71,7 +71,6 @@ In this example, we'll configure Piecewise for the city of Baltimore, Maryland, 
 
 **Please note that all commands below assume you are using linux or MacOS command line from inside the main ```piecewise``` folder cloned from Github.**
 
-
 ##### Rename key folders and files
 
 Rename the **seattle_example** folder and two configuration files inside it: 
@@ -357,7 +356,6 @@ The Ansible tasklist, ```baltimore_example/baltimore_tasks.yml```, configures th
   service: name=uwsgi state=restarted
 - command: python extra_data.py chdir=/opt/piecewise
 
-```
 
 ###### Edit the main Piecewise configuration file
 
@@ -422,14 +420,6 @@ The "rewrites" section allows you to map recognizable ISP names to one or more A
 1. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
 
 2. Replace the coordinates below with the bounding box coordinates you obtained earlier.
-
-```
-...
-	"filters": [
-    	{ "type": "temporal", "after": "Jan 1 2014 00:00:00", "before" : "Jan 1 2050 00:00:00" },
-    	{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },
-...
-```
 
 #### Customize the HTML page that displays aggregated M-Lab data
 

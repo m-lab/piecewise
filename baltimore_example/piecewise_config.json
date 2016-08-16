@@ -3,7 +3,6 @@
     "database_uri" : "postgresql+psycopg2://postgres:@/piecewise",
     "cache_table_name": "results",
     "aggregations": [{
-
         "name": "by_census_block",
         "statistics_table_name": "block_statistics",
         "bins": [
@@ -36,15 +35,20 @@
                     "wolfe": ["Wolfenet"],
                     "whidbey internet services": ["Whidbey Internet Services"],
                     "xo communciations": ["XO Communications"]
+
                 } }
         ],
         "statistics": [
             { "type" : "AverageRTT" },
             { "type" : "MedianRTT" },
             { "type" : "DownloadCount" },
+            { "type" : "DownloadMin" },
+            { "type" : "DownloadMax" },
             { "type" : "AverageDownload" },
             { "type" : "MedianDownload" },
             { "type" : "UploadCount" },
+            { "type" : "UploadMin" },
+            { "type" : "UploadMax" },
             { "type" : "AverageUpload" },
             { "type" : "MedianUpload" }
         ]
