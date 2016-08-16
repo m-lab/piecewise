@@ -110,7 +110,7 @@ Search for "Baltimore, MD" on [http://boundingbox.klokantech.com/](http://boundi
 Copy the coordinates at the bottom of the page to use as the coordinates of your bounding box. They should like this: ```-76.711519,39.197207,-76.529453,39.372206```
 
 Open the file ```baltimore_example/piecewise_config.json```, and replace the bounding box coordinates with your coordinates on this line: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
-Replace the existing coordinates in the file by pasting the bounding box coordinates you copied above in step #3.
+Replace the existing coordinates in the file by pasting the bounding box coordinates you copied above.
 
 Save your changes. You will make additional changes to this file later. 
 
@@ -123,8 +123,7 @@ Find the latitude and longitude coordinates for your desired location.
 We obtained the latitude and longitude coordinates by copying them from the URL:
 
 ```
-https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/
-data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
+https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
 ```
 
 The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```
@@ -416,8 +415,7 @@ At this point, we have customized all of the Piecewise backend components for a 
 
 ##### Update the map script to use your new location files and settings
 
-1. Open ```piecewise_web/index.html``` and find the JavaScript near the end of the file that begins with:
->>>>>>> multiple updates to documentation files and associated edits to some configuration files
+Open ```piecewise_web/index.html``` and find the JavaScript near the end of the file that begins with:
 
 ``` 
     <script>
