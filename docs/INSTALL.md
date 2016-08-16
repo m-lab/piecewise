@@ -71,6 +71,10 @@ This section details how to install the prerequisite components that your server
         git clone https://github.com/opentechinstitute/piecewise.git
         cd piecewise
 
+### Installation for Mac OS
+
+TBD
+
 ### Installation for RHEL 7 / CentOS 7
 
 TBD - using piecewise RHEL7 branch
