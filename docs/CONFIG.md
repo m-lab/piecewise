@@ -71,6 +71,7 @@ In this example, we'll configure Piecewise for the city of Baltimore, Maryland, 
 
 **Please note that all commands below assume you are using linux or MacOS command line from inside the main ```piecewise``` folder cloned from Github.**
 
+
 ##### Rename key folders and files
 
 Rename the **seattle_example** folder and two configuration files inside it: 
@@ -116,31 +117,31 @@ Save your changes. You will make additional changes to this file later.
 
 **Find the coordinates for the center of your map**
 
-Piecewise needs to know the coordinates for the center of your map. Again, there are many ways to find this information. We searched [Google Maps](https://www.google.com/maps) for Baltimore, MD, which shows us [a map with Baltimore at the center](https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758).
+  Piecewise needs to know the coordinates for the center of your map. Again, there are many ways to find this information. We searched [Google Maps](https://www.google.com/maps) for Baltimore, MD, which shows us [a map with Baltimore at the center](https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758).
 
-Find the latitude and longitude coordinates for your desired location.
+  Find the latitude and longitude coordinates for your desired location.
 
-We obtained the latitude and longitude coordinates by copying them from the URL:
+  We obtained the latitude and longitude coordinates by copying them from the URL:
 
-```
-https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
-```
+  ```
+  https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
+  ```
 
-The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```
+  The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```
 
 Open the file ```baltimore_example/center.js```, and replace the latitude and longitude coordinates between the brackets on this line: ```var center = [39.2847064,-76.620486];``` with your map center coordinates.
 
 **Obtain shapefiles for your data aggregation areas**
 
-To do these aggregations, Piecewise requires at least one geodata file containing the areas you wish M-Lab data to be aggregated into. This example uses shapefiles but your geodata can be in any of the following formats: 
+  To do these aggregations, Piecewise requires at least one geodata file containing the areas you wish M-Lab data to be aggregated into. This example uses shapefiles but your geodata can be in any of the following formats: 
 
   * Shapefile (.shp)
   * Geojson
   * Topojson
 
-The US Census Bureau provides downloadable shapefiles for a variety of boundaries in the US: [https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html](https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html). In the US, cities often publish shapefiles for their communities that often have been amended or corrected.
+  The US Census Bureau provides downloadable shapefiles for a variety of boundaries in the US: [https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html](https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html). In the US, cities often publish shapefiles for their communities that often have been amended or corrected.
 
-Once you locate the shapefile(s) you need, it's good practice to open the shapefile in [QGIS](http://www.qgis.org/en/site/) or another program to confirm it's ok.
+  Once you locate the shapefile(s) you need, it's good practice to open the shapefile in [QGIS](http://www.qgis.org/en/site/) or another program to confirm it's ok.
 
 **Create a folder for your geodata file(s)**
 
@@ -150,19 +151,19 @@ Save/copy your shapefiles to the folder:
 
 **Create a topojson file from your shapefile**
 
-The shapefile(s) above will be used by Piecewise to aggregate raw M-Lab data, but you also want to use a map or other visualization to display your data.
+  The shapefile(s) above will be used by Piecewise to aggregate raw M-Lab data, but you also want to use a map or other visualization to display your data.
 
-The map visualization that Piecewise provides by default requires a **topojson file that is created from the same shapefile** you downloaded in the previous section.
+  The map visualization that Piecewise provides by default requires a **topojson file that is created from the same shapefile** you downloaded in the previous section.
 
-Here are some resources for creating or converting geofiles:
+  Here are some resources for creating or converting geofiles:
 
   * [QGIS](http://www.qgis.org/en/site/)
   * [Mapshaper](http://mapshaper.org/)
   * [Topojson / geojson converter](http://jeffpaine.github.io/geojson-topojson/)
 
-Save your topojson file to the **baltimore_example** folder. In our example, this file is named **maryland_blkgrps_2015.json**
+  Save your topojson file to the **baltimore_example** folder. In our example, this file is named **maryland_blkgrps_2015.json**
 
-When you're done, the **baltimore_example** folder should contain the files below:
+  When you're done, the **baltimore_example** folder should contain the files below:
 
 ```
 baltimore_center.py
@@ -185,228 +186,252 @@ Now we have all the information we need to configure your Piecewise server. This
 
 ###### Edit the primary Ansible playbook
 
-The main Ansible playbook YAML file, ```piecewise/playbook.yml```, must be edited to include our new Baltimore example Ansible playbook. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
+  ```piecewise/playbook.yml```
 
-```
----
-# This is main Ansible playbook that configures your Piecewise server. You don't 
-# need to be an Ansible expert to use Piecewise. Follow the instructions in the 
-# code comments below to configure Piecewise for your desired location.
-#
-# For more information about Ansible and the syntax of this file, please see:
-# http://docs.ansible.com/ansible/YAMLSyntax.html
-#
-# ------------------------------------------------------------------
-# 
-# 1) Rename the folder "seattle_example" to match your folder name, and 
-#    the file "seattle_tasks.yml" to match the file name in your folder.
-#
-#    For example, change:
-#       include: seattle_example/seattle_tasks.yml
-#    to:
-#       include: baltimore_example/baltimore_tasks.yml
+  The main Ansible playbook YAML file must be edited to include our new Baltimore example Ansible plabook. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
 
-- hosts: all
-  tasks:
-  - include: system_tasks.yml
-    sudo: True
-  - include: user_tasks.yml
-  - include: seattle_example/seattle_tasks.yml
-    sudo: True
-```
+  ```yml
+  ---
+  # This is main Ansible playbook that configures your Piecewise server. You don't 
+  # need to be an Ansible expert to use Piecewise. Follow the instructions in the 
+  # code comments below to configure Piecewise for your desired location.
+  #
+  # For more information about Ansible and the syntax of this file, please see:
+  # http://docs.ansible.com/ansible/YAMLSyntax.html
+  #
+  # ------------------------------------------------------------------
+  # 
+  # 1) Rename the folder "seattle_example" to match your folder name, and 
+  #    the file "seattle_tasks.yml" to match the file name in your folder.
+  #
+  #    For example, change:
+  #       include: seattle_example/seattle_tasks.yml
+  #    to:
+  #       include: baltimore_example/baltimore_tasks.yml
+
+  - hosts: all
+    tasks:
+    - include: system_tasks.yml
+      sudo: True
+    - include: user_tasks.yml
+    - include: seattle_example/seattle_tasks.yml
+      sudo: True
+  ```
 
 ###### Edit the system tasks Ansible playbook
 
-The Ansible playbook, ```piecewise/system_tasks.yml```, installs and configures the software needed to run Piecewise. For most customizations of Piecewise, only a small change is needed to tell Ansible where your customized code is hosted. 
+  ```piecewise/system_tasks.yml```
 
-Open ```piecewise/system_tasks.yml``` and look for the section below:
+  This is the Ansible playbook that installs and configure software needed to run Piecewise. For most customizations of Piecewise, a small change is needed to tell Ansible where your customized code is hosted. 
 
-```
-# The command below tells Ansible where to download or copy your customized Piecewise files
-# when it deploys your VM. Change the **repo** to match your fork and **version** to match 
-# your branch.
-#
-#    For example, change:
-#       git: repo=https://github.com/opentechinstitute/piecewise.git
-#       dest=/opt/piecewise.git/
-#       version=master
-#    to:
-#       git: repo=https://github.com/baltimore-github-org/piecewise.git
-#       dest=/opt/piecewise.git/
-#       version=master
-#
-# Note that the example above is fictious. Use the github URL of your fork and your branch. 
+  Open ```piecewise/system_tasks.yml``` and look for the section below:
 
-- name: Fetch piecewise
-  git: repo=https://github.com/opentechinstitute/piecewise.git
-       dest=/opt/piecewise.git/
-       version=master
-```
+  ```yml
+
+  # The command below tells Ansible where to download or copy your customized Piecewise files
+  # when it deploys your VM. Change the **repo** to match your fork and **version** to match 
+  # your branch.
+  #
+  #    For example, change:
+  #       git: repo=https://github.com/opentechinstitute/piecewise.git
+  #       dest=/opt/piecewise.git/
+  #       version=master
+  #    to:
+  #       git: repo=https://github.com/baltimore-github-org/piecewise.git
+  #       dest=/opt/piecewise.git/
+  #       version=master
+  #
+  # Note that the example above is fictious. Use the github URL of your fork and your branch. 
+
+  - name: Fetch piecewise
+    git: repo=https://github.com/opentechinstitute/piecewise.git
+         dest=/opt/piecewise.git/
+         version=master
+  ```
 
 ###### Edit the Ansible playlist containing local specific information
 
-The Ansible tasklist, ```baltimore_example/baltimore_tasks.yml```, configures the location specific aspects of your Piecewise server. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
+  ```baltimore_example/baltimore_tasks.yml```
 
-```
----
-# This is the Ansible playbook that configures the location specific 
-# aspects of your Piecewise server. You don't need to be an Ansible expert
-# to use Piecewise. The commands in this playbook each begin with: "- name:" 
-# and consist of multiple subsequent lines.
-#
-# Each section of Ansible commands below are preceded with code comments 
-# to assist new Piecewise developers or implementers with customizing Piecewise
-# for a new location, complementing the instructions in our documentation:
-#   https://github.com/opentechinstitute/piecewise/blob/master/docs/CONFIG.md 
-#
-# For more information about Ansible and the syntax of this file, please see:
-# http://docs.ansible.com/ansible/YAMLSyntax.html
-#
-# ------------------------------------------------------------------
-# 
-# 1) Rename the folder name "seattle_example" to match your folder name. 
-#
-#    For example, change:
-#       copy: src=seattle_example/{{ item.src }}
-#    to:
-#       copy: src=baltimore_example/{{ item.src }}
-#
-# 2) On the lines following "with_items:", update the name of the json file 
-#    to match the name of your topojson file and change the name of the shapefile folder 
-#    to reflect your Piecewise instance.
-#
-#    For example, change:
-#       with_items:
-#        - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
-#        - { src: seattle_blkgrpce10, dest: '' }
-#    to:
-#        - { src: src: maryland_blkgrps_2015.json, dest: maryland_blkgrps_2015.json }
-#        - { src: maryland_blkgrps, dest: '' }
+  This is the Ansible tasklist that configures the location specific aspects of your Piecewise server. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
 
-- name: Copy geo data to server
-  copy: src=seattle_example/{{ item.src }}
-  dest=/opt/piecewise_web/{{ item.dest }}
-  with_items:
-   	- { src: maryland_blkgrps_2015.json, dest: maryland_blkgrps_2015.json }
-  	- { src: maryland_blkgrps, dest: '' }
-  	- { src: center.js, dest: js/center.js }
+  ```yml
+  ---
+  # This is the Ansible playbook that configures the location specific 
+  # aspects of your Piecewise server. You don't need to be an Ansible expert
+  # to use Piecewise. The commands in this playbook each begin with: "- name:" 
+  # and consist of multiple subsequent lines.
+  #
+  # Each section of Ansible commands below are preceded with code comments 
+  # to assist new Piecewise developers or implementers with customizing Piecewise
+  # for a new location, complementing the instructions in our documentation:
+  #   https://github.com/opentechinstitute/piecewise/blob/master/docs/CONFIG.md 
+  #
+  # For more information about Ansible and the syntax of this file, please see:
+  # http://docs.ansible.com/ansible/YAMLSyntax.html
+  #
+  # ------------------------------------------------------------------
+  # 
+  # 1) Rename the folder name "seattle_example" to match your folder name. 
+  #
+  #    For example, change:
+  #       copy: src=seattle_example/{{ item.src }}
+  #    to:
+  #       copy: src=baltimore_example/{{ item.src }}
+  #
+  # 2) On the lines following "with_items:", update the name of the json file 
+  #    to match the name of your topojson file and change the name of the shapefile folder 
+  #    to reflect your Piecewise instance.
+  #
+  #    For example, change:
+  #       with_items:
+  #        - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
+  #        - { src: seattle_blkgrpce10, dest: '' }
+  #    to:
+  #        - { src: src: maryland_blkgrps_2015.json, dest: maryland_blkgrps_2015.json }
+  #        - { src: maryland_blkgrps, dest: '' }
 
-# ------------------------------------------------------------------
-#
-# 3) Rename the folder name "seattle_example" to match your folder name. 
-#
-#    For example, change:
-#       copy: src=seattle_example/extra_data.py dest=/opt/piecewise
-#    to:
-#       copy: src=baltimore_example/extra_data.py dest=/opt/piecewise/
+  - name: Copy geo data to server
+    copy: src=seattle_example/{{ item.src }}
+    dest=/opt/piecewise_web/{{ item.dest }}
+    with_items:
+     	- { src: maryland_blkgrps_2015.json, dest: maryland_blkgrps_2015.json }
+    	- { src: maryland_blkgrps, dest: '' }
+    	- { src: center.js, dest: js/center.js }
 
-- name: Copy extra_data.py to server
-  copy: src=baltimore_example/extra_data.py dest=/opt/piecewise/
-- pip: name=ipaddress state=latest
+  # ------------------------------------------------------------------
+  #
+  # 3) Rename the folder name "seattle_example" to match your folder name. 
+  #
+  #    For example, change:
+  #       copy: src=seattle_example/extra_data.py dest=/opt/piecewise
+  #    to:
+  #       copy: src=baltimore_example/extra_data.py dest=/opt/piecewise/
 
-# ------------------------------------------------------------------
-#
-# 4) Change the Ansible command that imports your geodata to reflect the 
-# name of the folder containing your shapefiles as well as the shapefile itself.
-#
-#    For example, change:
-#
-#        command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln seattle_blkgrpce10 -nlt 
-#        MultiPolygon 'PG:user=postgres dbname=piecewise' 
-#        /opt/piecewise_web/seattle_blkgrpce10/CENSUS10_blkgrp_WGS.shp
-#    to:
-#        command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln maryland_blkgrps -nlt 
-#        MultiPolygon 'PG:user=postgres dbname=piecewise' 
-#        /opt/piecewise_web/maryland_blkgrps/cb_2015_24_bg_500k.shp
-#
-- name: Ingest census blocks to postgres
-  command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln seattle_blkgrpce10 -nlt MultiPolygon 'PG:user=postgres dbname=piecewise' /opt/piecewise_web/seattle_blkgrpce10/CENSUS10_blkgrp_WGS.shp
+  - name: Copy extra_data.py to server
+    copy: src=baltimore_example/extra_data.py dest=/opt/piecewise/
+  - pip: name=ipaddress state=latest
 
-# ------------------------------------------------------------------
-#
-# 5) Rename the folder name "seattle_example" to match your folder name. 
-#
-#    For example, change:
-#       copy: src=seattle_example/piecewise_config.json dest=/etc/piecewise/config.json
-#    to:  
-#       copy: src=baltimore_example/piecewise_config.json dest=/etc/piecewise/config.json
+  # ------------------------------------------------------------------
+  #
+  # 4) Change the Ansible command that imports your geodata to reflect the 
+  # name of the folder containing your shapefiles as well as the shapefile itself.
+  #
+  #    For example, change:
+  #
+  #        command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln seattle_blkgrpce10 -nlt 
+  #        MultiPolygon 'PG:user=postgres dbname=piecewise' 
+  #        /opt/piecewise_web/seattle_blkgrpce10/CENSUS10_blkgrp_WGS.shp
+  #    to:
+  #        command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln maryland_blkgrps -nlt 
+  #        MultiPolygon 'PG:user=postgres dbname=piecewise' 
+  #        /opt/piecewise_web/maryland_blkgrps/cb_2015_24_bg_500k.shp
+  #
+  - name: Ingest census blocks to postgres
+    command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln seattle_blkgrpce10 -nlt MultiPolygon 'PG:user=postgres dbname=piecewise' /opt/piecewise_web/seattle_blkgrpce10/CENSUS10_blkgrp_WGS.shp
 
-- name: Install piecewise configuration
-  copy: src=baltimore_example/piecewise_config.json dest=/etc/piecewise/config.json
+  # ------------------------------------------------------------------
+  #
+  # 5) Rename the folder name "seattle_example" to match your folder name. 
+  #
+  #    For example, change:
+  #       copy: src=seattle_example/piecewise_config.json dest=/etc/piecewise/config.json
+  #    to:  
+  #       copy: src=baltimore_example/piecewise_config.json dest=/etc/piecewise/config.json
 
-# ------------------------------------------------------------------
-# The remaining Ansible commands do not need to be changed for customization of Piecewise. 
-# ------------------------------------------------------------------
+  - name: Install piecewise configuration
+    copy: src=baltimore_example/piecewise_config.json dest=/etc/piecewise/config.json
 
-- name: Restart uwsgi so piecewise config is detected
-  service: name=uwsgi state=restarted
-- command: python extra_data.py chdir=/opt/piecewise
+  # ------------------------------------------------------------------
+  # The remaining Ansible commands do not need to be changed for customization of Piecewise. 
+  # ------------------------------------------------------------------
 
+  - name: Restart uwsgi so piecewise config is detected
+    service: name=uwsgi state=restarted
+  - command: python extra_data.py chdir=/opt/piecewise
+
+  ```
 
 ###### Edit the main Piecewise configuration file
 
-The main configuration file for your Piecewise deployment is ```baltimore_example/piecewise_config.json```. You will be updating some sections of this file for your deployment, most importantly the information about the aggregations you want to be applied.
+  ```baltimore_example/piecewise_config.json```
 
-This JSON file is arranged in sections with sub-elements. The relevant sections we will change begin with **"aggregations"** and **"filters"**. Each section below begins with a code block from the relevant section, followed by instructions on what to change, and ending with the edited section of code. In our examples, we are using the folder and file names for our Baltimore example. Your folder and file names will likely differ.
+  This is the main configuration file for your Piecewise deployment. You will be updating some sections of this file for your deployment, most importantly the information about the aggregations you want to be applied.
 
-**Aggregations Section Changes:**
+  This JSON file is arranged in sections with sub-elements. The relevant sections we will change are "aggregations" and "filters". Each section below begins with a code block from the relevant section, followed by instructions on what to change, and ending with the edited section of code. In our examples, we are using the folder and file names for our Baltimore example. Your folder and file names will likely differ.
 
-```
-"aggregations": [{
-       "name": "by_census_block",
-       "statistics_table_name": "block_statistics",
-       "bins": [
-          { "type" : "spatial_join", "table" : "seattle_blkgrpce10", "geometry_column" : "wkb_geometry", "key" : "geoid", "key_type" : "string" ,"join_custom_data" : true },
+  **Aggregations Section Changes:**
+
+  ```
+  "aggregations": [{
+         "name": "by_census_block",
+         "statistics_table_name": "block_statistics",
+         "bins": [
+            { "type" : "spatial_join", "table" : "seattle_blkgrpce10", "geometry_column" : "wkb_geometry", "key" : "geoid", "key_type" : "string" ,"join_custom_data" : true },
           { "type" : "time_slices", "resolution" : "month" },
           { "type" : "isp_bins", "maxmind_table" : "maxmind", 
                 "rewrites" : {
                     "aerioconnect": ["Aerioconnect"],
                     "at&t": ["AT&T Services", "AT&T Mobility LLC", "Wayport"],
                     "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"],
-...
-```
 
-1. Change ```"by_census_block"``` to any name that is significant for the shapefile areas that you downloaded earlier.
+          ...
+  ```
 
-2. Change ```"block_statistics"``` to a table name significant to your project. This defines the table name to store aggregated statistics for your Piecewise server.
+  1. Change "by_census_block" to any name that is significant for the shapefile areas that you downloaded earlier.
 
-3. In the sub-section labeled ```"bins"```, change ```"table" : "seattle_blkgrpce10"``` to:   ```"table" : "maryland_blkgrps"```. This table name is the same as the folder where you saved your geodata files.
-      
-4. Also in the ```"bins"``` section, change: ```"key" : "geoid"``` to: ```"key" : "<unique key field name>"```. The key name is the unique field in your geodata file which is used to join aggregated M-Lab data to geodata regions.
+  2. Change "block_statistics" to a table name significant to your project. This defines the table name to store aggregated statistics for your Piecewise server.
 
-Optionally, you may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. 
+  3. In the sub-section labelled "bins", change:   "table" : "seattle_blkgrpce10"  
+                                             to:   "table" : "maryland_blkgrps"
 
-When it ingests and aggregates M-Lab data, Piecewise looks up the IP address from test results in the [Maxmind Geolite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) to find the [Autonmous System](https://en.wikipedia.org/wiki/Autonomous_system_%28Internet%29) (AS) associated with that IP address. These names are aggregated by Piecewise, but may not reflect the public names of ISPs which consumers in your region recognize. Additionally, ISPs often have multiple AS's. 
+  This table name is the same as the folder where you saved your geodata files.
+        
+                                    also change:   "key" : "geoid"
+                                             to:   "key" : "<unique key field name>"
 
-The "rewrites" section allows you to map recognizable ISP names to one or more AS names that Piecewise returns from Maxmind. 
+  The key name is the unique field in your geodata file which is used to join aggregated M-Lab data to geodata regions.
 
-```
-        "name": "by_census_block",
-        "statistics_table_name": "block_statistics",
-        "bins": [
-            { "type" : "spatial_join", "table" : "maryland_blkgrps", "geometry_column" : "wkb_geometry", "key" : "GEOID", "key_type": "string", "join_custom_data" : true },
-            { "type" : "time_slices", "resolution" : "month" },
-            { "type" : "isp_bins", "maxmind_table" : "maxmind", 
-                "rewrites" : {
-                    "aerioconnect": ["Aerioconnect"],
-                    "at&t": ["AT&T Services", "AT&T Mobility LLC", "Wayport"],
-                    "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"],
-        ...
-```
+  4. Optionally, you may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. 
 
-**Filters Section Changes**
+  When it ingests and aggregates M-Lab data, Piecewise looks up the IP address from test results in the [Maxmind Geolite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) to find the [Autonmous System](https://en.wikipedia.org/wiki/Autonomous_system_%28Internet%29) (AS) associated with that IP address. These names are aggregated by Piecewise, but may not reflect the public names of ISPs which consumers in your region recognize. Additionally, ISPs often have multiple AS's. 
 
-```
-  "filters": [
-      { "type": "temporal", "after": "Jan 1 2014 00:00:00", "before" : "Jan 1 2050 00:00:00" },
-      { "type": "bbox", "bbox": [-122.6733398438,47.3630134401,-121.9509887695,47.8076208172] },
-...
-```
+  The "rewrites" section allows you to map recognizable ISP names to one or more AS names that Piecewise returns from Maxmind. 
 
-1. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
+  ```
+          "name": "by_census_block",
+          "statistics_table_name": "block_statistics",
+          "bins": [
+              { "type" : "spatial_join", "table" : "maryland_blkgrps", "geometry_column" : "wkb_geometry", "key" : "GEOID", "key_type": "string", "join_custom_data" : true },
+              { "type" : "time_slices", "resolution" : "month" },
+              { "type" : "isp_bins", "maxmind_table" : "maxmind", 
+                  "rewrites" : {
+                      "aerioconnect": ["Aerioconnect"],
+                      "at&t": ["AT&T Services", "AT&T Mobility LLC", "Wayport"],
+                      "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"],
+          ...
+  ```
 
-2. Replace the coordinates below with the bounding box coordinates you obtained earlier.
+  **Filters Section Changes**
 
+  ```
+    "filters": [
+        { "type": "temporal", "after": "Jan 1 2014 00:00:00", "before" : "Jan 1 2050 00:00:00" },
+        { "type": "bbox", "bbox": [-122.6733398438,47.3630134401,-121.9509887695,47.8076208172] },
+  ...
+  ```
+
+  5. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
+
+  6. Replace the coordinates below with the bounding box coordinates you obtained earlier.
+
+  ```
+  ...
+  	"filters": [
+      	{ "type": "temporal", "after": "Jan 1 2014 00:00:00", "before" : "Jan 1 2050 00:00:00" },
+      	{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },
+  ...
+  ```
 
 #### Customize the HTML page that displays aggregated M-Lab data
 
