@@ -1,5 +1,3 @@
-```yml
----
 # This is the Ansible playbook that configures the location specific 
 # aspects of your Piecewise server. You don't need to be an Ansible expert
 # to use Piecewise. The commands in this playbook each begin with: "- name:" 
