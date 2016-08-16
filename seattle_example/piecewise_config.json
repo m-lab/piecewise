@@ -41,9 +41,13 @@
             { "type" : "AverageRTT" },
             { "type" : "MedianRTT" },
             { "type" : "DownloadCount" },
+            { "type" : "DownloadMin" },
+            { "type" : "DownloadMax" },
             { "type" : "AverageDownload" },
             { "type" : "MedianDownload" },
             { "type" : "UploadCount" },
+            { "type" : "UploadMin" },
+            { "type" : "UploadMax" },
             { "type" : "AverageUpload" },
             { "type" : "MedianUpload" }
         ]
@@ -87,9 +91,13 @@
             { "type" : "AverageRTT" },
             { "type" : "MedianRTT" },
             { "type" : "DownloadCount" },
+            { "type" : "DownloadMin" },
+            { "type" : "DownloadMax" },
             { "type" : "AverageDownload" },
             { "type" : "MedianDownload" },
             { "type" : "UploadCount" },
+            { "type" : "UploadMin" },
+            { "type" : "UploadMax" },
             { "type" : "AverageUpload" },
             { "type" : "MedianUpload" }
         ]
