@@ -379,11 +379,14 @@ This JSON file is arranged in sections with sub-elements. The relevant sections 
       
 4. Also in the ```"bins"``` section, change: ```"key" : "geoid"``` to: ```"key" : "<unique key field name>"```. The key name is the unique field in your geodata file which is used to join aggregated M-Lab data to geodata regions.
 
-Optionally, you may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. 
+
+**Optionally, update the names of ISPs in the "rewrites" section**
+
+You may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. The "rewrites" section allows you to map recognizable ISP names to one or more AS names that Piecewise returns from Maxmind. 
 
 When it ingests and aggregates M-Lab data, Piecewise looks up the IP address from test results in the [Maxmind Geolite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) to find the [Autonmous System](https://en.wikipedia.org/wiki/Autonomous_system_%28Internet%29) (AS) associated with that IP address. These names are aggregated by Piecewise, but may not reflect the public names of ISPs which consumers in your region recognize. Additionally, ISPs often have multiple AS's. 
 
-The "rewrites" section allows you to map recognizable ISP names to one or more AS names that Piecewise returns from Maxmind. 
+It may be more useful to update the "rewrites" section later, after your initial development and testing and before launching your Piecewise instance in production. This allows you to gather test data and learn the names of ISPs as Maxmind sees them, in order to add the appropriate rewrites for your area. In any case, the rewrites section is required, and you can leave it as-is if needed.
 
 ```
         "name": "by_census_block",
@@ -411,14 +414,6 @@ The "rewrites" section allows you to map recognizable ISP names to one or more A
 1. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
 
 2. Replace the coordinates below with the bounding box coordinates you obtained earlier.
-
-```
-...
-	"filters": [
-    	{ "type": "temporal", "after": "Jan 1 2014 00:00:00", "before" : "Jan 1 2050 00:00:00" },
-    	{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },
-...
-```
 
 #### Customize the HTML page that displays aggregated M-Lab data
 

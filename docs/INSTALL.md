@@ -23,7 +23,7 @@ This section details how to install the prerequisite components that your server
 
 #### Installation for Debian Jessie
 
-1. Install virtualbox, virtualbox-dkms, vagrant, ansible, git
+1. Install virtualbox, vagrant, ansible, git
 
         sudo apt-get install vagrant ansible virtualbox virtualbox-dkms git
 
@@ -84,4 +84,4 @@ TBD
 TBD - using piecewise RHEL7 branch
 
 
-Next move on to [Configuring your instance for your location](CONFIG.md)
+## Next move on to [Configuring your instance for your location](CONFIG.md)
