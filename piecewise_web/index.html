@@ -312,10 +312,10 @@ var overlays = {
 var geoLayers = {
 	'census_block_groups': {
 		'name': 'Census block groups',
-		'polygonFile': 'maryland_blkgrps_2015.json',
+		'polygonFile': 'seattle_census10_blockgroups.topojson',
 		'dataUrl': 'stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
-		'dbKey': 'geoid',
-		'geoKey': 'GEOID',
+		'dbKey': 'geoid10',
+		'geoKey': 'GEOID10',
 		'cache': null,
 		'layer': null
 	},
