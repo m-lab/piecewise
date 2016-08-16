@@ -105,17 +105,15 @@ Next, we need to gather some information to configure your Piecewise server:
 
 First, we need to tell Piecewise the geographic area for which it should ingest M-Lab data. This will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
 
-1. Search for "Baltimore, MD" on [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/)
+Use the tool of your choice to select the geographic area you’re interested in. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/) and searched for Baltimore, MD. You can also draw an arbitrary bounding box. After selecting an area, change the settings in the lower left menu to CSV, then copy/paste the coordinates at the bottom of the page to use as the coordinates of your bounding box.
 
-2. Change the settings in the lower left menu to **CSV**
+Open the file ```baltimore_example/piecewise_config.json```, and replace the bounding box coordinates with your coordinates on this line: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
 
-3. Copy the coordinates at the bottom of the page to use as the coordinates of your bounding box. They should like this: ```-76.711519,39.197207,-76.529453,39.372206```
+Open the file ```baltimore_example/piecewise_config.json```, and find the line near the end of the file in the ```"filters"``` section: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
 
-4. Open the file ```baltimore_example/piecewise_config.json```, and find the line near the end of the file in the ```"filters"``` section: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
+Replace the existing coordinates in the file by pasting the bounding box coordinates you copied above in step #3.
 
-5. Replace the existing coordinates in the file by pasting the bounding box coordinates you copied above in step #3.
-
-6. Save your changes. You will make additional changes to this file later. 
+Save your changes. You will make additional changes to this file later. 
 
 **Find the coordinates for the center of your map**
 
