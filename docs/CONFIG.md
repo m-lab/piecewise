@@ -105,12 +105,11 @@ Next, we need to gather some information to configure your Piecewise server:
 
 First, we need to tell Piecewise the geographic area for which it should ingest M-Lab data. This will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
 
-Use the tool of your choice to select the geographic area you’re interested in. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/) and searched for Baltimore, MD. You can also draw an arbitrary bounding box. After selecting an area, change the settings in the lower left menu to CSV, then copy/paste the coordinates at the bottom of the page to use as the coordinates of your bounding box.
+Search for "Baltimore, MD" on [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/) and then change the settings in the lower left menu to **CSV**
+
+Copy the coordinates at the bottom of the page to use as the coordinates of your bounding box. They should like this: ```-76.711519,39.197207,-76.529453,39.372206```
 
 Open the file ```baltimore_example/piecewise_config.json```, and replace the bounding box coordinates with your coordinates on this line: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
-
-Open the file ```baltimore_example/piecewise_config.json```, and find the line near the end of the file in the ```"filters"``` section: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
-
 Replace the existing coordinates in the file by pasting the bounding box coordinates you copied above in step #3.
 
 Save your changes. You will make additional changes to this file later. 
@@ -134,8 +133,6 @@ Open the file ```baltimore_example/center.js```, and replace the latitude and lo
 
 **Obtain shapefiles for your data aggregation areas**
 
-Piecewise will download raw test data from M-Lab that was submitted from within the four coordinates you gathered in the previous step. Its real power, however, is that Piecewise will aggregate the raw data into smaller shaped areas within that bounding box. You can define multiple aggregations and use them as different layers in the same map or visualization. For example, we might use city council districts, counties, countries, census blocks or other shapes to aggregate M-Lab data.
-
 To do these aggregations, Piecewise requires at least one geodata file containing the areas you wish M-Lab data to be aggregated into. This example uses shapefiles but your geodata can be in any of the following formats: 
 
   * Shapefile (.shp)
@@ -151,14 +148,6 @@ Once you locate the shapefile(s) you need, it's good practice to open the shapef
 ```mkdir baltimore_example/maryland_blkgrps```
 
 Save/copy your shapefiles to the folder:
-
-```
-maryland_blkgrps/
-    cb_2015_24_bg_500k.cpg    cb_2015_24_bg_500k.shp.ea.iso.xml
-    cb_2015_24_bg_500k.dbf    cb_2015_24_bg_500k.shp.iso.xml
-    cb_2015_24_bg_500k.prj    cb_2015_24_bg_500k.shp.xml
-    cb_2015_24_bg_500k.shp    cb_2015_24_bg_500k.shx
-```
 
 **Create a topojson file from your shapefile**
 
@@ -185,7 +174,7 @@ maryland_blkgrps/
   	cb_2015_24_bg_500k.cpg  	cb_2015_24_bg_500k.shp.ea.iso.xml
     cb_2015_24_bg_500k.dbf  	cb_2015_24_bg_500k.shp.iso.xml
     cb_2015_24_bg_500k.prj  	cb_2015_24_bg_500k.shp.xml
-    cb_2015_24_bg_500k.shp  	cb_2an015_24_bg_500k.shx
+    cb_2015_24_bg_500k.shp  	cb_2015_24_bg_500k.shx
 maryland_blkgrps_2015.json
 piecewise_config.json
 README.md
@@ -419,13 +408,16 @@ The "rewrites" section allows you to map recognizable ISP names to one or more A
 
 2. Replace the coordinates below with the bounding box coordinates you obtained earlier.
 
+
 #### Customize the HTML page that displays aggregated M-Lab data
 
 At this point, we have customized all of the Piecewise backend components for a new location. We now need to update the HTML page that displays aggregated M-Lab data.
 
+
 ##### Update the map script to use your new location files and settings
 
-Open ```piecewise_web/index.html``` and find the JavaScript near the end of the file that begins with:
+1. Open ```piecewise_web/index.html``` and find the JavaScript near the end of the file that begins with:
+>>>>>>> multiple updates to documentation files and associated edits to some configuration files
 
 ``` 
     <script>
