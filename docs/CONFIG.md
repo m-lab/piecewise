@@ -93,10 +93,6 @@ rm seattle_bigquery_results.sql.gz
 cd ../
 ```
 
-Create a folder for the geodata file(s) to be used by your Piecewise server:
-
-```mkdir baltimore_example/maryland_blkgrps```
-
 ##### Obtain and save geodata for your desired location
 
 Next, we need to gather some information to configure your Piecewise server:
@@ -154,7 +150,7 @@ Once you locate the shapefile(s) you need, it's good practice to open the shapef
 
 ```mkdir baltimore_example/maryland_blkgrps```
 
-Save/copy your shapefiles to the folder:
+Save/copy your shapefiles to the folder.
 
 **Create a topojson file from your shapefile**
 
