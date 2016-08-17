@@ -85,12 +85,7 @@ mv baltimore_example/seattle_center.py baltimore_example/baltimore_center.py
 Remove Seattle specific files:
 
 ```
-cd baltimore_example
-rm seattle_council_districts.geojson
-rm seattle_census10_blockgroups.topojson
-rm -rf seattle_blkgrpce10
-rm seattle_bigquery_results.sql.gz
-cd ../
+rm -rf  baltimore_example/seattle_*
 ```
 
 ##### Obtain and save geodata for your desired location
@@ -110,8 +105,7 @@ Search for "Baltimore, MD" on [http://boundingbox.klokantech.com/](http://boundi
 
 Copy the coordinates at the bottom of the page to use as the coordinates of your bounding box. They should like this: ```-76.711519,39.197207,-76.529453,39.372206```
 
-Open the file ```baltimore_example/piecewise_config.json```, and replace the bounding box coordinates with your coordinates on this line: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },```
-Replace the existing coordinates in the file by pasting the bounding box coordinates you copied above.
+**Open the file ```baltimore_example/piecewise_config.json```**. Near the end of this file, replace the bounding box coordinates with your coordinates on this line: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },``` with the bounding box coordinates you copied above.
 
 Save your changes. You will make additional changes to this file later. 
 
@@ -411,9 +405,8 @@ It may be more useful to update the "rewrites" section later, after your initial
 ...
 ```
 
-1. In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
+In the "filters" section, change the "after" and "before" dates to reflect the start date from which M-Lab data should be ingested. Leaving the end date far in the future ensures data will be collected until that date.
 
-2. Replace the coordinates below with the bounding box coordinates you obtained earlier.
 
 #### Customize the HTML page that displays aggregated M-Lab data
 
@@ -527,4 +520,4 @@ var baseLayers = {
 
 The last thing you need to do before moving on to deploying Piecewise is commit and push all your changes to your fork. As you can see in the last step in the previous section, **Ansible downloads the repository and branch you specify during the deployment process.**
 
-Next move on to [Deploying your Piecewise instance](DEPLOY.md)
+## Next move on to [Deploying your Piecewise instance](DEPLOY.md)
