@@ -26,8 +26,23 @@
              dest=/tmp/
              creates=/tmp/GeoIPASNum2.csv
              copy=no
+
+# The command below tells Ansible where to download or copy your customized Piecewise files
+# when it deploys your VM. Change the **repo** to match your fork and **version** to match 
+# your branch.
+#
+#    For example, change:
+#       git: repo=https://github.com/opentechinstitute/piecewise.git
+#       dest=/opt/piecewise.git/
+#       version=master
+#    to:
+#       git: repo=https://github.com/baltimore-github-org/piecewise.git
+#       dest=/opt/piecewise.git/
+#       version=master
+#
+# Note that the example above is fictious. Use the github URL of your fork and your branch. 
 - name: Fetch piecewise
-  git: repo=https://github.com/opentechinstitute/piecewise.git
+  git: repo=https://github.com/opentechinstitute/piecewise.git 
        dest=/opt/piecewise.git/
        version=master
 

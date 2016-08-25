@@ -23,9 +23,13 @@ This section details how to install the prerequisite components that your server
 
 #### Installation for Debian Jessie
 
-1. Install virtualbox, virtualbox-dkms, vagrant, ansible, git
+1. Install virtualbox, vagrant, ansible, git
 
         sudo apt-get install vagrant ansible virtualbox virtualbox-dkms git
+
+   Also install the Virtualbox kernel modules and Guest Additions:
+
+        sudo apt-get install virtualbox-dkms virtualbox-guest-dkms virtualbox-guest-additions-iso virtualbox-guest-utils virtualbox-guest-x11
 
 2. Clone the piecewise repo
 
@@ -71,9 +75,13 @@ This section details how to install the prerequisite components that your server
         git clone https://github.com/opentechinstitute/piecewise.git
         cd piecewise
 
+### Installation for Mac OS
+
+TBD
+
 ### Installation for RHEL 7 / CentOS 7
 
 TBD - using piecewise RHEL7 branch
 
 
-Next move on to [Configuring your instance for your location](CONFIG.md)
+## Next move on to [Configuring your instance for your location](CONFIG.md)

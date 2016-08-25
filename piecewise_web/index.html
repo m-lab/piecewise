@@ -4,7 +4,7 @@
 
 <head>
 	<meta charset='utf-8' />
-	<title>Seattle Broadband Map</title>
+	<title>Your Map's Name</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -263,7 +263,9 @@
 	<a href="http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test" target="_parent" ><img src="images/about.svg" alt="Learn more  about this test." title="Learn more about this test." /></a>
 </div>
 </div>
+
 <script>
+// This is the Piecewise mapping script.
 
 // If set to 'hex' then GeoJSON files are assumed to be named like
 // 'YYYY_MM-<resolution>.json', where 3 files exist for each of resolutions
@@ -271,6 +273,9 @@
 // the MMMM_YY- suffix to look for. For example:
 // If set to 'city_council_districts', then the system will look for
 // GeoJSON files like 'MMMM_YY-city_council_districts.geojson'.
+
+// polygonType is a variable name defining your aggregation regions. 
+// Change the name to reflect the aggregated regions you are using if needed.
 var polygonType = 'census_block_groups';
 
 // Either 'topojson' or 'geojson'.  The Node.js script creates both TopoJSON and
@@ -401,17 +406,28 @@ var map = L.map('map', {zoomControl: false}).setView(center, zoom);
 map.scrollWheelZoom.disable();
 var control = L.control.zoom({position: 'topright'});
 map.addControl(control);
-var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
-		'contributors'
-});
 
+// Use Open Street Maps as a base tile layer
+// var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
+//		'contributors'
+// });
+
+// Use Mapbox as a base tile layer
+// var mapboxLayer = L.tileLayer(
+//		'https://{s}.tiles.mapbox.com/v3/newamerica.lcl1jan5/{z}/{x}/{y}.png', {
+//	attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
+// });
+ 
+// Use Mapbox as a base tile layer
 var mapboxLayer = L.tileLayer(
 		'https://{s}.tiles.mapbox.com/v3/newamerica.lcl1jan5/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
 });
 
-// Set the default base tile layer
+// Set the default base tile layer. 
+// If using Open Street Maps: map.addLayer(osmLayer);
+// If using Mapbox: map.addLayer(mapboxLayer);
 map.addLayer(mapboxLayer);
 
 // Add other base tile layer providers as needed

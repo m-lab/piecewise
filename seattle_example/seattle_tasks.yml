@@ -1,20 +1,104 @@
----
+# This is the Ansible playbook that configures the location specific 
+# aspects of your Piecewise server. You don't need to be an Ansible expert
+# to use Piecewise. The commands in this playbook each begin with: "- name:" 
+# and consist of multiple subsequent lines.
+#
+# Each section of Ansible commands below are preceded with code comments 
+# to assist new Piecewise developers or implementers with customizing Piecewise
+# for a new location, complementing the instructions in our documentation:
+#   https://github.com/opentechinstitute/piecewise/blob/master/docs/CONFIG.md 
+#
+# For more information about Ansible and the syntax of this file, please see:
+# http://docs.ansible.com/ansible/YAMLSyntax.html
+#
+# ------------------------------------------------------------------
+# 
+# 1) Rename the folder name "seattle_example" to match your folder name. 
+#
+#    For example, change:
+#       copy: src=seattle_example/{{ item.src }}
+#    to:
+#       copy: src=baltimore_example/{{ item.src }}
+#
+# 2) On the lines following "with_items:", update the name of the json file 
+#    to match the name of your topojson file and change the name of the shapefile folder 
+#    to reflect your Piecewise instance.
+#
+#    For example, change:
+#       with_items:
+#        - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
+#        - { src: seattle_blkgrpce10, dest: '' }
+#    to:
+#        - { src: src: maryland_blkgrps_2015.json, dest: maryland_blkgrps_2015.json }
+#        - { src: maryland_blkgrps, dest: '' }
+
 - name: Copy geo data to server
   copy: src=seattle_example/{{ item.src }} dest=/opt/piecewise_web/{{ item.dest }}
   with_items:
-      - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
-      - { src: seattle_blkgrpce10, dest: '' }
-      - { src: center.js, dest: js/center.js }
+    - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
+    - { src: seattle_blkgrpce10, dest: '' }
+    - { src: center.js, dest: js/center.js }
+
+# ------------------------------------------------------------------
+#
+# 3) Rename the folder name "seattle_example" to match your folder name. 
+#
+#    For example, change:
+#       copy: src=seattle_example/extra_data.py dest=/opt/piecewise
+#    to:
+#       copy: src=baltimore_example/extra_data.py dest=/opt/piecewise/
+
 - name: Copy extra_data.py to server
   copy: src=seattle_example/extra_data.py dest=/opt/piecewise/
 - pip: name=ipaddress state=latest
+
+# ------------------------------------------------------------------
+#
+# 4) Change the Ansible command that imports your geodata to reflect the 
+# name of the folder containing your shapefiles as well as the shapefile itself.
+#
+#    For example, change:
+#
+#        command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln seattle_blkgrpce10 -nlt 
+#        MultiPolygon 'PG:user=postgres dbname=piecewise' 
+#        /opt/piecewise_web/seattle_blkgrpce10/CENSUS10_blkgrp_WGS.shp
+#    to:
+#        command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln maryland_blkgrps -nlt 
+#        MultiPolygon 'PG:user=postgres dbname=piecewise' 
+#        /opt/piecewise_web/maryland_blkgrps/cb_2015_24_bg_500k.shp
+#
 - name: Ingest census blocks to postgres
   command: ogr2ogr -f PostgreSQL -t_srs EPSG:4326 -nln seattle_blkgrpce10 -nlt MultiPolygon 'PG:user=postgres dbname=piecewise' /opt/piecewise_web/seattle_blkgrpce10/CENSUS10_blkgrp_WGS.shp
-- name: Install seattle piecewise configuration
+
+# ------------------------------------------------------------------
+#
+# 5) Rename the folder name "seattle_example" to match your folder name. 
+#
+#    For example, change:
+#       copy: src=seattle_example/piecewise_config.json dest=/etc/piecewise/config.json
+#    to:  
+#       copy: src=baltimore_example/piecewise_config.json dest=/etc/piecewise/config.json
+
+- name: Install piecewise configuration
   copy: src=seattle_example/piecewise_config.json dest=/etc/piecewise/config.json
+
+# ------------------------------------------------------------------
+# The remaining Ansible commands do not need to be changed for a standard customization of 
+# Piecewise, but may be adjusted by developers to accomodate non-standard installation 
+# environments or in development environments.
+# ------------------------------------------------------------------
+
 - name: Restart uwsgi so piecewise config is detected
   service: name=uwsgi state=restarted
 - command: python extra_data.py chdir=/opt/piecewise
-- name: Load example results table
-  shell: gunzip -c /opt/piecewise.git/seattle_example/seattle_bigquery_results.sql.gz | psql -U postgres piecewise
-  when: piecewise_env == "dev"
+
+# ------------------------------------------------------------------
+# The Ansible commands below provide a means of loading data at the time of Ansible/Vagrant 
+# deployment, instead of running the piecewise.ingest commands described in DEPLOY.md. 
+# Using this command requires that you have previously setup a working Piecewise installation,
+# and exported previously ingested M-Lab data from postgres. This may be useful to some 
+# developers who wish to skip the ingest process during prototyping. 
+#
+#- name: Load example results table
+#  shell: gunzip -c /opt/piecewise.git/seattle_example/seattle_bigquery_results.sql.gz | psql -U postgres piecewise
+#  when: piecewise_env == "dev"
