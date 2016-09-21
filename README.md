@@ -20,6 +20,8 @@ To get started with installing and configuring Piecewise, please review the link
 * [Configuring your instance for your location](docs/CONFIG.md)
 * [Deploying your Piecewise instance](docs/DEPLOY.md)
 
+You can also learn more about [How Piecewise Works](docs/how-piecewise-works.md) and about the [statistics Piecewise generates](docs/piecewise-statistics.md)
+
 ## Organization
 
 Piecewise contains the following Python modules:
