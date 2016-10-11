@@ -150,3 +150,26 @@ Upload the dump file to a Github repository or other web-accessible location.
 vagrant@jessie $ wget https://web location of your database dump/piecewise.seattle.db.tar.gz
 vagrant@jessie $ sudo gunzip -c piecewise.seattle.db.tar.gz | pg_restore -U postgres -d piecewise -O --clean
 ```
+
+## Deploying Piecewise to a dedicated machine or pre-existing VM
+
+### Ubuntu 16.04 Desktop
+
+* Install OS, run updates
+* Install prerequisites
+  * sudo apt-get install ansible git postgresql postgis postgresql-client nginx uwsgi-plugin-python python-psycopg2 python-dev gdal-bin unzip
+* Fork Piecewise from OTI into your own Github account
+* Clone your fork to the machine where you're deploying
+  * ```$ git clone https://github.com/your-github-name/piecewise.git```
+* Enter the cloned directory and edit playbook.yml, removing the 2 lines referencing sudo.
+* Create a file named "hosts" with the following content, where, of course, you replace "<ip or name of VM>" with either the domain name or IP address of the server:
+
+```<ip address or domain name> ansible_ssh_user=root```
+
+If you are installing on a server for local-only development add ``` ansible_connection=local``` to the end of the line above.
+
+* Run Ansible with:
+```$ ansible-playbook -i hosts playbook.yml```
+
+You'll see Ansible do it's thing, printing information to the screen. It should complete within a few minutes, and (assuming your terminal supports color) you shouldn't see any red in the information printed. If this is the case, then the basic deployment went fine and should be done.
+
