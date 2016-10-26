@@ -26,6 +26,6 @@ extra_data = Table('extra_data', metadata,
         Column('min_rtt', Integer),
         Column('location_type', String),
         Column('client_ip', BigInteger),
-        Column('cost_of_service', Integer))
+        Column('cost_of_service', String))
 metadata.drop_all()
 metadata.create_all()
