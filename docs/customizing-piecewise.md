@@ -89,7 +89,9 @@ After you've initial development and customiztions Piecewise, and before deployi
 
 Assuming you have successfully deployed your customized Piecewise code to a VM using Vagrant, load the URL below into a web browser:
 
-```http://localhost:8080/stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&b.isp_bins```
+```
+http://localhost:8080/stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&b.isp_bins
+```
 
 Note that in this URL, we've removed the variable ```&f.time_slices=1475280000,1477958399``` in order to show aggregate data for all records in our database, not just the latest month. This allows you to see the names of ISPs as Maxmind sees them, in order to add the appropriate rewrites for your area. Make a note of the ISP names found by Piecewise.
 
