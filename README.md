@@ -17,6 +17,7 @@ Piecewise code can be found on Github: [https://github.com/opentechinstitute/pie
 To get started with installing and configuring Piecewise, please review the links below to our current documentation. We suggest that you read all the documents in the order below.
 
 * [Installing Piecewise](docs/INSTALL.md)
+* [Setup external service accounts required to run Piecewise](service-accounts.md)
 * [Configuring your instance for your location](docs/CONFIG.md)
 * [Deploying your Piecewise instance](docs/DEPLOY.md)
 

@@ -1,78 +1,30 @@
-## Configuring and Deploying a Piecewise VM
+## Customizing and configuring your Piecewise code
 
 We’re now ready to customize your copy of Piecewise for the region you care about. We recommend starting a text file to document information about your application that you’ll need to configure Piecewise, and that you might want to have on hand for your own documentation.
 
-### Steps to configure and deploy Piecewise
+The instructions on this page explain how to customize Piecewise on your **development** workstation, and test deployment in a VM, deployed using Vagrant and Ansible. Instructions on how to deploy your customized Piecewise code to a **production** server or VM can be found in our deployment documentation under [Deploying to production servers or VMs](https://github.com/opentechinstitute/piecewise/blob/stevenscounty/docs/DEPLOY.md#deploying-to-any-machine-or-vm-using-ansible-without-vagrant)
 
-  * Subscribe to M-Lab Discuss to whitelist a Google Developer account
-  * Setup a project in Google Developer Console
-  * Configure Piecewise for your location
+Also, please note that these instructions focus on the minimum customizations necessary to replicate the Seattle Broadband Map for a new location. To go beyond minumum customizations, we recommend completing these instructions to gain an understanding of the application, then read [Advanced Piecewise Customization](customizing-piecewise.md).
 
-**You will need the following information:**
+The basic steps for customizing Piecewise on a **development** workstation are:
 
-  * Geographic coordinates forming a bounding box, for example: [-122.6733398438,47.3630134401,-121.9509887695,47.8076208172]
-  * Shapefile(s) containing the sub-geographic areas by which the consumed raw data will be aggregated
-  * Topojson or geojson file(s) created from your shapefile for the map front-end
-  * A time range for which data should be consumed from M-Lab in format: Jan 1 2014 00:00:00
-  * A Google account
-  * A [MapBox](https://www.mapbox.com/) account if you intend to use MapBox base maps
+  * Customize location-specific folders and files
+  * Update Piecewise configuration files with geographic information about your region
+  * Deploy and test your customizations to a VM on your **development** workstation
 
-### Subscribe to M-Lab Discuss to Whitelist a Google Account to use with your Piecewise instance
-
-Piecewise requires a Google Account to be configured for ingesting M-Lab data from BigQuery. We recommend creating a separate account to use specifically for this purpose, rather than a personal account.
-
-1. Create/Identify a Google account to use for your instance of Piecewise.
-
-2. Subscribe that account to the [M-Lab Discuss Group](https://groups.google.com/a/measurementlab.net/forum/#!forum/discuss)
-
-Once subscribed to M-Lab Discuss, **your account will be whitelisted to query the M-Lab dataset at no charge**.
-
-### Configure an API project in the Google Developers console
-
-Go to [Google Developers console](https://console.developers.google.com/project) and log in using the account that was whitelisted by M-Lab.
-
-Create a Google-API project (or choose an already existing project) and turn on permissions for the BigQuery API.
-
-![Create a project](images/dev-console-1.png)
-
-![New project details](images/dev-console-2.png)
-
-If you are using an account maintained by an organization, use of Google Apps APIs may need to be enabled by the organization's Google Apps domain administrator. If this is the case, you may see notification errors to this effect.
-
-![Notification errors](images/dev-console-4.png)
-
-If the project was created successfully, a notification should appear like the one below.
-
-![Successful notification](images/dev-console-5.png)
-
-Turn on billing for the project in Google console (you will not be billed because your account is whitelisted, but Big Query requires API applications to have billing enabled)
-
-![Enable billing image 1](images/dev-console-6.png)
-![Enable billing image 2](images/dev-console-7.png)
-
-Lastly, view your Project's Information details and make note the Project ID number. You'll use it later to configure your instance of Piecewise.
-
-![View Project Information image 1](images/dev-console-8.png)
-![View Project Information image 2](images/dev-console-9.png)
-
-### Configure Piecewise for your location
-
-The purpose of the Piecewise server is to consume M-Lab data from a particular geographic region and to aggregate it by sub-regions within that area. In its current state, configuring a new Piecewise server for a new region will require you to gather some information, modify a few files, and then run the Piecewise ingest and aggregate scripts.
-
-#### Customize the location specific configuration folder and files
+### Customize location-specific folder and files
 
 When you first clone the Piecewise code, it is customized for its original use in the Seattle Broadband Map. To use Piecewise for a new location, we will:
 
   * Rename key folders and files
   * Obtain and save geodata for your desired location
-  * Update the contents of several configuration files with information about your Piecewise instance
+  * Update the Piecewise configuration files
 
 In this example, we'll configure Piecewise for the city of Baltimore, Maryland, to aggregate M-Lab data by US Census Blocks.
 
-**Please note that all commands below assume you are using linux or MacOS command line from inside the main ```piecewise``` folder cloned from Github.**
+**Please note that all commands below assume you are using linux or MacOS command line from inside the main ```piecewise``` folder cloned from your fork on Github.**
 
-
-##### Rename key folders and files
+#### Rename key folders and files
 
 Rename the **seattle_example** folder and two configuration files inside it: 
 
@@ -88,18 +40,18 @@ Remove Seattle specific files:
 rm -rf  baltimore_example/seattle_*
 ```
 
-##### Obtain and save geodata for your desired location
+#### Obtain and save geodata for your desired location
 
 Next, we need to gather some information to configure your Piecewise server:
 
-  * Geographic bounding box coordinates from which raw data will be consumed
+  * Geographic bounding box coordinates from which M-Lab data will be consumed
   * The latitude and longitude coordinates for the center of your map
-  * A shapefile containing the regions by which raw data will be aggregated by piecewise
-  * A topojson file **created from the shapefile**, to be used by the map visualization
+  * A shapefile containing the regions by which M-Lab data will be aggregated
+  * A topojson file **created from the shapefile**, which is used to create the areas from the shapefile on the map visualization
 
 **Select a geographic bounding box**
 
-First, we need to tell Piecewise the geographic area for which it should ingest M-Lab data. This will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
+We need to tell Piecewise the geographic area we're interested in. Piecewise will get M-Lab data from tests that have been run from within that area. The _bounding box_ will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
 
 Search for "Baltimore, MD" on [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/) and then change the settings in the lower left menu to **CSV**
 
@@ -122,29 +74,40 @@ https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/
 data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
 ```
 
-The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```
+The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```. 
+
+You can also note the _zoom level_ of the map, which can be useful later when we make customizations to the map. In this example, the zoom level is 12, denoted as ```12z```in the URL immediately following the two coordinates.
 
 Open the file ```baltimore_example/center.js```, and replace the latitude and longitude coordinates between the brackets on this line: ```var center = [39.2847064,-76.620486];``` with your map center coordinates.
 
 **Obtain shapefiles for your data aggregation areas**
 
-Piecewise will download raw test data from M-Lab that was submitted from within the four coordinates you gathered in the previous step. Its real power, however, is that Piecewise will aggregate the raw data into smaller shaped areas within that bounding box. You can define multiple aggregations and use them as different layers in the same map or visualization. For example, we might use city council districts, counties, countries, census blocks or other shapes to aggregate M-Lab data.
+Piecewise will eventually download M-Lab test data that was submitted from within the four coordinates you gathered in the previous step. Its real power, however, is that Piecewise will also compute aggregate statistics from the raw M-Lab data for smaller areas within that bounding box. You can define multiple aggregations and use them as different layers in the same map or visualization. For example, we might use city council districts, counties, countries, census blocks or other shapes to aggregate M-Lab data.
 
-To do these aggregations, Piecewise requires at least one geodata file containing the areas you wish M-Lab data to be aggregated into. This example uses shapefiles but your geodata can be in any of the following formats: 
+Piecewise needs two geodata files for each aggregation layer you wish to use on your map. One of the files is used to aggregate M-Lab data and the other to present the aggregate data on the default map view.
 
-  * Shapefile (.shp)
-  * Geojson
-  * Topojson
+For each aggregation you wish to present, you will need:
 
-The US Census Bureau provides downloadable shapefiles for a variety of boundaries in the US: [https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html](https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html). In the US, cities often publish shapefiles for their communities that often have been amended or corrected.
+  * a **shape file (.shp)** - used by piecewise scripts to aggregate M-Lab data and save the statistics in a database
+  * a **topojson file (.topojson or .json)** - created from the shape file above, used to present aggregate data on the map
 
-Once you locate the shapefile(s) you need, it's good practice to open the shapefile in [QGIS](http://www.qgis.org/en/site/) or another program to confirm it's ok.
+Shapefiles are the most widely used geodata format used in the GIS community. The US Census Bureau provides downloadable shapefiles for a variety of boundaries in the US: [https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html](https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html). In the US, GIS people in cities or states often publish shapefiles for their communities that often amend or correct the shapefiles provided by the US Census Bureau. ```TO DO: add reference to international shapefile sources```
+ 
+Once you locate the shapefile(s) you need, it's good practice to open the shapefile in [QGIS](http://www.qgis.org/en/site/) or another GIS program to confirm that it meets the requirements to use within your Piecewise application. When you open the shapefile(s) in your GIS program, **make a note of the name of its unique key field.** You'll use that later in these instructions.
+
+  Shapefile requirements:
+
+  * Must contain at least one field that serves as a unique key, for example "geoid" or "geoid10" in the case of census block groups
+  * Numeric fields should be of the type "integer" or "float". ```TO DO: test float```
+  * Text fields should be of the type "string"
+  * Fields of the type "real" are NOT supported
+
 
 **Create a folder for your geodata file(s)**
 
 ```mkdir baltimore_example/maryland_blkgrps```
 
-Save/copy your shapefiles to the folder.
+Save/copy your shapefile(s) to the folder. **Note:** Shapefiles usually come with several other related project files. **All project files that come with your .shp file should be placed in your Piecewise application folder, not just the .shp file.**
 
 **Create a topojson file from your shapefile**
 
@@ -177,11 +140,11 @@ piecewise_config.json
 README.md
 ```
 
-##### Update Piecewise configuration files with your values
+#### Update the Piecewise configuration files
 
 Now we have all the information we need to configure your Piecewise server. This will involve updating the values in several files in your configuration folder.
 
-###### Edit the primary Ansible playbook
+##### Edit the primary Ansible playbook
 
 The main Ansible playbook YAML file, ```piecewise/playbook.yml```, must be edited to include our new Baltimore example Ansible playbook. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
 
@@ -213,7 +176,7 @@ The main Ansible playbook YAML file, ```piecewise/playbook.yml```, must be edite
     sudo: True
 ```
 
-###### Edit the system tasks Ansible playbook
+##### Edit the system tasks Ansible playbook
 
 The Ansible playbook, ```piecewise/system_tasks.yml```, installs and configures the software needed to run Piecewise. For most customizations of Piecewise, only a small change is needed to tell Ansible where your customized code is hosted. 
 
@@ -241,7 +204,7 @@ Open ```piecewise/system_tasks.yml``` and look for the section below:
        version=master
 ```
 
-###### Edit the Ansible playlist containing local specific information
+##### Edit the Ansible playlist containing local specific information
 
 The Ansible tasklist, ```baltimore_example/baltimore_tasks.yml```, configures the location specific aspects of your Piecewise server. Lines in this file that begin with a **#** sign are code comments that highlight the modifications you need to make to the lines below the comment.
 
@@ -342,7 +305,7 @@ The Ansible tasklist, ```baltimore_example/baltimore_tasks.yml```, configures th
 
 ```
 
-###### Edit the main Piecewise configuration file
+##### Edit the main Piecewise configuration file
 
 The main configuration file for your Piecewise deployment is ```baltimore_example/piecewise_config.json```. You will be updating some sections of this file for your deployment, most importantly the information about the aggregations you want to be applied.
 
@@ -356,12 +319,6 @@ This JSON file is arranged in sections with sub-elements. The relevant sections 
        "statistics_table_name": "block_statistics",
        "bins": [
           { "type" : "spatial_join", "table" : "seattle_blkgrpce10", "geometry_column" : "wkb_geometry", "key" : "geoid", "key_type" : "string" ,"join_custom_data" : true },
-          { "type" : "time_slices", "resolution" : "month" },
-          { "type" : "isp_bins", "maxmind_table" : "maxmind", 
-                "rewrites" : {
-                    "aerioconnect": ["Aerioconnect"],
-                    "at&t": ["AT&T Services", "AT&T Mobility LLC", "Wayport"],
-                    "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"],
 ...
 ```
 
@@ -372,29 +329,6 @@ This JSON file is arranged in sections with sub-elements. The relevant sections 
 3. In the sub-section labeled ```"bins"```, change ```"table" : "seattle_blkgrpce10"``` to:   ```"table" : "maryland_blkgrps"```. This table name is the same as the folder where you saved your geodata files.
       
 4. Also in the ```"bins"``` section, change: ```"key" : "geoid"``` to: ```"key" : "<unique key field name>"```. The key name is the unique field in your geodata file which is used to join aggregated M-Lab data to geodata regions.
-
-
-**Optionally, update the names of ISPs in the "rewrites" section**
-
-You may wish to edit the sub-section of "bins" called "rewrites", which provides a mapping ISP names that are relevant for your region. The "rewrites" section allows you to map recognizable ISP names to one or more AS names that Piecewise returns from Maxmind. 
-
-When it ingests and aggregates M-Lab data, Piecewise looks up the IP address from test results in the [Maxmind Geolite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) to find the [Autonmous System](https://en.wikipedia.org/wiki/Autonomous_system_%28Internet%29) (AS) associated with that IP address. These names are aggregated by Piecewise, but may not reflect the public names of ISPs which consumers in your region recognize. Additionally, ISPs often have multiple AS's. 
-
-It may be more useful to update the "rewrites" section later, after your initial development and testing and before launching your Piecewise instance in production. This allows you to gather test data and learn the names of ISPs as Maxmind sees them, in order to add the appropriate rewrites for your area. In any case, the rewrites section is required, and you can leave it as-is if needed.
-
-```
-        "name": "by_census_block",
-        "statistics_table_name": "block_statistics",
-        "bins": [
-            { "type" : "spatial_join", "table" : "maryland_blkgrps", "geometry_column" : "wkb_geometry", "key" : "GEOID", "key_type": "string", "join_custom_data" : true },
-            { "type" : "time_slices", "resolution" : "month" },
-            { "type" : "isp_bins", "maxmind_table" : "maxmind", 
-                "rewrites" : {
-                    "aerioconnect": ["Aerioconnect"],
-                    "at&t": ["AT&T Services", "AT&T Mobility LLC", "Wayport"],
-                    "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"],
-        ...
-```
 
 **Filters Section Changes**
 
@@ -473,6 +407,9 @@ var geoLayers = {
 'geoKey': 'GEOID',
 ```
 
+Note that the name of the field for dbKey and geoKey are the same, one is in capital letters. The reason for this is that the dbKey field name is stored in the Postgres database in lowercase and the geoKey field name is stored in your topojson file in capital letters. 
+
+
 **Define your base tile layer**
 
 To use Open Street Maps tiles, uncomment the lines below that start with ```var osmLayer ...``` by removing "//" from the beginning of the line.
@@ -507,10 +444,8 @@ With the default base layer defined, we can now add it to the map.
 map.addLayer(mapboxLayer);
 ```
 
-Optionally, multiple base map layers can be defined:
-
+Ensure that your preferred base layer is added to the ```var baseLayers``` array:
 ```
-// Add other base tile layer providers as needed
 var baseLayers = {
    'Mapbox': mapboxLayer
 };
