@@ -26,16 +26,16 @@ Please note that all commands below assume you are using linux or MacOS command 
 
 #### Rename key folders and files
 
-> Rename the **seattle_example** folder and two configuration files inside it: 
+Rename the **seattle_example** folder and two configuration files inside it: 
 >
 >  ```
 >  mv seattle_example baltimore_example
 >  mv baltimore_example/seattle_tasks.yml baltimore_example/baltimore_tasks.yml
 >  mv baltimore_example/seattle_center.py baltimore_example/baltimore_center.py
 >  ```
->
-> Remove Seattle specific files:
->
+
+Remove Seattle specific files:
+
 >  ```
 >  rm -rf  baltimore_example/seattle_*
 >  ```
