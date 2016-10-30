@@ -454,4 +454,4 @@ var baseLayers = {
 
 The last thing you need to do before moving on to deploying Piecewise is commit and push all your changes to your fork. As you can see in the last step in the previous section, **Ansible downloads the repository and branch you specify during the deployment process.**
 
-## Next move on to [Deploying your Piecewise instance](DEPLOY.md)
+## Next move on to [Deploying your Piecewise instance](deploy.md)

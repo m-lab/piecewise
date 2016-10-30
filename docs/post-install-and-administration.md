@@ -35,3 +35,11 @@ Upload the dump file to a Github repository or other web-accessible location.
 vagrant@jessie $ wget https://web location of your database dump/piecewise.seattle.db.tar.gz
 vagrant@jessie $ sudo gunzip -c piecewise.seattle.db.tar.gz | pg_restore -U postgres -d piecewise -O --clean
 ```
+
+## Further Reading
+
+Additional resources on Piecewise:
+
+  * [How Piecewise Works](how-piecewise-works.md) 
+  * [Statistics in Piecewise](piecewise-statistics.md)
+  * [Advanced Piecewise Customization and Use](customizing-piecewise.md)

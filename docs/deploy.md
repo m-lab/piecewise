@@ -1,10 +1,10 @@
 ## Deploying a Piecewise server to a development VM
 
-If you have completed the [Install](INSTALL.md) and [Configure](CONFIG.md) documents, you should be ready to test your code in a VM on your **development** workstation. By default, Piecewise currently uses [Vagrant](http://www.vagrantup.com) to create a virtual machine on your **development** workstatin and then uses our [Ansible](http://ansible.com/) playbooks to deploy your customized Piecewise code into the VM.
+If you have completed the [Install](install.md), [Service Account setup](service-accounts.md) and [Configure](config.md) documents, you should be ready to test your code in a VM on your **development** workstation. By default, Piecewise currently uses [Vagrant](http://www.vagrantup.com) to create a virtual machine on your **development** workstatin and then uses our [Ansible](http://ansible.com/) playbooks to deploy your customized Piecewise code into the VM.
 
-If you prefer to install Piecewise without Vagrant, or if you are ready to deploy to a **production** server or VM, please see the last section of this document, [Deploying Piecewise to a **production** server or VM using Ansible _without_ Vagrant]().
+If you prefer to install Piecewise without Vagrant, or if you are ready to deploy to a **production** server or VM, please see the last section of this document, [Deploying Piecewise to a **production** server or VM using Ansible _without_ Vagrant](#deploying-piecewise-to-a-production-server-or-vm-using-ansible-without-vagrant).
 
-## Deploying Piecewise using Vagrant
+## Deploying Piecewise to a VM on your **development** workstation using Vagrant
 
 **Bring up the piecewise VM using Vagrant:**
 ```
@@ -56,7 +56,9 @@ On the first run of **piecewise.ingest**, you will be prompted with a URL to aut
 
 If successful, you will see a number of messages about BigQuery jobs running. If you get an error, it may be due to a misconfiguration or if you used a different account than the one associated with your project in the Google Developer Console.
 
-Once the last command above completes with no errors, again load [http://localhost:8080](http://localhost:8080). You should now see your map with data aggregated by the shapes you provided in the configuration section.
+Once the last command above completes with no errors, again load [http://localhost:8080](http://localhost:8080). You should now see your map with data aggregated by the shapes you provided in the configuration section. If you don't, you may needto restart the Python webserver in your VM with: 
+
+```$ sudo service uwsgi restart```
 
 ## Providing Authentication to /admin
 
@@ -64,20 +66,21 @@ By default, Piecewise provides a basic administrative interface to view, verify 
 
 SSH into your VM and add htaccess-based or other permissions for the directory: **/opt/piecewise_web/admin**
 
-In our sample directory, we put our htaccess file in ```/opt/piecewise.git/htaccess```
+In our sample directory, we put our htaccess file in ```/opt/piecewise.git/htaccess``` and used the program [htpasswd](http://httpd.apache.org/docs/current/programs/htpasswd.html) to add authorized usernames and passwords. 
 
 ## Prototyping and testing changes
 
-Once you have successfully deployed a new Piecewise server, you'll undoubtedly want to make customizations to the visual display from its default colors, layout, text, etc. Because of the way Piecewise is deployed, this can be somewhat confusing at first. Understanding the location of files and how they get updated will help.
+Once you have successfully deployed a new Piecewise server to a VM on your **development** workstation, you'll undoubtedly want to make customizations to the visual display from its default colors, layout, text, etc. Because of the way Piecewise is deployed, this can be somewhat confusing at first. Understanding the location of files and how they get updated will help.
 
-Generally, we have used the steps below to prototype and then commit front-end changes to a running Piecewise server:
+Generally, we have used different methods to prototype and then commit front-end changes to a running Piecewise server:
 
-**Prototyping changes**
+### Basic changes to HTML, CSS and JavaScript in ```piecewise_web/```
 
-  * Use web browser based developer tools to prototype HTML/CSS changes
+You can use the steps below to preview basic changes to HTML, CSS and JavaScript, where we don't necessarily need to see all server-side Piecewise features such as aggregation layers or having the map at it's intended center and zoom level. 
+
+  * Use web browser based or other developer tools to prototype HTML/CSS changes
   * Edit corresponding files in your local Piecewise repository to add those changes
-
-To preview visual or text changes only, it is convenient to run Python's **SimpleHTTPServer** command from within the ```piecewise_web``` folder. 
+  * Run Python's **SimpleHTTPServer** command from within the ```piecewise_web``` folder of your **development** workstation. 
 
   ```
   $ cd piecewise_web
@@ -86,10 +89,14 @@ To preview visual or text changes only, it is convenient to run Python's **Simpl
 
 Note that while using Python's SimpleHTTPServer to preview is useful in quickly previewing many visual elementsdoes not show your map centered on your configured region, and also excludes other Piecewise server-specific features.
 
-To prototype and preview changes will all Piecewise server-specific features, you must update the code inside your VM. The code in your VM is actually a clone of the Github repository you used. this makes pulling changes into a running VM very easy:
+### Full preview of changes with server-side features
 
+The method above is helpful for making edits to text, colors, placement of controls, etc. However, to prototype and preview changes with all Piecewise server-specific features, you must update the code inside your VM. The code in your VM is actually a clone of the Github repository you used. This makes pulling basic changes into a running VM very easy:
+
+  * Use web browser based or other developer tools to prototype HTML/CSS changes
+  * Edit corresponding files in your local Piecewise repository to add those changes
   * Commit your changes to your local fork and push the changes to Github
-  * Log into your VM, navigate to the Piecewise git repo, and pull in your changes
+  * Log into your VM, navigate to the Piecewise git repo, and pull in your changes with git:
 
   ```
   $ vagrant ssh
@@ -100,10 +107,10 @@ To prototype and preview changes will all Piecewise server-specific features, yo
 
 Depending on the changes you're making, you may need to restart services running inside the VM:
 
-```
-vagrant@jessie $ sudo service uwsgi restart
-vagrant@jessie $ sudo service nginx restart
-```
+  ```
+  vagrant@jessie $ sudo service uwsgi restart
+  vagrant@jessie $ sudo service nginx restart
+  ``` 
 
 ## Deploying Piecewise to a **production** server or VM using Ansible _without_ Vagrant
 
@@ -163,3 +170,13 @@ If successful, you will see a number of messages about BigQuery jobs running. If
   ```
 
 You should have a running instance of Piecewise available at your server or VM's public IP address or domain name. 
+
+## Next move on to [Post installation tasks and ongoing maintenance/administration](post-install-and-administration.md)
+
+## Further Reading
+
+Additional resources on Piecewise:
+
+  * [How Piecewise Works](how-piecewise-works.md) 
+  * [Statistics in Piecewise](piecewise-statistics.md)
+  * [Advanced Piecewise Customization and Use](customizing-piecewise.md)

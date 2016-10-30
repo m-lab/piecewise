@@ -20,8 +20,10 @@ To get started with installing and configuring Piecewise, please review the link
 * [Setup external service accounts required to run Piecewise](service-accounts.md)
 * [Configuring your instance for your location](docs/config.md)
 * [Deploying your Piecewise instance](docs/deploy.md)
+* [Post installation tasks and ongoing maintenance/administration](post-install-and-administration.md)
 
-Additionally, [Advanced Piecewise Customization](customizing-piecewise.md) covers how to customize additional components of the Piecewise application in greater detail.
+
+Additionally, [Advanced Piecewise Customization](docs/customizing-piecewise.md) covers how to customize additional components of the Piecewise application in greater detail.
 
 You can also learn more about [How Piecewise Works](docs/how-piecewise-works.md) and about the [statistics Piecewise generates](docs/piecewise-statistics.md)
 
