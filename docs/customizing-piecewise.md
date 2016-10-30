@@ -10,7 +10,9 @@ When it ingests and aggregates M-Lab data, Piecewise looks up the IP address fro
 
 By defaut, the map Piecewise provides doesn't use the ISP names detected in test data, but grouping statistics by ISP is supported by Piecewise, so building additional visualizations using the ISP groupings or "bins" is possible. For example, in the [Seattle Broadband Map](http://broadbandmap.seattle.gov/) the default map view shows M-Lab data for the current month. The map uses an API URL to get the data that is displayed in each census block:
 
-```http://broadbandmap.seattle.gov/stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=1475280000,1477958399```
+```
+http://broadbandmap.seattle.gov/stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=1475280000,1477958399
+```
 
 Loading this URL shows us JSON data containing the selected metrics, during the time range selected, for each census block:
 
@@ -34,7 +36,9 @@ Loading this URL shows us JSON data containing the selected metrics, during the 
 
 By adding the parameter ```&b.isp_bins``` to the URL above, we can get additional groupings by ISP. First, here is the modified URL:
 
-```http://broadbandmap.seattle.gov/stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=1475280000,1477958399&b.isp_bins```
+```
+http://broadbandmap.seattle.gov/stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=1475280000,1477958399&b.isp_bins
+```
 
 And the resulting JSON, which includes a new field, _isp_. Note that in the example below, the two entries shown are slightly different. The first shows a recognized consumer ISP: **isp: "comcast"**, and the second, **isp: "AS174 Cogent Communications"**, is perhaps not well recognized. 
 
