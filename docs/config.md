@@ -49,36 +49,36 @@ Next, we need to gather some information to configure your Piecewise server:
   * A shapefile containing the regions by which M-Lab data will be aggregated
   * A topojson file **created from the shapefile**, which is used to create the areas from the shapefile on the map visualization
 
-**Select a geographic bounding box**
+Select a geographic bounding box
 
-We need to tell Piecewise the geographic area we're interested in. Piecewise will get M-Lab data from tests that have been run from within that area. The _bounding box_ will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
+> We need to tell Piecewise the geographic area we're interested in. Piecewise will get M-Lab data from tests that have been run from within that area. The _bounding box_ will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
+> 
+> Search for "Baltimore, MD" on [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/) and then change the settings in the lower left menu to **CSV**
+>
+> Copy the coordinates at the bottom of the page to use as the coordinates of your bounding box. They should like this: ```-76.711519,39.197207,-76.529453,39.372206```
+>
+> **Open the file ```baltimore_example/piecewise_config.json```**. Near the end of this file, replace the bounding box coordinates with your coordinates on this line: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },``` with the bounding box coordinates you copied above.
+>
+> Save your changes. You will make additional changes to this file later. 
 
-Search for "Baltimore, MD" on [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/) and then change the settings in the lower left menu to **CSV**
+Find the coordinates for the center of your map:
 
-Copy the coordinates at the bottom of the page to use as the coordinates of your bounding box. They should like this: ```-76.711519,39.197207,-76.529453,39.372206```
-
-**Open the file ```baltimore_example/piecewise_config.json```**. Near the end of this file, replace the bounding box coordinates with your coordinates on this line: ```{ "type": "bbox", "bbox": [-76.711519,39.197207,-76.529453,39.372206] },``` with the bounding box coordinates you copied above.
-
-Save your changes. You will make additional changes to this file later. 
-
-**Find the coordinates for the center of your map**
-
-Piecewise needs to know the coordinates for the center of your map. Again, there are many ways to find this information. We searched [Google Maps](https://www.google.com/maps) for Baltimore, MD, which shows us [a map with Baltimore at the center](https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758).
-
-Find the latitude and longitude coordinates for your desired location.
-
-We obtained the latitude and longitude coordinates by copying them from the URL:
-
-```
-https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/
-data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
-```
-
-The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```. 
-
-You can also note the _zoom level_ of the map, which can be useful later when we make customizations to the map. In this example, the zoom level is 12, denoted as ```12z```in the URL immediately following the two coordinates.
-
-Open the file ```baltimore_example/center.js```, and replace the latitude and longitude coordinates between the brackets on this line: ```var center = [39.2847064,-76.620486];``` with your map center coordinates.
+> Piecewise needs to know the coordinates for the center of your map. Again, there are many ways to find this information. We searched [Google Maps](https://www.google.com/maps) for Baltimore, MD, which shows us [a map with Baltimore at the center](https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758).
+> 
+> Find the latitude and longitude coordinates for your desired location.
+> 
+> We obtained the latitude and longitude coordinates by copying them from the URL:
+> 
+> ```
+> https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/
+> data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758
+> ```
+>
+> The map center is the two coordinates after the @ sign in the URL: ```39.2848182,-76.6906973```. 
+> 
+> You can also note the _zoom level_ of the map, which can be useful later when we make customizations to the map. In this example, the zoom level is 12, denoted as ```12z```in the URL immediately following the two coordinates.
+> 
+> Open the file ```baltimore_example/center.js```, and replace the latitude and longitude coordinates between the brackets on this line: ```var center = [39.2847064,-76.620486];``` with your map center coordinates.
 
 **Obtain shapefiles for your data aggregation areas**
 
