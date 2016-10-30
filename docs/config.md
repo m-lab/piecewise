@@ -1,6 +1,6 @@
 ## Customizing and configuring your Piecewise code
 
-We’re now ready to customize your copy of Piecewise for the region you care about. We recommend starting a text file to document information about your application that you’ll need to configure Piecewise, and that you might want to have on hand for your own documentation.
+We’re now ready to customize your copy of Piecewise for the region you care about. We recommend starting a text file to document information about your application that you’ll need to configure Piecewise, and to have on hand for your own documentation.
 
 The instructions on this page explain how to customize Piecewise on your **development** workstation, and test deployment in a VM, deployed using Vagrant and Ansible. Instructions on how to deploy your customized Piecewise code to a **production** server or VM can be found in our deployment documentation under [Deploying to production servers or VMs](https://github.com/opentechinstitute/piecewise/blob/stevenscounty/docs/DEPLOY.md#deploying-to-any-machine-or-vm-using-ansible-without-vagrant)
 
@@ -22,23 +22,23 @@ When you first clone the Piecewise code, it is customized for its original use i
 
 In this example, we'll configure Piecewise for the city of Baltimore, Maryland, to aggregate M-Lab data by US Census Blocks.
 
-**Please note that all commands below assume you are using linux or MacOS command line from inside the main ```piecewise``` folder cloned from your fork on Github.**
+Please note that all commands below assume you are using linux or MacOS command line from inside the main ```piecewise``` folder cloned from your fork on Github.
 
 #### Rename key folders and files
 
-Rename the **seattle_example** folder and two configuration files inside it: 
+  Rename the **seattle_example** folder and two configuration files inside it: 
 
-```
-mv seattle_example baltimore_example
-mv baltimore_example/seattle_tasks.yml baltimore_example/baltimore_tasks.yml
-mv baltimore_example/seattle_center.py baltimore_example/baltimore_center.py
-```
+  ```
+  mv seattle_example baltimore_example
+  mv baltimore_example/seattle_tasks.yml baltimore_example/baltimore_tasks.yml
+  mv baltimore_example/seattle_center.py baltimore_example/baltimore_center.py
+  ```
 
-Remove Seattle specific files:
+  Remove Seattle specific files:
 
-```
-rm -rf  baltimore_example/seattle_*
-```
+  ```
+  rm -rf  baltimore_example/seattle_*
+  ```
 
 #### Obtain and save geodata for your desired location
 
