@@ -49,7 +49,7 @@ Next, we need to gather some information to configure your Piecewise server:
   * A shapefile containing the regions by which M-Lab data will be aggregated
   * A topojson file **created from the shapefile**, which is used to create the areas from the shapefile on the map visualization
 
-Select a geographic bounding box
+##### Select a geographic bounding box
 
 > We need to tell Piecewise the geographic area we're interested in. Piecewise will get M-Lab data from tests that have been run from within that area. The _bounding box_ will be in the form of four coordinates. There are many tools to help define a bounding box. We used [http://boundingbox.klokantech.com/](http://boundingbox.klokantech.com/). 
 > 
@@ -61,7 +61,7 @@ Select a geographic bounding box
 >
 > Save your changes. You will make additional changes to this file later. 
 
-Find the coordinates for the center of your map:
+##### Find the coordinates for the center of your map:
 
 > Piecewise needs to know the coordinates for the center of your map. Again, there are many ways to find this information. We searched [Google Maps](https://www.google.com/maps) for Baltimore, MD, which shows us [a map with Baltimore at the center](https://www.google.com/maps/place/Baltimore,+MD/@39.2848182,-76.6906973,12z/data=!3m1!4b1!4m2!3m1!1s0x89c803aed6f483b7:0x44896a84223e758).
 > 
@@ -80,7 +80,7 @@ Find the coordinates for the center of your map:
 > 
 > Open the file ```baltimore_example/center.js```, and replace the latitude and longitude coordinates between the brackets on this line: ```var center = [39.2847064,-76.620486];``` with your map center coordinates.
 
-Obtain shapefiles for your data aggregation areas
+##### Obtain shapefiles for your data aggregation areas
 
 > Piecewise will eventually download M-Lab test data that was submitted from within the four coordinates you gathered in the previous step. Its real power, however, is that Piecewise will also compute aggregate statistics from the raw M-Lab data for smaller areas within that bounding box. You can define multiple aggregations and use them as different layers in the same map or visualization. For example, we might use city council districts, counties, countries, census blocks or other shapes to aggregate M-Lab data.
 > 
@@ -102,14 +102,13 @@ Obtain shapefiles for your data aggregation areas
 >  * Text fields should be of the type "string"
 >  * Fields of the type "real" are NOT supported
 
-
-Create a folder for your geodata file(s)
+##### Create a folder for your geodata file(s)
 
 > ```mkdir baltimore_example/maryland_blkgrps```
 > 
 > Save/copy your shapefile(s) to the folder. **Note:** Shapefiles usually come with several other related project files. **All project files that come with your .shp file should be placed in your Piecewise application folder, not just the .shp file.**
 
-Create a topojson file from your shapefile
+##### Create a topojson file from your shapefile
 
 > The shapefile(s) above will be used by Piecewise to aggregate raw M-Lab data, but you also want to use a map or other visualization to display your data.
 > 
