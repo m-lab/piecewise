@@ -80,65 +80,65 @@ Find the coordinates for the center of your map:
 > 
 > Open the file ```baltimore_example/center.js```, and replace the latitude and longitude coordinates between the brackets on this line: ```var center = [39.2847064,-76.620486];``` with your map center coordinates.
 
-**Obtain shapefiles for your data aggregation areas**
+Obtain shapefiles for your data aggregation areas
 
-Piecewise will eventually download M-Lab test data that was submitted from within the four coordinates you gathered in the previous step. Its real power, however, is that Piecewise will also compute aggregate statistics from the raw M-Lab data for smaller areas within that bounding box. You can define multiple aggregations and use them as different layers in the same map or visualization. For example, we might use city council districts, counties, countries, census blocks or other shapes to aggregate M-Lab data.
+> Piecewise will eventually download M-Lab test data that was submitted from within the four coordinates you gathered in the previous step. Its real power, however, is that Piecewise will also compute aggregate statistics from the raw M-Lab data for smaller areas within that bounding box. You can define multiple aggregations and use them as different layers in the same map or visualization. For example, we might use city council districts, counties, countries, census blocks or other shapes to aggregate M-Lab data.
+> 
+> Piecewise needs two geodata files for each aggregation layer you wish to use on your map. One of the files is used to aggregate M-Lab data and the other to present the aggregate data on the default map view.
+> 
+> For each aggregation you wish to present, you will need:
+> 
+>  * a **shape file (.shp)** - used by piecewise scripts to aggregate M-Lab data and save the statistics in a database
+>  * a **topojson file (.topojson or .json)** - created from the shape file above, used to present aggregate data on the map
+>
+> Shapefiles are the most widely used geodata format used in the GIS community. The US Census Bureau provides downloadable shapefiles for a variety of boundaries in the US: [https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html](https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html). In the US, GIS people in cities or states often publish shapefiles for their communities that often amend or correct the shapefiles provided by the US Census Bureau. ```TO DO: add reference to international shapefile sources```
+> 
+> Once you locate the shapefile(s) you need, it's good practice to open the shapefile in [QGIS](http://www.qgis.org/en/site/) or another GIS program to confirm that it meets the requirements to use within your Piecewise application. When you open the shapefile(s) in your GIS program, **make a note of the name of its unique key field.** You'll use that later in these instructions.
+> 
+>  Shapefile requirements:
+>
+>  * Must contain at least one field that serves as a unique key, for example "geoid" or "geoid10" in the case of census block groups
+>  * Numeric fields should be of the type "integer" or "float". ```TO DO: test float```
+>  * Text fields should be of the type "string"
+>  * Fields of the type "real" are NOT supported
 
-Piecewise needs two geodata files for each aggregation layer you wish to use on your map. One of the files is used to aggregate M-Lab data and the other to present the aggregate data on the default map view.
 
-For each aggregation you wish to present, you will need:
+Create a folder for your geodata file(s)
 
-  * a **shape file (.shp)** - used by piecewise scripts to aggregate M-Lab data and save the statistics in a database
-  * a **topojson file (.topojson or .json)** - created from the shape file above, used to present aggregate data on the map
+> ```mkdir baltimore_example/maryland_blkgrps```
+> 
+> Save/copy your shapefile(s) to the folder. **Note:** Shapefiles usually come with several other related project files. **All project files that come with your .shp file should be placed in your Piecewise application folder, not just the .shp file.**
 
-Shapefiles are the most widely used geodata format used in the GIS community. The US Census Bureau provides downloadable shapefiles for a variety of boundaries in the US: [https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html](https://www.census.gov/geo/maps-data/data/cbf/cbf_blkgrp.html). In the US, GIS people in cities or states often publish shapefiles for their communities that often amend or correct the shapefiles provided by the US Census Bureau. ```TO DO: add reference to international shapefile sources```
- 
-Once you locate the shapefile(s) you need, it's good practice to open the shapefile in [QGIS](http://www.qgis.org/en/site/) or another GIS program to confirm that it meets the requirements to use within your Piecewise application. When you open the shapefile(s) in your GIS program, **make a note of the name of its unique key field.** You'll use that later in these instructions.
+Create a topojson file from your shapefile
 
-  Shapefile requirements:
-
-  * Must contain at least one field that serves as a unique key, for example "geoid" or "geoid10" in the case of census block groups
-  * Numeric fields should be of the type "integer" or "float". ```TO DO: test float```
-  * Text fields should be of the type "string"
-  * Fields of the type "real" are NOT supported
-
-
-**Create a folder for your geodata file(s)**
-
-```mkdir baltimore_example/maryland_blkgrps```
-
-Save/copy your shapefile(s) to the folder. **Note:** Shapefiles usually come with several other related project files. **All project files that come with your .shp file should be placed in your Piecewise application folder, not just the .shp file.**
-
-**Create a topojson file from your shapefile**
-
-The shapefile(s) above will be used by Piecewise to aggregate raw M-Lab data, but you also want to use a map or other visualization to display your data.
-
-The map visualization that Piecewise provides by default requires a **topojson file that is created from the same shapefile** you downloaded in the previous section.
-
-Here are some resources for creating or converting geofiles:
-
-  * [QGIS](http://www.qgis.org/en/site/)
-  * [Mapshaper](http://mapshaper.org/)
-  * [Topojson / geojson converter](http://jeffpaine.github.io/geojson-topojson/)
-
-Save your topojson file to the **baltimore_example** folder. In our example, this file is named **maryland_blkgrps_2015.json**
-
-When you're done, the **baltimore_example** folder should contain the files below:
-
-```
-baltimore_center.py
-baltimore_tasks.yml
-center.js
-extra_data.py
-maryland_blkgrps/
-  	cb_2015_24_bg_500k.cpg  	cb_2015_24_bg_500k.shp.ea.iso.xml
-    cb_2015_24_bg_500k.dbf  	cb_2015_24_bg_500k.shp.iso.xml
-    cb_2015_24_bg_500k.prj  	cb_2015_24_bg_500k.shp.xml
-    cb_2015_24_bg_500k.shp  	cb_2an015_24_bg_500k.shx
-maryland_blkgrps_2015.json
-piecewise_config.json
-README.md
-```
+> The shapefile(s) above will be used by Piecewise to aggregate raw M-Lab data, but you also want to use a map or other visualization to display your data.
+> 
+> The map visualization that Piecewise provides by default requires a **topojson file that is created from the same shapefile** you downloaded in the previous section.
+> 
+> Here are some resources for creating or converting geofiles:
+> 
+>  * [QGIS](http://www.qgis.org/en/site/)
+>  * [Mapshaper](http://mapshaper.org/)
+>  * [Topojson / geojson converter](http://jeffpaine.github.io/geojson-topojson/)
+>
+> Save your topojson file to the **baltimore_example** folder. In our example, this file is named **maryland_blkgrps_2015.json**
+>
+> When you're done, the **baltimore_example** folder should contain the files below:
+> 
+> ```
+> baltimore_center.py
+> baltimore_tasks.yml
+> center.js
+> extra_data.py
+> maryland_blkgrps/
+>   	cb_2015_24_bg_500k.cpg  	cb_2015_24_bg_500k.shp.ea.iso.xml
+>     cb_2015_24_bg_500k.dbf  	cb_2015_24_bg_500k.shp.iso.xml
+>     cb_2015_24_bg_500k.prj  	cb_2015_24_bg_500k.shp.xml
+>     cb_2015_24_bg_500k.shp  	cb_2an015_24_bg_500k.shx
+> maryland_blkgrps_2015.json
+> piecewise_config.json
+> README.md
+> ```
 
 #### Update the Piecewise configuration files
 
