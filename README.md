@@ -16,9 +16,14 @@ Piecewise code can be found on Github: [https://github.com/opentechinstitute/pie
 
 To get started with installing and configuring Piecewise, please review the links below to our current documentation. We suggest that you read all the documents in the order below.
 
-* [Installing Piecewise](docs/INSTALL.md)
-* [Configuring your instance for your location](docs/CONFIG.md)
-* [Deploying your Piecewise instance](docs/DEPLOY.md)
+* [Installing Piecewise](docs/install.md)
+* [Setup external service accounts required to run Piecewise](service-accounts.md)
+* [Configuring your instance for your location](docs/config.md)
+* [Deploying your Piecewise instance](docs/deploy.md)
+* [Post installation tasks and ongoing maintenance/administration](post-install-and-administration.md)
+
+
+Additionally, [Advanced Piecewise Customization](docs/customizing-piecewise.md) covers how to customize additional components of the Piecewise application in greater detail.
 
 You can also learn more about [How Piecewise Works](docs/how-piecewise-works.md) and about the [statistics Piecewise generates](docs/piecewise-statistics.md)
 

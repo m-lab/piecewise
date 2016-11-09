@@ -71,5 +71,8 @@
     - uwsgi
     - nginx
     - postgresql
-- postgresql_db: name=piecewise state=present
-- command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
+- name: Create postgres database
+  sudo: yes
+  sudo_user: postgres
+  postgresql_db: name=piecewise state=present
+  command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
