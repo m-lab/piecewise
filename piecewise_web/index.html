@@ -212,7 +212,7 @@
 		document.getElementById('longitude').value = position.coords.longitude;
 
 		var xhr = new XMLHttpRequest(),
-		currentLocationURL = "http://nominatim.openstreetmap.org/reverse?format=json&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&zoom=18&addressdetails=1";
+		currentLocationURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&zoom=18&addressdetails=1";
 
 		var currentLoc;
 		xhr.open('GET', currentLocationURL, true);
@@ -239,7 +239,7 @@
 
 	function getNdtServer () {
 		var xhr = new XMLHttpRequest(),
-			mlabNsUrl = 'http://mlab-ns.appspot.com/ndt?format=json';
+			mlabNsUrl = 'https://mlab-ns.appspot.com/ndt?format=json';
 
 		xhr.open('GET', mlabNsUrl, true);
 		xhr.send();
