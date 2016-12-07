@@ -21,7 +21,7 @@
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
-	server_name 168.62.227.64;
+	server_name localhost;
 	return 301 https://$server_name$request_uri;
 }
 # HTTPS server
