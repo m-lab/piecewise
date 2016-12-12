@@ -33,23 +33,23 @@ server {
 	root /opt/piecewise_web;
 	index index.html index.htm;
 
-    location = /stats { rewrite ^ /stats/; }
-    location /stats  { try_files $uri @stats; }
-    location @stats {
-    	include uwsgi_params;
-    	uwsgi_param SCRIPT_NAME /stats;
-    	uwsgi_modifier1 30;
-		uwsgi_pass unix:///tmp/uwsgi-piecewise.sock;
-    }
-
-    location = /collector { rewrite ^ /collector/; }
-    location /collector  { try_files $uri @collector; }
-    location @collector {
+	location = /stats { rewrite ^ /stats/; }
+	location /stats  { try_files $uri @stats; }
+	location @stats {
 		include uwsgi_params;
-    	uwsgi_param SCRIPT_NAME /collector;
-    	uwsgi_modifier1 30;
-    	uwsgi_pass unix:///tmp/uwsgi-collector.sock;
-    }
+		uwsgi_param SCRIPT_NAME /stats;
+		uwsgi_modifier1 30;
+		uwsgi_pass unix:///tmp/uwsgi-piecewise.sock;
+	}
+
+	location = /collector { rewrite ^ /collector/; }
+	location /collector  { try_files $uri @collector; }
+	location @collector {
+		include uwsgi_params;
+		uwsgi_param SCRIPT_NAME /collector;
+		uwsgi_modifier1 30;
+		uwsgi_pass unix:///tmp/uwsgi-collector.sock;
+	}
 	location /collector/retrieve {
 		try_files $uri @collector;
 		auth_basic "Custom Data";
@@ -60,6 +60,7 @@ server {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
 		try_files $uri $uri/ =404;
+
 		# Uncomment to enable naxsi on this location
 		# include /etc/nginx/naxsi.rules
 	}
@@ -78,5 +79,4 @@ server {
 	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
 	ssl_ciphers "HIGH:!aNULL:!MD5 or HIGH:!aNULL:!MD5:!3DES";
 	ssl_prefer_server_ciphers on;
-
 }
