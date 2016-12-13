@@ -66,7 +66,7 @@
 - name: Fix postgres configuration permissions
   file: path=/etc/postgresql/9.4/main/pg_hba.conf state=file owner=postgres group=postgres mode=0640
 - name: create self-signed SSL cert
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=District of Columbia/L=Washington/O=IT/CN=${ansible_fqdn}" -days 3650 -out /etc/ssl/localcerts/localcert.pem -keyout /etc/ssl/localcerts/localcert.key -out /etc/ssl/localcerts/localcert.crt -extensions v3_ca creates=/etc/ssl/localcerts/localcert.crt  
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=District of Columbia/L=Washington/O=IT/CN=${ansible_fqdn}" -days 3650 -out /etc/nginx/ssl/localcert.pem -keyout /etc/nginx/ssl/localcert.key -out /etc/nginx/ssl/localcert.crt -extensions v3_ca creates=/etc/nginx/ssl/localcert.crt  
 - name: Restart services
   service: name={{ item }} state=restarted
   with_items: 
