@@ -77,7 +77,6 @@
     - uwsgi
     - nginx
     - postgresql
-
 - name: Create postgres database
   become: True
   become_user: postgres  
