@@ -3,8 +3,8 @@
   tasks:
     - include: system_tasks.yml
       become: True
-      become_user: sudo
+      become_user: root
     - include: user_tasks.yml
     - include: seattle_example/seattle_tasks.yml
       become: True
-      become_user: sudo
+      become_user: root
