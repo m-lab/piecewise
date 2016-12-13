@@ -57,15 +57,17 @@
   with_items:
     - /opt/telescope/requirements.txt
     - /opt/piecewise/requirements.txt
-- name: Create piecewise log directory
-  file: path=/var/log/piecewise/ state=directory
 - name: Install convenience python modules
   pip: name=bigquery state=latest
+- name: Create Nginx ssl directory
+  file: path=/etc/nginx/ssl/ state=directory  
 - name: Deploy configuration files
   copy: src=conf/ dest=/ owner=root group=root
 - name: Fix postgres configuration permissions
   file: path=/etc/postgresql/9.4/main/pg_hba.conf state=file owner=postgres group=postgres mode=0640
-- name: create self-signed SSL cert
+- name: Create piecewise log directory
+  file: path=/var/log/piecewise/ state=directory
+- name: Create self-signed SSL cert for Nginx
   command: openssl req -new -nodes -x509 -subj "/C=US/ST=District of Columbia/L=Washington/O=IT/CN=${ansible_fqdn}" -days 3650 -out /etc/nginx/ssl/localcert.pem -keyout /etc/nginx/ssl/localcert.key -out /etc/nginx/ssl/localcert.crt -extensions v3_ca creates=/etc/nginx/ssl/localcert.crt  
 - name: Restart services
   service: name={{ item }} state=restarted
