@@ -21,14 +21,14 @@
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
-	server_name localhost;
+	server_name 45.79.191.25;
 	return 301 https://$server_name$request_uri;
 }
 # HTTPS server
 #
 server {
 	listen 443;
-	server_name localhost;
+	server_name 45.79.191.25;
 
 	root /opt/piecewise_web;
 	index index.html index.htm;
