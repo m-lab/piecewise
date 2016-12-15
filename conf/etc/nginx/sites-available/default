@@ -42,6 +42,10 @@ server {
 		uwsgi_pass unix:///tmp/uwsgi-piecewise.sock;
 	}
 
+	location /app {
+		alias /opt/piecewise_web/app/;
+	}
+
 	location = /collector { rewrite ^ /collector/; }
 	location /collector  { try_files $uri @collector; }
 	location @collector {
