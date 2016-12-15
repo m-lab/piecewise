@@ -1,21 +1,14 @@
 ---
 - name: Fetch updated piecewise repo
-  become: True
-  become_user: root
   git: repo=https://github.com/opentechinstitute/piecewise.git 
        dest=/opt/piecewise.git/
        version=update-ndt-test
-
-- name: Deploy updated piecewise website code
-  become: True
-  become_user: root
+- name: Deploy updated piecewise code
   file: src=/opt/piecewise.git/{{ item.src }} dest=/opt/{{ item.dest }} state=link
   with_items:
-      - { src: piecewise_web, dest: piecewise_web }
+      - { src: piecewise, dest: piecewise }
 
 - name: Restart services
-  become: True
-  become_user: root
   service: name={{ item }} state=restarted
   with_items: 
     - uwsgi

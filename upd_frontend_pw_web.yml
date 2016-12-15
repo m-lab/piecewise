@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - include: yml/update_pw_web.yml
+      become: True
+      become_user: root
