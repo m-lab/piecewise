@@ -37,7 +37,13 @@ function error(error) {
 
 function submitExtraData() {
   if (validateExtraDataForm()) {
+<<<<<<< db1888233ec26d90b41f440b92579bf8ccb7a2ff
     var formData = $($("#collector")[0].elements).not("#other,#demoHuman").serialize();
+=======
+    var formData = $('#collector').serialize();
+    $(formData).children('#other').remove();
+    $(formData).children('#demo-human').remove();
+>>>>>>> test modification to form validation function to remove un-needed fields
     $.ajax({
       method: 'GET',
       url: $('#collector').attr('action'),
