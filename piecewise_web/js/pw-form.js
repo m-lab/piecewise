@@ -39,7 +39,7 @@ function submitExtraData() {
   if (validateExtraDataForm()) {
     var formData = $('#collector').serialize();
     $(formData.other).remove();
-    $(formData.'demo-human').remove();
+    $(formData.demoHuman).remove();
     $.ajax({
       method: 'GET',
       url: $('#collector').attr('action'),
