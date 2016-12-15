@@ -100,7 +100,7 @@ angular.module('Measure.Measure', ['ngRoute'])
         $scope.startButtonClass = '';
 
         // Update Piecewise form fields with collected values
-        document.getElementById('bigquery_key').value = $scope.timeStarted;
+        document.getElementById('bigquery_key').value = timeStarted;
         var metric_name;
         var resultString;
         for (metric_name in $scope.measurementResult) {
