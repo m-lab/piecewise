@@ -5,13 +5,62 @@
   </div>
   <div class="features">
     <section>
-      <h1 translate>Test Your Speed</h1>
-      <p class="startIntroLabel">
-        <span translate>M-Lab's Speed Test provides advanced diagnostics of the performance of your broadband connection through quick measurements.</span><br />
-      </p>
+      <h3>The City of Seattle is collecting information from residents about broadband experiences across the City. To contribute, please answer the following questions and then take our Broadband Speed Test:</h3>
+      <form action="/collector/collect" method="get" id="collector">
+      <div id="extra-data" class="ndt-related">
+        <div class="container">
+          <p><span class="required">*</span> Who is your Internet Service Provider?</p>
+          <p>
+            <select id="isp_user" name="isp_user" class="form-control">
+              <option value="default">------</option>
+              <option value="comcast">Comcast</option>
+              <option value="centurylink">CenturyLink</option>
+              <option value="wave">Wave</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="text" name="other" id="isp_user_text" class="form-control" style="display:none;"/>
+          </p>
+        </div>
+        <div class="container">
+          <p><span class="required">*</span> How do you connect to the Internet?</p>
+          <p>
+            <select id="connection_type" name="connection_type" class="form-control">
+              <option value="default">------</option>
+              <option value="wired">Wired connection</option>
+              <option value="wireless-single">Wireless connection - 1 device</option>
+              <option value="wireless-multiple">Wireless connection - shared among multiple devices or households</option>
+            </select>
+          </p>
+        </div>
+        <div class="container">
+          <p><span class="required">*</span> How much do you pay, per month?</p>
+          <p>
+            <select id="cost_of_service" name="cost_of_service" class="form-control">
+              <option value="default">------</option>
+              <option value="less_than_25">Less than $25</option>
+              <option value="25_50">$25-$50</option>
+              <option value="50_75">$50-$75</option>
+              <option value="75_100">$75-$100</option>
+              <option value="100_or_above">$100+</option>
+              <option value="dont_know">Don't know</option>
+            </select>
+          </p>
+        </div>
+        <div class="container textboxes">
+          <p>What are your advertised upload and download speeds? <strong>(Optional)</strong></p>
+          <div class="expected-values">
+            <p>Download:</p>
+            <input name="advertised_download" size="3"/><small> mbps</small>
+          </div>
+          <div class='expected-values'>
+            <p>Upload:</p>
+            <input name="advertised_upload" size="3"/><small> mbps</small>
+          </div>
+        </div>
+      </div>
       <p>
         <input type="checkbox" id="demo-human" name="demo-human" ng-model="privacyConsent">
-        <label for="demo-human" translate style="font-size: smaller;">I agree to the <a href="http://www.measurementlab.net/privacy/">data policy</a>, which includes retention and publication of IP addresses.</label>
+        <label for="demo-human" translate style="font-size: smaller;">I understand that the data collected from this test will be anonymized and aggregated for publication to the Broadband Map and <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>. I agree to the <a href="https://www.measurementlab.net/privacy/">data policy</a>, which includes retention and publication of IP addresses.</label>
       </p>
       <p>
         <div class="row">
@@ -27,7 +76,7 @@
         	</div>
         </div>
       </p>
-      <small translate>For more on M-Lab's data collection and measurement, including the disclosure of IP addresses, see our <a href="http://www.measurementlab.net/privacy/">Privacy Policy</a>.</small>
+      <small translate>For more on M-Lab's data collection and measurement, including the disclosure of IP addresses, see our <a href="https://www.measurementlab.net/privacy/">Privacy Policy</a>.</small>
     </section>
     <section id="measurementSpace">
       <div ng-show="!measurementComplete">
@@ -71,75 +120,102 @@
   					</tr>
   				</table>
         </div>
+        <div id="thankyou">
+            <h3 class="league-gothic">Thank you!</h3>
+            <strong>Your test results will be combined with others and will appear on the map at the end of the month.</strong><br /><br />
+            <strong>What do you want to do next?</strong>
+            <ul>
+              <li><a href="#" onclick="showMap()">View all results to-date on a map of Seattle</a></li>
+              <li><a href="http://www.seattle.gov/broadband-speed-test-about" target="_parent">Learn more about this test and how to improve your speed</a></li>
+              <li><a href="#" onclick="showSocialShare()">Share this test with your friends, colleagues, and neighbors</a></li>
+            </ul>
+          <div id="socialshare">
+                <!-- Social Button HTML -->
+
+              <!-- Twitter -->
+              <a href="http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea" target="_blank" class="share-btn twitter">
+                  <i class="fa fa-twitter"></i>
+              </a>
+
+              <!-- Google Plus -->
+              <a href="https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn google-plus">
+                  <i class="fa fa-google-plus"></i>
+              </a>
+
+              <!-- Facebook -->
+              <a href="http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn facebook">
+                  <i class="fa fa-facebook"></i>
+              </a>
+
+              <!-- StumbleUpon (url, title) -->
+              <a href="http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test" target="_blank" class="share-btn stumbleupon">
+                  <i class="fa fa-stumbleupon"></i>
+              </a>
+
+              <!-- Reddit (url, title) -->
+              <a href="http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test" target="_blank" class="share-btn reddit">
+                  <i class="fa fa-reddit"></i>
+              </a>
+
+              <!-- LinkedIn -->
+              <a href="http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn linkedin">
+                  <i class="fa fa-linkedin"></i>
+              </a>
+
+              <!-- Email -->
+              <a href="mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn email">
+                  <i class="fa fa-envelope"></i>
+              </a>
+            </div>
+          </div>        
+        <input name="latitude" id="latitude" type="hidden" />
+        <input name="longitude" id="longitude" type="hidden" />
+        <input name="actual_download" id="actual_download" type="hidden" />
+        <input name="actual_upload" id="actual_upload" type="hidden" />
+        <input name="min_rtt" id="min_rtt" type="hidden" />
+        <input name="bigquery_key" id="bigquery_key" type="hidden" />
+
+    </form>
+
+
     </section>
   </div>
 </section>
 
-<!-- Two -->
-<section id="about" class="wrapper style3">
-  <div class="inner">
-    <h2 translate>About</h2>
-    <p translate>Measurement Lab (M-Lab) provides the largest collection of open Internet performance data on the planet. As a consortium of research, industry, and public-interest partners, M-Lab is dedicated to providing an ecosystem for the open, verifiable measurement of global network performance.</p>
-    <div class="features">
-      <section>
-        <span class="icon major fa-code"></span>
-        <h3 translate>Open Source</h3>
-        <p translate>Measurement tools are openly licensed and operated, allowing third parties to develop their own client-side measurement software and audit the source.</p>
-      </section>
-      <section>
-        <span class="icon major fa-users"></span>
-        <h3 translate>Public Data</h3>
-        <p translate>Data collected is made available to the public, allowing researchers and anyone else to build on a common pool of network measurement information.</p>
-      </section>
-      <section>
-        <span class="icon major fa-globe"></span>
-        <h3 translate>Global</h3>
-        <p translate>Distributed infrastructure and large user base provides an open, verifiable measurement platform for global network performance.</p>
-      </section>
-      <section>
-        <span class="icon major fa-institution"></span>
-        <h3 translate>Trusted</h3>
-        <p translate>Used by public organization, academic researchers, regulators and companies around the world to understand the health of the Internet.</p>
-      </section>
-    </div>
-    <ul class="actions">
-      <li><a href="http://measurementlab.net" class="button" translate>Learn more</a></li>
-    </ul>
-  </div>
-</section>
+<script>
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
 
+  function success(position) {
 
-<!-- Three  fade-up -->
-<section id="contact" class="wrapper style1">
-  <div class="inner">
-    <h2 translate>Contact</h2>
-    <ul class="alt">
-      <li translate>Questions or comments about M-Lab and its tools?</li>
-      <li translate>Want to participate in M-Lab?</li>
-      <li translate>Need to report an issue or bug?</li>
-      <li translate>Please contact us.</li>
-    </ul>
-    <div class="">
-      <section>
-        <ul class="contact">
-          <li>
-            <h3 translate>Email</h3>
-            <a href="mailto: support@measurementlab.net">support@measurementlab.net</a>
-          </li>
-          <li>
-            <h3 translate>Discussion and Notification Group</h3>
-            <a href="https://groups.google.com/a/measurementlab.net/forum/#!forum/discuss" translate>Join Group</a>
-            <i class="fa fa-link" aria-hidden="true"></i>
-          </li>
-          <li>
-            <h3 translate>Social</h3>
-            <ul class="icons">
-              <li><a href="https://twitter.com/MeasurementLab" class="fa-twitter"><span class="label" translate>Twitter</span></a></li>
-              <li><a href="https://github.com/m-lab" class="fa-github"><span class="label" translate>GitHub</span></a></li>
-            </ul>
-          </li>
-        </ul>
-      </section>
-    </div>
-  </div>
-</section>
+    document.getElementById('latitude').value = position.coords.latitude;
+    document.getElementById('longitude').value = position.coords.longitude;
+
+    var xhr = new XMLHttpRequest(),
+    currentLocationURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&zoom=18&addressdetails=1";
+
+    var currentLoc;
+    xhr.open('GET', currentLocationURL, true);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          currentLoc = JSON.parse(xhr.responseText);
+          console.log("Location received");
+
+          // currentLocText.text(currentLoc.address.road + currentLoc.address.neighbourhood + currentLoc.address.suburb + currentLoc.address.city + currentLoc.address.state);
+          $('#mobile-container').append('<div id="mobile-approx-loc"></div>')
+          $('#approx-loc, #mobile-approx-loc').append("<p>Searching from:</p><p>" + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state + "</p>");
+        } else {
+          console.log('Location lookup failed');
+        }
+      }
+    };
+  }
+
+  function error(error) {
+    document.getElementById('msg').innerHTML = 'ERROR(' + error.code + '): ' + error.message;
+  }
+
+</script>
