@@ -99,6 +99,28 @@ angular.module('Measure.Measure', ['ngRoute'])
         ndtSemaphore = false;
         $scope.startButtonClass = '';
 
+        // Update Piecewise form fields with collected values
+        document.getElementById('bigquery_key').value = $scope.timeStarted;
+
+        for (metric_name in $scope.measurementResult) {
+          switch (metric_name) {
+            case 'latency':
+              resultString = readNDTvar('MinRTT');
+              document.getElementById('min_rtt').value = resultString;
+              break;
+            case 's2cRate':
+              resultString = downloadSpeed().toFixed(2);
+              document.getElementById('actual_download').value = resultString;
+              break;
+            case 'c2sRate':
+              resultString = uploadSpeed().toFixed(2);
+              document.getElementById('actual_upload').value = resultString;
+              break;
+          }   
+        }
+        submitExtraData();
+        // ^ Update Piecewise form fields with collected values
+
         $interval.cancel(intervalPromise);
       }
 
