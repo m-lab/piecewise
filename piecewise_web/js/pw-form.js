@@ -37,7 +37,7 @@ function error(error) {
 
 function submitExtraData() {
   if (validateExtraDataForm()) {
-    var formData = $("#collector :input[value!=''][value!='on']").serialize();
+    var formData = $($("#collector").elements).not(#other,#demoHuman).serialize();
     $.ajax({
       method: 'GET',
       url: $('#collector').attr('action'),
