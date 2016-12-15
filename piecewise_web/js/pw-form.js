@@ -36,20 +36,22 @@ function error(error) {
 }
 
 function submitExtraData() {
-  var formData = $('#collector').serialize();
-  $.ajax({
-    method: 'GET',
-    url: $('#collector').attr('action'),
-    data: formData,
-    statusCode: {
-      201: function() {
-        console.log('Data submitted successfully.');
+  if (validateExtraDataForm()) {
+    var formData = $('#collector').serialize();
+    $.ajax({
+      method: 'GET',
+      url: $('#collector').attr('action'),
+      data: formData,
+      statusCode: {
+        201: function() {
+          console.log('Data submitted successfully.');
+        }
+      },
+      error: function(jqXHR, status, msg) {
+        console.log('Something went wrong: ' + status + ' ' + msg);
       }
-    },
-    error: function(jqXHR, status, msg) {
-      console.log('Something went wrong: ' + status + ' ' + msg);
-    }
-  });
+    });
+  }
 }
 
 function validateExtraDataForm() {

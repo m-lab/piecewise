@@ -101,7 +101,7 @@ angular.module('Measure.Measure', ['ngRoute'])
 
         // Update Piecewise form fields with collected values
         document.getElementById('bigquery_key').value = $scope.timeStarted;
-
+        var metric_name;
         for (metric_name in $scope.measurementResult) {
           switch (metric_name) {
             case 'latency':
