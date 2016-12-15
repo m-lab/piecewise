@@ -18,7 +18,7 @@
               <option value="wave">Wave</option>
               <option value="other">Other</option>
             </select>
-        <!--    <input type="text" name="other" id="isp_user_text" class="form-control" style="display:none;"/> -->
+            <input type="text" name="other" id="isp_user_text" class="form-control" style="display:none;"/>
           </p>
         </div>
         <div class="container">
@@ -58,6 +58,10 @@
           </div>
         </div>
       </div>
+      <p>
+        <input type="checkbox" id="demo-human" name="demo-human" ng-model="privacyConsent">
+        <label for="demo-human" translate style="font-size: smaller;">I understand that the data collected from this test will be anonymized and aggregated for publication to the Broadband Map and <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>. I also agree to the <a href="https://www.measurementlab.net/privacy/">M-Lab data policy</a>, which includes retention and publication of IP addresses.</label>
+      </p>
       <p>
         <div class="row">
         	<div class="6u">
@@ -172,9 +176,5 @@
         <input name="bigquery_key" id="bigquery_key" type="hidden" />
     </section>
   </form>
-  <p>
-  <input type="checkbox" id="demo-human" name="demo-human" ng-model="privacyConsent">
-  <label for="demo-human" translate style="font-size: smaller;">I understand that the data collected from this test will be anonymized and aggregated for publication to the Broadband Map and <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>. I also agree to the <a href="https://www.measurementlab.net/privacy/">M-Lab data policy</a>, which includes retention and publication of IP addresses.</label>
-</p>  
   </div>
 </section>

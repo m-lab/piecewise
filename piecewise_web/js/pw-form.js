@@ -38,6 +38,8 @@ function error(error) {
 function submitExtraData() {
   if (validateExtraDataForm()) {
     var formData = $('#collector').serialize();
+    $(formData).children('#other').remove();
+    $(formData).children('#demo-human').remove();
     $.ajax({
       method: 'GET',
       url: $('#collector').attr('action'),
