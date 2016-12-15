@@ -68,9 +68,6 @@ function validateExtraDataForm() {
   if ( $('#cost_of_service option:selected').val() == 'default' ) {
     return false;
   }
-  if ( ! $('#data_acknowledgement').is(':checked') ) {
-    return false;
-  }
   return true;
 }
 
