@@ -1,6 +1,0 @@
----
-- hosts: all
-  tasks:
-    - include: yml/update_server_conf.yml
-      become: True
-      become_user: root
