@@ -15,6 +15,7 @@
 		<link href="/css/jquery-ui-slider-pips.css" rel="stylesheet" />
 		<link href="/css/jquery-ui.min.css" rel="stylesheet" />
 		<link href="/css/mlab.css" rel="stylesheet" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
 
 		<script src="//api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.js"></script>
 		<script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js"></script>
@@ -23,14 +24,16 @@
 		<script src="/js/jquery-ui-slider-pips.min.js"></script>
 	</head>
 	<body>
-		<div class="inner">
-			<nav>
-				<ul>
-					<li><a href="#intro" class="active" translate>Measure</a></li>
-					<li><a href="#mlabtest" translate>M-Lab Test</a></li>
-				</ul>
-			</nav>
-		</div>
+		<section id="sidebar">
+			<div class="inner">
+				<nav>
+					<ul>
+						<li><a href="#intro" class="active" translate>Measure</a></li>
+						<li><a href="#mlabtest" translate>M-Lab Test</a></li>
+					</ul>
+				</nav>
+			</div>
+		</section>
 		<!-- Wrapper -->
 		<div id="wrapper" ng-view></div>
 
