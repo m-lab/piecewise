@@ -46,8 +46,8 @@ var overlays = {
 var geoLayers = {
 	'census_block_groups': {
 		'name': 'Census block groups',
-		'polygonFile': 'seattle_census10_blockgroups.topojson',
-		'dataUrl': 'stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
+		'polygonFile': '/seattle_census10_blockgroups.topojson',
+		'dataUrl': '/stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
 		'dbKey': 'geoid10',
 		'geoKey': 'GEOID10',
 		'cache': null,
