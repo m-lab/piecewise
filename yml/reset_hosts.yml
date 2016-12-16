@@ -1,0 +1,24 @@
+---
+- name: Stop services
+  service: name={{ item }} state=stop
+  with_items: 
+    - uwsgi
+    - nginx
+- postgresql_db: 
+    name: piecewise 
+    state: absent
+- name: Purge packages
+  apt: name={{ item }} purge
+  with_items:
+    - postgresql
+    - postgis
+    - postgresql-client
+    - nginx
+    - uwsgi-plugin-python
+    - git
+    - python-pip
+    - python-psycopg2
+    - python-dev
+    - gdal-bin
+    - unzip
+- command: rm -rf /opt/*
