@@ -8,8 +8,8 @@
     name: piecewise 
     state: absent
 - name: Purge packages
-  apt: name={{ item }} purge
-  with_items:
+  apt: name={{ item }} 
+    with_items:
     - postgresql
     - postgis
     - postgresql-client
@@ -21,4 +21,6 @@
     - python-dev
     - gdal-bin
     - unzip
+    state: absent
+
 - command: rm -rf /opt/*
