@@ -2162,7 +2162,7 @@ span.privacyConsentMessage {
 		input[type="button"].special,
 		button.special,
 		.button.special {
-			background-color: #ffffff;
+			background-color: #cccccc;
 			color: #312450 !important;
 		}
 
