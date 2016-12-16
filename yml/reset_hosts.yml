@@ -1,6 +1,6 @@
 ---
 - name: Stop services
-  service: name={{ item }} state=stop
+  service: name={{ item }} state=stopped
   with_items: 
     - uwsgi
     - nginx
