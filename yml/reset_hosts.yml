@@ -7,20 +7,60 @@
 - postgresql_db: 
     name: piecewise 
     state: absent
-- name: Purge packages
-  apt: name={{ item }} 
-    with_items:
-    - postgresql
-    - postgis
-    - postgresql-client
-    - nginx
-    - uwsgi-plugin-python
-    - git
-    - python-pip
-    - python-psycopg2
-    - python-dev
-    - gdal-bin
-    - unzip
+
+- name: Purge package 
+  apt:  
+    name: postgresql
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: postgis
+    name: postgresql
+  
+- name: Purge package 
+  apt:  
+    name: postgresql-client
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: nginx
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: uwsgi-plugin-python
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: git
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: python-pip
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: python-psycopg2
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: python-dev
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: gdal-bin
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: unzip
     state: absent
 
 - command: rm -rf /opt/*
