@@ -44,7 +44,7 @@
 - name: Fetch piecewise
   git: repo=https://github.com/opentechinstitute/piecewise.git 
        dest=/opt/piecewise.git/
-       version=update-ndt-test
+       version=import-angular-app
 
 - name: Deploy piecewise
   file: src=/opt/piecewise.git/{{ item.src }} dest=/opt/{{ item.dest }} state=link
