@@ -70,7 +70,7 @@
 - name: Create self-signed SSL cert for Nginx
   command: openssl req -new -nodes -x509 -subj "/C=US/ST=District of Columbia/L=Washington/O=IT/CN=45.79.191.25" -days 3650 -out /etc/nginx/ssl/localcert.pem -keyout /etc/nginx/ssl/localcert.key
 - name: Enable nginx default site
-  command: ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+  file: src=/etc/nginx/sites-available/default dest=/etc/nginx/sites-enabled/default state=link
 - name: Restart services
   service: name={{ item }} state=restarted
   with_items: 

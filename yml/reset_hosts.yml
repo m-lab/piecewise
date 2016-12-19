@@ -63,4 +63,11 @@
     name: unzip
     state: absent
 
-- command: rm -rf /opt/*
+- name: Remove Piecewise files
+  file: path=/opt/{{ item.src }} state=absent
+    with_items:
+      - { src: collector }
+      - { src: piecewise }
+      - { src: piecewise.git }
+      - { src: piecewise_web }
+      - { src: telescope }
