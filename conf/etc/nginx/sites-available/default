@@ -21,14 +21,18 @@
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
-	server_name localhost;
+
+	# TO DO: Make server_name a parameter
+	server_name 45.79.191.25;
 	return 301 https://$server_name$request_uri;
 }
 # HTTPS server
 #
 server {
 	listen 443;
-	server_name localhost;
+
+	# TO DO: Make server_name a parameter
+	server_name 45.79.191.25;
 
 	root /opt/piecewise_web;
 	index index.html index.htm;
@@ -40,6 +44,10 @@ server {
 		uwsgi_param SCRIPT_NAME /stats;
 		uwsgi_modifier1 30;
 		uwsgi_pass unix:///tmp/uwsgi-piecewise.sock;
+	}
+
+	location /app {
+		alias /opt/piecewise_web/app/;
 	}
 
 	location = /collector { rewrite ^ /collector/; }
@@ -71,8 +79,8 @@ server {
 	}
 
 	ssl on;
-	ssl_certificate /etc/ssl/localcerts/localcert.pem;
-	ssl_certificate_key /etc/ssl/localcerts/localcert.key;
+	ssl_certificate /etc/nginx/ssl/localcert.pem;
+	ssl_certificate_key /etc/nginx/ssl/localcert.key;
 
 	ssl_session_timeout 5m;
 
