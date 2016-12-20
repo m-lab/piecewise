@@ -1805,7 +1805,7 @@ span.privacyConsentMessage {
 	}
 
 	body {
-		background: #312450;
+		/* background: #312450; */
 	}
 
 		body.is-loading *, body.is-loading *:before, body.is-loading *:after {
@@ -1822,11 +1822,13 @@ span.privacyConsentMessage {
 /* Type */
 
 	body, input, select, textarea {
+		/*
 		color: rgba(255, 255, 255, 0.55);
+		*/
 		font-family: Arial, Helvetica, sans-serif;
 		font-size: 16.5pt;
 		font-weight: normal;
-		line-height: 1.75;
+		line-height: 1.25;
 	}
 
 		@media screen and (max-width: 1680px) {
@@ -1869,7 +1871,7 @@ span.privacyConsentMessage {
 		}
 
 	strong, b {
-		color: #ffffff;
+		/* color: #ffffff; */
 		font-weight: bold;
 	}
 
@@ -1882,7 +1884,9 @@ span.privacyConsentMessage {
 	}
 
 	h1, h2, h3, h4, h5, h6 {
+		/*
 		color: #ffffff;
+		*/
 		font-weight: bold;
 		line-height: 1.5;
 		margin: 0 0 0.5em 0;
@@ -1926,11 +1930,11 @@ span.privacyConsentMessage {
 	}
 
 	h3 {
-		font-size: 1.1em;
+		font-size: 1em;
 	}
 
 	h4 {
-		font-size: 1em;
+		font-size: 0.7em;
 	}
 
 	h5 {
@@ -2158,7 +2162,7 @@ span.privacyConsentMessage {
 		input[type="button"].special,
 		button.special,
 		.button.special {
-			background-color: #ffffff;
+			background-color: #cccccc;
 			color: #312450 !important;
 		}
 
@@ -2628,7 +2632,7 @@ span.privacyConsentMessage {
 		input[type="checkbox"] + label,
 		input[type="radio"] + label {
 			text-decoration: none;
-			color: rgba(255, 255, 255, 0.55);
+			color: rgba(0, 0, 0, 1.0);
 			cursor: pointer;
 			display: inline-block;
 			font-size: 1em;
@@ -2650,9 +2654,9 @@ span.privacyConsentMessage {
 
 			input[type="checkbox"] + label:before,
 			input[type="radio"] + label:before {
-				background: rgba(255, 255, 255, 0.05);
+				background: rgba(0, 0, 0, 0.5);
 				border-radius: 0.25em;
-				border: solid 1px rgba(255, 255, 255, 0.15);
+				border: solid 2px rgba(255, 255, 255, 0.75);
 				content: '';
 				display: inline-block;
 				height: 1.65em;
@@ -2666,8 +2670,8 @@ span.privacyConsentMessage {
 
 		input[type="checkbox"]:checked + label:before,
 		input[type="radio"]:checked + label:before {
-			background: #ffffff;
-			border-color: #ffffff;
+			background: #cccccc;
+			border-color: #666666;
 			color: #b74e91;
 			content: '\f00c';
 		}
@@ -3349,7 +3353,7 @@ span.privacyConsentMessage {
 		}
 
 			table tbody tr:nth-child(2n + 1) {
-				background-color: rgba(255, 255, 255, 0.05);
+				background-color: rgba(0, 0, 0, 0.15);
 			}
 
 		table td {
@@ -3439,7 +3443,9 @@ span.privacyConsentMessage {
 		}
 
 		.wrapper.style1 {
+			/*
 			background-color: #5e42a6;
+			*/
 		}
 
 		.wrapper.style1-alt {
@@ -4069,15 +4075,17 @@ span.privacyConsentMessage {
 /* Intro */
 
 	#intro {
+		/*
 		background-attachment: fixed;
 		background-image: url("images/intro.svg");
 		background-position: top right;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
+		*/
 	}
 
 		#intro p {
-			font-size: 1.25em;
+			font-size: 1em;
 		}
 
 			@media screen and (max-width: 980px) {

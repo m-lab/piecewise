@@ -1,0 +1,73 @@
+---
+- name: Stop services
+  service: name={{ item }} state=stopped
+  with_items: 
+    - uwsgi
+    - nginx
+- postgresql_db: 
+    name: piecewise 
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: postgresql
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: postgis
+    name: postgresql
+  
+- name: Purge package 
+  apt:  
+    name: postgresql-client
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: nginx
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: uwsgi-plugin-python
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: git
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: python-pip
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: python-psycopg2
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: python-dev
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: gdal-bin
+    state: absent
+
+- name: Purge package 
+  apt:  
+    name: unzip
+    state: absent
+
+- name: Remove Piecewise files
+  file: path=/opt/{{ item.src }} state=absent
+  with_items:
+    - { src: collector }
+    - { src: piecewise }
+    - { src: piecewise.git }
+    - { src: piecewise_web }
+    - { src: telescope }

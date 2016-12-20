@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - include: yml/reset_hosts.yml
+      become: True
+      become_user: root
