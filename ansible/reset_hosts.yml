@@ -1,10 +1,11 @@
 ---
-- service:
-    name: uwsgi
-    state: stopped
-- service:
-    name: nginx
-    state: stopped
+- name: Stop services
+    systemd: 
+      name: {{ item }} 
+      state: stopped
+      with_items: 
+        - uwsgi
+        - nginx
 - postgresql_db: 
     name: piecewise 
     state: absent
