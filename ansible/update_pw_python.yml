@@ -1,7 +1,6 @@
 ---
 - hosts: all
   tasks:
-    - include: update_pw_python.yml
       become: true
       become_user: root
 - name: Fetch updated piecewise repo
