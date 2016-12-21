@@ -1,6 +1,0 @@
----
-- hosts: all
-  tasks:
-    - include: yml/update_pw_python.yml
-      become: True
-      become_user: root

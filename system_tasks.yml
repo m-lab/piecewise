@@ -44,7 +44,7 @@
 - name: Fetch piecewise
   git: repo=https://github.com/opentechinstitute/piecewise.git 
        dest=/opt/piecewise.git/
-       version=import-angular-app
+       version=master
 
 - name: Deploy piecewise
   file: src=/opt/piecewise.git/{{ item.src }} dest=/opt/{{ item.dest }} state=link
@@ -57,29 +57,22 @@
   with_items:
     - /opt/telescope/requirements.txt
     - /opt/piecewise/requirements.txt
+- name: Create piecewise log directory
+  file: path=/var/log/piecewise/ state=directory
 - name: Install convenience python modules
   pip: name=bigquery state=latest
-- name: Create Nginx ssl directory
-  file: path=/etc/nginx/ssl/ state=directory  
 - name: Deploy configuration files
   copy: src=conf/ dest=/ owner=root group=root
 - name: Fix postgres configuration permissions
   file: path=/etc/postgresql/9.4/main/pg_hba.conf state=file owner=postgres group=postgres mode=0640
-- name: Create piecewise log directory
-  file: path=/var/log/piecewise/ state=directory
-- name: Create self-signed SSL cert for Nginx
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=District of Columbia/L=Washington/O=IT/CN=45.79.191.25" -days 3650 -out /etc/nginx/ssl/localcert.pem -keyout /etc/nginx/ssl/localcert.key  
-- name: Enable nginx default site
-  command: ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 - name: Restart services
   service: name={{ item }} state=restarted
   with_items: 
     - uwsgi
     - nginx
     - postgresql
-  
-- postgresql_db: 
-    name: piecewise 
-    state: present
-  
-- command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
+- name: Create postgres database
+  sudo: yes
+  sudo_user: postgres
+  postgresql_db: name=piecewise state=present
+  command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
