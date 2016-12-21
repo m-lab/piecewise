@@ -185,7 +185,8 @@
 <script>
 	var ndtServer,
 		ndtServerIp,
-		ndtPort = "3001",
+		ndtPort = "3010",
+		ndtProtocol = 'wss',
 		ndtPath = "/ndt_protocol",
 		ndtUpdateInterval = 1000,
 		c2sRate,
@@ -198,7 +199,7 @@
 
 	NDT_meter = new NDTmeter('#ndt-svg');
 	NDT_meter.meter.on("click", function () {
-		NDT_client = new NDTjs(ndtServer, ndtPort, ndtPath, NDT_meter, ndtUpdateInterval);
+		NDT_client = new NDTjs(ndtServer, ndtPort, ndtProtocol, ndtPath, NDT_meter, ndtUpdateInterval);
 		NDT_client.startTest();
 	});
 
@@ -239,7 +240,7 @@
 
 	function getNdtServer () {
 		var xhr = new XMLHttpRequest(),
-			mlabNsUrl = 'https://mlab-ns.appspot.com/ndt?format=json';
+			mlabNsUrl = 'https://mlab-ns.appspot.com/ndt_ssl?format=json';
 
 		xhr.open('GET', mlabNsUrl, true);
 		xhr.send();

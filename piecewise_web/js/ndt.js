@@ -8,20 +8,17 @@
 
 'use strict';
 
-var WebSocket;
-
-function NDTjs(server, serverPort, serverPath, callbacks, updateInterval, debugLevel) {
+function NDTjs(server, serverPort, serverProtocol, serverPath, callbacks,
+               updateInterval) {
   this.server = server;
   this.serverPort = serverPort || 3001;
   this.serverPath = serverPath || '/ndt_protocol';
+  this.serverProtocol = serverProtocol || 'ws';
   this.updateInterval = updateInterval / 1000.0 || false;
-  this.metaInformation = {'client.application': 'NDTjs'};
-  this.debugLevel = debugLevel || false;
   this.results = {
     c2sRate: undefined,
     s2cRate: undefined
   };
-  this.mlabServer = undefined;
   this.SEND_BUFFER_SIZE = 1048576;
 
   // Someone may want to run this test without callbacks (perhaps for
@@ -77,8 +74,6 @@ function NDTjs(server, serverPort, serverPath, callbacks, updateInterval, debugL
  */
 NDTjs.prototype.logger = function (logMessage, debugging) {
   debugging = debugging || false;
-	// || (this.debugLevel !== undefined && this.debugLevel === true)
-
   if (debugging === true) {
     console.log(logMessage);
   }
@@ -89,36 +84,10 @@ NDTjs.prototype.logger = function (logMessage, debugging) {
  * @returns {boolean} Browser supports necessary functions for test client.
  */
 NDTjs.prototype.checkBrowserSupport = function () {
-
-  if (WebSocket === undefined && window.WebSocket === undefined && window.MozWebSocket === undefined) {
-    this.callbacks.onerror('UnsupportedBrowser');
-    throw new UnsupportedBrowser('No Websockets');
+  if (self.WebSocket === undefined && self.MozWebSocket === undefined) {
+    throw this.UnsupportedBrowser('No Websockets');
   }
   return true;
-};
-
-/**
- * Make an asynchronous AJAX request to M-Lab NS for the closest NDT service.
- */
-NDTjs.prototype.findNdtServer = function () {
-  var mlabNsRequest = new XMLHttpRequest(),
-    mlabNsUrl = 'http://mlab-ns.appspot.com/ndt?format=json',
-    that = this;
-
-  mlabNsRequest.onreadystatechange = function () {
-    if (mlabNsRequest.readyState === 4) {
-      if (mlabNsRequest.status === 200) {
-        that.mlabServer = JSON.parse(mlabNsRequest.responseText);
-        that.mlabServer.metro = that.mlabServer.site.slice(0, 3);
-        that.logger('M-Lab NS lookup answer:' + that.mlabServer);
-      } else {
-        that.mlabServer = undefined;
-        that.logger('M-Lab NS lookup failed.');
-      }
-    }
-  };
-  mlabNsRequest.open("GET", mlabNsUrl, false);
-  mlabNsRequest.send();
 };
 
 /**
@@ -178,18 +147,9 @@ NDTjs.prototype.makeNdtMessage = function (messageType, messageContent) {
 NDTjs.prototype.parseNdtMessage = function (buffer) {
   var i,
     response = [],
-    bufferArray,
-    message;
-
-  try {
-    bufferArray = new Uint8Array(buffer);
-		message =  String.fromCharCode.apply(null,
+    bufferArray = new Uint8Array(buffer),
+    message =  String.fromCharCode.apply(null,
                                          new Uint8Array(buffer.slice(3)));
-  } catch (caughtError) {
-    this.callbacks.onerror('TestFailureException');
-	  throw new TestFailureException(caughtError, this.server);
-  }
-
   for (i = 0; i < 3; i += 1) {
     response[i] = bufferArray[i];
   }
@@ -202,65 +162,20 @@ NDTjs.prototype.parseNdtMessage = function (buffer) {
  * @param {string} message Specific failure messages passed in the course of
  *  receiving the exception.
  */
-
-function ConnectionException(errorMessage, server) {
-  
-  this.reportFailureToMLab(errorMessage, server);
-  this.logger(errorMessage, true);
+NDTjs.prototype.ConnectionException = function (message) {
+  this.logger(message);
+  this.callbacks.onerror(message);
 };
-
-ConnectionException.prototype = Object.create(NDTjsException.prototype);
-ConnectionException.prototype.constructor = ConnectionException;
 
 /**
  * Exception related to an unsupported browser.
  * @param {string} message Specific failure messages passed in the course of
  *  receiving the exception.
  */
-function UnsupportedBrowser(errorMessage) {
-  
-  this.reportFailureToMLab(errorMessage, '');
-  this.logger(errorMessage, true);
+NDTjs.prototype.UnsupportedBrowser = function (message) {
+  this.logger(message);
+  this.callbacks.onerror(message);
 };
-
-UnsupportedBrowser.prototype = Object.create(NDTjsException.prototype);
-UnsupportedBrowser.prototype.constructor = UnsupportedBrowser;
-
-function NDTjsException() {};
-
-NDTjsException.prototype = Object.create(Error.prototype);
-NDTjsException.prototype.constructor = NDTjsException;
-
-NDTjsException.prototype.reportFailureToMLab = function (passedError, mlabServer) {
-  var diagnosticRequest = new XMLHttpRequest();
-  var diagnosticInformation = {
-                'tool': 'ndt',
-                'error': passedError,
-                'server': mlabServer
-              },
-      diagnosticInformationString = '',
-      iterationKey,
-      diagnosticAddress;
-  
-  for (iterationKey in diagnosticInformation) {
-    if (diagnosticInformation.hasOwnProperty(iterationKey)) {
-      diagnosticInformationString += iterationKey + '=' + encodeURIComponent(diagnosticInformation[iterationKey]) + '&';
-    }
-  }
-  
-  diagnosticAddress = 'https://mlab-error.appspot.com/?' + diagnosticInformationString;
-  diagnosticRequest.open('GET', diagnosticAddress, true);
-  diagnosticRequest.send();
-};
-
-NDTjsException.prototype.logger = function (logMessage, debugging) {
-  debugging = debugging || false;
-
-  if (debugging === true) {
-    console.error(logMessage);
-  }
-};
-
 
 /**
  * Exception related to test failures, such as behavior inconsistent with
@@ -268,15 +183,10 @@ NDTjsException.prototype.logger = function (logMessage, debugging) {
  * @param {string} message Specific failure messages passed in the course of
  *  receiving the exception.
  */
-function TestFailureException(message, server) {
-  
-  this.reportFailureToMLab(message, server);
-  this.logger(message, true);
+NDTjs.prototype.TestFailureException = function (message) {
+  this.logger(message);
+  this.callbacks.onerror(message);
 };
-
-TestFailureException.prototype = Object.create(NDTjsException.prototype);
-TestFailureException.prototype.constructor = TestFailureException;
-
 
 /**
  * A simple helper function to create websockets consistently.
@@ -286,12 +196,11 @@ TestFailureException.prototype.constructor = TestFailureException;
  * @param {string} protocol The WebSocket protocol to build for.
  * @returns {Websocket} The WebSocket we created;
  */
-NDTjs.prototype.createWebsocket = function (serverAddress, serverPort, urlPath,
-                                            protocol) {
-  var createdWebsocket;
-
-  createdWebsocket = new WebSocket('ws://' + serverAddress + ':' +
-                                       serverPort + urlPath, protocol);
+NDTjs.prototype.createWebsocket = function (serverProtocol, serverAddress,
+                                            serverPort, urlPath, protocol) {
+  var createdWebsocket = new WebSocket(serverProtocol + '://' +
+                                       serverAddress + ':' + serverPort +
+                                       urlPath, protocol);
   createdWebsocket.binaryType = 'arraybuffer';
   return createdWebsocket;
 };
@@ -354,8 +263,8 @@ NDTjs.prototype.ndtC2sTest = function () {
         messageType === that.TEST_PREPARE) {
       that.callbacks.onstatechange('preparing_c2s', that.results);
       serverPort = Number(messageContent.msg);
-      testConnection = that.createWebsocket(that.server, serverPort,
-                                            that.serverPath, 'c2s');
+      testConnection = that.createWebsocket(that.serverProtocol, that.server,
+                                            serverPort, that.serverPath, 'c2s');
       state = 'WAIT_FOR_TEST_START';
       return false;
     }
@@ -408,15 +317,14 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
         messageType === that.TEST_PREPARE) {
       that.callbacks.onstatechange('preparing_s2c', that.results);
       serverPort = Number(messageContent.msg);
-      testConnection = that.createWebsocket(that.server, serverPort,
-                                            that.serverPath, 's2c');
+      testConnection = that.createWebsocket(that.serverProtocol, that.server,
+                                            serverPort, that.serverPath, 's2c');
       testConnection.onopen = function () {
         that.logger('Successfully opened S2C test connection.');
         testStart = Date.now() / 1000;
       };
       testConnection.onmessage = function (response) {
         var hdrSize,
-		  byteLength,
           currentTime;
         if (response.data.byteLength < 126) {
           hdrSize = 2;
@@ -425,14 +333,10 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
         } else {
           hdrSize = 10;
         }
-		
-		
-		byteLength = (response.data.byteLength !== undefined) ? response.data.byteLength : response.data.length;
-		
-        receivedBytes += (hdrSize + byteLength);
+        receivedBytes += (hdrSize + response.data.byteLength);
         currentTime = Date.now() / 1000.0;
         if (that.updateInterval && currentTime > (testStart + nextCallback)) {
-          that.results.s2cRate = 8 * Number(receivedBytes) / 1000
+          that.results.s2cRate = 8 * receivedBytes / 1000
             / (currentTime - testStart);
           that.callbacks.onprogress('interval_s2c', that.results);
           nextCallback += that.updateInterval;
@@ -442,8 +346,7 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
 
       testConnection.onerror = function (response) {
         errorMessage = that.parseNdtMessage(response.data)[3].msg;
-        that.callbacks.onerror('ConnectionException');
-        throw new ConnectionException(errorMessage, that.server);
+        throw that.TestFailureException(errorMessage);
       };
 
       state = 'WAIT_FOR_TEST_START';
@@ -464,11 +367,6 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
       }
       // Calculation per spec, compared between client and server
       // understanding.
-      for (var web100Variable in messageContent) {
-        if (messageContent.hasOwnProperty(web100Variable)) {
-          that.results[web100Variable] = messageContent[web100Variable]
-	    }
-	  }
       that.results.s2cRate = 8 * receivedBytes / 1000 / (testEnd - testStart);
       that.logger('S2C rate calculated by client: ' + that.results.s2cRate);
       that.logger('S2C rate calculated by server: ' +
@@ -506,8 +404,6 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
  */
 NDTjs.prototype.ndtMetaTest = function (ndtSocket) {
   var errorMessage,
-    i,
-    clientMessage,
     that = this,
     state = 'WAIT_FOR_TEST_PREPARE';
 
@@ -521,14 +417,8 @@ NDTjs.prototype.ndtMetaTest = function (ndtSocket) {
     if (state === 'WAIT_FOR_TEST_START' && messageType === that.TEST_START) {
       that.callbacks.onstatechange('running_meta', that.results);
       // Send one piece of meta data and then an empty meta data packet
-      if (typeof that.metaInformation === "object") {
-        for (i in that.metaInformation) {
-          if (that.metaInformation.hasOwnProperty(i) === true) {
-            clientMessage = i + ':' + that.metaInformation[i];
-            ndtSocket.send(that.makeNdtMessage(that.TEST_MSG, clientMessage));
-          }
-        }
-      }
+      ndtSocket.send(that.makeNdtMessage(that.TEST_MSG,
+                                         'client.os.name:NDTjs'));
       ndtSocket.send(that.makeNdtMessage(that.TEST_MSG, ''));
       state = 'WAIT_FOR_TEST_FINALIZE';
       return false;
@@ -541,8 +431,7 @@ NDTjs.prototype.ndtMetaTest = function (ndtSocket) {
     }
     errorMessage = 'Bad state and message combo for META test: ' +
       state + ', ' + messageType + ', ' + messageContent.msg;
-    that.callbacks.onerror('TestFailureException');
-    throw new TestFailureException(errorMessage, that.server);
+    throw that.TestFailureException(errorMessage);
   };
 };
 
@@ -551,14 +440,14 @@ NDTjs.prototype.ndtMetaTest = function (ndtSocket) {
  **/
 NDTjs.prototype.startTest = function () {
   var ndtSocket, activeTest, state, errorMessage, i,
-      testsToRun = [],
-      that = this;
+    testsToRun = [],
+    that = this;
 
   this.checkBrowserSupport();
   this.logger('Test started.  Waiting for connection to server...');
   this.callbacks.onstart(this.server);
-  ndtSocket = this.createWebsocket(this.server, this.serverPort,
-                                   this.serverPath, 'ndt');
+  ndtSocket = this.createWebsocket(this.serverProtocol, this.server,
+                                   this.serverPort, this.serverPath, 'ndt');
 
   /** When the NDT control socket is opened, send a message requesting a
    * TEST_S2C, TEST_C2S, and TEST_META.
@@ -609,9 +498,8 @@ NDTjs.prototype.startTest = function () {
           ndtSocket.send(that.makeNdtMessage(that.MSG_WAITING, ''));
         } else if (messageContent.msg === '9977') {
           // Test failed, leave now.
-          that.callbacks.onerror('TestFailureException');
-          throw new TestFailureException('Server terminated test ' +
-            'with SRV_QUEUE 9977', that.server);
+          throw that.TestFailureException('Server terminated test ' +
+            'with SRV_QUEUE 9977');
         }
         that.logger('Got SRV_QUEUE. Ignoring and waiting for ' +
           'MSG_LOGIN.');
@@ -624,8 +512,7 @@ NDTjs.prototype.startTest = function () {
         errorMessage = 'Expected type 1 (SRV_QUEUE) or 2 (MSG_LOGIN)' +
             'but got ' + messageType + ' (' +
             that.NDT_MESSAGES[messageType] + ')';
-        that.callbacks.onerror('TestFailureException');
-        throw new TestFailureException(errorMessage, that.server);
+        throw that.TestFailureException(errorMessage);
       }
     } else if (state === 'WAIT_FOR_TEST_IDS' &&
                messageType === that.MSG_LOGIN) {
@@ -639,8 +526,7 @@ NDTjs.prototype.startTest = function () {
           testsToRun.push(that.ndtMetaTest(ndtSocket));
         } else if (tests[i] !== '') {
           errorMessage = 'Unknown test type: ' + tests[i];
-          that.callbacks.onerror('TestFailureException');
-          throw new TestFailureException(errorMessage, that.server);
+          throw that.TestFailureException(errorMessage);
         }
       }
       state = 'WAIT_FOR_MSG_RESULTS';
@@ -664,45 +550,12 @@ NDTjs.prototype.startTest = function () {
     } else {
       errorMessage = 'No handler for message ' + messageType +
           ' in state ' + state;
-      that.callbacks.onerror('TestFailureException');
-      throw new TestFailureException(errorMessage, that.server);
+      throw that.TestFailureException(errorMessage);
     }
   };
 
   ndtSocket.onerror = function (response) {
     errorMessage = that.parseNdtMessage(response.data)[3].msg;
-    that.callbacks.onerror('TestFailureException');
-    throw new ConnectionException(errorMessage, that.server);
+    throw that.TestFailureException(errorMessage);
   };
 };
-
-(function () {
-    if (typeof module !== 'undefined' && module.exports) {
-		module.exports = NDTjs;
-		WebSocket = require('ws');
-    }
-})();
-
-if ('ArrayBuffer' in window) {
-  if (!ArrayBuffer.prototype.slice) {
-	ArrayBuffer.prototype.slice = function (begin, end) {
-	  var len = this.byteLength;
-	  begin = (begin|0) || 0;
-	  end = end === (void 0) ? len : (end|0);
-
-	  // Handle negative values.
-	  if (begin < 0) begin = Math.max(begin + len, 0);
-	  if (end < 0) end = Math.max(end + len, 0);
-
-	  if (len === 0 || begin >= len || begin >= end) {
-		return new ArrayBuffer(0);
-	  }
-
-	  var length = Math.min(len - begin, end - begin);
-	  var target = new ArrayBuffer(length);
-	  var targetArray = new Uint8Array(target);
-	  targetArray.set(new Uint8Array(this, begin, length));
-	  return target;
-	};
-  }
-}
