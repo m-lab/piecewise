@@ -15,6 +15,9 @@
 - name: install Python cryptography module
   pip: name=cryptography
 
+- name: Create certbot directory
+  file: path=/root/certbot-auto state=directory
+
 - name: download certbot
   get_url: >
     url=https://dl.eff.org/certbot-auto
