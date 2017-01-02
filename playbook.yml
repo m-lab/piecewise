@@ -1,11 +1,13 @@
 ---
 - hosts: all
   tasks:
+    - include: letsencrypt_tasks.yml
+      become: true
+      become_user: root
     - include: system_tasks.yml
       become: true
       become_user: root
     - include: user_tasks.yml
-    - include: letsencrypt_tasks.yml
       become: true
       become_user: root
     - include: seattle_example/seattle_tasks.yml
