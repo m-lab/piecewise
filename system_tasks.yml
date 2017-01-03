@@ -15,6 +15,20 @@
     - python-dev
     - gdal-bin
     - unzip
+    - python-apt
+- apt_repository:
+    repo: deb http://ftp.debian.org/debian jessie-backports main
+    state: present
+- name: Update apt database to get jessie-backports
+  apt: update_cache=yes
+- name: Install EFF Certbot
+  become: yes
+  shell: "apt-get install certbot -t jessie-backports"
+
+# Note: replace the domain and username values below with vars  
+- name: Generate Letsencrypt certs
+  shell: "certbot certonly --standalone -n -d piecewise.opentechinstitute.org -m critzo@opentechinstitute.org --agree-tos"
+
 - name: Fetch telescope
   git: repo=https://github.com/m-lab/telescope.git
        dest=/opt/telescope/
@@ -61,12 +75,7 @@
   file: path=/var/log/piecewise/ state=directory
 - name: Install convenience python modules
   pip: name=bigquery state=latest
-- name: Create Nginx ssl directory
-  file: path=/etc/nginx/ssl/ state=directory
-- name: Create self-signed SSL cert for Nginx
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=District of Columbia/L=Washington/O=IT/CN=45.79.191.25" -days 3650 -out /etc/nginx/ssl/localcert.pem -keyout /etc/nginx/ssl/localcert.key  
-- name: Enable nginx default site
-  file: src=/etc/nginx/sites-available/default dest=/etc/nginx/sites-enabled/default state=link 
+
 - name: Deploy configuration files
   copy: src=conf/ dest=/ owner=root group=root
 - name: Fix postgres configuration permissions
