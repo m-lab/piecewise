@@ -16,6 +16,11 @@
     - gdal-bin
     - unzip
     - python-apt
+
+# By default, Piecewise uses EFF's LetsEncrypt CA for obtaining SSL certificates.
+# If you have obtained SSL certificates from another source, you should comment out the 
+# lines below, ending at the line starting with: `shell: "certbot ...` and then edit 
+# the Nginx default site to point at your certificates: /conf/etc/nginx/sites-available/default
 - apt_repository:
     repo: deb http://ftp.debian.org/debian jessie-backports main
     state: present
@@ -26,6 +31,9 @@
   shell: "apt-get install certbot -t jessie-backports"
 - name: Generate Letsencrypt certs
   shell: "certbot certonly --standalone -n -d piecewise.opentechinstitute.org -m critzo@opentechinstitute.org --agree-tos"
+
+- name: Enable nginx default site
+  file: src=/etc/nginx/sites-available/default dest=/etc/nginx/sites-enabled/default state=link 
 
 - name: Fetch telescope
   git: repo=https://github.com/m-lab/telescope.git
@@ -74,13 +82,11 @@
 - name: Install convenience python modules
   pip: name=bigquery state=latest
 
-- name: Enable nginx default site
-  file: src=/etc/nginx/sites-available/default dest=/etc/nginx/sites-enabled/default state=link 
-
 - name: Deploy configuration files
   copy: src=conf/ dest=/ owner=root group=root
 - name: Fix postgres configuration permissions
   file: path=/etc/postgresql/9.4/main/pg_hba.conf state=file owner=postgres group=postgres mode=0640
+
 - name: Restart services
   service: name={{ item }} state=restarted
   with_items: 
