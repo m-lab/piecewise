@@ -12,11 +12,8 @@
 
 - name: Deploy updated piecewise website code
   file:
-    src: /opt/piecewise.git/{{ item }}
-    dest: /opt/{{ item }}
-    state: link
-  with_items:
-      - piecewise_web
+    src: /opt/piecewise.git/piecewise_web
+    dest: /opt/piecewise_web
 
 - name: Restart services
   service: 

@@ -10,11 +10,9 @@
     version: master
 - name: Deploy updated piecewise code
   file:
-    src: /opt/piecewise.git/{{ item }}
-    dest: /opt/{{ item }}
+    src: /opt/piecewise.git/piecewise
+    dest: /opt/piecewise
     state: link
-  with_items:
-    - piecewise
 - name: Restart services
   service: 
     name: "{{ item }}"

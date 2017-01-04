@@ -89,9 +89,9 @@
     dest: /opt/{{ item }}
     state: link
   with_items:
-      - piecewise
-      - piecewise_web
-      - collector
+    - piecewise
+    - piecewise_web
+    - collector
 
 - name: Install required python modules for piecewise and telescope
   pip:
