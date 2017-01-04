@@ -1,10 +1,7 @@
 ---
-- name: Update apt database
+- name: Update apt and install packages
   apt:
     update_cache: yes
-
-- name: Install packages
-  apt:
     name: "{{ item }}"
     state: latest
   with_items:
@@ -88,13 +85,13 @@
 
 - name: Deploy piecewise
   file:
-    src: /opt/piecewise.git/{{ item.src }}
-    dest: /opt/{{ item.dest }}
+    src: /opt/piecewise.git/{{ item }}
+    dest: /opt/{{ item }}
     state: link
   with_items:
-      - { src: piecewise, dest: piecewise }
-      - { src: piecewise_web, dest: piecewise_web }
-      - { src: collector, dest: collector }
+      - piecewise
+      - piecewise_web
+      - collector
 
 - name: Install required python modules for piecewise and telescope
   pip:
