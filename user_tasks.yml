@@ -1,2 +1,3 @@
 ---
-- shell: echo 'alias telescope="PYTHONPATH=/opt/telescope python /opt/telescope/main.py"' >> .profile
+- name: Create an alias for telescope in the deploy users' profile
+  shell: echo 'alias telescope="PYTHONPATH=/opt/telescope python /opt/telescope/main.py"' >> .profile
