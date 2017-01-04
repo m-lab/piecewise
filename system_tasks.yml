@@ -96,14 +96,18 @@
       - { src: piecewise_web, dest: piecewise_web }
       - { src: collector, dest: collector }
 
-- name: Install required python modules
+- name: Install required python modules for piecewise and telescope
   pip:
     requirements: "{{ item }}"
     state: latest
   with_items:
     - /opt/telescope/requirements.txt
     - /opt/piecewise/requirements.txt
-    - ipaddress
+
+- name: Install additional python module
+  pip: 
+    name: ipaddress
+    state: latest
 
 - name: Create piecewise log directory
   file:
