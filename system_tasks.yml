@@ -1,8 +1,12 @@
 ---
 - name: Update apt database
-  apt: update_cache=yes
+  apt:
+    update_cache: yes
+
 - name: Install packages
-  apt: name={{ item }} state=latest
+  apt:
+    name: "{{ item }}"
+    state: latest
   with_items:
     - postgresql
     - postgis
@@ -17,85 +21,128 @@
     - unzip
     - python-apt
 
-# By default, Piecewise uses EFF's LetsEncrypt CA for obtaining SSL certificates.
+# By default, Piecewise uses EFF's certbot tool to obtain SSL certificates from the LetsEncrypt CA.
 # If you have obtained SSL certificates from another source, you should comment out the 
 # lines below, ending at the line starting with: `shell: "certbot ...` and then edit 
 # the Nginx default site to point at your certificates: /conf/etc/nginx/sites-available/default
-- apt_repository:
+- name: Add jessie-backports to apt configuration
+  apt_repository:
     repo: deb http://ftp.debian.org/debian jessie-backports main
     state: present
-- name: Update apt database to get jessie-backports
-  apt: update_cache=yes
+    update_cache: yes
+
 - name: Install EFF Certbot
-  become: yes
-  shell: "apt-get install certbot -t jessie-backports"
+  apt:
+    name: certbot
+    state: present
+    default_release: jessie-backports
+
 - name: Generate Letsencrypt certs
   shell: "certbot certonly --standalone -n -d piecewise.opentechinstitute.org -m critzo@opentechinstitute.org --agree-tos"
 
 - name: Enable nginx default site
-  file: src=/etc/nginx/sites-available/default dest=/etc/nginx/sites-enabled/default state=link 
+  file:
+    src: "/etc/nginx/sites-available/default"
+    dest: "/etc/nginx/sites-enabled/default"
+    state: link
 
 - name: Fetch telescope
-  git: repo=https://github.com/m-lab/telescope.git
-       dest=/opt/telescope/
+  git:
+    repo: https://github.com/m-lab/telescope.git
+    dest: /opt/telescope/
+
 - name: Get latest MaxMind CSV
-  get_url: url=http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
-           dest=/tmp/GeoIPASNum2.zip
+  get_url:
+    url: http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
+    dest: /tmp/GeoIPASNum2.zip
+
 - name: Unzip MaxMind CSV
-  unarchive: src=/tmp/GeoIPASNum2.zip
-             dest=/tmp/
-             creates=/tmp/GeoIPASNum2.csv
-             copy=no
+  unarchive:
+    src: /tmp/GeoIPASNum2.zip
+    dest: /tmp/
+    creates: /tmp/GeoIPASNum2.csv
+    copy: no
 
 # The command below tells Ansible where to download or copy your customized Piecewise files
 # when it deploys your VM. Change the **repo** to match your fork and **version** to match 
 # your branch.
 #
-#    For example, change:
-#       git: repo=https://github.com/opentechinstitute/piecewise.git
-#       dest=/opt/piecewise.git/
-#       version=master
-#    to:
-#       git: repo=https://github.com/baltimore-github-org/piecewise.git
-#       dest=/opt/piecewise.git/
-#       version=master
+# Note that the example below is fictious. Use the github URL of your fork and your branch. 
 #
-# Note that the example above is fictious. Use the github URL of your fork and your branch. 
+#    For example, change:
+#       git: 
+#          repo: https://github.com/opentechinstitute/piecewise.git
+#          dest: /opt/piecewise.git/
+#          version: master
+#    to:
+#       git: 
+#         repo: https://github.com/baltimore-github-org/piecewise.git
+#         dest: /opt/piecewise.git/
+#         version: master
+#
 - name: Fetch piecewise
-  git: repo=https://github.com/opentechinstitute/piecewise.git 
-       dest=/opt/piecewise.git/
-       version=master
+  git:
+    repo: https://github.com/opentechinstitute/piecewise.git
+    dest: /opt/piecewise.git/
+    version: master
 
 - name: Deploy piecewise
-  file: src=/opt/piecewise.git/{{ item.src }} dest=/opt/{{ item.dest }} state=link
+  file:
+    src: /opt/piecewise.git/{{ item.src }}
+    dest: /opt/{{ item.dest }}
+    state: link
   with_items:
       - { src: piecewise, dest: piecewise }
       - { src: piecewise_web, dest: piecewise_web }
       - { src: collector, dest: collector }
+
 - name: Install required python modules
-  pip: requirements={{ item }} state=latest
+  pip:
+    requirements: "{{ item }}"
+    state: latest
   with_items:
     - /opt/telescope/requirements.txt
     - /opt/piecewise/requirements.txt
+    - ipaddress
+
 - name: Create piecewise log directory
-  file: path=/var/log/piecewise/ state=directory
+  file:
+    path: /var/log/piecewise/
+    state: directory
+
 - name: Install convenience python modules
-  pip: name=bigquery state=latest
+  pip:
+    name: bigquery
+    state: latest
 
 - name: Deploy configuration files
-  copy: src=conf/ dest=/ owner=root group=root
+  copy:
+    src: conf/
+    dest: /
+    owner: root
+    group: root
+
 - name: Fix postgres configuration permissions
-  file: path=/etc/postgresql/9.4/main/pg_hba.conf state=file owner=postgres group=postgres mode=0640
+  file:
+    path: /etc/postgresql/9.4/main/pg_hba.conf
+    state: file
+    owner: postgres
+    group: postgres
+    mode: 0640
 
 - name: Restart services
-  service: name={{ item }} state=restarted
-  with_items: 
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
     - uwsgi
     - nginx
     - postgresql
-    
-- postgresql_db: 
-    name: piecewise 
+
+- name: Create the piecewise database in postgres
+  postgresql_db:
+    name: piecewise
     state: present
-  
-- command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
+
+- name: Setup the piecewise database schema
+  command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
