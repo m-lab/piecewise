@@ -26,20 +26,24 @@
 #
 #    For example, change:
 #       with_items:
-#        - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
-#        - { src: seattle_blkgrpce10, dest: '' }
+#        - seattle_census10_blockgroups.topojson
+#        - seattle_blkgrpce10
 #    to:
-#        - { src: src: maryland_blkgrps_2015.json, dest: maryland_blkgrps_2015.json }
-#        - { src: maryland_blkgrps, dest: '' }
+#        - maryland_blkgrps_2015.json
+#        - maryland_blkgrps
 
 - name: Copy geo data to server
   copy:
-    src: seattle_example/{{ item.src }}
-    dest: /opt/piecewise_web/{{ item.dest }}
+    src: seattle_example/{{ item }}
+    dest: /opt/piecewise_web/{{ item }}
   with_items:
-    - { src: seattle_census10_blockgroups.topojson, dest: seattle_census10_blockgroups.topojson }
-    - { src: seattle_blkgrpce10, dest: '' }
-    - { src: center.js, dest: js/center.js }
+    - seattle_census10_blockgroups.topojson
+    - seattle_blkgrpce10
+
+- name: Copy map center to server
+  copy:
+    src: center.js
+    dest: /opt/piecewise_web/js/center.js 
 
 # ------------------------------------------------------------------
 #
