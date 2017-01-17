@@ -1,0 +1,45 @@
+{ 
+    "piecewise_version" : "1.0",
+    "database_uri" : "postgresql+psycopg2://{{ database_user }}:@/{{ database_name }}",
+    "cache_table_name": "results",
+    "aggregations": [{
+        "name": "{{ aggregation_name }}",
+        "statistics_table_name": "{{ aggregation_stats_table_name }}",
+        "bins": [
+            { "type" : "spatial_join", "table" : "{{ layer_name }}", "geometry_column" : "wkb_geometry", "key" : "{{ dbKey }}", "key_type": "{{ dbKeyDataType }}", "join_custom_data" : true },
+            { "type" : "time_slices", "resolution" : "month" },
+            { "type" : "isp_bins", "maxmind_table" : "maxmind", 
+                "rewrites" : {
+                    {% for key, value in isp_rewrites_names.iteritems() %}
+                    "{{ key }}": [{% for val in value names.iteritems() %}"{{ val }}"
+                                    {% if not loop.last %},{% endif %}
+                                    {% endfor %} 
+                                {% if not loop.last %},{% endif %}
+                    {% endfor %}
+                } }
+        ],
+        "statistics": [
+            { "type" : "AverageRTT" },
+            { "type" : "MedianRTT" },
+            { "type" : "DownloadCount" },
+            { "type" : "DownloadMin" },
+            { "type" : "DownloadMax" },
+            { "type" : "AverageDownload" },
+            { "type" : "MedianDownload" },
+            { "type" : "UploadCount" },
+            { "type" : "UploadMin" },
+            { "type" : "UploadMax" },
+            { "type" : "AverageUpload" },
+            { "type" : "MedianUpload" }
+        ]
+    }],
+    "filters": [
+        { "type": "temporal", "after": "{{ map_date_start_date }}", "before" : "{{ map_data_end_date }}" },
+        { "type": "bbox", "bbox": [{{ map_bounding_box }}] },
+        { "type": "raw", "query": "connection_spec.data_direction IS NOT NULL" },
+        { "type": "raw", "query": "(web100_log_entry.snap.HCThruOctetsAcked >= 8192 OR web100_log_entry.snap.HCThruOctetsReceived >= 8192)" },
+        { "type": "raw", "query": "(web100_log_entry.snap.State == 1 OR (web100_log_entry.snap.State >= 5 AND web100_log_entry.snap.State <= 11))" },
+        { "type": "raw", "query": "((web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) >= 9000000 OR web100_log_entry.snap.Duration >= 9000000)" },
+        { "type": "raw", "query": "((web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) < 3600000000 OR web100_log_entry.snap.Duration < 3600000000)" }
+    ]
+}
