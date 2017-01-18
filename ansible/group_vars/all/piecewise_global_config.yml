@@ -16,6 +16,17 @@ sys: debian8
 # This var is referenced by a few other vars, eg. git_repo, hostname, site_fqdn.
 project_name: piecewise
 
+# Information about the fork and branch to deploy
+
+# Specify any valid git remote (typically a github username)
+remote: critzo
+
+# Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
+# pushed to the remote git_repo before it can be deployed.
+commit: ansible-refactor
+
+git_repo: https://github.com/{{ remote }}/{{ project_name }}.git
+
 # Your Postgres database name and user can be customized if necessary.  
 database_name: piecewise
 database_user: postgres
@@ -53,17 +64,6 @@ self_signed_ssl_key_path: /etc/ssl/selfsigned.{{ site_fqdn }}.key
 # If we're deploying to production, we'll use LetsEncrypt certs instead. 
 letsencrypt_ssl_cert_path: /etc/letsencrypt/live/{{ site_fqdn }}/fullchain.pem
 letsencrypt_ssl_key_path: /etc/letsencrypt/live/{{ site_fqdn }}/privkey.pem
-
-# Information about the fork and branch to deploy
-
-# Specify any valid git remote (typically a github username)
-remote: critzo
-
-# Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
-# pushed to the remote git_repo before it can be deployed.
-commit: ansible-refactor
-
-git_repo: https://github.com/{{ remote }}/{{ project_name }}.git
 
 ########
 # DEPLOY
@@ -147,7 +147,7 @@ mapscript_start_month: 1
 mapscript_base_layer: mapbox
 
 # If using a Mapbox base layer, set the API URL for your Mapbox tiles here.
-mapscript_mapbox_api_url: "https://{s}.tiles.mapbox.com/v3/newamerica.lcl1jan5/{z}/{x}/{y}.png"
+mapscript_mapbox_api_url: "https://api.mapbox.com/styles/v1/newamerica/ciy31olzw00792sp6w98b76i0/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibmV3YW1lcmljYSIsImEiOiIyM3ZnYUtrIn0.57fFgg_iM7S1wLH2GQC71g"
 
 
 ########
@@ -205,83 +205,78 @@ intro_text: >
 #   text, display_order, and options.
 
 form_fields:
-  - isp_user: {
-      name: "isp_user",
-      html_type: "select",
-      data_type: "String",
-      required: true,
-      text: "Who is your Internet Service Provider?",
-      display_order: 1,
-      options: [
-        default: "------",
-        comcast: "Comcast",
-        centurylink: "CenturyLink",
-        wave: "Wave"
-      ]
-  }
+  isp_user:
+    name: "isp_user"
+    html_type: "select"
+    data_type: "String"
+    required: true
+    text: "Who is your Internet Service Provider?"
+    display_order: 1
+    options:
+      default: "------"
+      comcast: "Comcast"
+      centurylink: "CenturyLink"
+      wave: "Wave"
+
 # isp_other has the attribute init_display: false, because JavaScript is used to show
 # it if 'other' is selected in the field isp_user. Validation 
-  - isp_other: {
-      name: "other",
-      html_type: "text",
-      data_type: "String",
-      required: false,
-      init_display: false,
-      display_order: 2
-    }
-  - connection_type: {
-      name: "connection_type",
-      html_type: "select",
-      data_type: "String",
-      required: true,
-      text: "How do you connect to the Internet?",
-      display_order: 3,
-      options: [
-        default: "------",
-        wired: "Wired connection",
-        wireless_single: "Wireless connection - 1 device",
-        wireless_multiple: "Wireless connection - shared among multiple devices or households"
-      ]
-    }
-  - cost_of_service: {
-      name: "cost_of_service",
-      html_type: "select",
-      required: true,
-      text: "How much do you pay, per month?",
-      display_order: 4,
-      options: [
-        default: "------",
-        less_than_25: "Less than $25",
-        bet_25_50: "$25-$50",
-        bet_50_75: "$50-$75",
-        bet_75_100: "$75-$100",
-        above_100: "$100 or more",
-        dont_know: "Don't know"
-      ]
-    }
-  - advertised_download: {
-      name: "advertised_download",
-      html_type: "textfield",
-      data_type: "Integer",
-      required: false,
-      text: "What is your advertised download speed?",
-      display_order: 5,
-      size: 3,
-      label: "Download",
-      units: "mbps"
-    }
-  - advertised_upload: {
-      name: "advertised_upload",
-      html_type: "text",
-      data_type: "Integer",
-      required: false,
-      text: "What is your advertised upload speed?",
-      display_order: 6,
-      size: 3,
-      label: "Upload",
-      units: "mbps"
-    }
+  isp_other:
+    name: "other"
+    html_type: "text"
+    data_type: "String"
+    required: false
+    init_display: false
+    display_order: 2
 
+  connection_type:
+    name: "connection_type"
+    html_type: "select"
+    data_type: "String"
+    required: true
+    text: "How do you connect to the Internet?"
+    display_order: 3
+    options:
+      default: "------"
+      wired: "Wired connection"
+      wireless_single: "Wireless connection - 1 device"
+      wireless_multiple: "Wireless connection - shared among multiple devices or households"
+
+  cost_of_service:
+    name: "cost_of_service"
+    html_type: "select"
+    required: true
+    text: "How much do you pay, per month?"
+    display_order: 4
+    options:
+      default: "------"
+      less_than_25: "Less than $25"
+      bet_25_50: "$25-$50"
+      bet_50_75: "$50-$75"
+      bet_75_100: "$75-$100"
+      above_100: "$100 or more"
+      dont_know: "Don't know"
+
+  advertised_download:
+    name: "advertised_download"
+    html_type: "textfield"
+    data_type: "Integer"
+    required: false
+    text: "What is your advertised download speed?"
+    display_order: 5
+    size: 3
+    label: "Download"
+    units: "mbps"
+
+  advertised_upload:
+    name: "advertised_upload"
+    html_type: "text"
+    data_type: "Integer"
+    required: false
+    text: "What is your advertised upload speed?"
+    display_order: 6
+    size: 3
+    label: "Upload"
+    units: "mbps"
 
 consent_message: >
   'I understand that the data collected from this test will be anonymized and aggregated 
