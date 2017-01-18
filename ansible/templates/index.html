@@ -40,14 +40,7 @@
 	<div id="sidebar">
 		<form action="/collector/collect" method="get" id="collector">
 			<div id="extra-data" class="ndt-related">
-			{% for field in form_fields %}
-				{{ field[name] }} - {{ field[html_type] }}
-				{% if field[options] is defined %}
-					{% for k,v in field[options].iteritems() %}
-						{{ k }} - {{ v }}
-					{% endfor %}
-				{% endif %}
-			{% endfor %}
+				{% include 'html_form' %}
 				<div class="container" id="consent-text">
 					<p>
 						<span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> {{ consent_message }}
@@ -328,7 +321,7 @@ var startYear = {{ mapscript_start_year }};
 var startMonth = {{ mapscript_start_month }};
 
 // Get current year/month into variables
-var currentYear = new Date().getFulYear();
+var currentYear = new Date().getFullYear();
 var currentMonth = new Date().getMonth() + 1;
 // Zero pad the front of the month
 currentMonth = currentMonth < 10 ? '0' + currentMonth : currentMonth;
