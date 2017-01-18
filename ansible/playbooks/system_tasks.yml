@@ -297,16 +297,31 @@
     src: "../local_customizations/geofiles"
     dest: "{{ site_path }}/"
 
+- name: Copy extra_data.py server
+  copy:
+    src: "../local_customizations/extra_data.py"
+    dest: "{{ base_path }}/{{ project_name }}/"
+
 - name: Add the file defining the map center
   template:
     src: "templates/map_center.js"
     dest: "{{ site_path }}/js/center.js"
 
-- name: Copy extra_data.py to server
-  copy:
-    template: "templates/extra_data.py"
-    dest: "{{ base_path }}/{{ project_name }}/extra_data.py"
+## Add the site's index file, built from templated values
+- name: Add the map site index page
+  template:
+    src: "templates/index.html"
+    dest: "{{ site_path }}/index.html"
     force: yes
+
+# Commented out since adding the form fields and database fields from 
+# variables and templates is not yet working.
+#
+#- name: Copy extra_data.py to server
+#  copy:
+#    template: "templates/extra_data.py"
+#    dest: "{{ base_path }}/{{ project_name }}/extra_data.py"
+#    force: yes
 
 - name: Ingest census blocks to postgres
   command: > 
@@ -326,11 +341,14 @@
     dest: "{{ base_path }}/piecewise/piecewise/bigquery.py"
     force: yes
 
-- name: Install collector wsgi.py from template
-  template:
-      src: "templates/wsgi.py"
-      dest: "{{ base_path }}/collector/collector/wsgi.py"
-      force: yes
+# Commented out since adding the form fields and database fields from 
+# variables and templates is not yet working.
+#
+#- name: Install collector wsgi.py from template
+#  template:
+#      src: "templates/wsgi.py"
+#      dest: "{{ base_path }}/collector/collector/wsgi.py"
+#      force: yes
 
 - name: Restart uwsgi so piecewise config is detected
   service:

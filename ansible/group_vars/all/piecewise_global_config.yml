@@ -92,7 +92,7 @@ topojson_file: seattle_census10_blockgroups.topojson
 
 # The field name in your shape file which is a unique key
 dbKey: geoid10
-dbKeyDataType: text
+dbKeyDataType: string
 
 # Additional details about your shapefile, used by ogr2ogr to import shapes into Postgres
 
