@@ -23,7 +23,11 @@
 - name: Fetch M-Lab's Telescope Utility
   git:
     repo: https://github.com/m-lab/telescope.git
+<<<<<<< 2b5bfbc3f98c80a55e85ab3264384172c13a7992
     dest: "{{ base_path }}/telescope/"
+=======
+    dest: "{{base_path}}/telescope/"
+>>>>>>> Adds new deployment playbook, templates and variables covering the installation of system packages, services and configurations. All web-based content of the application is yet to be templated and remains static in this commit.
 
 - name: Create an alias for telescope in the deploy users' profile
   shell: echo 'alias telescope="PYTHONPATH=/opt/telescope python /opt/telescope/main.py"' >> .profile
@@ -32,7 +36,11 @@
   git:
     repo: "{{ git_repo }}"
     dest: "{{ base_path }}/piecewise.git"
+<<<<<<< 2b5bfbc3f98c80a55e85ab3264384172c13a7992
     version: "{{ piecewise_commit }}"
+=======
+    version: "{{ commit }}"
+>>>>>>> Adds new deployment playbook, templates and variables covering the installation of system packages, services and configurations. All web-based content of the application is yet to be templated and remains static in this commit.
 
 - name: Deploy Piecewise
   file:
@@ -205,8 +213,13 @@
 
 - name: Copy map center to server
   copy:
+<<<<<<< 2b5bfbc3f98c80a55e85ab3264384172c13a7992
     src: ../local_customizations/center.js
     dest: "{{ base_path }}/piecewise_web/js/center.js"
+=======
+    src: local_customizations/center.js
+    dest: /opt/piecewise_web/js/center.js 
+>>>>>>> Adds new deployment playbook, templates and variables covering the installation of system packages, services and configurations. All web-based content of the application is yet to be templated and remains static in this commit.
 
 - name: Ingest census blocks to postgres
   command: > 
@@ -234,4 +247,8 @@
 - name: Run extra_data.py in the /opt/piecewise directory
   command: python extra_data.py arg1
   args:
+<<<<<<< 2b5bfbc3f98c80a55e85ab3264384172c13a7992
     chdir: "{{ base_path }}/piecewise"
+=======
+    chdir: /opt/piecewise
+>>>>>>> Adds new deployment playbook, templates and variables covering the installation of system packages, services and configurations. All web-based content of the application is yet to be templated and remains static in this commit.
