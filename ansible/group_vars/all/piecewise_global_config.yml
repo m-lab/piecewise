@@ -10,7 +10,7 @@
 env: development
 
 # What Linux distro is being used? Supported options include: debian8, rhel7
-sys: debian8
+sys: rhel7
 
 # The project name should be the name of your forked repository.
 # This var is referenced by a few other vars, eg. git_repo, hostname, site_fqdn.
