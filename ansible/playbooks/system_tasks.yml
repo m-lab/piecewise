@@ -203,6 +203,7 @@
     src: "../local_customizations/extra_data.py"
     dest: "{{ base_path }}/{{ project_name }}/"
 
+<<<<<<< 540f0a2382119ef3d48e27b5c8f893188c7fe28c
 - name: Add the file defining the map center
   template:
     src: "templates/map_center.js"
@@ -215,6 +216,11 @@
     src: "templates/index.html"
     dest: "{{ site_path }}/index.html"
     force: yes
+
+- name: Copy map center to server
+  copy:
+    src: ../local_customizations/center.js
+    dest: "{{ base_path }}/piecewise_web/js/center.js"
 
 - name: Ingest census blocks to postgres
   command: > 

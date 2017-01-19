@@ -1,7 +1,15 @@
 ##
 # This is the Nginx default site template for a development deployment of Piecewise
 # The main difference between the production and development template is the 
+<<<<<<< 540f0a2382119ef3d48e27b5c8f893188c7fe28c
 # handling of SSL certificates. In development Piecewise's Ansible playbooks create 
+=======
+<<<<<<< 2b5bfbc3f98c80a55e85ab3264384172c13a7992
+# handling of SSL certificates. In development Piecewise's Ansible playbooks creates 
+=======
+# handling of SSL certificates. In development Piecwise's Ansible playbooks create . 
+>>>>>>> Adds new deployment playbook, templates and variables covering the installation of system packages, services and configurations. All web-based content of the application is yet to be templated and remains static in this commit.
+>>>>>>> Adds new deployment playbook, templates and variables covering the installation of system packages, services and configurations. All web-based content of the application is yet to be templated and remains static in this commit.
 # a self-signed SSL certificate, suitable to deploy to a host by IP address only.
 #
 # Development deployments are useful when a DNS FQDN for your site is not yet configured.
