@@ -71,7 +71,11 @@ server {
 	# NOTE: replace domains below with vars
 	ssl on;
 	ssl_certificate {{letsencrypt_ssl_cert_path}};
+<<<<<<< 2b5bfbc3f98c80a55e85ab3264384172c13a7992
 	ssl_certificate_key {{letsencrypt_ssl_key_path}};
+=======
+	ssl_certificate_key {{letsencrypt_ssl_cert_path}};
+>>>>>>> Adds new deployment playbook, templates and variables covering the installation of system packages, services and configurations. All web-based content of the application is yet to be templated and remains static in this commit.
 
 	ssl_session_timeout 5m;
 	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
