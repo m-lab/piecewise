@@ -111,5 +111,11 @@ layer_name: seattle_blkgrpce10
 aggregation_name: "by_census_block"
 aggregation_stats_table_name: "block_statistics"
 
+# Define the bounding box coordinates for the region you are interested in.
+map_bounding_box: "-122.6733398438,47.3630134401,-121.9509887695,47.8076208172"
+
 map_data_start_date: "Jan 1 2014 00:00:00"
 map_data_end_date: "Jan 1 2050 00:00:00"
+
+# Define the latitude and longitude coordinates for the center of your map
+map_center: "47.607181,-122.337226"
