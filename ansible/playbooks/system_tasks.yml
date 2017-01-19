@@ -205,7 +205,7 @@
 
 - name: Copy map center to server
   copy:
-    src: local_customizations/center.js
+    src: ../local_customizations/center.js
     dest: /opt/piecewise_web/js/center.js 
 
 - name: Ingest census blocks to postgres
