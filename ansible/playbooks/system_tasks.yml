@@ -203,7 +203,6 @@
     src: "../local_customizations/extra_data.py"
     dest: "{{ base_path }}/{{ project_name }}/"
 
-<<<<<<< 540f0a2382119ef3d48e27b5c8f893188c7fe28c
 - name: Add the file defining the map center
   template:
     src: "templates/map_center.js"
