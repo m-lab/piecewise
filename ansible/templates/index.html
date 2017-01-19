@@ -275,7 +275,7 @@ var overlays = {
 var geoLayers = {
 	'{{ mapscript_layer_name }}': {
 		'name': '{{ mapscript_layer_name_pretty }}',
-		'polygonFile': '{{ topojson_file }}',
+		'polygonFile': 'geofiles/{{ topojson_file }}',
 		'dataUrl': 'stats/q/{{ aggregation_name }}?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
 		'dbKey': '{{ dbKey }}',
 		'geoKey': '{{ geoKey }}',
