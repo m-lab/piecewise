@@ -1,0 +1,327 @@
+#######
+# PIECEWISE SYSTEM CONFIGURATION
+#######
+
+# Certain tasks may operate in a less secure (but more convenient) manner, eg.
+# enabling passwordless sudo or generating self-signed ssl certs, when testing
+# locally, in Vagrant. But not in production!
+#
+# Supported values: production, development
+env: development
+
+# What Linux distro is being used? Supported options include: debian8, rhel7
+sys: rhel7
+
+# The project name should be the name of your forked repository.
+# This var is referenced by a few other vars, eg. git_repo, hostname, site_fqdn.
+project_name: piecewise
+
+# Information about the fork and branch to deploy
+
+# Specify any valid git remote (typically a github username)
+remote: critzo
+
+# Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
+# pushed to the remote git_repo before it can be deployed.
+commit: ansible-refactor98
+
+git_repo: https://github.com/{{ remote }}/{{ project_name }}.git
+
+# Your Postgres database name and user can be customized if necessary.  
+database_name: piecewise
+database_user: postgres
+database_user_group: postgres
+
+bigquery_project_num: 819467010820
+
+hostname: "{{ project_name }}"
+
+# This is the fully qualified domain name of your production server. Because
+# nginx checks this value against the URL being requested, it must be the same
+# as the server's DNS name. This value is overridden for Vagrant and staging
+# servers.
+site_fqdn: "{{ project_name }}.opentechinstitute.org"
+
+# The variables below will be used to generate SSL certificates. When deploying to 
+# development hosts, the country, state and city are used by open SSL to generate a 
+# self-signed certificate. This is useful when you don't have an DNS name set up yet 
+# and want to deploy using the host's IP address, or to a server not accessible to 
+# the Internet. 
+#
+# When deploying to a production host. The site_contact and the site_fqdn variables are 
+# used by EFF's certbot tool to automate the request for valis SSL certificates from 
+# the LetsEncrypt CA.
+site_contact: critzo@opentechinstitute.org
+site_country: US
+site_state: District of Columbia
+site_city: Washington
+site_ou: OTI
+
+# Path for self-signed certificates to be used in development deployments
+self_signed_ssl_cert_path: /etc/ssl/selfsigned.{{ site_fqdn }}.cert
+self_signed_ssl_key_path: /etc/ssl/selfsigned.{{ site_fqdn }}.key
+
+# If we're deploying to production, we'll use LetsEncrypt certs instead. 
+letsencrypt_ssl_cert_path: /etc/letsencrypt/live/{{ site_fqdn }}/fullchain.pem
+letsencrypt_ssl_key_path: /etc/letsencrypt/live/{{ site_fqdn }}/privkey.pem
+
+########
+# DEPLOY
+########
+
+# Parent directory for cloned repository directories. The clone_path and
+# site_path should be children of this directory.
+base_path: /opt
+
+# Temporary location where the Git repo will be cloned and the build scripts
+# will be run before going live.
+temp_path: "{{ base_path }}/tmp"
+
+# Where the production site symlink will exist.
+site_path: "{{ base_path }}/piecewise_web"
+
+########
+# MAPPING CUSTOMIZATIONS
+########
+# Save the geofiles you intend to use for your Piecewise aggregations of
+# M-Lab data in the folder: /local_customizations/geofiles/
+
+# Then add the name of the shapefile file to be used below.
+shape_file: CENSUS10_blkgrp_WGS.shp
+topojson_file: seattle_census10_blockgroups.topojson
+
+# The field name in your shape file which is a unique key
+dbKey: geoid10
+dbKeyDataType: string
+
+# Additional details about your shapefile, used by ogr2ogr to import shapes into Postgres
+
+# The SRS reprojection/transform to use for this shapefile
+shape_projection: "EPSG:4326"
+# The geometry type for this layer
+geometry_type: MultiPolygon
+
+# The layer name to be used for this shapefile in Postgres
+layer_name: seattle_blkgrpce10
+
+# The field name in your topojson file which corresponds to the unique key in your shapefile,
+# typically the same as dbKey, but in CAPS.
+geoKey: GEOID10
+
+# Define the bounding box coordinates for the region you are interested in.
+map_bounding_box: "-122.6733398438,47.3630134401,-121.9509887695,47.8076208172"
+
+map_data_start_date: "Jan 1 2014 00:00:00"
+map_data_end_date: "Jan 1 2050 00:00:00"
+
+# Define the latitude and longitude coordinates for the center of your map
+map_center: "47.607181,-122.337226"
+
+mapscript_layer_name: "census_block_groups"
+mapscript_layer_name_pretty: "Census block groups"
+mapscript_json_type: "topojson"
+
+mapscript_min_data_points: 5
+mapscript_zoom_level: 11
+
+# This dictionary of month names/abbreviations lets you configure how month names appear in the HTML page
+mapscript_month_names: 
+  1: Jan
+  2: Feb
+  3: Mar
+  4: Apr
+  5: May
+  6: Jun
+  7: Jul
+  8: Aug
+  9: Sep
+  10: Oct
+  11: Nov
+  12: Dec
+
+mapscript_start_year: 2014
+mapscript_start_month: 1
+
+# Which type of base layer should be used on the map? Mapbox and OpenStreetMaps are supported.
+# Set mapscript_base_layer to either: mapbox OR osm
+mapscript_base_layer: mapbox
+
+# If using a Mapbox base layer, set the API URL for your Mapbox tiles here.
+mapscript_mapbox_api_url: "https://api.mapbox.com/styles/v1/newamerica/ciy31olzw00792sp6w98b76i0/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibmV3YW1lcmljYSIsImEiOiIyM3ZnYUtrIn0.57fFgg_iM7S1wLH2GQC71g"
+
+
+########
+# AGGREGATION CUSTOMIZATIONS
+########
+
+aggregation_name: "by_census_block"
+aggregation_stats_table_name: "block_statistics"
+
+# Need a utility script that runs a test ingest/aggregate in order to simply get a list of
+# ISPs in the selected region for these rewrites, before final deployment. 
+# This could be an initial step to setup the BQ project and credentials.
+
+isp_rewrites:
+  - { "aerioconnect": [ "Aerioconnect" ] }
+  - { "at&t": [ "AT&T Services", "AT&T Mobility LLC", "Wayport" ] }
+  - { "cablevision": ["Cablevision Systems", "CSC Holdings", "Cablevision Infrastructure", "Cablevision Corporate", "Optimum Online", "Optimum WiFi", "Optimum Network"] }
+  - { "cascasde link": ["CASCADELINK INC"] }
+  - { "centurylink": ["Qwest", "Embarq", "Centurylink", "Centurytel"] }
+  - { "cequint": ["Cequint"] }
+  - { "comcast": ["Comcast Cable Communications"] }
+  - { "cox communications": ["Cox Communications Inc."] }
+  - { "elauwit networks": ["Elauwit"] } 
+  - { "frontier": ["Frontier Communications of America"] }
+  - { "hughes": ["Hughes Network Systems"] }
+  - { "level3": ["Level 3 Communications", "GBLX"] }
+  - { "MDU Communications": ["MDU Communications (USA)"] }
+  - { "northland cable": ["NORTHLAND CABLE TELEVISION INC."] }
+  - { "rainier connect": ["Rainier Connect"] }
+  - { "sprint": ["Sprint"] }
+  - { "t-mobile": ["T-Mobile USA"] }
+  - { "twc": ["Time Warner"] }
+  - { "visionary communications": ["Visionary Communications"] }
+  - { "verizon": ["Cellco Partnership DBA Verizon Wireless"] }
+  - { "wave": ["Wave Broadband", "Broadstripe", "Condointernet.net"] }
+  - { "windstream": ["Windstream Communications Inc"] }
+  - { "wolfe": ["Wolfenet"] }
+  - { "whidbey internet services": ["Whidbey Internet Services"] }
+  - { "xo communciations": ["XO Communications"] }
+
+########
+# HTML webpage customization
+#
+########
+site_name: "Seattle Broadband Map"
+intro_text: >
+  "The City of Seattle is collecting information from residents about broadband 
+  experiences across the City. To contribute, please answer the following 
+  questions and then take our Broadband Speed Test:"
+
+# Below you can customize various aspects of the HTML form that users are asked to completed
+# prior to taking the speed test. Suggestions on a per field basis are provided below.
+#
+# For the fields: isp_user and isp_other, we recommend only changing the values for:
+#   text, display_order, and options.
+
+form_fields:
+  isp_user:
+    name: "isp_user"
+    html_type: "select"
+    data_type: "String"
+    required: true
+    text: "Who is your Internet Service Provider?"
+    display_order: 1
+    options:
+      default: "------"
+      comcast: "Comcast"
+      centurylink: "CenturyLink"
+      wave: "Wave"
+
+# isp_other has the attribute init_display: false, because JavaScript is used to show
+# it if 'other' is selected in the field isp_user. Validation 
+  isp_other:
+    name: "other"
+    html_type: "text"
+    data_type: "String"
+    required: false
+    init_display: false
+    display_order: 2
+
+  connection_type:
+    name: "connection_type"
+    html_type: "select"
+    data_type: "String"
+    required: true
+    text: "How do you connect to the Internet?"
+    display_order: 3
+    options:
+      default: "------"
+      wired: "Wired connection"
+      wireless_single: "Wireless connection - 1 device"
+      wireless_multiple: "Wireless connection - shared among multiple devices or households"
+
+  cost_of_service:
+    name: "cost_of_service"
+    html_type: "select"
+    required: true
+    text: "How much do you pay, per month?"
+    display_order: 4
+    options:
+      default: "------"
+      less_than_25: "Less than $25"
+      bet_25_50: "$25-$50"
+      bet_50_75: "$50-$75"
+      bet_75_100: "$75-$100"
+      above_100: "$100 or more"
+      dont_know: "Don't know"
+
+  advertised_download:
+    name: "advertised_download"
+    html_type: "textfield"
+    data_type: "Integer"
+    required: false
+    text: "What is your advertised download speed?"
+    display_order: 5
+    size: 3
+    label: "Download"
+    units: "mbps"
+
+  advertised_upload:
+    name: "advertised_upload"
+    html_type: "text"
+    data_type: "Integer"
+    required: false
+    text: "What is your advertised upload speed?"
+    display_order: 6
+    size: 3
+    label: "Upload"
+    units: "mbps"
+
+consent_message: >
+  'I understand that the data collected from this test will be anonymized and aggregated 
+  for publication to the Broadband Map and 
+  <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.'
+
+
+run_test_heading: "Test your speed!"
+test_result_heading: "Your test results"
+download_result_label: "Download speed:"
+download_result_unit: "mbps"
+upload_result_label: "Upload speed:"
+upload_result_unit: "mbps"
+rtt_result_label: "Minimum Round Trip Time:"
+rtt_result_unit: "ms"
+thank_you_heading: "Thank you!"
+thank_you_message: >
+  "Your test results will be combined with others and will appear on the map 
+  at the end of the month."
+next_action_message: "What do you want to do next?"
+next_action_show_map_text: "View all results to-date on a map of Seattle"
+next_action_learn_about_text: "Learn more about this test and how to improve your speed"
+next_action_learn_about_link: "https://www.seattle.gov/broadband-speed-test-about"
+next_action_social_share_text: "Share this test with your friends, colleagues, and neighbors"
+
+social_share_twitter: "http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea"
+social_share_gplus: "https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test"
+social_share_facebook: "http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test"
+social_share_stumbleupon: "http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
+social_share_reddit: "http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
+social_share_linkedin: "http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test"
+social_share_email: "mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test"
+
+icon_test_label: "Take the Speed Test"
+icon_test_alt_text: "Take the Speed Test"
+icon_browse_label: "Browse the Broadband Map"
+icon_browse_alt_text: "Browse the Broadband Map"
+icon_learn_label: "Learn More"
+icon_learn_alt_text: "Learn more about this test."
+icon_learn_link: "http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test"
+
+mapview_icon_test_alt_text: "Take the Speed Test"
+mapview_icon_learn_alt_text: "Learn more about this test."
+mapview_icon_learn_link: "http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test"
+
+# Where to place map controls. Use the values ...DEFAULTS FOR LEAFLET?
+mapcontrols_zoom_pos: topright
+mapcontrols_legend_pos: bottomleft

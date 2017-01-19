@@ -1,5 +1,6 @@
 ---
-- name: Update apt and install packages
+## Install base packages
+- name: Update apt and install packages for Debian 8 hosts
   apt:
     update_cache: yes
     name: "{{ item }}"
@@ -17,11 +18,128 @@
     - gdal-bin
     - unzip
     - python-apt
+  when: sys == "debian8"
 
-# By default, Piecewise uses EFF's certbot tool to obtain SSL certificates from the LetsEncrypt CA.
-# If you have obtained SSL certificates from another source, you should comment out the 
-# lines below, ending at the line starting with: `shell: "certbot ...` and then edit 
-# the Nginx default site to point at your certificates: /conf/etc/nginx/sites-available/default
+- name: Update yum repositorues for RHEl 7 / Centos hosts
+  yum: 
+    name: "*"
+    state: latest
+  when: sys == "rhel7"
+
+- name: Install EPEL & PostgreSQL repos for RHEL 7 / Centos hosts
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - epel-release
+    - http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm
+  when: sys == "rhel7"
+
+- name: Install packages for RHEL 7 / Centos hosts
+  yum: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - postgresql94
+    - postgresql94-server
+    - postgis2_94
+    - nginx
+    - httpd-tools
+    - uwsgi-plugin-python
+    - git
+    - python-pip
+    - python-psycopg2
+    - python-devel
+    - gdal
+  when: sys == "rhel7"
+
+## For RHEL7 hosts, initialize and start core services
+- name: Initiate PostgreSQL database for RHEL 7 / Centos hosts
+  command: /usr/pgsql-9.4/bin/postgresql94-setup initdb
+  #  creates: /var/lib/pgsql/9.4/data/pg_hba.conf
+  when: sys == "rhel7"
+
+- name: Copy initial pg config
+  file:
+    src: "{{ base_path }}/{{ project_name }}.git/ansible/files/rhel7/var/lib/pgsql/9.4/data/pg_hba.conf"
+    dest: /var/lib/pgsql/9.4/data/pg_hba.conf
+  when: sys == "rhel7"
+
+- name: Enable and start core services for RHEL 7 / Centos hosts
+  service: 
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items: 
+    - uwsgi
+    - nginx
+    - postgresql-9.4
+  when: sys == "rhel7"
+
+## Obtain Piecewise, M-Lab's Telescope Utility, and the current MaxMind CSV
+- name: Fetch M-Lab's Telescope Utility
+  git:
+    repo: https://github.com/m-lab/telescope.git
+    dest: "{{base_path}}/telescope/"
+
+- name: Create an alias for telescope in the deploy users' profile
+  shell: echo 'alias telescope="PYTHONPATH=/opt/telescope python /opt/telescope/main.py"' >> .profile
+
+- name: Fetch Piecewise
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ base_path }}/piecewise.git"
+    version: "{{ commit }}"
+
+- name: Deploy Piecewise
+  file:
+    src: "{{ base_path }}/{{ project_name }}.git/{{ item }}"
+    dest: "{{ base_path }}/{{ item }}"
+    state: link
+  with_items:
+    - piecewise
+    - piecewise_web
+    - collector
+
+- name: Install required python modules for piecewise and telescope
+  pip:
+    requirements: "{{ item }}"
+    state: latest
+  with_items:
+    - "{{ base_path }}/telescope/requirements.txt"
+    - "{{ base_path }}/{{ project_name }}/requirements.txt"
+
+- name: Install additional python modules
+  pip: 
+    name: "{{ item }}"
+    state: latest
+  with_items: 
+    - ipaddress
+    - bigquery
+
+- name: Get the latest MaxMind CSV
+  get_url:
+    url: http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
+    dest: /tmp/GeoIPASNum2.zip
+
+- name: Unzip MaxMind CSV
+  unarchive:
+    src: /tmp/GeoIPASNum2.zip
+    dest: /tmp/
+    creates: /tmp/GeoIPASNum2.csv
+    copy: no
+
+## Generate and Install SSL/TLS Certificates
+#
+# By default, Piecewise uses EFF's certbot tool to obtain SSL/TLS certificates from the 
+# LetsEncrypt CA for production deployments, and generates self-signed SSL/TLS certificates 
+# for development deployments.
+#
+# If you want to use SSL/TLS certificates from another source, in your fork's code comment out 
+# or delete the section below, install your certificates manually on your server where 
+# appropriate for your system, and update the ssl certificate variables for development 
+# and production in: ansible/piecewise_global_config.yml
+
 - name: Add jessie-backports to apt configuration
   apt_repository:
     repo: deb http://ftp.debian.org/debian jessie-backports main
@@ -35,103 +153,71 @@
     default_release: jessie-backports
 
 - name: Generate Letsencrypt certs
-  shell: "certbot certonly --standalone -n -d piecewise.opentechinstitute.org -m critzo@opentechinstitute.org --agree-tos"
+  command: "certbot certonly --standalone -n -d {{ site_fqdn }} -m {{ site_contact }} --agree-tos"
+  when: env == "production"
 
-- name: Enable nginx default site
-  file:
-    src: "/etc/nginx/sites-available/default"
-    dest: "/etc/nginx/sites-enabled/default"
-    state: link
+- name: create self-signed ssl cert/key - development only!
+  command: >
+    openssl req -new -nodes -x509
+    -subj "/C={{ site_country }}/ST={{ site_state }}/L={{ site_city }}/O={{ site_ou }}/CN={{ site_fqdn }}" -days 3650
+    -keyout {{ self_signed_ssl_key_path }} -out {{ self_signed_ssl_cert_path }} -extensions v3_ca
+  args:
+    creates: "{{ self_signed_ssl_cert_path }}"
+  when: env == "development"
 
-- name: Fetch telescope
-  git:
-    repo: https://github.com/m-lab/telescope.git
-    dest: /opt/telescope/
-
-- name: Get latest MaxMind CSV
-  get_url:
-    url: http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
-    dest: /tmp/GeoIPASNum2.zip
-
-- name: Unzip MaxMind CSV
-  unarchive:
-    src: /tmp/GeoIPASNum2.zip
-    dest: /tmp/
-    creates: /tmp/GeoIPASNum2.csv
-    copy: no
-
-# The command below tells Ansible where to download or copy your customized Piecewise files
-# when it deploys your VM. Change the **repo** to match your fork and **version** to match 
-# your branch.
-#
-# Note that the example below is fictious. Use the github URL of your fork and your branch. 
-#
-#    For example, change:
-#       git: 
-#          repo: https://github.com/opentechinstitute/piecewise.git
-#          dest: /opt/piecewise.git/
-#          version: master
-#    to:
-#       git: 
-#         repo: https://github.com/baltimore-github-org/piecewise.git
-#         dest: /opt/piecewise.git/
-#         version: master
-#
-- name: Fetch piecewise
-  git:
-    repo: https://github.com/opentechinstitute/piecewise.git
-    dest: /opt/piecewise.git/
-    version: master
-
-- name: Deploy piecewise
-  file:
-    src: /opt/piecewise.git/{{ item }}
-    dest: /opt/{{ item }}
-    state: link
-  with_items:
-    - piecewise
-    - piecewise_web
-    - collector
-
-- name: Install required python modules for piecewise and telescope
-  pip:
-    requirements: "{{ item }}"
-    state: latest
-  with_items:
-    - /opt/telescope/requirements.txt
-    - /opt/piecewise/requirements.txt
-
-- name: Install additional python module
-  pip: 
-    name: ipaddress
-    state: latest
-
-- name: Create piecewise log directory
-  file:
-    path: /var/log/piecewise/
-    state: directory
-
-- name: Install convenience python modules
-  pip:
-    name: bigquery
-    state: latest
-
-- name: Deploy configuration files
+## Deploy system configuration files common to all systems
+- name: Deploy common system configuration files
   copy:
-    src: conf/
+    src: "files/common/"
     dest: /
     owner: root
     group: root
 
-- name: Fix postgres configuration permissions
+- name: Create /etc/piecewise directory
+  file:
+    path: /etc/{{ project_name }}
+    state: directory
+
+## Deploy configs specfic to Debian 8 systems
+- name: Deploy configs for Debian 8 systems
+  copy:
+    src: "files/debian8/"
+    dest: /
+    owner: root
+    group: root
+  when: sys == "debian8"
+
+## Deploy configs for RHEL 7 / Centos systems
+- name: Deploy configuration file for RHEL 7 / Centos systems
+  copy:
+    remote_src: true
+    src: "files/rhel7/"
+    dest: /
+    owner: root
+    group: root
+  when: sys == "rhel7"
+
+## Fix Postgres config file permissions
+- name: Fix postgres configuration permissions for Debian 8 systems
   file:
     path: /etc/postgresql/9.4/main/pg_hba.conf
     state: file
-    owner: postgres
-    group: postgres
+    owner: "{{ database_user }}"
+    group: "{{ database_user_group }}"
     mode: 0640
+  when: sys == "debian8"
 
-- name: Restart services
+- name: Fix postgres configuration permissions for RHEL 7 / Centos systems
+  file: 
+    path: /var/lib/pgsql/9.4/data/pg_hba.conf
+    state: file
+    owner: "{{ database_user }}"
+    group: "{{ database_user_group }}"
+    mode: 0640
+  when: sys == "rhel7"
+
+## Reload system daemons or services
+- name: Restart services for Debian 8 systems
   service:
     name: "{{ item }}"
     state: restarted
@@ -139,11 +225,137 @@
     - uwsgi
     - nginx
     - postgresql
+  when: sys == "debian8"
 
+- name: Reload daemons for RHEL 7 / Centos systems
+  command: systemctl daemon-reload
+  when: sys == "rhel7"
+
+## NGINX configs for Debian 8
+- name: For Debian 8 development systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_development_default"
+    dest: /etc/nginx/sites-available/default
+    force: yes
+  when: 
+    - env == "development"
+    - sys == "debian8"
+
+- name: For Debian 8 production systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_production_default"
+    dest: /etc/nginx/sites-available/default
+    force: yes
+  when: 
+    - env == "production"
+    - sys == "debian8"
+
+- name: Create a link to enable the nginx default site if Debian 
+  file:
+    src: "/etc/nginx/sites-available/default"
+    dest: "/etc/nginx/sites-enabled/default"
+    state: link
+  when: sys == "debian8"
+
+## NGINX configs for RHEL 7
+- name: For RHEL 7 development systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_development_default"
+    dest: /etc/nginx/conf.d/default
+    force: yes
+  when: 
+    - env == "development"
+    - sys == "rhel7"
+
+- name: For RHEL 7 production systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_production_default"
+    dest: /etc/nginx/conf.d/default
+    force: yes
+  when: 
+    - env == "production"
+    - sys == "rhel7"
+
+## Logs
+- name: Create Piecewise log directory
+  file:
+    path: /var/log/{{ project_name }}/
+    state: directory
+
+## Initialize the Piecewise database and setup its schema
 - name: Create the piecewise database in postgres
   postgresql_db:
-    name: piecewise
+    name: "{{ database_name }}"
     state: present
 
 - name: Setup the piecewise database schema
-  command: psql -U postgres -d piecewise -f /opt/piecewise/setup.sql
+  command: psql -U {{ database_user }} -d {{ database_name }} -f {{base_path}}/piecewise/setup.sql
+
+## Apply local server files and customizations
+- name: Copy geo data to server
+  copy:
+    src: "../local_customizations/geofiles"
+    dest: "{{ site_path }}/"
+
+- name: Copy extra_data.py server
+  copy:
+    src: "../local_customizations/extra_data.py"
+    dest: "{{ base_path }}/{{ project_name }}/"
+
+- name: Add the file defining the map center
+  template:
+    src: "templates/map_center.js"
+    dest: "{{ site_path }}/js/center.js"
+
+## Add the site's index file, built from templated values
+- name: Add the map site index page
+  template:
+    src: "templates/index.html"
+    dest: "{{ site_path }}/index.html"
+    force: yes
+
+# Commented out since adding the form fields and database fields from 
+# variables and templates is not yet working.
+#
+#- name: Copy extra_data.py to server
+#  copy:
+#    template: "templates/extra_data.py"
+#    dest: "{{ base_path }}/{{ project_name }}/extra_data.py"
+#    force: yes
+
+- name: Ingest census blocks to postgres
+  command: > 
+    ogr2ogr -f PostgreSQL -t_srs {{ shape_projection }} -nln {{ layer_name }}
+    -nlt {{ geometry_type }} 'PG:user={{ database_user }} dbname={{ database_name }}'
+    {{ site_path }}/geofiles/{{ shape_file }}
+
+- name: Install piecewise configuration
+  template:
+    src: "templates/piecewise_config"
+    dest: /etc/piecewise/config.json
+    force: yes
+
+- name: Update bigquery config
+  template:
+    src: "templates/bigquery.py"
+    dest: "{{ base_path }}/piecewise/piecewise/bigquery.py"
+    force: yes
+
+# Commented out since adding the form fields and database fields from 
+# variables and templates is not yet working.
+#
+#- name: Install collector wsgi.py from template
+#  template:
+#      src: "templates/wsgi.py"
+#      dest: "{{ base_path }}/collector/collector/wsgi.py"
+#      force: yes
+
+- name: Restart uwsgi so piecewise config is detected
+  service:
+    name: uwsgi
+    state: restarted
+
+- name: Run extra_data.py in the /opt/piecewise directory
+  command: python extra_data.py arg1
+  args:
+    chdir: /opt/piecewise
