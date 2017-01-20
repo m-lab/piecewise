@@ -18,13 +18,13 @@ project_name: piecewise
 
 # Information about the fork and branch to deploy.
 # Specify any valid git remote (typically a github username)
-remote: critzo
+remote: https://github.com/critzo
 
 # Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
 # pushed to the remote git_repo before it can be deployed.
 commit: ansible-refactor98-2
 
-git_repo: https://github.com/{{ remote }}/{{ project_name }}.git
+git_repo: "{{ remote }}/{{ project_name }}.git"
 
 # BigQuery Project Number to use
 bigquery_project_num: 819467010820
@@ -38,9 +38,8 @@ hostname: "{{ project_name }}"
 
 # This is the fully qualified domain name of your production server. Because
 # nginx checks this value against the URL being requested, it must be the same
-# as the server's DNS name. This value is overridden for Vagrant and staging
-# servers.
-site_fqdn: "{{ project_name }}.opentechinstitute.org"
+# as the server's DNS name. 
+site_fqdn: "piecewise.opentechinstitute.org"
 
 # The variables below will be used to generate SSL certificates. When deploying to 
 # development hosts, the country, state and city are used by open SSL to generate a 
@@ -49,7 +48,7 @@ site_fqdn: "{{ project_name }}.opentechinstitute.org"
 # the Internet. 
 #
 # When deploying to a production host. The site_contact and the site_fqdn variables are 
-# used by EFF's certbot tool to automate the request for valis SSL certificates from 
+# used by EFF's certbot tool to automate the request for valid SSL certificates from 
 # the LetsEncrypt CA.
 site_contact: critzo@opentechinstitute.org
 site_country: US
@@ -111,11 +110,21 @@ layer_name: seattle_blkgrpce10
 aggregation_name: "by_census_block"
 aggregation_stats_table_name: "block_statistics"
 
-# Define the bounding box coordinates for the region you are interested in.
-map_bounding_box: "-122.6733398438,47.3630134401,-121.9509887695,47.8076208172"
+# Define the latitude and longitude for the southwest and northeast corners of a bounding 
+# box, defining the region where you are interested in pulling M-Lab NDT data.
+map_coordinate_southwest: 
+  lat: "-122.6733398438"
+  lon: "47.3630134401"
+
+map_coordinate_northeast: 
+  lat: "-121.9509887695"
+  lon: "47.8076208172"
+
+# The four variable below are derived from your bounding box coordinates above.
+map_bounding_box: "{{ map_coordinate_southwest.lat }},{{ map_coordinate_southwest.lon }},{{ map_coordinate_northeast.lat }},{{ map_coordinate_northeast.lon }}"
+map_center_lat: ({{ map_coordinate_southwest.lat }} + {{ map_coordinate_northeast.lat }})/2
+map_center_lon: ({{ map_coordinate_southwest.lon }} + {{ map_coordinate_northeast.lon }})/2
+map_center: "{{ map_center_lat }},{{ map_center_lon }}"
 
 map_data_start_date: "Dec 1 2016 00:00:00"
 map_data_end_date: "Jan 1 2017 00:00:00"
-
-# Define the latitude and longitude coordinates for the center of your map
-map_center: "47.607181,-122.337226"

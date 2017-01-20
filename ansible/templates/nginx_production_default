@@ -71,7 +71,7 @@ server {
 	# NOTE: replace domains below with vars
 	ssl on;
 	ssl_certificate {{letsencrypt_ssl_cert_path}};
-	ssl_certificate_key {{letsencrypt_ssl_cert_path}};
+	ssl_certificate_key {{letsencrypt_ssl_key_path}};
 
 	ssl_session_timeout 5m;
 	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
