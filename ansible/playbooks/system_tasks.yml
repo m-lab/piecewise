@@ -216,11 +216,6 @@
     dest: "{{ site_path }}/index.html"
     force: yes
 
-- name: Copy map center to server
-  copy:
-    src: ../local_customizations/center.js
-    dest: "{{ base_path }}/piecewise_web/js/center.js"
-
 - name: Ingest census blocks to postgres
   command: > 
     ogr2ogr -f PostgreSQL -t_srs {{ shape_projection }} -nln {{ layer_name }}
