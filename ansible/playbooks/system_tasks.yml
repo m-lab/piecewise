@@ -242,4 +242,4 @@
 - name: Run extra_data.py in the /opt/piecewise directory
   command: python extra_data.py arg1
   args:
-    chdir: "{{ base_path }}/piecewise"
+    chdir: "{{ base_path }}/{{ project_name }}"

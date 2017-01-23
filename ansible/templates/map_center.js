@@ -3,5 +3,4 @@
 {% set map_center -%}
 	{{ map_center_lat|replace("(","") }}, {{ map_center_lon|replace(")","") }}
 {%- endset %}
-
 var center = [{{ map_center }}];

@@ -122,7 +122,7 @@ map_coordinate_northeast:
   lon: -121.9509887695
 
 # The four variable below are derived from your bounding box coordinates above.
-map_bounding_box: "{{ map_coordinate_southwest.lat }},{{ map_coordinate_southwest.lon }},{{ map_coordinate_northeast.lat }},{{ map_coordinate_northeast.lon }}"
+map_bounding_box: "{{ map_coordinate_southwest.lon }},{{ map_coordinate_southwest.lat }},{{ map_coordinate_northeast.lon }},{{ map_coordinate_northeast.lat }}"
 
 # The two dates below define the date range for M-Lab NDT test data. In production,
 # it is advisable to set 'map_data_data_end_date' to a date well in the future, for
