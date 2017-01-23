@@ -23,7 +23,7 @@
 - name: Fetch M-Lab's Telescope Utility
   git:
     repo: https://github.com/m-lab/telescope.git
-    dest: "{{base_path}}/telescope/"
+    dest: "{{ base_path }}/telescope/"
 
 - name: Create an alias for telescope in the deploy users' profile
   shell: echo 'alias telescope="PYTHONPATH=/opt/telescope python /opt/telescope/main.py"' >> .profile
@@ -32,7 +32,7 @@
   git:
     repo: "{{ git_repo }}"
     dest: "{{ base_path }}/piecewise.git"
-    version: "{{ commit }}"
+    version: "{{ piecewise_commit }}"
 
 - name: Deploy Piecewise
   file:
