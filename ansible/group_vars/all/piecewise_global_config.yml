@@ -34,8 +34,6 @@ database_name: piecewise
 database_user: postgres
 database_user_group: postgres
 
-hostname: "{{ project_name }}"
-
 # This is the fully qualified domain name of your production server. Because
 # nginx checks this value against the URL being requested, it must be the same
 # as the server's DNS name. 
