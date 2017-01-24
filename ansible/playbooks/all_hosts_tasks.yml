@@ -47,6 +47,7 @@
 
 - name: Unzip MaxMind CSV
   unarchive:
+    remote_src: yes
     src: /tmp/GeoIPASNum2.zip
     dest: /tmp/
     creates: /tmp/GeoIPASNum2.csv
