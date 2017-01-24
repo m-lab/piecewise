@@ -30,9 +30,14 @@
     - gdal
 
 ## For RHEL7 hosts, initialize and start core services
-- name: Initiate PostgreSQL database for RHEL 7 / Centos hosts
+- name: Check whether PostgreSQL has been initialized
+  stat:
+    path: /var/lib/pgsql/9.4/data/pg_hba.conf
+  register: pginit
+
+- name: PostgreSQL not initialized - Initiate PostgreSQL database for RHEL 7 / Centos hosts
   command: /usr/pgsql-9.4/bin/postgresql94-setup initdb
-  #  creates: /var/lib/pgsql/9.4/data/pg_hba.conf
+  when: pginit.stat.exists == false
 
 - name: Copy initial pg config
   file:
