@@ -1,0 +1,89 @@
+---
+- name: Update yum repositorues for RHEl 7 / Centos hosts
+  yum: 
+    name: "*"
+    state: latest
+
+- name: Install EPEL & PostgreSQL repos for RHEL 7 / Centos hosts
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - epel-release
+    - http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm
+
+- name: Install packages for RHEL 7 / Centos hosts
+  yum: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - postgresql94
+    - postgresql94-server
+    - postgis2_94
+    - nginx
+    - httpd-tools
+    - uwsgi-plugin-python
+    - git
+    - python-pip
+    - python-psycopg2
+    - python-devel
+    - gdal
+
+## For RHEL7 hosts, initialize and start core services
+- name: Initiate PostgreSQL database for RHEL 7 / Centos hosts
+  command: /usr/pgsql-9.4/bin/postgresql94-setup initdb
+  #  creates: /var/lib/pgsql/9.4/data/pg_hba.conf
+
+- name: Copy initial pg config
+  file:
+    src: "{{ base_path }}/{{ project_name }}.git/ansible/files/rhel7/var/lib/pgsql/9.4/data/pg_hba.conf"
+    dest: /var/lib/pgsql/9.4/data/pg_hba.conf
+
+- name: Enable and start core services for RHEL 7 / Centos hosts
+  service: 
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items: 
+    - uwsgi
+    - nginx
+    - postgresql-9.4
+
+## Deploy configs for RHEL 7 / Centos systems
+- name: Deploy configuration file for RHEL 7 / Centos systems
+  copy:
+    remote_src: true
+    src: "files/rhel7/"
+    dest: /
+    owner: root
+    group: root
+
+## Fix Postgres config file permissions
+- name: Fix postgres configuration permissions for RHEL 7 / Centos systems
+  file: 
+    path: /var/lib/pgsql/9.4/data/pg_hba.conf
+    state: file
+    owner: "{{ database_user }}"
+    group: "{{ database_user_group }}"
+    mode: 0640
+
+## Reload system daemons or services
+- name: Reload daemons for RHEL 7 / Centos systems
+  command: systemctl daemon-reload
+
+## NGINX configs for RHEL 7
+- name: For RHEL 7 development systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_development_default"
+    dest: /etc/nginx/conf.d/default
+    force: yes
+  when: 
+    - env == "development"
+
+- name: For RHEL 7 production systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_production_default"
+    dest: /etc/nginx/conf.d/default
+    force: yes
+  when: 
+    - env == "production"
