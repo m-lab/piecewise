@@ -90,6 +90,8 @@
   postgresql_db:
     name: "{{ database_name }}"
     state: present
+  become: true
+  become_user: postgres
 
 - name: Setup the piecewise database schema
   command: psql -U {{ database_user }} -d {{ database_name }} -f {{ base_path }}/piecewise/setup.sql
