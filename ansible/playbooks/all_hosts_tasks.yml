@@ -123,7 +123,7 @@
 
 - name: Ingest census blocks to postgres
   command: > 
-    ogr2ogr -f PostgreSQL -t_srs {{ shape_projection }} -nln {{ layer_name }}
+    ogr2ogr -overwrite -f PostgreSQL -t_srs {{ shape_projection }} -nln {{ layer_name }}
     -nlt {{ geometry_type }} 'PG:user={{ database_user }} dbname={{ database_name }}'
     {{ site_path }}/geofiles/{{ shape_file }}
   become: true
@@ -152,4 +152,3 @@
     chdir: "{{ base_path }}/{{ project_name }}"
   become: true
   become_user: postgres
-  
