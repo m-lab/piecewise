@@ -52,7 +52,6 @@
 ## Deploy configs for RHEL 7 / Centos systems
 - name: Deploy configuration file for RHEL 7 / Centos systems
   copy:
-    remote_src: true
     src: "files/rhel7/"
     dest: /
     owner: root
