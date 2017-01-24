@@ -150,3 +150,6 @@
   command: python extra_data.py arg1
   args:
     chdir: "{{ base_path }}/{{ project_name }}"
+  become: true
+  become_user: postgres
+  
