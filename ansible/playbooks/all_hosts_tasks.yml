@@ -126,6 +126,8 @@
     ogr2ogr -f PostgreSQL -t_srs {{ shape_projection }} -nln {{ layer_name }}
     -nlt {{ geometry_type }} 'PG:user={{ database_user }} dbname={{ database_name }}'
     {{ site_path }}/geofiles/{{ shape_file }}
+  become: true
+  become_user: postgres
 
 - name: Install piecewise configuration
   template:
