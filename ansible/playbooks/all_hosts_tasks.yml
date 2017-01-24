@@ -95,6 +95,8 @@
 
 - name: Setup the piecewise database schema
   command: psql -U {{ database_user }} -d {{ database_name }} -f {{ base_path }}/piecewise/setup.sql
+  become: true
+  become_user: postgres
 
 ## Apply local server files and customizations
 - name: Copy geo data to server
