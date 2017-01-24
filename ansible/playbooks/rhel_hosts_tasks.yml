@@ -27,6 +27,7 @@
     - python-pip
     - python-psycopg2
     - python-devel
+    - unzip
     - gdal
 
 ## For RHEL7 hosts, initialize and start core services
