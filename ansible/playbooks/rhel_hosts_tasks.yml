@@ -1,5 +1,5 @@
 ---
-- name: Update yum repositories for RHEl 7 / Centos hosts
+- name: Update yum repositorues for RHEl 7 / Centos hosts
   yum: 
     name: "*"
     state: latest
