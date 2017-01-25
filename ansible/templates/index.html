@@ -8,6 +8,8 @@
 	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 {% if 'mapbox' in mapscript_base_layer %}
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
+{% elif 'osm' in mapscript_base_layer %}
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 {% endif %}
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link href='css/ndt_d3.css' rel='stylesheet' />
@@ -17,6 +19,8 @@
 {% if 'mapbox' in mapscript_base_layer %}
 	<script src='//api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.js'></script>
 	<script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+{% elif 'osm' in mapscript_base_layer %}
+	<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 {% endif %}
 	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 	<script src='js/mlab.js'></script>
@@ -391,7 +395,7 @@ map.addControl(control);
 	});
 {% elif 'osm' in mapscript_base_layer %}
 	// Use Open Street Maps as a base tile layer
-	var baseTileLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	var baseTileLayer = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
 			'contributors'
 	});
