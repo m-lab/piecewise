@@ -295,17 +295,6 @@ var seedCache = false;
 // The inteval (in milliseconds) to use when animating the map.
 var animateInterval = 1500;
 
-// Center and zoom level of map.  center may be pulled in via js/center.js, but
-// if not then just set it to the center of the USA.
-{% set map_center_lat = (map_coordinate_southwest.lat + map_coordinate_northeast.lat)/2 %}
-{% set map_center_lon = (map_coordinate_southwest.lon + map_coordinate_northeast.lon)/2 %}
-{% set map_center -%}
-	{{ map_center_lat|replace("(","") }}, {{ map_center_lon|replace(")","") }}
-{%- endset %}
-
-if ( typeof center == 'undefined' ) {
-	var center = [{{ map_center }}]; //USA
-}
 var zoom = {{ mapscript_zoom_level }};
 
 // These are the labels that will be used for the month slider in the control
