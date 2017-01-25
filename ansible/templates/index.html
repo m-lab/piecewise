@@ -6,14 +6,18 @@
 	<meta charset='utf-8' />
 	<title>{{ site_name }}</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+{% if 'mapbox' in mapscript_base_layer %}
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
+{% endif %}
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link href='css/ndt_d3.css' rel='stylesheet' />
 	<link href="css/jquery-ui-slider-pips.css" rel="stylesheet" />
 	<link href='css/jquery-ui.min.css' rel='stylesheet' />
 	<link href='css/mlab.css' rel='stylesheet' />
+{% if 'mapbox' in mapscript_base_layer %}
 	<script src='//api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.js'></script>
 	<script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+{% endif %}
 	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 	<script src='js/mlab.js'></script>
 	<script src='js/ndt.js'></script>
@@ -80,50 +84,50 @@
 						  <li><a href="#" onclick="showSocialShare()">{{ next_action_social_share_text }}</a></li>
 						</ul>
 						<div id="socialshare">
-						  	<!-- Social Button HTML -->
-						  	{% if social_share_twitter is not none %}
-								<!-- Twitter -->
-						  		<a href='
-						  		{{ social_share_twitter }}' target="_blank" class="share-btn twitter">
-							    <i class="fa fa-twitter"></i>
-								</a>
-						  	{% endif %}
-						  	{% if social_share_gplus is not none %}
-								<!-- Google Plus -->
-								<a href='{{ social_share_gplus }}' target="_blank" class="share-btn google-plus">
-							    <i class="fa fa-google-plus"></i>
-								</a>
-							{% endif %}
-						  	{% if social_share_facebook is not none %}
-								<!-- Facebook -->
-								<a href='{{ social_share_facebook }}' target="_blank" class="share-btn facebook">
-							    <i class="fa fa-facebook"></i>
-								</a>
-							{% endif %}
-						  	{% if social_share_stumbleupon is not none %}
-								<!-- StumbleUpon (url, title) -->
-								<a href='{{ social_share_stumbleupon }}' target="_blank" class="share-btn stumbleupon">
-							    <i class="fa fa-stumbleupon"></i>
-								</a>
-							{% endif %}
-						  	{% if social_share_reddit is not none %}
-								<!-- Reddit (url, title) -->
-								<a href='{{ social_share_reddit }}' target="_blank" class="share-btn reddit">
-							    <i class="fa fa-reddit"></i>
-								</a>
-							{% endif %}
-						  	{% if social_share_linkedin is not none %}
-								<!-- LinkedIn -->
-								<a href='{{ social_share_linkedin }}' target="_blank" class="share-btn linkedin">
-							    <i class="fa fa-linkedin"></i>
-								</a>
-							{% endif %}
-						  	{% if social_share_email is not none %}
-								<!-- Email -->
-								<a href='{{ social_share_email }}' target="_blank" class="share-btn email">
-							    <i class="fa fa-envelope"></i>
-								</a>
-							{% endif %}
+						<!-- Social Button HTML -->
+						{% if social_share_twitter is not none %}
+							<!-- Twitter -->
+							<a href='
+							{{ social_share_twitter }}' target="_blank" class="share-btn twitter">
+							<i class="fa fa-twitter"></i>
+							</a>
+						{% endif %}
+						{% if social_share_gplus is not none %}
+							<!-- Google Plus -->
+							<a href='{{ social_share_gplus }}' target="_blank" class="share-btn google-plus">
+							<i class="fa fa-google-plus"></i>
+							</a>
+						{% endif %}
+						{% if social_share_facebook is not none %}
+							<!-- Facebook -->
+							<a href='{{ social_share_facebook }}' target="_blank" class="share-btn facebook">
+							<i class="fa fa-facebook"></i>
+							</a>
+						{% endif %}
+						{% if social_share_stumbleupon is not none %}
+							<!-- StumbleUpon (url, title) -->
+							<a href='{{ social_share_stumbleupon }}' target="_blank" class="share-btn stumbleupon">
+							<i class="fa fa-stumbleupon"></i>
+							</a>
+						{% endif %}
+						{% if social_share_reddit is not none %}
+							<!-- Reddit (url, title) -->
+							<a href='{{ social_share_reddit }}' target="_blank" class="share-btn reddit">
+							<i class="fa fa-reddit"></i>
+							</a>
+						{% endif %}
+						{% if social_share_linkedin is not none %}
+							<!-- LinkedIn -->
+							<a href='{{ social_share_linkedin }}' target="_blank" class="share-btn linkedin">
+							<i class="fa fa-linkedin"></i>
+							</a>
+						{% endif %}
+						{% if social_share_email is not none %}
+							<!-- Email -->
+							<a href='{{ social_share_email }}' target="_blank" class="share-btn email">
+							<i class="fa fa-envelope"></i>
+							</a>
+						{% endif %}
 						</div>
 					</div>
 				</div>

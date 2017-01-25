@@ -241,8 +241,8 @@ next_action_social_share_text: "Share this test with your friends, colleagues, a
 # 'social_share_' variables define the links to be used for social sharing actions.
 #
 # If you set any of these to 'none', they will be excluded from the website.
-# If you don't wnat any social share options, set all of the items below to 'none'
-# and also set 'next_action_social_share_text' to 'none' above.
+# If you don't want any social share options, set all of the items below to 'none'
+# and also set 'next_action_social_share_text' to 'none' (without quotes) above.
 social_share_twitter: "http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea"
 social_share_gplus: "https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test"
 social_share_facebook: "http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test"
