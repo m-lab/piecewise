@@ -387,7 +387,7 @@ map.addControl(control);
 	});
 {% elif 'osm' in mapscript_base_layer %}
 	// Use Open Street Maps as a base tile layer
-	var baseTileLayer = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	var baseTileLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
 			'contributors'
 	});
