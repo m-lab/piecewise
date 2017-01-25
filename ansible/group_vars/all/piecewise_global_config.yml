@@ -156,6 +156,11 @@ mapscript_start_month: 1
 # Set mapscript_base_layer to either: 'mapbox' OR 'osm'
 mapscript_base_layer: osm
 
+# If you would like to customize the OSM base layer API url, for example if you
+# are hosting custom maps and tiles on your own tile server, update the variable below.
+# The default OSM url is provided.
+mapscript_osm_api_url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+
 # If you are using a Mapbox base layer, set the API URL for your Mapbox tiles here.
 mapscript_mapbox_api_url: "https://api.mapbox.com/styles/v1/newamerica/ciy31olzw00792sp6w98b76i0/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibmV3YW1lcmljYSIsImEiOiIyM3ZnYUtrIn0.57fFgg_iM7S1wLH2GQC71g"
 
