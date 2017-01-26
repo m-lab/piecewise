@@ -76,7 +76,7 @@
   with_items:
     - uwsgi
     - nginx
-    - postgresql
+    - postgresql-9.4
 
 ## NGINX configs for RHEL 7
 - name: For RHEL 7 development systems, create the nginx default site for Piecewise
