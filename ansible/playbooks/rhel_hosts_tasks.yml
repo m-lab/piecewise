@@ -74,7 +74,8 @@
 
 ## Reload system daemons or services
 - name: Reload daemons for RHEL 7 / Centos systems
-  command: systemctl daemon-reload
+  systemd: 
+    daemon-reload: yes
 
 ## NGINX configs for RHEL 7
 - name: For RHEL 7 development systems, create the nginx default site for Piecewise
