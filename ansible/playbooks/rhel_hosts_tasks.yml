@@ -71,8 +71,13 @@
 ## Reload system daemons or services
 - name: Reload daemons for RHEL 7 / Centos systems
   systemd:
+    name: "{{ item }}"
     state: restarted
     daemon_reload: yes
+  with_items:
+    - uwsgi
+    - nginx
+    - postgresql
 
 ## NGINX configs for RHEL 7
 - name: For RHEL 7 development systems, create the nginx default site for Piecewise
