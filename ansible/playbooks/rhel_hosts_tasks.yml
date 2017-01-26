@@ -70,10 +70,9 @@
 
 ## Reload system daemons or services
 - name: Reload daemons for RHEL 7 / Centos systems
-  systemd:
+  service:
     name: "{{ item }}"
     state: restarted
-    daemon_reload: yes
   with_items:
     - uwsgi
     - nginx
