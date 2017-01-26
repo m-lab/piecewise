@@ -203,10 +203,18 @@
     src: "../local_customizations/extra_data.py"
     dest: "{{ base_path }}/{{ project_name }}/"
 
-- name: Copy map center to server
-  copy:
-    src: ../local_customizations/center.js
-    dest: "{{ base_path }}/piecewise_web/js/center.js"
+- name: Add the file defining the map center
+  template:
+    src: "templates/map_center.js"
+    dest: "{{ site_path }}/js/center.js"
+    force: yes
+
+## Add the site's index file, built from templated values
+- name: Add the map site index page
+  template:
+    src: "templates/index.html"
+    dest: "{{ site_path }}/index.html"
+    force: yes
 
 - name: Ingest census blocks to postgres
   command: > 
@@ -234,4 +242,4 @@
 - name: Run extra_data.py in the /opt/piecewise directory
   command: python extra_data.py arg1
   args:
-    chdir: "{{ base_path }}/piecewise"
+    chdir: "{{ base_path }}/{{ project_name }}"
