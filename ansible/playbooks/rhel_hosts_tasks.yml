@@ -70,7 +70,8 @@
 
 ## Reload system daemons or services
 - name: Reload daemons for RHEL 7 / Centos systems
-  systemd: 
+  systemd:
+    state: restarted
     daemon_reload: yes
 
 ## NGINX configs for RHEL 7
