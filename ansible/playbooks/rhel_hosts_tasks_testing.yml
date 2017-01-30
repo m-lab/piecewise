@@ -99,7 +99,7 @@
 - name: Deploy standard Nginx conf file, replacing the default
   copy:
     src: "files/rhel7/etc/nginx/nginx.conf"
-    dest: /etc/nginx/
+    dest: /etc/nginx/nginx.conf
     owner: root
     group: root
     force: yes
