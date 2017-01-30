@@ -95,16 +95,6 @@
     group: "{{ database_user_group }}"
     mode: 0640
 
-## Reload system daemons or services
-- name: Reload daemons for RHEL 7 / Centos systems
-  service:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-    - uwsgi
-    - nginx
-    - postgresql-9.4
-
 ## NGINX configs for RHEL 7
 - name: For RHEL 7 development systems, create the nginx default site for Piecewise
   template:
@@ -121,3 +111,13 @@
     force: yes
   when: 
     - env == "production"
+
+## Reload system daemons or services
+- name: Reload daemons for RHEL 7 / Centos systems
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - uwsgi
+    - nginx
+    - postgresql-9.4
