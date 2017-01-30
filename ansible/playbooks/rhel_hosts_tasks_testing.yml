@@ -83,8 +83,8 @@
     owner: root
     group: root
   with_items:
-    - "files/rhel7/uwsgi.d/collector.ini"
-    - "files/rhel7/uwsgi.d/piecewise.ini"
+    - "files/rhel7/etc/uwsgi.d/collector.ini"
+    - "files/rhel7/etc/uwsgi.d/piecewise.ini"
 
 ## Fix Postgres config file permissions
 - name: Fix postgres configuration permissions for RHEL 7 / Centos systems
