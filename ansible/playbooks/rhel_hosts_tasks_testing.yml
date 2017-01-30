@@ -69,6 +69,15 @@
     owner: root
     group: root
 
+## Fix Postgres config file permissions
+- name: Fix postgres configuration permissions for RHEL 7 / Centos systems
+  file: 
+    path: /var/lib/pgsql/9.4/data/pg_hba.conf
+    state: file
+    owner: "{{ database_user }}"
+    group: "{{ database_user_group }}"
+    mode: 0640
+
 - name: Deploy Uwsgi service configuration file for RHEL 7 / Centos systems
   copy:
     src: "files/rhel7/lib/systemd/system/uwsgi.service"
@@ -86,16 +95,15 @@
     - "files/rhel7/etc/uwsgi.d/collector.ini"
     - "files/rhel7/etc/uwsgi.d/piecewise.ini"
 
-## Fix Postgres config file permissions
-- name: Fix postgres configuration permissions for RHEL 7 / Centos systems
-  file: 
-    path: /var/lib/pgsql/9.4/data/pg_hba.conf
-    state: file
-    owner: "{{ database_user }}"
-    group: "{{ database_user_group }}"
-    mode: 0640
-
 ## NGINX configs for RHEL 7
+- name: Deploy standard Nginx conf file, replacing the default
+  copy:
+    src: "files/rhel7/etc/nginx/nginx.conf"
+    dest: /etc/nginx/
+    owner: root
+    group: root
+    force: yes
+
 - name: For RHEL 7 development systems, create the nginx default site for Piecewise
   template:
     src: "templates/nginx_development_default"
@@ -111,13 +119,3 @@
     force: yes
   when: 
     - env == "production"
-
-## Reload system daemons or services
-- name: Reload daemons for RHEL 7 / Centos systems
-  service:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-    - uwsgi
-    - nginx
-    - postgresql-9.4

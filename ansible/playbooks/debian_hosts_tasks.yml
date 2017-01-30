@@ -59,16 +59,6 @@
     group: "{{ database_user_group }}"
     mode: 0640
 
-## Reload system daemons or services
-- name: Restart services for Debian 8 systems
-  service:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-    - uwsgi
-    - nginx
-    - postgresql
-
 ## NGINX configs for Debian 8
 - name: For Debian 8 development systems, create the nginx default site for Piecewise
   template:

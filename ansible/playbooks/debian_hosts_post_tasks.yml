@@ -1,0 +1,10 @@
+---
+## Reload system daemons or services
+- name: Restart services for Debian 8 systems
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - uwsgi
+    - nginx
+    - postgresql
