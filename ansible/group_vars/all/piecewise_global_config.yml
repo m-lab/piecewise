@@ -55,8 +55,8 @@ site_city: Washington
 site_ou: OTI
 
 # Path for self-signed certificates to be used in development deployments
-self_signed_ssl_cert_path: /etc/ssl/selfsigned.{{ site_fqdn }}.cert
-self_signed_ssl_key_path: /etc/ssl/selfsigned.{{ site_fqdn }}.key
+self_signed_ssl_cert_path: /etc/ssl/certs/selfsigned.{{ site_fqdn }}.cert
+self_signed_ssl_key_path: /etc/ssl/private/selfsigned.{{ site_fqdn }}.key
 
 # If we're deploying to production, we'll use LetsEncrypt certs instead. 
 letsencrypt_ssl_cert_path: /etc/letsencrypt/live/{{ site_fqdn }}/fullchain.pem

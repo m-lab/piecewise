@@ -62,12 +62,29 @@
     - https
 
 ## Deploy configs for RHEL 7 / Centos systems
-- name: Deploy configuration file for RHEL 7 / Centos systems
+- name: Deploy Postgres configuration file for RHEL 7 / Centos systems
   copy:
-    src: "files/rhel7/"
-    dest: /
+    src: "files/rhel7/var/lib/pgsql/9.4/data/pg_hba.conf"
+    dest: /var/lib/pgsql/9.4/data/
     owner: root
     group: root
+
+- name: Deploy Uwsgi service configuration file for RHEL 7 / Centos systems
+  copy:
+    src: "files/rhel7/lib/systemd/system/uwsgi.service"
+    dest: /lib/systemd/system/
+    owner: root
+    group: root
+
+- name: Deploy Uwsgi ini configuration files for RHEL 7 / Centos systems
+  copy:
+    src: "{{ item }}"
+    dest: /etc/uwsgi.d/
+    owner: root
+    group: root
+  with_items:
+    - "files/rhel7/uwsgi.d/collector.ini"
+    - "files/rhel7/uwsgi.d/piecewise.ini"
 
 ## Fix Postgres config file permissions
 - name: Fix postgres configuration permissions for RHEL 7 / Centos systems

@@ -57,6 +57,13 @@
   command: "certbot certonly --standalone -n -d {{ site_fqdn }} -m {{ site_contact }} --agree-tos"
   when: env == "production"
 
+## Create SSL directory for self-signed Certificate Keys
+- name: Create private directory for SSL Keys
+  file:
+    path: /etc/ssl/private
+    state: directory
+  when: env == "development"
+
 - name: create self-signed ssl cert/key - development only!
   command: >
     openssl req -new -nodes -x509
