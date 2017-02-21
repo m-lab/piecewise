@@ -36,7 +36,7 @@
   args:
     creates: /var/lib/pgsql/9.4/data/pg_hba.conf
 
-- name: Copy initial pg config
+- name: Replaces initial pg config with Piecewise specific one
   file:
     src: "{{ base_path }}/{{ project_name }}.git/ansible/files/rhel7/var/lib/pgsql/9.4/data/pg_hba.conf"
     dest: /var/lib/pgsql/9.4/data/pg_hba.conf
