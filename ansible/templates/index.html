@@ -299,11 +299,17 @@ var zoom = {{ mapscript_zoom_level }};
 
 // These are the labels that will be used for the month slider in the control
 // box in the lower left corner.
-var monthNames = [
-	{% for key, value in mapscript_month_names.iteritems() %}
-		'{{ value }}' {% if not loop.last %},{% endif %} 
-	{% endfor %}
-];
+// 
+// the following was throwing errors on some systems, likely bcs of python, so commented 
+// out temporarily
+// var monthNames = [
+//	{% for key, value in mapscript_month_names.iteritems() %}
+//		'{{ value }}' {% if not loop.last %},{% endif %} 
+//	{% endfor %}
+//];
+
+var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct',
+	'Nov','Dec'];
 
 // An object which will hold cached GeoJSON files so that we don't have to fetch
 // them from the server more than once.  This could potentially be problematic
