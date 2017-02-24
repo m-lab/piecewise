@@ -26,8 +26,8 @@ server {
 # HTTPS server
 #
 server {
-	listen 443 http2 ssl;
-	listen [::]:443 http2 ssl;
+	listen 443 http ssl;
+	listen [::]:443 http ssl;
 	
 	server_name {{site_fqdn}};
 
