@@ -127,8 +127,8 @@ map_bounding_box: "{{ map_coordinate_southwest.lon }},{{ map_coordinate_southwes
 # The two dates below define the date range for M-Lab NDT test data. In production,
 # it is advisable to set 'map_data_data_end_date' to a date well in the future, for
 # example: "Dec 31 2050 00:00:00"
-map_data_start_date: "Dec 1 2016 00:00:00"
-map_data_end_date: "Feb 28 2017 00:00:00"
+map_data_start_date: "Jan 1 2017 00:00:00"
+map_data_end_date: "Feb 15 2017 00:00:00"
 
 ###
 # WEBSITE MAP INFORMATION
