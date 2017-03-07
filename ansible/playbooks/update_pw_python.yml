@@ -1,0 +1,23 @@
+---
+- hosts: all
+  tasks:
+    become: true
+    become_user: root
+- name: Fetch updated piecewise repo
+  git: 
+    repo: https://github.com/opentechinstitute/piecewise.git 
+    dest: /opt/piecewise.git/
+    version: master
+- name: Deploy updated piecewise code
+  file:
+    src: /opt/piecewise.git/piecewise
+    dest: /opt/piecewise
+    state: link
+- name: Restart services
+  service: 
+    name: "{{ item }}"
+    state: restarted
+  with_items: 
+    - uwsgi
+    - nginx
+    

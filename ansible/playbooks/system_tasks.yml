@@ -1,0 +1,245 @@
+---
+## Install base packages
+- name: Update apt and install packages for Debian 8 hosts
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - postgresql
+    - postgis
+    - postgresql-client
+    - nginx
+    - uwsgi-plugin-python
+    - git
+    - python-pip
+    - python-psycopg2
+    - python-dev
+    - gdal-bin
+    - unzip
+    - python-apt
+
+## Obtain Piecewise, M-Lab's Telescope Utility, and the current MaxMind CSV
+- name: Fetch M-Lab's Telescope Utility
+  git:
+    repo: https://github.com/m-lab/telescope.git
+    dest: "{{ base_path }}/telescope/"
+
+- name: Create an alias for telescope in the deploy users' profile
+  shell: echo 'alias telescope="PYTHONPATH=/opt/telescope python /opt/telescope/main.py"' >> .profile
+
+- name: Fetch Piecewise
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ base_path }}/piecewise.git"
+    version: "{{ piecewise_commit }}"
+
+- name: Deploy Piecewise
+  file:
+    src: "{{ base_path }}/{{ project_name }}.git/{{ item }}"
+    dest: "{{ base_path }}/{{ item }}"
+    state: link
+  with_items:
+    - piecewise
+    - piecewise_web
+    - collector
+
+- name: Install required python modules for piecewise and telescope
+  pip:
+    requirements: "{{ item }}"
+    state: latest
+  with_items:
+    - "{{ base_path }}/telescope/requirements.txt"
+    - "{{ base_path }}/{{ project_name }}/requirements.txt"
+
+- name: Install additional python modules
+  pip: 
+    name: "{{ item }}"
+    state: latest
+  with_items: 
+    - ipaddress
+    - bigquery
+
+- name: Get the latest MaxMind CSV
+  get_url:
+    url: http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
+    dest: /tmp/GeoIPASNum2.zip
+
+- name: Unzip MaxMind CSV
+  unarchive:
+    src: /tmp/GeoIPASNum2.zip
+    dest: /tmp/
+    creates: /tmp/GeoIPASNum2.csv
+    copy: no
+
+## Generate and Install SSL/TLS Certificates
+#
+# By default, Piecewise uses EFF's certbot tool to obtain SSL/TLS certificates from the 
+# LetsEncrypt CA for production deployments, and generates self-signed SSL/TLS certificates 
+# for development deployments.
+#
+# If you want to use SSL/TLS certificates from another source, in your fork's code comment out 
+# or delete the section below, install your certificates manually on your server where 
+# appropriate for your system, and update the ssl certificate variables for development 
+# and production in: ansible/piecewise_global_config.yml
+
+- name: Add jessie-backports to apt configuration
+  apt_repository:
+    repo: deb http://ftp.debian.org/debian jessie-backports main
+    state: present
+    update_cache: yes
+
+- name: Install EFF Certbot
+  apt:
+    name: certbot
+    state: present
+    default_release: jessie-backports
+
+- name: Generate Letsencrypt certs
+  command: "certbot certonly --standalone -n -d {{ site_fqdn }} -m {{ site_contact }} --agree-tos"
+  when: env == "production"
+
+- name: create self-signed ssl cert/key - development only!
+  command: >
+    openssl req -new -nodes -x509
+    -subj "/C={{ site_country }}/ST={{ site_state }}/L={{ site_city }}/O={{ site_ou }}/CN={{ site_fqdn }}" -days 3650
+    -keyout {{ self_signed_ssl_key_path }} -out {{ self_signed_ssl_cert_path }} -extensions v3_ca
+  args:
+    creates: "{{ self_signed_ssl_cert_path }}"
+  when: env == "development"
+
+## Deploy system configuration files common to all systems
+- name: Deploy common system configuration files
+  copy:
+    src: "files/common/"
+    dest: /
+    owner: root
+    group: root
+
+- name: Create /etc/piecewise directory
+  file:
+    path: /etc/{{ project_name }}
+    state: directory
+
+## Deploy configs specfic to Debian 8 systems
+- name: Deploy configs for Debian 8 systems
+  copy:
+    src: "files/debian8/"
+    dest: /
+    owner: root
+    group: root
+  when: sys == "debian8"
+
+  ## Fix Postgres config file permissions
+- name: Fix postgres configuration permissions for Debian 8 systems
+  file:
+    path: /etc/postgresql/9.4/main/pg_hba.conf
+    state: file
+    owner: "{{ database_user }}"
+    group: "{{ database_user_group }}"
+    mode: 0640
+  when: sys == "debian8"
+
+## Reload system daemons or services
+- name: Restart services for Debian 8 systems
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - uwsgi
+    - nginx
+    - postgresql
+  when: sys == "debian8"
+
+## NGINX configs for Debian 8
+- name: For Debian 8 development systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_development_default"
+    dest: /etc/nginx/sites-available/default
+    force: yes
+  when: 
+    - env == "development"
+    - sys == "debian8"
+
+- name: For Debian 8 production systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_production_default"
+    dest: /etc/nginx/sites-available/default
+    force: yes
+  when: 
+    - env == "production"
+    - sys == "debian8"
+
+- name: Create a link to enable the nginx default site if Debian 
+  file:
+    src: "/etc/nginx/sites-available/default"
+    dest: "/etc/nginx/sites-enabled/default"
+    state: link
+  when: sys == "debian8"
+
+  ## Logs
+- name: Create Piecewise log directory
+  file:
+    path: /var/log/{{ project_name }}/
+    state: directory
+
+## Initialize the Piecewise database and setup its schema
+- name: Create the piecewise database in postgres
+  postgresql_db:
+    name: "{{ database_name }}"
+    state: present
+
+- name: Setup the piecewise database schema
+  command: psql -U {{ database_user }} -d {{ database_name }} -f {{base_path}}/piecewise/setup.sql
+
+## Apply local server files and customizations
+- name: Copy geo data to server
+  copy:
+    src: "../local_customizations/geofiles"
+    dest: "{{ site_path }}/"
+
+- name: Copy extra_data.py server
+  copy:
+    src: "../local_customizations/extra_data.py"
+    dest: "{{ base_path }}/{{ project_name }}/"
+
+- name: Add the file defining the map center
+  template:
+    src: "templates/map_center.js"
+    dest: "{{ site_path }}/js/center.js"
+    force: yes
+
+## Add the site's index file, built from templated values
+- name: Add the map site index page
+  template:
+    src: "templates/index.html"
+    dest: "{{ site_path }}/index.html"
+    force: yes
+
+- name: Ingest census blocks to postgres
+  command: > 
+    ogr2ogr -f PostgreSQL -t_srs {{ shape_projection }} -nln {{ layer_name }}
+    -nlt {{ geometry_type }} 'PG:user={{ database_user }} dbname={{ database_name }}'
+    {{ site_path }}/geofiles/{{ shape_file }}
+
+- name: Install piecewise configuration
+  template:
+    src: "templates/piecewise_config"
+    dest: /etc/piecewise/config.json
+    force: yes
+
+- name: Update bigquery config
+  template:
+    src: "templates/bigquery.py"
+    dest: "{{ base_path }}/piecewise/piecewise/bigquery.py"
+    force: yes
+
+- name: Restart uwsgi so piecewise config is detected
+  service:
+    name: uwsgi
+    state: restarted
+
+- name: Run extra_data.py in the /opt/piecewise directory
+  command: python extra_data.py arg1
+  args:
+    chdir: "{{ base_path }}/{{ project_name }}"

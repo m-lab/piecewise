@@ -1,0 +1,83 @@
+##
+# This is the Nginx default site template for a development deployment of Piecewise
+# The main difference between the production and development template is the 
+# handling of SSL certificates. In development Piecewise's Ansible playbooks creates 
+# a self-signed SSL certificate, suitable to deploy to a host by IP address only.
+#
+# Development deployments are useful when a DNS FQDN for your site is not yet configured.
+##
+##
+# For more information about the Nginx web server:
+# 	http://wiki.nginx.org/Pitfalls
+# 	http://wiki.nginx.org/QuickStart
+# 	http://wiki.nginx.org/Configuration
+#
+# 	Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+
+# Redirect to HTTPS
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	server_name {{site_fqdn}};
+	return 301 https://$server_name$request_uri;
+}
+# HTTPS server
+#
+server {
+	listen 443;
+	listen [::]:443;
+	
+	server_name {{site_fqdn}};
+
+	root {{site_path}};
+	index index.html index.htm;
+
+	location = /stats { rewrite ^ /stats/; }
+	location /stats  { try_files $uri @stats; }
+	location @stats {
+		include uwsgi_params;
+		uwsgi_param SCRIPT_NAME /stats;
+		uwsgi_modifier1 30;
+		uwsgi_pass unix:///tmp/uwsgi-piecewise.sock;
+	}
+
+	location = /collector { rewrite ^ /collector/; }
+	location /collector  { try_files $uri @collector; }
+	location @collector {
+		include uwsgi_params;
+		uwsgi_param SCRIPT_NAME /collector;
+		uwsgi_modifier1 30;
+		uwsgi_pass unix:///tmp/uwsgi-collector.sock;
+	}
+	location /collector/retrieve {
+		try_files $uri @collector;
+		auth_basic "Custom Data";
+		auth_basic_user_file {{base_path}}/piecewise.git/htpasswd;
+	}
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+
+		# Uncomment to enable naxsi on this location
+		# include /etc/nginx/naxsi.rules
+	}
+
+	location /admin {
+		auth_basic "Custom Data Admin";
+		auth_basic_user_file {{base_path}}/piecewise.git/htpasswd;
+	}
+
+	# NOTE: replace domains below with vars
+	ssl on;
+	ssl_certificate {{self_signed_ssl_cert_path}};
+	ssl_certificate_key {{self_signed_ssl_key_path}};
+
+	ssl_session_timeout 5m;
+	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+	ssl_ciphers "HIGH:!aNULL:!MD5 or HIGH:!aNULL:!MD5:!3DES";
+	ssl_prefer_server_ciphers on;
+}
