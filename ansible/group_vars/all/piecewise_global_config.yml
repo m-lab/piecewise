@@ -1,0 +1,275 @@
+#######
+# PIECEWISE SYSTEM CONFIGURATION
+#######
+
+# Certain tasks may operate in a less secure (but more convenient) manner, eg.
+# enabling passwordless sudo or generating self-signed ssl certs, when testing
+# locally, in Vagrant. But not in production!
+#
+# Supported values: production, development
+env: development
+
+# The project name should be the name of your forked repository.
+# This var is referenced by a few other vars, eg. git_repo, hostname, site_fqdn.
+project_name: piecewise
+
+# Information about the fork and branch to deploy.
+# Specify any valid git remote (typically a github username)
+remote: https://github.com/critzo
+
+# Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
+# pushed to the remote git_repo before it can be deployed.
+piecewise_commit: ansible-refactor-rhel7-2
+
+git_repo: "{{ remote }}/{{ project_name }}.git"
+
+# BigQuery Project Number to use
+bigquery_project_num: 581276032543
+
+# Your Postgres database name and user can be customized if necessary.  
+database_name: piecewise
+database_user: postgres
+database_user_group: postgres
+
+# This is the fully qualified domain name of your production server. Because
+# nginx checks this value against the URL being requested, it must be the same
+# as the server's DNS name. 
+site_fqdn: "97.107.132.199"
+
+# The variables below will be used to generate SSL certificates. When deploying to 
+# development hosts, the country, state and city are used by open SSL to generate a 
+# self-signed certificate. This is useful when you don't have an DNS name set up yet 
+# and want to deploy using the host's IP address, or to a server not accessible to 
+# the Internet. 
+#
+# When deploying to a production host. The site_contact and the site_fqdn variables are 
+# used by EFF's certbot tool to automate the request for valid SSL certificates from 
+# the LetsEncrypt CA.
+site_contact: critzo@opentechinstitute.org
+site_country: US
+site_state: District of Columbia
+site_city: Washington
+site_ou: OTI
+
+# Path for self-signed certificates to be used in development deployments
+self_signed_ssl_cert_path: /etc/ssl/certs/selfsigned.{{ site_fqdn }}.cert
+self_signed_ssl_key_path: /etc/ssl/private/selfsigned.{{ site_fqdn }}.key
+
+# If we're deploying to production, we'll use LetsEncrypt certs instead. 
+letsencrypt_ssl_cert_path: /etc/letsencrypt/live/{{ site_fqdn }}/fullchain.pem
+letsencrypt_ssl_key_path: /etc/letsencrypt/live/{{ site_fqdn }}/privkey.pem
+
+########
+# DEPLOYMENT FILE LOCATIONS
+########
+
+# These paths specify where specific components will be deployed. 
+# These can be largely unchanged, unless your system requires different paths.
+
+# Where the base files from your repo will be copied on the remote server.
+base_path: /opt
+
+# Temporary location where the Git repo will be cloned and the build scripts
+# will be run before going live.
+temp_path: "{{ base_path }}/tmp"
+
+# Where the production site symlink will exist.
+site_path: "{{ base_path }}/piecewise_web"
+
+########
+# MAPPING & AGGREGATION CUSTOMIZATIONS
+########
+
+###
+# Geodata and Database Information
+#
+# The section below defines variables used to import your geodata into the database.
+
+# Save the geofiles you intend to use for your Piecewise aggregations of
+# M-Lab data in the folder: /local_customizations/geofiles/
+
+# Add the name of the shapefile file to be used.
+shape_file: CENSUS10_blkgrp_WGS.shp
+
+# The variables below are used when importing your shapefile into postgres.
+#
+# 'dbKey' should be the field name of the unique key in your shape file.
+# 'dbKeyDataType' should be the data type of dbKey
+# 'shape_projection' specifies the SRS reprojection/transform to use for this shapefile.
+# 'geometry_type' specifies the geometry type for this layer
+# 'layer_name' is the name you wish to be used for this shapefile layer in postgres
+dbKey: geoid10
+dbKeyDataType: string
+shape_projection: "EPSG:4326"
+geometry_type: MultiPolygon
+layer_name: seattle_blkgrpce10
+
+# The variables below define the aggregation name and table name for aggregate statistics
+aggregation_name: "by_census_block"
+aggregation_stats_table_name: "block_statistics"
+
+# Define the latitude and longitude for the southwest and northeast corners of a bounding 
+# box, defining the region where you are interested in pulling M-Lab NDT data.
+map_coordinate_southwest: 
+  lat: 47.3630134401
+  lon: -122.6733398438
+
+map_coordinate_northeast: 
+  lat: 47.8076208172
+  lon: -121.9509887695
+
+# The four variable below are derived from your bounding box coordinates above.
+map_bounding_box: "{{ map_coordinate_southwest.lon }},{{ map_coordinate_southwest.lat }},{{ map_coordinate_northeast.lon }},{{ map_coordinate_northeast.lat }}"
+
+# The two dates below define the date range for M-Lab NDT test data. In production,
+# it is advisable to set 'map_data_data_end_date' to a date well in the future, for
+# example: "Dec 31 2050 00:00:00"
+map_data_start_date: "Jan 1 2017 00:00:00"
+map_data_end_date: "Feb 15 2017 00:00:00"
+
+###
+# WEBSITE MAP INFORMATION
+#
+# The section below defines variables to be used on the website map.
+
+# Piecewise requires a topojson file for the website to use. This topojson file must
+# be created from the shapefile you defined above. 
+# Save your topojson file into the folder /local_customizations/geofiles
+# and then enter its filename here.
+topojson_file: seattle_census10_blockgroups.topojson
+
+# 'geoKey' is the field name in your topojson file which corresponds to the unique key 
+# in your shapefile, and is typically the same as dbKey, but in CAPITAL LETTERS.
+geoKey: GEOID10
+
+# 'mapscript_start_year' is the first year you are interested in showing in the year dropdown
+# 'mapscript_start_month' lets you define the order of months in the UI.
+mapscript_start_year: 2016
+mapscript_start_month: 1
+
+# 'mapscript_base_layer' defines the type of base layer to be used on the map.
+# Either Mapbox.com or OpenStreetMaps base layers are supported. 
+#
+# Set mapscript_base_layer to either: 'mapbox' OR 'osm'
+mapscript_base_layer: osm
+
+# If you would like to customize the OSM base layer API url, for example if you
+# are hosting custom maps and tiles on your own tile server, update the variable below.
+# The default OSM url is provided.
+mapscript_osm_api_url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+
+# If you are using a Mapbox base layer, set the API URL for your Mapbox tiles here.
+mapscript_mapbox_api_url: ""
+
+# 'mapscript_min_data_points' allows you to set a minimum number of tests which must be 
+# present in any aggregate area defined by your shapefile in order to be displayed on the 
+# aggregate website map. 
+mapscript_min_data_points: 5
+
+# 'mapscript_zoom_level' sets the initial zoom level for the map
+mapscript_zoom_level: 11
+
+# These variables name the map layers on the website. 'mapscript_layer_name' is used as 
+# a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
+# UI if the layer controls are displayed for the user. By default, Piecewise will deploy
+# with one layer, and will not show the layer controls.
+mapscript_layer_name: "census_block_groups"
+mapscript_layer_name_pretty: "Census block groups"
+
+# In the future, support for other types of geo data, such as the geojson format may be
+# included in Piecewise. Currently, the mapscript json type should always be 'topojson'. 
+mapscript_json_type: "topojson"
+
+
+# This dictionary of month names/abbreviations lets you configure how month names appear 
+# on the website map controls. 
+mapscript_month_names: 
+  1: Jan
+  2: Feb
+  3: Mar
+  4: Apr
+  5: May
+  6: Jun
+  7: Jul
+  8: Aug
+  9: Sep
+  10: Oct
+  11: Nov
+  12: Dec
+
+###
+# WEBSITE TEXT CUSTOMIZATIONS
+#
+# The section below allows you to customize various text and other elements of the website
+
+# 'site_name' is used as the HTML page title element
+site_name: "Seattle Broadband Map"
+
+# 'intro_text' defines the heading text that precedes the HTML survey form, provided to users
+# before they may take the test.
+intro_text: >
+  "The City of Seattle is collecting information from residents about broadband 
+  experiences across the City. To contribute, please answer the following 
+  questions and then take our Broadband Speed Test:"
+
+# 'consent_message' defines the message displayed next to the consent checkbox
+consent_message: >
+  'I understand that the data collected from this test will be anonymized and aggregated 
+  for publication to the Broadband Map and 
+  <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.'
+
+# The variables below define the messages and labels provided to the user before and 
+# after the test.
+run_test_heading: "Test your speed!"
+test_result_heading: "Your test results"
+download_result_label: "Download speed:"
+download_result_unit: "Mbps"
+upload_result_label: "Upload speed:"
+upload_result_unit: "Mbps"
+rtt_result_label: "Minimum Round Trip Time:"
+rtt_result_unit: "ms"
+thank_you_heading: "Thank you!"
+thank_you_message: >
+  "Your test results will be combined with others and will appear on the map 
+  at the end of the month."
+
+# 'next_action_' variables define the action items present to the user after they run the test.
+next_action_message: "What do you want to do next?"
+next_action_show_map_text: "View all results to-date on a map of Seattle"
+next_action_learn_about_text: "Learn more about this test and how to improve your speed"
+next_action_learn_about_link: "https://www.seattle.gov/broadband-speed-test-about"
+next_action_social_share_text: "Share this test with your friends, colleagues, and neighbors"
+
+# 'social_share_' variables define the links to be used for social sharing actions.
+#
+# If you set any of these to 'none', they will be excluded from the website.
+# If you don't want any social share options, set all of the items below to 'none'
+# and also set 'next_action_social_share_text' to 'none' (without quotes) above.
+social_share_twitter: "http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea"
+social_share_gplus: "https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test"
+social_share_facebook: "http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test"
+social_share_stumbleupon: "http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
+social_share_reddit: "http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
+social_share_linkedin: "http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test"
+social_share_email: "mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test"
+
+# 'icon_' and 'mapview_icon_' variables define the text accompanying the icons in the user interface
+#
+# 'icon_' variables set the text values and '?' link accompanying icons on the initial map display
+icon_test_label: "Take the Speed Test"
+icon_test_alt_text: "Take the Speed Test"
+icon_browse_label: "Browse the Broadband Map"
+icon_browse_alt_text: "Browse the Broadband Map"
+icon_learn_label: "Learn More"
+icon_learn_alt_text: "Learn more about this test."
+icon_learn_link: "http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test"
+
+# 'mapview_icon_' variables set the text values and '?' link on the mapview display
+mapview_icon_test_alt_text: "Take the Speed Test"
+mapview_icon_learn_alt_text: "Learn more about this test."
+mapview_icon_learn_link: "http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test"
+
+# The two varables below control where Leaflet map controls are placed in the UI. 
+# They should remain unchanged for now. More work on positioning for Leaflet elements will follow.
+mapcontrols_zoom_pos: topright
+mapcontrols_legend_pos: bottomleft
