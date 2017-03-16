@@ -9,9 +9,6 @@
 # Supported values: production, development
 env: development
 
-# What Linux distro is being used? Supported options include: debian8, rhel7
-#sys: debian8
-
 # The project name should be the name of your forked repository.
 # This var is referenced by a few other vars, eg. git_repo, hostname, site_fqdn.
 project_name: piecewise
@@ -162,7 +159,7 @@ mapscript_base_layer: osm
 mapscript_osm_api_url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 
 # If you are using a Mapbox base layer, set the API URL for your Mapbox tiles here.
-mapscript_mapbox_api_url: "https://api.mapbox.com/styles/v1/newamerica/ciy31olzw00792sp6w98b76i0/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibmV3YW1lcmljYSIsImEiOiIyM3ZnYUtrIn0.57fFgg_iM7S1wLH2GQC71g"
+mapscript_mapbox_api_url: ""
 
 # 'mapscript_min_data_points' allows you to set a minimum number of tests which must be 
 # present in any aggregate area defined by your shapefile in order to be displayed on the 
