@@ -4,7 +4,7 @@
 
 <head>
 	<meta charset='utf-8' />
-	<title>Your Map's Name</title>
+	<title>{{ site_name }}</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -34,63 +34,16 @@
 <div id="welcome-container">
 	<div id="header">
 		<div id="intro">
-			<h3>The City of Seattle is collecting information from residents about broadband experiences across the City. To contribute, please answer the following questions and then take our Broadband Speed Test:</h3>
+			<h3>{{ intro_text }}</h3>
 		</div>
 	</div>
 	<div id="sidebar">
 		<form action="/collector/collect" method="get" id="collector">
 			<div id="extra-data" class="ndt-related">
-				<div class="container">
-						<p><span class="required">*</span> Who is your Internet Service Provider?</p>
-						<p>
-							<select id="isp_user" name="isp_user" class="form-control">
-								<option value="default">------</option>
-								<option value="comcast">Comcast</option>
-								<option value="centurylink">CenturyLink</option>
-								<option value="wave">Wave</option>
-								<option value="other">Other</option>
-							</select>
-							<input type="text" name="other" id="isp_user_text" class="form-control" style="display:none;"/>
-						</p>
-				</div>
-				<div class="container">
-						<p><span class="required">*</span> How do you connect to the Internet?</p>
-						<p>
-							<select id="connection_type" name="connection_type" class="form-control">
-								<option value="default">------</option>
-								<option value="wired">Wired connection</option>
-								<option value="wireless-single">Wireless connection - 1 device</option>
-								<option value="wireless-multiple">Wireless connection - shared among multiple devices or households</option>
-							</select>
-						</p>
-				</div>
-				<div class="container">
-						<p><span class="required">*</span> How much do you pay, per month?</p>
-						<p>
-							<select id="cost_of_service" name="cost_of_service" class="form-control">
-								<option value="default">------</option>
-								<option value="less_than_25">Less than $25</option>
-								<option value="25_50">$25-$50</option>
-								<option value="50_75">$50-$75</option>
-								<option value="75_100">$75-$100</option>
-								<option value="100_or_above">$100+</option>
-								<option value="dont_know">Don't know</option>
-							</select>
-						</p>
-				</div>
-				<div class="container textboxes">
-						<p>What are your advertised upload and download speeds? <strong>(Optional)</strong></p>
-						<div class='expected-values'>
-						<p>Upload:</p>
-						<input name="advertised_upload" size="3"/><small> mbps</small>
-					</div><div class="expected-values">
-						<p>Download:</p>
-						<input name="advertised_download" size="3"/><small> mbps</small>
-						</div>
-				</div>
+				{% include 'html_form' %}
 				<div class="container" id="consent-text">
 					<p>
-						<span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> I understand that the data collected from this test will be anonymized and aggregated for publication to the Broadband Map and <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.
+						<span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> {{ consent_message }}
 					</p>
 				</div>
 				<input name="latitude" id="latitude" type="hidden" />
@@ -105,64 +58,72 @@
 					<div id="ndt-svg"></div>
 				</div>
 				<div id="approx-loc">
-					<h3 class="league-gothic">Test your speed!</h3>
+					<h3 class="league-gothic">{{ run_test_heading }}</h3>
 					<div id="ndt-status"></div>
 				</div>
 			</div>
 			<div id="ndt-results" class="ndt-related">
 				<div class="container">
 					<div id="your-results">
-						<h3 class="league-gothic">Your test results</h3>
-						<p>Download speed: <span id="s2cRate"></span> mbps</p>
-						<p>Upload speed: <span id="c2sRate"></span> mbps</p>
-						<p>Minimum Round Trip Time: <span id="MinRTT"></span> ms</p>
+						<h3 class="league-gothic">{{ test_result_heading }}</h3>
+						<p>{{ download_result_label }} <span id="s2cRate"></span> {{ download_result_unit }}</p>
+						<p>{{ upload_result_label }} <span id="c2sRate"></span> {{ upload_result_unit }}</p>
+						<p>{{ rtt_result_label }} <span id="MinRTT"></span> {{ rtt_result_unit }}</p>
 					</div>
 					<div id="thankyou">
-						<h3 class="league-gothic">Thank you!</h3>
-						<strong>Your test results will be combined with others and will appear on the map at the end of the month.</strong><br /><br />
-						<strong>What do you want to do next?</strong>
+						<h3 class="league-gothic">{{ thank_you_heading }}</h3>
+						<strong>{{ thank_you_message }}</strong><br /><br />
+						<strong>{{ next_action_message }}</strong>
 						<ul>
-						  <li><a href="#" onclick="showMap()">View all results to-date on a map of Seattle</a></li>
-						  <li><a href="http://www.seattle.gov/broadband-speed-test-about" target="_parent">Learn more about this test and how to improve your speed</a></li>
-						  <li><a href="#" onclick="showSocialShare()">Share this test with your friends, colleagues, and neighbors</a></li>
+						  <li><a href="#" onclick="showMap()">{{ next_action_show_map_text }}</a></li>
+						  <li><a href="{{ next_action_learn_about_link }}" target="_parent">{{ next_action_learn_about_text }}</a></li>
+						  <li><a href="#" onclick="showSocialShare()">{{ next_action_social_share_text }}</a></li>
 						</ul>
 						<div id="socialshare">
-						  	<!-- Social Button HTML -->
-
+						<!-- Social Button HTML -->
+						{% if social_share_twitter is not none %}
 							<!-- Twitter -->
-							<a href="http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea" target="_blank" class="share-btn twitter">
-							    <i class="fa fa-twitter"></i>
+							<a href='
+							{{ social_share_twitter }}' target="_blank" class="share-btn twitter">
+							<i class="fa fa-twitter"></i>
 							</a>
-
+						{% endif %}
+						{% if social_share_gplus is not none %}
 							<!-- Google Plus -->
-							<a href="https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn google-plus">
-							    <i class="fa fa-google-plus"></i>
+							<a href='{{ social_share_gplus }}' target="_blank" class="share-btn google-plus">
+							<i class="fa fa-google-plus"></i>
 							</a>
-
+						{% endif %}
+						{% if social_share_facebook is not none %}
 							<!-- Facebook -->
-							<a href="http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn facebook">
-							    <i class="fa fa-facebook"></i>
+							<a href='{{ social_share_facebook }}' target="_blank" class="share-btn facebook">
+							<i class="fa fa-facebook"></i>
 							</a>
-
+						{% endif %}
+						{% if social_share_stumbleupon is not none %}
 							<!-- StumbleUpon (url, title) -->
-							<a href="http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test" target="_blank" class="share-btn stumbleupon">
-							    <i class="fa fa-stumbleupon"></i>
+							<a href='{{ social_share_stumbleupon }}' target="_blank" class="share-btn stumbleupon">
+							<i class="fa fa-stumbleupon"></i>
 							</a>
-
+						{% endif %}
+						{% if social_share_reddit is not none %}
 							<!-- Reddit (url, title) -->
-							<a href="http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test" target="_blank" class="share-btn reddit">
-							    <i class="fa fa-reddit"></i>
+							<a href='{{ social_share_reddit }}' target="_blank" class="share-btn reddit">
+							<i class="fa fa-reddit"></i>
 							</a>
-
+						{% endif %}
+						{% if social_share_linkedin is not none %}
 							<!-- LinkedIn -->
-							<a href="http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn linkedin">
-							    <i class="fa fa-linkedin"></i>
+							<a href='{{ social_share_linkedin }}' target="_blank" class="share-btn linkedin">
+							<i class="fa fa-linkedin"></i>
 							</a>
-
+						{% endif %}
+						{% if social_share_email is not none %}
 							<!-- Email -->
-							<a href="mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test" target="_blank" class="share-btn email">
-							    <i class="fa fa-envelope"></i>
+							<a href='{{ social_share_email }}' target="_blank" class="share-btn email">
+							<i class="fa fa-envelope"></i>
 							</a>
+						{% endif %}
 						</div>
 					</div>
 				</div>
@@ -170,13 +131,13 @@
 		</form>
 		<div id="icons">
 			<div id="take-test" onclick="runTest()">
-				<img src="images/speed.svg" id="test-icon" alt="Take the Speed Test" title="Take the Speed Test" /><span class="button-label">Take the Speed Test</span>
+				<img src="images/speed.svg" id="test-icon" alt="{{ icon_test_label }}" title="{{ icon_test_label }}" /><span class="button-label">{{ icon_test_label }}</span>
 			</div>
 			<div id="explore-map" onclick="showMap()">
-				<img src="images/compass.png" id="exploreMap" alt="Browse the Broadband Map" title="Browse the Broadband Map" /><span class="button-label">Browse the Broadband Map</span>
+				<img src="images/compass.png" id="exploreMap" alt="{{ icon_browse_label }}" title="{{ icon_browse_label }}" /><span class="button-label">{{ icon_browse_label }}</span>
 			</div>
 			<div id="learn-more">
-				<a href="http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test" target="_parent" ><img src="images/about.svg" alt="Learn more about this test." title="Learn more about this test." /><span class="button-label">Learn More</span></a>
+				<a href="{{ icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ icon_learn_alt_text }}" title="{{ icon_learn_alt_text }}" /><span class="button-label">{{ icon_learn_label }}</span></a>
 			</div>
 		</div>
 	</div>
@@ -258,10 +219,10 @@
 	};
 </script>
 
-<div id='map'>
+<div id="map">
 <div id="mapview-icons">
-	<a href="index.html" alt="Take the Speed test" title="Take the Speed Test"><img src="images/speed.svg" id="mapview-test-icon" alt="Take the Speed test" title="Take the Speed Test" /></a>
-	<a href="http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test" target="_parent" ><img src="images/about.svg" alt="Learn more  about this test." title="Learn more about this test." /></a>
+	<a href="index.html" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}"><img src="images/speed.svg" id="mapview-test-icon" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}" /></a>
+	<a href="{{ mapview_icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ mapview_icon_learn_alt_text }}" title="{{ mapview_icon_learn_alt_text }}" /></a>
 </div>
 </div>
 
@@ -277,7 +238,7 @@
 
 // polygonType is a variable name defining your aggregation regions. 
 // Change the name to reflect the aggregated regions you are using if needed.
-var polygonType = 'census_block_groups';
+var polygonType = '{{ mapscript_layer_name }}';
 
 // Either 'topojson' or 'geojson'.  The Node.js script creates both TopoJSON and
 // GeoJSON files.  TopoJSON files are significantly smaller in size, but need to
@@ -286,13 +247,13 @@ var polygonType = 'census_block_groups';
 // client-side to convert the TopJSON to GeoJSON.  I would conjecture that
 // the network is the most limiting factor and that generally TopoJSON will be
 // the right choice.  TODO: prove this theory.
-var jsonType = "topojson";
+var jsonType = "{{ mapscript_json_type }}";
 
 
 // The minimum number of data points in any given polygon for a it to be
 // considered statistically relevant.  These cells will either not be displayed
 // or will be displayed with a different styling.
-var minDataPoints = 5;
+var minDataPoints = "{{ mapscript_min_data_points }}";
 
 // Defines how each overlay is treated on load.  If an overlay is enabled, then
 // there will be a checkbox for it in the layers control. 'defaultOn' determines
@@ -312,19 +273,19 @@ var overlays = {
 
 // Defines the layers that are going to be added to the map.
 var geoLayers = {
-	'census_block_groups': {
-		'name': 'Census block groups',
-		'polygonFile': 'seattle_census10_blockgroups.topojson',
-		'dataUrl': 'stats/q/by_census_block?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
-		'dbKey': 'geoid10',
-		'geoKey': 'GEOID10',
+	'{{ mapscript_layer_name }}': {
+		'name': '{{ mapscript_layer_name_pretty }}',
+		'polygonFile': 'geofiles/{{ topojson_file }}',
+		'dataUrl': 'stats/q/{{ aggregation_name }}?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
+		'dbKey': '{{ dbKey }}',
+		'geoKey': '{{ geoKey }}',
 		'cache': null,
 		'layer': null
 	},
 };
 
 // Which of the geoLayers should be the one added to the map by default
-var defaultLayer = 'census_block_groups';
+var defaultLayer = '{{ mapscript_layer_name }}';
 
 // If set to true, then prefetch the GeoJSON files into a local cache.  WARNING:
 // You may not want to enable if you expect mobile, low bandwidth, or otherwise
@@ -334,15 +295,19 @@ var seedCache = false;
 // The inteval (in milliseconds) to use when animating the map.
 var animateInterval = 1500;
 
-// Center and zoom level of map.  center may be pulled in via js/center.js, but
-// if not then just set it to the center of the USA.
-if ( typeof center == 'undefined' ) {
-	var center = [38.8961302513129,-99.04025268554688]; //USA
-}
-var zoom = 11;
+var zoom = {{ mapscript_zoom_level }};
 
 // These are the labels that will be used for the month slider in the control
 // box in the lower left corner.
+// 
+// the following was throwing errors on some systems, likely bcs of python, so commented 
+// out temporarily
+// var monthNames = [
+//	{% for key, value in mapscript_month_names.iteritems() %}
+//		'{{ value }}' {% if not loop.last %},{% endif %} 
+//	{% endfor %}
+//];
+
 var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct',
 	'Nov','Dec'];
 
@@ -353,8 +318,8 @@ var geoJsonCache = {};
 var geometryCache = null;
 
 // The oldest year and month for which we have data.
-var startYear = 2014;
-var startMonth = 1;
+var startYear = {{ mapscript_start_year }};
+var startMonth = {{ mapscript_start_month }};
 
 // Get current year/month into variables
 var currentYear = new Date().getFullYear();
@@ -405,38 +370,33 @@ while (thisYear <= currentYear) {
 // Create the map
 var map = L.map('map', {zoomControl: false}).setView(center, zoom);
 map.scrollWheelZoom.disable();
-var control = L.control.zoom({position: 'topright'});
+var control = L.control.zoom({position: '{{ mapcontrols_zoom_pos }}'});
 map.addControl(control);
 
-// Use Open Street Maps as a base tile layer
-// var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-//	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
-//		'contributors'
-// });
-
-// Use Mapbox as a base tile layer
-// var mapboxLayer = L.tileLayer(
-//		'https://{s}.tiles.mapbox.com/v3/newamerica.lcl1jan5/{z}/{x}/{y}.png', {
-//	attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
-// });
- 
-// Use Mapbox as a base tile layer
-var mapboxLayer = L.tileLayer(
-		'https://{s}.tiles.mapbox.com/v3/newamerica.lcl1jan5/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
-});
+// Set the base tile layer type
+{% if 'mapbox' in mapscript_base_layer %}
+	// Use Mapbox as a base tile layer
+	var baseTileLayer = L.tileLayer(
+		'{{ mapscript_mapbox_api_url }}', {
+		attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
+	});
+{% elif 'osm' in mapscript_base_layer %}
+	// Use Open Street Maps as a base tile layer
+	var baseTileLayer = L.tileLayer('{{ mapscript_osm_api_url }}', {
+		attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
+			'contributors'
+	});
+{% endif %}
 
 // Set the default base tile layer. 
-// If using Open Street Maps: map.addLayer(osmLayer);
-// If using Mapbox: map.addLayer(mapboxLayer);
-map.addLayer(mapboxLayer);
+map.addLayer(baseTileLayer);
 
 // Add other base tile layer providers as needed
 var baseLayers = {
-	 'Mapbox': mapboxLayer
+	 '{{ mapscript_base_layer }}': baseTileLayer
 };
 
-var layerCtrl = L.control.layers(baseLayers, null, { collapsed: false, position: 'bottomleft' });
+var layerCtrl = L.control.layers(baseLayers, null, { collapsed: false, position: '{{ mapcontrols_legend_pos }}' });
 addControls();
 layerCtrl.addTo(map);
 addLegend();
