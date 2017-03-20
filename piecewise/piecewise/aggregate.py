@@ -702,7 +702,7 @@ class _UploadMin(Statistic):
         return query.column(label("upload_min", func.min(a.c.upload_min)))
 
 class _UploadMax(Statistic):
-    label = "UploadMax"
+    label = "UploadMin"
 
     @property
     def postgres_columns(self):

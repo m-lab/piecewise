@@ -1,4 +1,3 @@
-import decimal
 from flask import Flask, request
 from flask.json import dumps
 from piecewise.aggregate import AverageRTT
@@ -70,9 +69,6 @@ def _rows_to_geojson(rows):
     else:
         def row_to_feature(r):
             properties = dict(r.items())
-            for k, v in properties.iteritems():
-                if isinstance(v, decimal.Decimal):
-                    properties[k] = float(v)
             geometry = None
             return {
                 "type" : "Feature",
