@@ -19,12 +19,12 @@ remote: https://github.com/critzo
 
 # Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
 # pushed to the remote git_repo before it can be deployed.
-piecewise_commit: ansible-refactor-rhel7-2
+piecewise_commit: master
 
 git_repo: "{{ remote }}/{{ project_name }}.git"
 
 # BigQuery Project Number to use
-bigquery_project_num: 581276032543
+bigquery_project_num: mlab-sandbox
 
 # Your Postgres database name and user can be customized if necessary.  
 database_name: piecewise
@@ -34,7 +34,7 @@ database_user_group: postgres
 # This is the fully qualified domain name of your production server. Because
 # nginx checks this value against the URL being requested, it must be the same
 # as the server's DNS name. 
-site_fqdn: "97.107.132.199"
+site_fqdn: "104.197.237.109"
 
 # The variables below will be used to generate SSL certificates. When deploying to 
 # development hosts, the country, state and city are used by open SSL to generate a 
@@ -125,7 +125,7 @@ map_bounding_box: "{{ map_coordinate_southwest.lon }},{{ map_coordinate_southwes
 # it is advisable to set 'map_data_data_end_date' to a date well in the future, for
 # example: "Dec 31 2050 00:00:00"
 map_data_start_date: "Jan 1 2017 00:00:00"
-map_data_end_date: "Feb 15 2017 00:00:00"
+map_data_end_date: "Mar 13 2017 00:00:00"
 
 ###
 # WEBSITE MAP INFORMATION
