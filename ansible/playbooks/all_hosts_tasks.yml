@@ -41,15 +41,23 @@
     - bigquery
 
 - name: Get the latest MaxMind CSV
-  get_url:
-    url: http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
-    dest: /opt/GeoIPASNum2.zip
+  local_action:
+    get_url:
+      url: http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
+      dest: /tmp/GeoIPASNum2.zip
 
 - name: Unzip MaxMind CSV
-  unarchive:
-    src: /opt/GeoIPASNum2.zip
-    dest: /opt
-    copy: no
+  local_action:
+    unarchive:
+      src: /tmp/GeoIPASNum2.zip
+      dest: /tmp
+
+- name: Push unzipped Maxmind CSV to the server
+  copy:
+    src: /tmp/GeoIPASNum2.csv
+    dest: /tmp
+    owner: root
+    group: root
 
 - name: Generate Letsencrypt certs
   command: "certbot certonly --standalone -n -d {{ site_fqdn }} -m {{ site_contact }} --agree-tos"
