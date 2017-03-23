@@ -1,0 +1,10 @@
+---
+## Reload system daemons or services
+- name: Reload daemons for RHEL 7 / Centos systems
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - uwsgi
+    - nginx
+    - postgresql-9.4
