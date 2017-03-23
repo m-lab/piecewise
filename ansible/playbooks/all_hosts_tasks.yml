@@ -43,11 +43,11 @@
 - name: Get the latest MaxMind CSV
   get_url:
     url: http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
-    dest: /tmp/GeoIPASNum2.zip
+    dest: /opt/GeoIPASNum2.zip
 
 - name: Unzip MaxMind CSV
   unarchive:
-    src: /tmp/GeoIPASNum2.zip
+    src: /opt/GeoIPASNum2.zip
     dest: /tmp
     copy: no
 
