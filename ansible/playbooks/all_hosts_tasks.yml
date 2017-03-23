@@ -47,11 +47,9 @@
 
 - name: Unzip MaxMind CSV
   unarchive:
-    remote_src: yes
     src: /tmp/GeoIPASNum2.zip
     dest: /tmp/
-    creates: /tmp/GeoIPASNum2.csv
-    copy: no
+    remote_src: yes
 
 - name: Generate Letsencrypt certs
   command: "certbot certonly --standalone -n -d {{ site_fqdn }} -m {{ site_contact }} --agree-tos"
