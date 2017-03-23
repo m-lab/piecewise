@@ -1,0 +1,121 @@
+---
+- name: Update yum repositories for RHEl 7 / Centos hosts
+  yum: 
+    name: "*"
+    state: latest
+
+- name: Install EPEL & PostgreSQL repos for RHEL 7 / Centos hosts
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - epel-release
+    - https://download.postgresql.org/pub/repos/yum/9.4/redhat/rhel-7-x86_64/pgdg-redhat94-9.4-3.noarch.rpm
+
+- name: Install packages for RHEL 7 / Centos hosts
+  yum: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - postgresql94
+    - postgresql94-server
+    - postgis2_94
+    - nginx
+    - httpd-tools
+    - uwsgi-plugin-python
+    - git
+    - python-pip
+    - python-psycopg2
+    - python-devel
+    - unzip
+    - gdal
+
+## For RHEL7 hosts, initialize and start core services
+- name: PostgreSQL not initialized - Initiate PostgreSQL database for RHEL 7 / Centos hosts
+  command: /usr/pgsql-9.4/bin/postgresql94-setup initdb
+  args:
+    creates: /var/lib/pgsql/9.4/data/pg_hba.conf
+
+- name: Copy initial pg config
+  file:
+    src: "{{ base_path }}/{{ project_name }}.git/ansible/files/rhel7/var/lib/pgsql/9.4/data/pg_hba.conf"
+    dest: /var/lib/pgsql/9.4/data/pg_hba.conf
+
+- name: Enable and start core services for RHEL 7 / Centos hosts
+  service: 
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items: 
+    - uwsgi
+    - nginx
+    - postgresql-9.4
+    - firewalld
+
+- name: Configure firewalld to allow http and https
+  firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items:
+    - http
+    - https
+
+## Deploy configs for RHEL 7 / Centos systems
+- name: Deploy Postgres configuration file for RHEL 7 / Centos systems
+  copy:
+    src: "files/rhel7/var/lib/pgsql/9.4/data/pg_hba.conf"
+    dest: /var/lib/pgsql/9.4/data/
+    owner: root
+    group: root
+
+## Fix Postgres config file permissions
+- name: Fix postgres configuration permissions for RHEL 7 / Centos systems
+  file: 
+    path: /var/lib/pgsql/9.4/data/pg_hba.conf
+    state: file
+    owner: "{{ database_user }}"
+    group: "{{ database_user_group }}"
+    mode: 0640
+
+- name: Deploy Uwsgi service configuration file for RHEL 7 / Centos systems
+  copy:
+    src: "files/rhel7/lib/systemd/system/uwsgi.service"
+    dest: /lib/systemd/system/
+    owner: root
+    group: root
+
+- name: Deploy Uwsgi ini configuration files for RHEL 7 / Centos systems
+  copy:
+    src: "{{ item }}"
+    dest: /etc/uwsgi.d/
+    owner: root
+    group: root
+  with_items:
+    - "files/rhel7/etc/uwsgi.d/collector.ini"
+    - "files/rhel7/etc/uwsgi.d/piecewise.ini"
+
+## NGINX configs for RHEL 7
+- name: Deploy standard Nginx conf file, replacing the default
+  copy:
+    src: "files/rhel7/etc/nginx/nginx.conf"
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    force: yes
+
+- name: For RHEL 7 development systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_development_default"
+    dest: /etc/nginx/conf.d/default.conf
+    force: yes
+  when: 
+    - env == "development"
+
+- name: For RHEL 7 production systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_production_default"
+    dest: /etc/nginx/conf.d/default.conf
+    force: yes
+  when: 
+    - env == "production"

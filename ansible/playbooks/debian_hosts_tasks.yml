@@ -1,0 +1,84 @@
+---
+## Install base packages
+- name: Update apt and install packages for Debian 8 hosts
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - postgresql
+    - postgis
+    - postgresql-client
+    - nginx
+    - uwsgi-plugin-python
+    - git
+    - python-pip
+    - python-psycopg2
+    - python-dev
+    - gdal-bin
+    - unzip
+    - python-apt
+
+## Generate and Install SSL/TLS Certificates
+#
+# By default, Piecewise uses EFF's certbot tool to obtain SSL/TLS certificates from the 
+# LetsEncrypt CA for production deployments, and generates self-signed SSL/TLS certificates 
+# for development deployments.
+#
+# If you want to use SSL/TLS certificates from another source, in your fork's code comment out 
+# or delete the section below, install your certificates manually on your server where 
+# appropriate for your system, and update the ssl certificate variables for development 
+# and production in: ansible/piecewise_global_config.yml
+
+- name: Add jessie-backports to apt configuration
+  apt_repository:
+    repo: deb http://ftp.debian.org/debian jessie-backports main
+    state: present
+    update_cache: yes
+
+- name: Install EFF Certbot
+  apt:
+    name: certbot
+    state: present
+    default_release: jessie-backports
+
+## Deploy configs specfic to Debian 8 systems
+- name: Deploy configs for Debian 8 systems
+  copy:
+    src: "files/debian8/"
+    dest: /
+    owner: root
+    group: root
+
+## Fix Postgres config file permissions
+- name: Fix postgres configuration permissions for Debian 8 systems
+  file:
+    path: /etc/postgresql/9.4/main/pg_hba.conf
+    state: file
+    owner: "{{ database_user }}"
+    group: "{{ database_user_group }}"
+    mode: 0640
+
+## NGINX configs for Debian 8
+- name: For Debian 8 development systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_development_default"
+    dest: /etc/nginx/sites-available/default
+    force: yes
+  when: 
+    - env == "development"
+
+- name: For Debian 8 production systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_production_default"
+    dest: /etc/nginx/sites-available/default
+    force: yes
+  when: 
+    - env == "production"
+
+- name: Create a link to enable the nginx default site if Debian 
+  file:
+    src: "/etc/nginx/sites-available/default"
+    dest: "/etc/nginx/sites-enabled/default"
+    state: link
+
