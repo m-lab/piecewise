@@ -49,7 +49,7 @@
   unarchive:
     src: /tmp/GeoIPASNum2.zip
     dest: /tmp
-    remote_src: yes
+    copy: no
 
 - name: Generate Letsencrypt certs
   command: "certbot certonly --standalone -n -d {{ site_fqdn }} -m {{ site_contact }} --agree-tos"
