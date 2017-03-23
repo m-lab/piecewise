@@ -48,7 +48,7 @@
 - name: Unzip MaxMind CSV
   unarchive:
     src: /opt/GeoIPASNum2.zip
-    dest: /tmp
+    dest: /opt
     copy: no
 
 - name: Generate Letsencrypt certs
