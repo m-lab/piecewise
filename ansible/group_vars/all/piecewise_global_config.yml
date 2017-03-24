@@ -31,9 +31,15 @@ database_name: piecewise
 database_user: postgres
 database_user_group: postgres
 
-# This is the fully qualified domain name of your production server. Because
-# nginx checks this value against the URL being requested, it must be the same
-# as the server's DNS name. 
+# site_fqdn should contain either: 
+#   - the fully qualified domain name of your production server 
+#   - the IP address of your development or production server
+#
+# Typically we use IP address for development, either on a server/VM on our LAN
+# or a development server/VM on a cloud service like Linode, GCE, Amazon, etc. 
+#
+# For production installs we usually use the server's fqdn once we have it configured
+# in DNS.  
 site_fqdn: "104.197.237.109"
 
 # The variables below will be used to generate SSL certificates. When deploying to 
@@ -121,9 +127,13 @@ map_coordinate_northeast:
 # The four variable below are derived from your bounding box coordinates above.
 map_bounding_box: "{{ map_coordinate_southwest.lon }},{{ map_coordinate_southwest.lat }},{{ map_coordinate_northeast.lon }},{{ map_coordinate_northeast.lat }}"
 
-# The two dates below define the date range for M-Lab NDT test data. In production,
-# it is advisable to set 'map_data_data_end_date' to a date well in the future, for
-# example: "Dec 31 2050 00:00:00"
+# The two dates below define the date range for M-Lab NDT test data. 
+#
+# For a production server deployment, it is advisable to set 'map_data_data_end_date'
+# to a date well in the future, for example: "Dec 31 2050 00:00:00".
+#
+# During development, we usually set a smaller date range to enable faster ingesting
+# of M-Lab data during the final steps of deployment.
 map_data_start_date: "Jan 1 2017 00:00:00"
 map_data_end_date: "Mar 13 2017 00:00:00"
 
