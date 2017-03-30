@@ -1,4 +1,11 @@
 ---
+- name: Unzip MaxMind CSV
+  unarchive:
+    src: /tmp/GeoIPASNum2.zip
+    dest: /tmp
+    creates: /tmp/GeoIPASNum2.csv
+    remote_src: yes
+
 ## Reload system daemons or services
 - name: Reload daemons for RHEL 7 / Centos systems
   service:
