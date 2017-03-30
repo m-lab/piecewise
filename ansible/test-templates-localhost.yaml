@@ -1,0 +1,4 @@
+---
+- hosts: all
+  tasks:
+    - include: playbooks/test_templates.yml

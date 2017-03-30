@@ -1,0 +1,48 @@
+---
+- name: Add the map site index page
+  template:
+    src: "templates/index.html"
+    dest: "{{ test_path }}/index.html"
+    force: yes
+
+- name: Add the file defining the map center
+  template:
+    src: "templates/map_center.js"
+    dest: "{{ test_path }}/center.js"
+
+- name: Install piecewise configuration
+  template:
+    src: "templates/piecewise_config"
+    dest: "{{ test_path }}/config.json"
+    force: yes
+
+- name: Update bigquery config
+  template:
+    src: "templates/bigquery.py"
+    dest: "{{ test_path}}/bigquery.py"   
+    force: yes
+
+- name: For Debian 8 development systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_development_default"
+    dest: "{{ test_path }}/nginx_dev_deb8_default"
+    force: yes
+
+- name: For Debian 8 production systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_production_default"
+    dest: "{{ test_path }}/nginx_prod_deb8_default"
+    force: yes
+
+## NGINX configs for RHEL 7
+- name: For RHEL 7 development systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_development_default"
+    dest: "{{ test_path }}/nginx_dev_rhel7_default.conf"
+    force: yes
+
+- name: For RHEL 7 production systems, create the nginx default site for Piecewise
+  template:
+    src: "templates/nginx_production_default"
+    dest: "{{ test_path }}/nginx_dev_rhel7_default.conf"
+    force: yes
