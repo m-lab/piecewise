@@ -12,7 +12,7 @@
       become: true
       become_user: root
       when:
-        - ansible_distribution == "CentOS"
+        - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
         - ansible_distribution_major_version == "7"
     
     ## Run all hosts tasks common regardless of host OS
@@ -31,6 +31,6 @@
       become: true
       become_user: root
       when:
-        - ansible_distribution == "CentOS"
+        - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
         - ansible_distribution_major_version == "7"
 
