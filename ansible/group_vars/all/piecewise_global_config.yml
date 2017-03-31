@@ -212,85 +212,77 @@ mapscript_month_names:
 #
 # The section below allows you to customize the HTML form preceding the test
 
-form_fields: {
-  1: isp_user { 
-    field_type: select_list,
-    db_type: String,
-    name: isp_user,
-    text: "Who is your Internet Serice Provider?",
-    options: {
-      default: "------",
-      comcast: "Comcast",
-      centurylink: "CenturyLink",
-      wave: "Wave",
-      other: "Other",
-      },
-    required: yes,
-    init_display: yes,
-    display_order: 1
-  },
-  2: isp_user_text {
-    field_type: text,
-    db_type: String,
-    name: other,
-    required: no,
-    init_display: no,
-    display_order: 2
-  },
-  3: connection_type {
-    field_type: select_list,
-    db_type: String,
-    name: connection_type,
-    text: "How do you connect to the Internet?",
-    options: {
-      default: "------",
-      wired: "Wired connection",
-      wireless_single: "Wireless connection - 1 device",
-      wireless_multiple: "Wireless connection - shared among multiple devices or households"
-      },
-    required: yes,
-    init_display: yes,
-    display_order: 3
-  },
-  4: cost_of_service {
-    field_type: select_list,
-    db_type: String,
-    name: cost_of_service,
-    text: "How much do you pay, per month?",
-    options: {
-      default: "------",
-      less_than_25: "Less than $25",
-      bet_25_50: "$25-$50",
-      bet_50_75: "$50-$75",
-      bet_75_100: "$75-$100",
-      above_100: "$100 +",
-      dont_know: "Don't know"
-      },
-    required: yes,
-    init_display: yes,
-    display_order: 4
-    },
-  5: advertised_download {
-    field_type: text,
-    db_type: Integer,
-    name: advertised_download,
-    text: "What is your advertised download speed?",
-    size: 3,
-    required: no,
-    init_display: yes,
-    display_order: 5
-    },
-  6: advertised_upload {
-    field_type: text,
-    db_type: Integer,
-    name: advertised_upload,
-    text: "What is your advertised upload speed?",
-    size: 3,
-    required: no,
-    init_display: yes,
-    display_order: 6
-  }
-}
+form_fields:
+  1:
+    isp_user:
+      field_type: select_list
+      db_type: String
+      name: isp_user
+      text: "Who is your Internet Serice Provider?"
+      options:
+        default: "------"
+        comcast: "Comcast"
+        centurylink: "CenturyLink"
+        wave: "Wave"
+        other: "Other"
+      required: yes
+      init_display: yes
+  2:
+    isp_user_text:
+      field_type: text
+      db_type: String
+      name: other
+      text: "Other ISP"
+      required: no
+      init_display: no
+  3:
+    connection_type:
+      field_type: select_list
+      db_type: String
+      name: connection_type
+      text: "How do you connect to the Internet?"
+      options:
+        default: "------"
+        wired: "Wired connection"
+        wireless_single: "Wireless connection   1 device"
+        wireless_multiple: "Wireless connection   shared among multiple devices or households"
+      required: yes
+      init_display: yes
+  4:
+    cost_of_service:
+      field_type: select_list
+      db_type: String
+      name: cost_of_service
+      text: "How much do you pay, per month?"
+      options: 
+        default: "------"
+        less_than_25: "Less than $25"
+        bet_25_50: "$25-$50"
+        bet_50_75: "$50-$75"
+        bet_75_100: "$75-$100"
+        above_100: "$100 +"
+        dont_know: "Don't know"
+      required: yes
+      init_display: yes
+  5:
+    advertised_download:
+      field_type: text
+      db_type: Integer
+      name: advertised_download,
+      text: "What is your advertised download speed?"
+      size: 3
+      required: no
+      init_display: yes
+  6:
+    advertised_upload:
+      field_type: text
+      db_type: Integer
+      name: advertised_upload
+      text: "What is your advertised upload speed?"
+      size: 3
+      required: no
+      init_display: yes
+
 ###
 # WEBSITE TEXT CUSTOMIZATIONS
 #
