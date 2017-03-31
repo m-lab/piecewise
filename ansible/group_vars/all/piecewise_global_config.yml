@@ -224,6 +224,7 @@ form_fields:
         comcast: "Comcast"
         centurylink: "CenturyLink"
         wave: "Wave"
+        verizon: "Verizon"
         other: "Other"
       required: yes
       init_display: yes
@@ -280,6 +281,14 @@ form_fields:
       name: advertised_upload
       text: "What is your advertised upload speed?"
       size: 3
+      required: no
+      init_display: yes
+  7:
+    service_tier:
+      field_type: text
+      db_type: String
+      name: service_tier
+      text: "What is your serivce tier?"
       required: no
       init_display: yes
 
