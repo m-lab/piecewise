@@ -218,13 +218,13 @@ form_fields:
       field_type: select_list
       db_type: String
       name: isp_user
+      id: isp_user
       text: "Who is your Internet Serice Provider?"
       options:
         default: "------"
         comcast: "Comcast"
         centurylink: "CenturyLink"
         wave: "Wave"
-        verizon: "Verizon"
         other: "Other"
       required: yes
       init_display: yes
@@ -233,7 +233,7 @@ form_fields:
       field_type: text
       db_type: String
       name: other
-      text: "Other ISP"
+      id: isp_user_text
       required: no
       init_display: no
   3:
@@ -241,6 +241,7 @@ form_fields:
       field_type: select_list
       db_type: String
       name: connection_type
+      id: connection_type
       text: "How do you connect to the Internet?"
       options:
         default: "------"
@@ -254,6 +255,7 @@ form_fields:
       field_type: select_list
       db_type: String
       name: cost_of_service
+      id: cost_of_service
       text: "How much do you pay, per month?"
       options: 
         default: "------"
@@ -269,7 +271,8 @@ form_fields:
     advertised_download:
       field_type: text
       db_type: Integer
-      name: advertised_download,
+      name: advertised_download
+      id: advertised_download
       text: "What is your advertised download speed?"
       size: 3
       required: no
@@ -279,16 +282,9 @@ form_fields:
       field_type: text
       db_type: Integer
       name: advertised_upload
+      id: advertised_upload
       text: "What is your advertised upload speed?"
       size: 3
-      required: no
-      init_display: yes
-  7:
-    service_tier:
-      field_type: text
-      db_type: String
-      name: service_tier
-      text: "What is your serivce tier?"
       required: no
       init_display: yes
 
