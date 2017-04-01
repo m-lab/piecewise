@@ -60,7 +60,7 @@ extra_data = Table('extra_data', metadata,
     {% for item, field in form_fields.items() | sort -%}
     {%- for attr, vals in field.items() -%}
     {% if vals['name'] != 'other' -%}
-    Column("{{ vals['name'] }}", {{ vals['db_type'] }}),
+    Column('{{ vals["name"] }}', {{ vals['db_type'] }}),
     {% endif -%}
     {% endfor -%}
     {% endfor -%}    
@@ -92,15 +92,17 @@ class ExtraData(Base):
     bigquery_key = Column('bigquery_key', String)
     bigquery_test_id = Column('bigquery_test_id', String)
     location = Column('location', Geometry("Point", srid=4326))
-    connection_type = Column('connection_type', String)
-    advertised_download = Column('advertised_download', Integer)
     actual_download = Column('actual_download', Float)
-    advertised_upload = Column('advertised_upload', Integer)
     actual_upload = Column('actual_upload', Float)
     min_rtt = Column('min_rtt', Integer)
     client_ip = Column('client_ip', BigInteger)
-    isp_user = Column('isp_user', String)
-    cost_of_service = Column('cost_of_service', String)
+    {% for item, field in form_fields.items() | sort -%}
+    {%- for attr, vals in field.items() -%}
+    {% if vals['name'] != 'other' -%}
+    {{ vals['name'] }} = Column('{{ vals["name"] }}', {{ vals['db_type'] }})
+    {% endif -%}
+    {% endfor -%}
+    {% endfor %}
 
 class Maxmind(Base):
     __tablename__ = 'maxmind'
@@ -215,15 +217,17 @@ def retrieve_extra_data():
         record['date_pretty'] = row.ExtraData.timestamp
         record['timestamp'] = int(row.epoch)
         record['client_ip'] = row.ExtraData.client_ip
-        record['min_rtt'] = row.ExtraData.min_rtt
-        record['advertised_download'] = row.ExtraData.advertised_download
-        record['actual_download'] = row.ExtraData.actual_download
-        record['advertised_upload'] = row.ExtraData.advertised_upload
-        record['actual_upload'] = row.ExtraData.actual_upload
-        record['isp_user'] = row.ExtraData.isp_user
-        record['connection_type'] = row.ExtraData.connection_type
-        record['cost_of_service'] = row.ExtraData.cost_of_service
         record['isp'] = rewrite_isp(row.label)
+        record['actual_download'] = row.ExtraData.actual_download
+        record['actual_upload'] = row.ExtraData.actual_upload
+        record['min_rtt'] = row.ExtraData.min_rtt
+        {% for item, field in form_fields.items() | sort -%}
+        {%- for attr, vals in field.items() -%}
+        {% if vals['name'] != 'other' -%}
+        record['{{ vals["name"] }}'] = row.ExtraData.{{ vals['name'] }}
+        {% endif -%}
+        {% endfor -%}
+        {% endfor %}
         for aggregation in aggregations:
             record[aggregation['table']] = eval('row.%s' % aggregation['key'])
         records.append(record)
@@ -292,9 +296,14 @@ def admin_extra_data():
         offset = 0
 
     order_by = ExtraData.id.desc()
-    sort_fields = ['id', 'timestamp', 'advertised_download', 'actual_download',
-            'advertised_upload', 'actual_upload', 'min_rtt', 'cost_of_service',
-            'isp_user', 'connection_type', 'verified']
+    sort_fields = ['id', 'timestamp', 'actual_download', 'actual_upload', 'min_rtt', 
+        {%- for item, field in form_fields.items() | sort -%}
+        {%- for attr, vals in field.items() -%}
+        {%- if vals['name'] != 'other' -%}
+        '{{ vals["name"] }}',
+        {%- endif -%}
+        {%- endfor -%}
+        {%- endfor -%} 'verified']
 
     if request.args.get('sort'):
         if request.args.get('sort') in sort_fields:
@@ -328,16 +337,18 @@ def admin_extra_data():
         record['bigquery_test_id'] = row[0].bigquery_test_id
         record['verified'] = row[0].verified
         record['timestamp'] = int(row[0].timestamp.strftime('%s')) * 1000
-        record['connection_type'] = row[0].connection_type
-        record['isp_user'] = row[0].isp_user
-        record['advertised_download'] = row[0].advertised_download
-        record['actual_download'] = row[0].actual_download
-        record['advertised_upload'] = row[0].advertised_upload
-        record['actual_upload'] = row[0].actual_upload
-        record['min_rtt'] = row[0].min_rtt
-        record['cost_of_service'] = row[0].cost_of_service
         record['latitude'] = row.lat
         record['longitude'] = row.lon
+        record['actual_download'] = row[0].actual_download
+        record['actual_upload'] = row[0].actual_upload
+        record['min_rtt'] = row[0].min_rtt
+        {% for item, field in form_fields.items() | sort -%}
+        {% for attr, vals in field.items() %}
+        {%- if vals['name'] != 'other' -%}
+        record['{{ vals["name"] }}'] = row[0].{{ vals['name'] }}
+        {% endif -%}
+        {% endfor -%}
+        {% endfor -%}
         records.append(record)
 
     if len(records):
@@ -348,9 +359,26 @@ def admin_extra_data():
 
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
-    isp_types = ['default', 'comcast', 'centurylink', 'wave', 'other']
-    connection_types = ['default', 'wired', 'wireless-single', 'wireless-multiple']
-    cost_of_service_types = ['default', 'less_than_25', '25_50', '50_75', '75_100', '100_or_above', 'dont_know']
+    {% for item, field in form_fields.items() | sort -%}
+        {% for attr, vals in field.items() -%}
+        {% if vals['name'] == 'isp_user' -%}
+        isp_types = [
+            {%- for opt, item in vals.options.items() | sort -%}
+                {%- for k, v in item.items() -%}'{{ k }}'{% if loop.last is sameas true %},{% endif %}{%- endfor -%}
+            {% endfor -%}]
+        {% elif vals['name'] == 'connection_type' %}
+        connection_types = [
+            {%- for opt, item in vals.options.items() | sort -%}
+                {%- for k, v in item.items() -%}'{{ k }}'{% if loop.last is sameas true %},{% endif %}{%- endfor -%}
+            {% endfor -%}]
+        {% elif vals['name'] == 'cost_of_service' %}
+        cost_of_service_types = [
+            {%- for opt, item in vals.options.items() | sort -%}
+                {%- for k, v in item.items() -%}'{{ k }}'{% if loop.last is sameas true %},{% endif %}{%- endfor -%}
+            {%- endfor -%}]
+        {% endif %}
+        {% endfor %}
+    {% endfor %} 
 
     try:
         if request.args.get('longitude') and request.args.get('latitude'):
@@ -426,15 +454,18 @@ def append_extra_data():
             query = extra_data.insert(dict(
                 bigquery_key = bigquery_key,
                 location = location,
-                connection_type = connection_type,
-                advertised_download = advertised_download,
+                client_ip = int(ipaddress.ip_address(unicode(request.remote_addr))),
                 actual_download = actual_download,
-                advertised_upload = advertised_upload,
                 actual_upload = actual_upload,
                 min_rtt = min_rtt,
-                isp_user = isp_user,
-                client_ip = int(ipaddress.ip_address(unicode(request.remote_addr))),
-                cost_of_service = cost_of_service))
+                {% for item, field in form_fields.items() | sort -%}
+                {% for attr, vals in field.items() %}
+                {%- if vals['name'] != 'other' -%}
+                {{ vals['name'] }} = {{ vals['name'] }},
+                {% endif -%}
+                {% endfor -%}
+                {% endfor -%}
+            ))
             conn.execute(query)
         return ("", 201, {})
         conn.commit()

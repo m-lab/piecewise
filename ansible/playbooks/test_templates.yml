@@ -46,3 +46,15 @@
     src: "templates/nginx_production_default"
     dest: "{{ test_path }}/nginx_dev_rhel7_default.conf"
     force: yes
+
+- name: Template aggregate.py
+  template:
+    src: "templates/aggregate.py.j2"
+    dest: "{{ test_path }}/aggregate.py"
+    force: yes
+
+- name: Template wsgi.py
+  template:
+    src: "templates/wsgi.py.j2"
+    dest: "{{ test_path }}/wsgi.py"
+    force: yes

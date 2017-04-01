@@ -112,13 +112,13 @@
 
 - name: Add the file defining the map center
   template:
-    src: "templates/map_center.js"
+    src: "templates/map_center.js.j2"
     dest: "{{ site_path }}/js/center.js"
 
 ## Add the site's index file, built from templated values
 - name: Add the map site index page
   template:
-    src: "templates/index.html"
+    src: "templates/index.html.j2"
     dest: "{{ site_path }}/index.html"
     force: yes
 
@@ -132,14 +132,26 @@
 
 - name: Install piecewise configuration
   template:
-    src: "templates/piecewise_config"
+    src: "templates/piecewise_config.j2"
     dest: /etc/piecewise/config.json
     force: yes
 
 - name: Update bigquery config
   template:
-    src: "templates/bigquery.py"
+    src: "templates/bigquery.py.j2"
     dest: "{{ base_path }}/piecewise/piecewise/bigquery.py"
+    force: yes
+
+- name: Template aggregate.py
+  template:
+    src: "templates/aggregate.py.j2"
+    dest: "{{ base_path }}/piecewise/piecewise/aggregate.py"
+    force: yes
+
+- name: Template wsgi.py
+  template:
+    src: "templates/collector_wsgi.py.j2"
+    dest: "{{ base_path }}/collector/collector/wsgi.py"
     force: yes
 
 - name: Restart uwsgi so piecewise config is detected
@@ -153,3 +165,4 @@
     chdir: "{{ base_path }}/{{ project_name }}"
   become: true
   become_user: postgres
+
