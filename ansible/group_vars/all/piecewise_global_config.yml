@@ -221,11 +221,16 @@ form_fields:
       id: isp_user
       text: "Who is your Internet Serice Provider?"
       options:
-        default: "------"
-        comcast: "Comcast"
-        centurylink: "CenturyLink"
-        wave: "Wave"
-        other: "Other"
+        1:
+          default: "------"
+        2:
+          comcast: "Comcast"
+        3:
+          centurylink: "CenturyLink"
+        4:
+          wave: "Wave"
+        5:
+          other: "Other"
       required: yes
       init_display: yes
   2:
@@ -244,10 +249,14 @@ form_fields:
       id: connection_type
       text: "How do you connect to the Internet?"
       options:
-        default: "------"
-        wired: "Wired connection"
-        wireless_single: "Wireless connection   1 device"
-        wireless_multiple: "Wireless connection   shared among multiple devices or households"
+        1:
+          default: "------"
+        2:
+          wired: "Wired connection"
+        3:
+          wireless_single: "Wireless connection - 1 device"
+        4:
+          wireless_multiple: "Wireless connection - shared among multiple devices or households"
       required: yes
       init_display: yes
   4:
@@ -258,13 +267,20 @@ form_fields:
       id: cost_of_service
       text: "How much do you pay, per month?"
       options: 
-        default: "------"
-        less_than_25: "Less than $25"
-        bet_25_50: "$25-$50"
-        bet_50_75: "$50-$75"
-        bet_75_100: "$75-$100"
-        above_100: "$100 +"
-        dont_know: "Don't know"
+        1:
+          default: "------"
+        2:
+          less_than_25: "Less than $25"
+        3:
+          bet_25_50: "$25-$50"
+        4:
+          bet_50_75: "$50-$75"
+        5:
+          bet_75_100: "$75-$100"
+        6:
+          above_100: "$100 +"
+        7:
+          dont_know: "Don't know"
       required: yes
       init_display: yes
   5:

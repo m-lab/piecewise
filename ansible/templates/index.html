@@ -51,12 +51,14 @@
 			<p>
 			{% if vals['field_type'] == 'select_list' -%}
 			<select id="{{ vals['id'] }}" name="{{ vals['name'] }}" class="form-control">
-				{% for opt, item in vals.options.items() | sort(loop.index) -%}
-				  <option value="{{ opt }}"{%- if opt == 'default' -%} selected {%- endif -%}>{{ item }}</option>
-				{% endfor -%}
+				{% for opt, item in vals.options.items() | sort -%}
+					{%- for k, v in item.items() -%}
+					<option value="{{ k }}"{%- if k == 'default' %} selected {%- endif -%}>{{ v }}</option>
+					{% endfor -%}
+				{%- endfor -%}
 			</select>
 			{% elif vals['field_type'] == 'text' -%}
-			<input id="{{ vals['id'] }}" type="text" name="{{ vals['name'] }}" class="form-control"{% if vals['init_display'] == false %} style="display: none;"{%- endif -%}{%- if vals['size'] is defined -%} size="{{ vals['size'] }}"{%- endif -%}/>
+			<input id="{{ vals['id'] }}" type="text" name="{{ vals['name'] }}" class="form-control"{% if vals['init_display'] == false %} style="display: none;"{%- endif -%}{%- if vals['size'] is defined %} size="{{ vals['size'] }}"{% endif -%}/>
 			{% endif -%}
 			</p>
 			{% endfor -%}
