@@ -108,7 +108,7 @@
 - name: Template extra_data.py
   template:
     src: "templates/extra_data.py.j2"
-    dest: "{{ base_path }}/{{ project_name }}/"
+    dest: "{{ base_path }}/{{ project_name }}/extra_data.py"
     force: yes
 
 - name: Add the file defining the map center
