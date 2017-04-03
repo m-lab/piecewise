@@ -326,9 +326,9 @@ var zoom = {{ mapscript_zoom_level }};
 // out temporarily
 
 var monthNames = [
-	{% for key, value in mapscript_month_names.items() %}
-		'{{ value }}' {% if not loop.last %},{% endif %} 
-	{% endfor %}
+	{%- for key, value in mapscript_month_names.items() -%}
+		'{{ value }}' {%- if not loop.last %}, {% endif -%} 
+	{%- endfor -%}
 ];
 
 // An object which will hold cached GeoJSON files so that we don't have to fetch
