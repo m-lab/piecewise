@@ -139,9 +139,7 @@ class Aggregator(object):
                 Column('client_ip', BigInteger),
                 {% for item, field in form_fields.items() | sort -%}
                     {%- for attr, vals in field.items() -%}
-                    {% if vals['name'] != 'other' -%}
                     Column("{{ vals['name'] }}", {{ vals['db_type'] }}),
-                    {% endif -%}
                     {% endfor -%}
                 {% endfor -%}    
                 )
@@ -310,9 +308,7 @@ class SpatialJoinBins(Bins):
                     Column("min_rtt", Integer),
                 {% for item, field in form_fields.items() | sort -%}
                     {%- for attr, vals in field.items() -%}
-                    {% if vals['name'] != 'other' -%}
                     Column("{{ vals['name'] }}", {{ vals['db_type'] }}),
-                    {% endif -%}
                     {% endfor -%}
                 {% endfor -%}    
                     keep_existing = True)

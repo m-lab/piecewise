@@ -105,10 +105,11 @@
     src: "../local_customizations/geofiles"
     dest: "{{ site_path }}/"
 
-- name: Copy extra_data.py server
-  copy:
-    src: "../local_customizations/extra_data.py"
+- name: Template extra_data.py
+  template:
+    src: "templates/extra_data.py.j2"
     dest: "{{ base_path }}/{{ project_name }}/"
+    force: yes
 
 - name: Add the file defining the map center
   template:

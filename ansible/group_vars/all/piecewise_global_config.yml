@@ -232,15 +232,14 @@ form_fields:
         5:
           other: "Other"
       required: yes
-      init_display: yes
   2:
-    isp_user_text:
+    other_isp:
       field_type: text
       db_type: String
-      name: other
-      id: isp_user_text
+      name: other_isp
+      id: other_isp
+      text: "If your ISP is not listed, please enter it here: " 
       required: no
-      init_display: no
   3:
     connection_type:
       field_type: select_list
@@ -258,7 +257,6 @@ form_fields:
         4:
           wireless_multiple: "Wireless connection - shared among multiple devices or households"
       required: yes
-      init_display: yes
   4:
     cost_of_service:
       field_type: select_list
@@ -282,7 +280,6 @@ form_fields:
         7:
           dont_know: "Don't know"
       required: yes
-      init_display: yes
   5:
     advertised_download:
       field_type: text
@@ -292,7 +289,6 @@ form_fields:
       text: "What is your advertised download speed?"
       size: 3
       required: no
-      init_display: yes
   6:
     advertised_upload:
       field_type: text
@@ -302,7 +298,6 @@ form_fields:
       text: "What is your advertised upload speed?"
       size: 3
       required: no
-      init_display: yes
 
 ###
 # WEBSITE TEXT CUSTOMIZATIONS

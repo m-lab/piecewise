@@ -58,7 +58,7 @@
 				{%- endfor -%}
 			</select>
 			{% elif vals['field_type'] == 'text' -%}
-			<input id="{{ vals['id'] }}" type="text" name="{{ vals['name'] }}" class="form-control"{% if vals['init_display'] == false %} style="display: none;"{%- endif -%}{%- if vals['size'] is defined %} size="{{ vals['size'] }}"{%- endif -%}/>
+			<input id="{{ vals['id'] }}" type="text" name="{{ vals['name'] }}" class="form-control"{%- if vals['size'] is defined %} size="{{ vals['size'] }}"{%- endif -%}/>
 			{% endif -%}
 			</p>
 			{% endfor -%}

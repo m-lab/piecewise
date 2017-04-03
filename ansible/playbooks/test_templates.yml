@@ -1,49 +1,49 @@
 ---
 - name: Add the map site index page
   template:
-    src: "templates/index.html"
+    src: "templates/index.html.j2"
     dest: "{{ test_path }}/index.html"
     force: yes
 
 - name: Add the file defining the map center
   template:
-    src: "templates/map_center.js"
+    src: "templates/map_center.js.j2"
     dest: "{{ test_path }}/center.js"
 
 - name: Install piecewise configuration
   template:
-    src: "templates/piecewise_config"
+    src: "templates/piecewise_config.j2"
     dest: "{{ test_path }}/config.json"
     force: yes
 
 - name: Update bigquery config
   template:
-    src: "templates/bigquery.py"
+    src: "templates/bigquery.py.j2"
     dest: "{{ test_path}}/bigquery.py"   
     force: yes
 
 - name: For Debian 8 development systems, create the nginx default site for Piecewise
   template:
-    src: "templates/nginx_development_default"
+    src: "templates/nginx_development_default.j2"
     dest: "{{ test_path }}/nginx_dev_deb8_default"
     force: yes
 
 - name: For Debian 8 production systems, create the nginx default site for Piecewise
   template:
-    src: "templates/nginx_production_default"
+    src: "templates/nginx_production_default.j2"
     dest: "{{ test_path }}/nginx_prod_deb8_default"
     force: yes
 
 ## NGINX configs for RHEL 7
 - name: For RHEL 7 development systems, create the nginx default site for Piecewise
   template:
-    src: "templates/nginx_development_default"
+    src: "templates/nginx_development_default.j2"
     dest: "{{ test_path }}/nginx_dev_rhel7_default.conf"
     force: yes
 
 - name: For RHEL 7 production systems, create the nginx default site for Piecewise
   template:
-    src: "templates/nginx_production_default"
+    src: "templates/nginx_production_default.j2"
     dest: "{{ test_path }}/nginx_dev_rhel7_default.conf"
     force: yes
 
@@ -55,6 +55,12 @@
 
 - name: Template wsgi.py
   template:
-    src: "templates/wsgi.py.j2"
+    src: "templates/collector_wsgi.py.j2"
     dest: "{{ test_path }}/wsgi.py"
+    force: yes
+
+- name: Template extra_data.py
+  template:
+    src: "templates/extra_data.py.j2"
+    dest: "{{ test_path }}/extra_data.py"
     force: yes
