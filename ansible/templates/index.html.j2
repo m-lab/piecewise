@@ -269,13 +269,13 @@ var polygonType = '{{ mapscript_layer_name }}';
 // client-side to convert the TopJSON to GeoJSON.  I would conjecture that
 // the network is the most limiting factor and that generally TopoJSON will be
 // the right choice.  TODO: prove this theory.
-var jsonType = "{{ mapscript_json_type }}";
+var jsonType = '{{ mapscript_json_type }}';
 
 
 // The minimum number of data points in any given polygon for a it to be
 // considered statistically relevant.  These cells will either not be displayed
 // or will be displayed with a different styling.
-var minDataPoints = "{{ mapscript_min_data_points }}";
+var minDataPoints = '{{ mapscript_min_data_points }}';
 
 // Defines how each overlay is treated on load.  If an overlay is enabled, then
 // there will be a checkbox for it in the layers control. 'defaultOn' determines
@@ -324,14 +324,12 @@ var zoom = {{ mapscript_zoom_level }};
 // 
 // the following was throwing errors on some systems, likely bcs of python, so commented 
 // out temporarily
-// var monthNames = [
-//	{% for key, value in mapscript_month_names.iteritems() %}
-//		'{{ value }}' {% if not loop.last %},{% endif %} 
-//	{% endfor %}
-//];
 
-var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct',
-	'Nov','Dec'];
+var monthNames = [
+	{% for key, value in mapscript_month_names.items() %}
+		'{{ value }}' {% if not loop.last %},{% endif %} 
+	{% endfor %}
+];
 
 // An object which will hold cached GeoJSON files so that we don't have to fetch
 // them from the server more than once.  This could potentially be problematic
