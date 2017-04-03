@@ -1,169 +1,164 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-	<meta charset='utf-8' />
-	<title>{{ site_name }}</title>
-	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<link href='css/ndt_d3.css' rel='stylesheet' />
-	<link href="css/jquery-ui-slider-pips.css" rel="stylesheet" />
-	<link href='css/jquery-ui.min.css' rel='stylesheet' />
-	<link href='css/mlab.css' rel='stylesheet' />
-	<script src='//api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.js'></script>
-	<script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
-	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src='js/mlab.js'></script>
-	<script src='js/ndt.js'></script>
-	<script src='js/ndt_d3.js'></script>
-	<script src='js/d3.v3.min.js'></script>
-	<script src='js/center.js'></script>
-	<script src="js/jquery-ui.min.js"></script>
-	<script src="js/jquery-ui-slider-pips.min.js"></script>
+  <meta charset='utf-8' />
+  <title>{{ site_name }}</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link href='css/ndt_d3.css' rel='stylesheet' />
+  <link href="css/jquery-ui-slider-pips.css" rel="stylesheet" />
+  <link href='css/jquery-ui.min.css' rel='stylesheet' />
+  <link href='css/mlab.css' rel='stylesheet' />
+  <script src='//api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.js'></script>
+  <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+  <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src='js/mlab.js'></script>
+  <script src='js/ndt.js'></script>
+  <script src='js/ndt_d3.js'></script>
+  <script src='js/d3.v3.min.js'></script>
+  <script src='js/center.js'></script>
+  <script src="js/jquery-ui.min.js"></script>
+  <script src="js/jquery-ui-slider-pips.min.js"></script>
 </head>
 
 <body>
 
 <div id="spinner">
-	<div id="spin">&nbsp;</div>
-	<div id="loading">LOADING</div>
+  <div id="spin">&nbsp;</div>
+  <div id="loading">LOADING</div>
 </div>
 
 <div id="welcome-container">
-	<div id="header">
-		<div id="intro">
-			<h3>{{ intro_text }}</h3>
-		</div>
-	</div>
-	<div id="sidebar">
-		<form action="/collector/collect" method="get" id="collector">
-		<div id="extra-data" class="ndt-related">
-		{% for item, field in form_fields.items() | sort -%}
-		<div class="container">
-			{% for attr, vals in field.items() -%}
-			<p>
-			{% if vals['required'] == true -%}
-				<span class="required">*</span> 
-			{%- endif -%}{%- if vals['text'] is defined -%}{{ vals['text'] }}{%- endif -%}
-			</p>
-			<p>
-			{% if vals['field_type'] == 'select_list' -%}
-			<select id="{{ vals['id'] }}" name="{{ vals['name'] }}" class="form-control">
-				{% for opt, item in vals.options.items() | sort -%}
-					{%- for k, v in item.items() -%}
-					<option value="{{ k }}"{%- if k == 'default' %} selected {%- endif -%}>{{ v }}</option>
-					{% endfor -%}
-				{%- endfor -%}
-			</select>
-			{% elif vals['field_type'] == 'text' -%}
-			<input id="{{ vals['id'] }}" type="text" name="{{ vals['name'] }}" class="form-control"{%- if vals['size'] is defined %} size="{{ vals['size'] }}"{%- endif -%}/>
-			{% endif -%}
-			</p>
-			{% endfor -%}
-		</div>
-		{% endfor -%} 
-		<div class="container" id="consent-text">
-			<p>
-				<span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> {{ consent_message }}
-			</p>
-		</div>
-		<input name="latitude" id="latitude" type="hidden" />
-		<input name="longitude" id="longitude" type="hidden" />
-		<input name="actual_download" id="actual_download" type="hidden" />
-		<input name="actual_upload" id="actual_upload" type="hidden" />
-		<input name="min_rtt" id="min_rtt" type="hidden" />
-		<input name="bigquery_key" id="bigquery_key" type="hidden" />
-		<div id="test-container">
-			<div id="ndt-div">
-				<div id="ndt-svg"></div>
-			</div>
-			<div id="approx-loc">
-				<h3 class="league-gothic">{{ run_test_heading }}</h3>
-				<div id="ndt-status"></div>
-			</div>
-		</div>
-		<div id="ndt-results" class="ndt-related">
-			<div class="container">
-				<div id="your-results">
-					<h3 class="league-gothic">{{ test_result_heading }}</h3>
-					<p>{{ download_result_label }} <span id="s2cRate"></span> {{ download_result_unit }}</p>
-					<p>{{ upload_result_label }} <span id="c2sRate"></span> {{ upload_result_unit }}</p>
-					<p>{{ rtt_result_label }} <span id="MinRTT"></span> {{ rtt_result_unit }}</p>
-				</div>
-				<div id="thankyou">
-					<h3 class="league-gothic">{{ thank_you_heading }}</h3>
-					<strong>{{ thank_you_message }}</strong><br /><br />
-					<strong>{{ next_action_message }}</strong>
-					<ul>
-					  <li><a href="#" onclick="showMap()">{{ next_action_show_map_text }}</a></li>
-					  <li><a href="{{ next_action_learn_about_link }}" target="_parent">{{ next_action_learn_about_text }}</a></li>
-					  <li><a href="#" onclick="showSocialShare()">{{ next_action_social_share_text }}</a></li>
-					</ul>
-					<div id="socialshare">
-					<!-- Social Button HTML -->
-					{% if social_share_twitter is not none -%}
-						<!-- Twitter -->
-						<a href='
-						{{ social_share_twitter }}' target="_blank" class="share-btn twitter">
-						<i class="fa fa-twitter"></i>
-						</a>
-					{% endif %}
-					{%- if social_share_gplus is not none -%}
-						<!-- Google Plus -->
-						<a href='{{ social_share_gplus }}' target="_blank" class="share-btn google-plus">
-						<i class="fa fa-google-plus"></i>
-						</a>
-					{% endif %}
-					{%- if social_share_facebook is not none -%}
-						<!-- Facebook -->
-						<a href='{{ social_share_facebook }}' target="_blank" class="share-btn facebook">
-						<i class="fa fa-facebook"></i>
-						</a>
-					{% endif %}
-					{%- if social_share_stumbleupon is not none -%}
-						<!-- StumbleUpon (url, title) -->
-						<a href='{{ social_share_stumbleupon }}' target="_blank" class="share-btn stumbleupon">
-						<i class="fa fa-stumbleupon"></i>
-						</a>
-					{% endif %}
-					{%- if social_share_reddit is not none -%}
-						<!-- Reddit (url, title) -->
-						<a href='{{ social_share_reddit }}' target="_blank" class="share-btn reddit">
-						<i class="fa fa-reddit"></i>
-						</a>
-					{% endif %}
-					{%- if social_share_linkedin is not none -%}
-						<!-- LinkedIn -->
-						<a href='{{ social_share_linkedin }}' target="_blank" class="share-btn linkedin">
-						<i class="fa fa-linkedin"></i>
-						</a>
-					{% endif %}
-					{%- if social_share_email is not none -%}
-						<!-- Email -->
-						<a href='{{ social_share_email }}' target="_blank" class="share-btn email">
-						<i class="fa fa-envelope"></i>
-						</a>
-					{% endif -%}
-					</div>
-				</div>
-			</div>
-		</div>
-		</form>
-		<div id="icons">
-			<div id="take-test" onclick="runTest()">
-				<img src="images/speed.svg" id="test-icon" alt="{{ icon_test_label }}" title="{{ icon_test_label }}" /><span class="button-label">{{ icon_test_label }}</span>
-			</div>
-			<div id="explore-map" onclick="showMap()">
-				<img src="images/compass.png" id="exploreMap" alt="{{ icon_browse_label }}" title="{{ icon_browse_label }}" /><span class="button-label">{{ icon_browse_label }}</span>
-			</div>
-			<div id="learn-more">
-				<a href="{{ icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ icon_learn_alt_text }}" title="{{ icon_learn_alt_text }}" /><span class="button-label">{{ icon_learn_label }}</span></a>
-			</div>
-		</div>
-	</div>
-</div>
+  <div id="header">
+    <div id="intro">
+      <h3>{{ intro_text }}</h3>
+    </div>
+  </div>
+  <div id="sidebar">
+    <form action="/collector/collect" method="get" id="collector">
+      <div id="extra-data" class="ndt-related">
+      {% for item, field in form_fields.items() | sort -%}
+        <div class="container">
+        {% for attr, vals in field.items() -%}
+        <p>
+        {% if vals['required'] == true -%}
+        <span class="required">* </span> 
+        {%- endif -%}{%- if vals['text'] is defined -%}{{ vals['text'] }}{%- endif -%}
+        </p>
+        <p>
+        {% if vals['field_type'] == 'select_list' -%}
+          <select id="{{ vals['id'] }}" name="{{ vals['name'] }}" class="form-control">
+          {% for opt, item in vals.options.items() | sort -%}
+            {%- for k, v in item.items() -%}
+            <option value="{{ k }}"{%- if k == 'default' %} selected {%- endif -%}>{{ v }}</option>
+            {% endfor -%}
+          {%- endfor -%}
+          </select>
+        {% elif vals['field_type'] == 'text' -%}
+          <input id="{{ vals['id'] }}" type="text" name="{{ vals['name'] }}" class="form-control"{%- if vals['size'] is defined %} size="{{ vals['size'] }}"{%- endif -%}/>
+        {% endif -%}
+        </p>
+      {% endfor -%}
+      </div>
+      {% endfor -%} 
+      <div class="container" id="consent-text">
+        <p>
+          <span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> {{ consent_message }}
+        </p>
+      </div>
+      <input name="latitude" id="latitude" type="hidden" />
+      <input name="longitude" id="longitude" type="hidden" />
+      <input name="actual_download" id="actual_download" type="hidden" />
+      <input name="actual_upload" id="actual_upload" type="hidden" />
+      <input name="min_rtt" id="min_rtt" type="hidden" />
+      <input name="bigquery_key" id="bigquery_key" type="hidden" />
+      <div id="test-container">
+        <div id="ndt-div">
+          <div id="ndt-svg"></div>
+        </div>
+	  <div id="approx-loc">
+	    <h3 class="league-gothic">{{ run_test_heading }}</h3>
+	    <div id="ndt-status"></div>
+	  </div>
+	  <div id="ndt-results" class="ndt-related">
+	    <div class="container">
+	      <div id="your-results">
+	        <h3 class="league-gothic">{{ test_result_heading }}</h3>
+	        <p>{{ download_result_label }} <span id="s2cRate"></span> {{ download_result_unit }}</p>
+	        <p>{{ upload_result_label }} <span id="c2sRate"></span> {{ upload_result_unit }}</p>
+	        <p>{{ rtt_result_label }} <span id="MinRTT"></span> {{ rtt_result_unit }}</p>
+	      </div>
+	      <div id="thankyou">
+	        <h3 class="league-gothic">{{ thank_you_heading }}</h3>
+	        <strong>{{ thank_you_message }}</strong><br /><br />
+	        <strong>{{ next_action_message }}</strong>
+	        <ul>
+	          <li><a href="#" onclick="showMap()">{{ next_action_show_map_text }}</a></li>
+	          <li><a href="{{ next_action_learn_about_link }}" target="_parent">{{ next_action_learn_about_text }}</a></li>
+	          <li><a href="#" onclick="showSocialShare()">{{ next_action_social_share_text }}</a></li>
+	        </ul>
+	        <div id="socialshare">
+	        <!-- Social Button HTML -->
+	        {% if social_share_twitter is not none -%}
+	        <!-- Twitter -->
+	          <a href="{{ social_share_twitter }}"" target="_blank" class="share-btn twitter">
+	          <i class="fa fa-twitter"></i>
+	          </a>
+	        {% endif %}
+	        {%- if social_share_gplus is not none -%}
+	        <!-- Google Plus -->
+	          <a href="{{ social_share_gplus }}" target="_blank" class="share-btn google-plus">
+	          <i class="fa fa-google-plus"></i>
+	          </a>
+	        {% endif %}
+	        {%- if social_share_facebook is not none -%}
+	        <!-- Facebook -->
+	          <a href="{{ social_share_facebook }}" target="_blank" class="share-btn facebook">
+	          <i class="fa fa-facebook"></i>
+	          </a>
+	        {% endif %}
+	        {%- if social_share_stumbleupon is not none -%}
+	        <!-- StumbleUpon (url, title) -->
+	          <a href="{{ social_share_stumbleupon }}" target="_blank" class="share-btn stumbleupon">
+	          <i class="fa fa-stumbleupon"></i>
+	          </a>
+	        {% endif %}
+	        {%- if social_share_reddit is not none -%}
+	        <!-- Reddit (url, title) -->
+	          <a href="{{ social_share_reddit }}" target="_blank" class="share-btn reddit">
+	          <i class="fa fa-reddit"></i>
+	          </a>
+	        {% endif %}
+	        {%- if social_share_linkedin is not none -%}
+	        <!-- LinkedIn -->
+	          <a href="{{ social_share_linkedin }}" target="_blank" class="share-btn linkedin">
+	          <i class="fa fa-linkedin"></i>
+	          </a>
+	        {% endif %}
+	        {%- if social_share_email is not none -%}
+	        <!-- Email -->
+	          <a href="{{ social_share_email }}" target="_blank" class="share-btn email">
+	          <i class="fa fa-envelope"></i>
+	          </a>
+	        {% endif -%}
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	  <div id="icons">
+	    <div id="take-test" onclick="runTest()">
+	      <img src="images/speed.svg" id="test-icon" alt="{{ icon_test_label }}" title="{{ icon_test_label }}" /><span class="button-label">{{ icon_test_label }}</span>
+	    </div>
+	    <div id="explore-map" onclick="showMap()">
+	      <img src="images/compass.png" id="exploreMap" alt="{{ icon_browse_label }}" title="{{ icon_browse_label }}" /><span class="button-label">{{ icon_browse_label }}</span>
+	    </div>
+	    <div id="learn-more">
+	      <a href="{{ icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ icon_learn_alt_text }}" title="{{ icon_learn_alt_text }}" /><span class="button-label">{{ icon_learn_label }}</span></a>
+	    </div>
+      </div>
+    </form>
+  </div>
 
 <script>
 	var ndtServer,
@@ -242,10 +237,10 @@
 </script>
 
 <div id="map">
-<div id="mapview-icons">
+  <div id="mapview-icons">
 	<a href="index.html" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}"><img src="images/speed.svg" id="mapview-test-icon" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}" /></a>
 	<a href="{{ mapview_icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ mapview_icon_learn_alt_text }}" title="{{ mapview_icon_learn_alt_text }}" /></a>
-</div>
+  </div>
 </div>
 
 <script>
@@ -428,7 +423,7 @@ for (var geoLayer in geoLayers) {
 
 
 </script>
-
+</div>
 </body>
 
 </html>
