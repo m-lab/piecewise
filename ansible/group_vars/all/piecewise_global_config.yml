@@ -310,15 +310,15 @@ site_name: "Seattle Broadband Map"
 # 'intro_text' defines the heading text that precedes the HTML survey form, provided to users
 # before they may take the test.
 intro_text: >
-  "The City of Seattle is collecting information from residents about broadband 
+  The City of Seattle is collecting information from residents about broadband 
   experiences across the City. To contribute, please answer the following 
-  questions and then take our Broadband Speed Test:"
+  questions and then take our Broadband Speed Test:
 
 # 'consent_message' defines the message displayed next to the consent checkbox
 consent_message: >
-  'I understand that the data collected from this test will be anonymized and aggregated 
+  I understand that the data collected from this test will be anonymized and aggregated 
   for publication to the Broadband Map and 
-  <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.'
+  <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.
 
 # The variables below define the messages and labels provided to the user before and 
 # after the test.
