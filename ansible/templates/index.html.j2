@@ -144,24 +144,24 @@
 	            </a>
 	          {% endif -%}
 	          </div>
+	        </div> <!-- thankyou div -->
 	      </div>
 	    </div>
 	  </div>
     </form>
     <div id="icons">
-	  <div id="take-test" onclick="runTest()">
-	    <img src="images/speed.svg" id="test-icon" alt="{{ icon_test_label }}" title="{{ icon_test_label }}" /><span class="button-label">{{ icon_test_label }}</span>
-	  </div>
-	  <div id="explore-map" onclick="showMap()">
-	    <img src="images/compass.png" id="exploreMap" alt="{{ icon_browse_label }}" title="{{ icon_browse_label }}" /><span class="button-label">{{ icon_browse_label }}</span>
-	  </div>
-	  <div id="learn-more">
-	    <a href="{{ icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ icon_learn_alt_text }}" title="{{ icon_learn_alt_text }}" /><span class="button-label">{{ icon_learn_label }}</span></a>
-	  </div>
+      <div id="take-test" onclick="runTest()">
+        <img src="images/speed.svg" id="test-icon" alt="{{ icon_test_label }}" title="{{ icon_test_label }}" /><span class="button-label">{{ icon_test_label }}</span>
+      </div>
+      <div id="explore-map" onclick="showMap()">
+        <img src="images/compass.png" id="exploreMap" alt="{{ icon_browse_label }}" title="{{ icon_browse_label }}" /><span class="button-label">{{ icon_browse_label }}</span>
+      </div>
+      <div id="learn-more">
+        <a href="{{ icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ icon_learn_alt_text }}" title="{{ icon_learn_alt_text }}" /><span class="button-label">{{ icon_learn_label }}</span></a>
+      </div>
     </div>
-  </div>
 
-<script>
+    <script>
 	var ndtServer,
 		ndtServerIp,
 		ndtPort = "3010",
@@ -235,196 +235,186 @@
 			}
 		};
 	};
-</script>
+    </script>
+    <div id="map">
+      <div id="mapview-icons">
+	  <a href="index.html" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}"><img src="images/speed.svg" id="mapview-test-icon" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}" /></a>
+	  <a href="{{ mapview_icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ mapview_icon_learn_alt_text }}" title="{{ mapview_icon_learn_alt_text }}" /></a>
+    </div>
+    <script>
+      // This is the Piecewise mapping script.
 
-<div id="map">
-  <div id="mapview-icons">
-	<a href="index.html" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}"><img src="images/speed.svg" id="mapview-test-icon" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}" /></a>
-	<a href="{{ mapview_icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ mapview_icon_learn_alt_text }}" title="{{ mapview_icon_learn_alt_text }}" /></a>
+      // If set to 'hex' then GeoJSON files are assumed to be named like
+      // 'YYYY_MM-<resolution>.json', where 3 files exist for each of resolutions
+      // 'low', 'medium', 'high'.  If anything other than 'hex', then this value is
+      // the MMMM_YY- suffix to look for. For example:
+      // If set to 'city_council_districts', then the system will look for
+      // GeoJSON files like 'MMMM_YY-city_council_districts.geojson'.
+
+      // polygonType is a variable name defining your aggregation regions.
+      // Change the name to reflect the aggregated regions you are using if needed.
+      var polygonType = '{{ mapscript_layer_name }}';
+
+      // Either 'topojson' or 'geojson'.  The Node.js script creates both TopoJSON and
+      // GeoJSON files.  TopoJSON files are significantly smaller in size, but need to
+      // be converted to GeoJSON by the browser.  There may be some balance between
+      // loading a smaller file across the network and the processing time on the
+      // client-side to convert the TopJSON to GeoJSON.  I would conjecture that
+      // the network is the most limiting factor and that generally TopoJSON will be
+      // the right choice.  TODO: prove this theory.
+      var jsonType = '{{ mapscript_json_type }}';
+
+      // The minimum number of data points in any given polygon for a it to be
+      // considered statistically relevant.  These cells will either not be displayed
+      // or will be displayed with a different styling.
+      var minDataPoints = '{{ mapscript_min_data_points }}';
+
+      // Defines how each overlay is treated on load.  If an overlay is enabled, then
+      // there will be a checkbox for it in the layers control. 'defaultOn' determines
+      // whether it will be displayed by default. NOTE: If only a single overlay is
+      // enabled, then no checkbox will be displayed, since it doesn't make much sense
+      // to disable the only meaningful layer that exists.
+      var overlays = {
+        'polygon': {
+      	  'enabled': true,
+      	  'defaultOn': true
+        },
+        'plot': {
+          'enabled': false,
+          'defaultOn': false
+        }
+      };
+
+      // Defines the layers that are going to be added to the map.
+      var geoLayers = {
+        '{{ mapscript_layer_name }}': {
+          'name': '{{ mapscript_layer_name_pretty }}',
+          'polygonFile': 'geofiles/{{ topojson_file }}',
+          'dataUrl': 'stats/q/{{ aggregation_name }}?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
+          'dbKey': '{{ dbKey }}',
+          'geoKey': '{{ geoKey }}',
+          'cache': null,
+          'layer': null
+        },
+      };
+
+      // Which of the geoLayers should be the one added to the map by default
+      var defaultLayer = '{{ mapscript_layer_name }}';
+
+      // If set to true, then prefetch the GeoJSON files into a local cache.  WARNING:
+      // You may not want to enable if you expect mobile, low bandwidth, or otherwise
+      // bandwidth restricted users, as this can pull in many megabytes of data.
+      var seedCache = false;
+
+      // The inteval (in milliseconds) to use when animating the map.
+      var animateInterval = 1500;
+
+      var zoom = {{ mapscript_zoom_level }};
+
+      // These are the labels that will be used for the month slider in the control
+      // box in the lower left corner.
+      //
+
+      var monthNames = [
+        {%- for key, value in mapscript_month_names.items() -%}
+          '{{ value }}' {%- if not loop.last %}, {% endif -%}
+        {%- endfor -%}
+      ];
+
+      // An object which will hold cached GeoJSON files so that we don't have to fetch
+      // them from the server more than once.  This could potentially be problematic
+      // if there are many files and they are large.
+      var geoJsonCache = {};
+      var geometryCache = null;
+
+      // The oldest year and month for which we have data.
+      var startYear = {{ mapscript_start_year }};
+      var startMonth = {{ mapscript_start_month }};
+
+      // Get current year/month into variables
+      var currentYear = new Date().getFullYear();
+      var currentMonth = new Date().getMonth() + 1;
+      // Zero pad the front of the month
+      currentMonth = currentMonth < 10 ? '0' + currentMonth : currentMonth;
+
+      // Be sure that we actually have data for the current month.  If not, then fall
+      // back to the previous month.
+      var start = Date.UTC(currentYear, currentMonth - 1, 1) / 1000;
+      var end = Math.floor(Date.now() / 1000);
+      var dataUrl = geoLayers[defaultLayer]['dataUrl'] + start + ',' + end;
+      $.ajax({
+      	url: dataUrl,
+      	dataType: 'json',
+      	async: false,
+        success: function(resp) {
+      	  if ( ! resp.features.length ) {
+      	    if ( currentMonth == '01' ) {
+      	      currentMonth = 12;
+      	      currentYear = currentYear - 1;
+      	    } else {
+      	      currentMonth = currentMonth - 1;
+      	      currentMonth = currentMonth < 10 ? '0' + currentMonth : currentMonth;
+      	    }
+      	    console.log("No data for current year/month, using last month instead.");
+      	  }
+        }
+      });
+
+      // An object with the years and months we have data for.  This will be used to
+      // auto-generate various form controls.
+      var dates = {};
+      var thisYear = startYear;
+      while (thisYear <= currentYear) {
+        if (thisYear == currentYear) {
+          var months = [];
+          for (i = 1; i <= currentMonth; i++) { months.push(i) };
+            dates[thisYear] = months
+        } else {
+          dates[thisYear] = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+        }
+        thisYear++;
+      }
+
+    // Create the map
+    var map = L.map('map', {zoomControl: false}).setView(center, zoom);
+    map.scrollWheelZoom.disable();
+    var control = L.control.zoom({position: '{{ mapcontrols_zoom_pos }}'});
+    map.addControl(control);
+
+    // Set the base tile layer type
+    {% if 'mapbox' in mapscript_base_layer %}
+      // Use Mapbox as a base tile layer
+      var baseTileLayer = L.tileLayer(
+        '{{ mapscript_mapbox_api_url }}', {
+      	  attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
+        }
+      );
+    {% elif 'osm' in mapscript_base_layer %}
+    // Use Open Street Maps as a base tile layer
+      var baseTileLayer = L.tileLayer('{{ mapscript_osm_api_url }}', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
+        'contributors'
+      });
+    {% endif %}
+
+    // Set the default base tile layer.
+    map.addLayer(baseTileLayer);
+
+    // Add other base tile layer providers as needed
+    var baseLayers = {
+      '{{ mapscript_base_layer }}': baseTileLayer
+    };
+
+    var layerCtrl = L.control.layers(baseLayers, null, { collapsed: false, position: '{{ mapcontrols_legend_pos }}' });
+    addControls();
+    layerCtrl.addTo(map);
+    addLegend();
+
+    for (var geoLayer in geoLayers) {
+      setupLayer(geoLayer);
+    }
+    </script>
   </div>
 </div>
-
-<script>
-// This is the Piecewise mapping script.
-
-// If set to 'hex' then GeoJSON files are assumed to be named like
-// 'YYYY_MM-<resolution>.json', where 3 files exist for each of resolutions
-// 'low', 'medium', 'high'.  If anything other than 'hex', then this value is
-// the MMMM_YY- suffix to look for. For example:
-// If set to 'city_council_districts', then the system will look for
-// GeoJSON files like 'MMMM_YY-city_council_districts.geojson'.
-
-// polygonType is a variable name defining your aggregation regions. 
-// Change the name to reflect the aggregated regions you are using if needed.
-var polygonType = '{{ mapscript_layer_name }}';
-
-// Either 'topojson' or 'geojson'.  The Node.js script creates both TopoJSON and
-// GeoJSON files.  TopoJSON files are significantly smaller in size, but need to
-// be converted to GeoJSON by the browser.  There may be some balance between
-// loading a smaller file across the network and the processing time on the
-// client-side to convert the TopJSON to GeoJSON.  I would conjecture that
-// the network is the most limiting factor and that generally TopoJSON will be
-// the right choice.  TODO: prove this theory.
-var jsonType = '{{ mapscript_json_type }}';
-
-
-// The minimum number of data points in any given polygon for a it to be
-// considered statistically relevant.  These cells will either not be displayed
-// or will be displayed with a different styling.
-var minDataPoints = '{{ mapscript_min_data_points }}';
-
-// Defines how each overlay is treated on load.  If an overlay is enabled, then
-// there will be a checkbox for it in the layers control. 'defaultOn' determines
-// whether it will be displayed by default. NOTE: If only a single overlay is
-// enabled, then no checkbox will be displayed, since it doesn't make much sense
-// to disable the only meaningful layer that exists.
-var overlays = {
-	'polygon': {
-		'enabled': true,
-		'defaultOn': true
-	},
-	'plot': {
-		'enabled': false,
-		'defaultOn': false
-	}
-};
-
-// Defines the layers that are going to be added to the map.
-var geoLayers = {
-	'{{ mapscript_layer_name }}': {
-		'name': '{{ mapscript_layer_name_pretty }}',
-		'polygonFile': 'geofiles/{{ topojson_file }}',
-		'dataUrl': 'stats/q/{{ aggregation_name }}?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
-		'dbKey': '{{ dbKey }}',
-		'geoKey': '{{ geoKey }}',
-		'cache': null,
-		'layer': null
-	},
-};
-
-// Which of the geoLayers should be the one added to the map by default
-var defaultLayer = '{{ mapscript_layer_name }}';
-
-// If set to true, then prefetch the GeoJSON files into a local cache.  WARNING:
-// You may not want to enable if you expect mobile, low bandwidth, or otherwise
-// bandwidth restricted users, as this can pull in many megabytes of data.
-var seedCache = false;
-
-// The inteval (in milliseconds) to use when animating the map.
-var animateInterval = 1500;
-
-var zoom = {{ mapscript_zoom_level }};
-
-// These are the labels that will be used for the month slider in the control
-// box in the lower left corner.
-// 
-// the following was throwing errors on some systems, likely bcs of python, so commented 
-// out temporarily
-
-var monthNames = [
-	{%- for key, value in mapscript_month_names.items() -%}
-		'{{ value }}' {%- if not loop.last %}, {% endif -%} 
-	{%- endfor -%}
-];
-
-// An object which will hold cached GeoJSON files so that we don't have to fetch
-// them from the server more than once.  This could potentially be problematic
-// if there are many files and they are large.
-var geoJsonCache = {};
-var geometryCache = null;
-
-// The oldest year and month for which we have data.
-var startYear = {{ mapscript_start_year }};
-var startMonth = {{ mapscript_start_month }};
-
-// Get current year/month into variables
-var currentYear = new Date().getFullYear();
-var currentMonth = new Date().getMonth() + 1;
-// Zero pad the front of the month
-currentMonth = currentMonth < 10 ? '0' + currentMonth : currentMonth;
-
-// Be sure that we actually have data for the current month.  If not, then fall
-// back to the previous month.
-var start = Date.UTC(currentYear, currentMonth - 1, 1) / 1000;
-var end = Math.floor(Date.now() / 1000);
-var dataUrl = geoLayers[defaultLayer]['dataUrl'] + start + ',' + end;
-$.ajax({
-	url: dataUrl,
-	dataType: 'json',
-	async: false,
-	success: function(resp) {
-		if ( ! resp.features.length ) {
-			if ( currentMonth == '01' ) {
-				currentMonth = 12;
-				currentYear = currentYear - 1;
-			} else {
-				currentMonth = currentMonth - 1;
-				currentMonth = currentMonth < 10 ?
-					'0' + currentMonth : currentMonth;
-			}
-			console.log("No data for current year/month, using last" +
-				" month instead.");
-		}
-	}
-});
-
-// An object with the years and months we have data for.  This will be used to
-// auto-generate various form controls.
-var dates = {};
-var thisYear = startYear;
-while (thisYear <= currentYear) {
-	if (thisYear == currentYear) {
-		var months = [];
-		for (i = 1; i <= currentMonth; i++) { months.push(i) };
-		dates[thisYear] = months
-	} else {
-		dates[thisYear] = ['1','2','3','4','5','6','7','8','9','10','11','12'];
-	}
-	thisYear++;
-}
-
-// Create the map
-var map = L.map('map', {zoomControl: false}).setView(center, zoom);
-map.scrollWheelZoom.disable();
-var control = L.control.zoom({position: '{{ mapcontrols_zoom_pos }}'});
-map.addControl(control);
-
-// Set the base tile layer type
-{% if 'mapbox' in mapscript_base_layer %}
-	// Use Mapbox as a base tile layer
-	var baseTileLayer = L.tileLayer(
-		'{{ mapscript_mapbox_api_url }}', {
-		attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
-	});
-{% elif 'osm' in mapscript_base_layer %}
-	// Use Open Street Maps as a base tile layer
-	var baseTileLayer = L.tileLayer('{{ mapscript_osm_api_url }}', {
-		attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>' +
-			'contributors'
-	});
-{% endif %}
-
-// Set the default base tile layer. 
-map.addLayer(baseTileLayer);
-
-// Add other base tile layer providers as needed
-var baseLayers = {
-	 '{{ mapscript_base_layer }}': baseTileLayer
-};
-
-var layerCtrl = L.control.layers(baseLayers, null, { collapsed: false, position: '{{ mapcontrols_legend_pos }}' });
-addControls();
-layerCtrl.addTo(map);
-addLegend();
-
-for (var geoLayer in geoLayers) {
-	setupLayer(geoLayer);
-}
-
-
-
-</script>
-</div>
 </body>
-
 </html>
