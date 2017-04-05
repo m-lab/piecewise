@@ -58,10 +58,11 @@ extra_data = Table('extra_data', metadata,
     Column('client_ip', BigInteger),
     Column('isp', String),
     {% for item, field in form_fields.items() | sort -%}
+    {%- set num_fields = form_fields.items() | length -%}
     {%- for attr, vals in field.items() -%}
-    Column('{{ vals["name"] }}', {{ vals['db_type'] }}),
+    Column('{{ vals["name"] }}', {{ vals['db_type'] }}){%- if item < num_fields -%}, {% endif -%}
     {% endfor -%}
-    {% endfor -%}    
+    {% endfor -%}  
     )
 metadata.create_all()
 
@@ -353,8 +354,9 @@ def append_extra_data():
         {% for attr, vals in field.items() -%}
         {% if vals['field_type'] == 'select_list' -%}
             {{ vals['name'] }}_types = [
-            {%- for opt, item in vals.options.items() | sort -%}
-                {%- for k, v in item.items() -%}'{{ k }}'{% if loop.last is sameas true %},{% endif %}{%- endfor -%}
+            {%- set num_opts = vals.options.items() | length -%}
+            {%- for opt, items in vals.options.items() | sort -%}
+                {%- for k, v in items.items() -%}'{{ k }}'{%- if opt < num_opts -%}, {% endif -%}{%- endfor -%}
             {% endfor -%}
             ]
         {% endif -%}
@@ -438,8 +440,9 @@ def append_extra_data():
                 actual_upload = actual_upload,
                 min_rtt = min_rtt,
                 {% for item, field in form_fields.items() | sort -%}
+                {%- set num_fields = form_fields.items() | length -%}
                 {% for attr, vals in field.items() -%}
-                {{ vals['name'] }} = {{ vals['name'] }},
+                {{ vals['name'] }} = {{ vals['name'] }}{%- if item < num_fields -%}, {% endif -%}
                 {% endfor -%}
                 {% endfor -%}
             ))

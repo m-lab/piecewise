@@ -112,7 +112,7 @@ class Aggregator(object):
         return Table(self.cache_table_name, metadata, 
                 Column('id', BigInteger, primary_key = True),
                 Column('time', DateTime),
-                Column('location', Geometry("POINT", srid=4326)),
+                Column('location', Geometry('POINT', srid=4326)),
                 Column('client_ip', BigInteger),
                 Column('server_ip', BigInteger),
                 Column('countrtt', BigInteger),
@@ -128,20 +128,21 @@ class Aggregator(object):
     def make_extra_data_table(self, metadata):
         return Table("extra_data", metadata,
                 Column('id', BigInteger, primary_key = True),
-                Column("timestamp", DateTime),
-                Column("verified", Boolean),
-                Column("bigquery_key", String),
-                Column("bigquery_test_id", String),
-                Column("location", Geometry("Point", srid=4326)),
-                Column("actual_download", Float),
-                Column("actual_upload", Float),
-                Column("min_rtt", Integer),
+                Column('timestamp', DateTime),
+                Column('verified', Boolean),
+                Column('bigquery_key', String),
+                Column('bigquery_test_id', String),
+                Column('location', Geometry('Point', srid=4326)),
+                Column('actual_download', Float),
+                Column('actual_upload', Float),
+                Column('min_rtt', Integer),
                 Column('client_ip', BigInteger),
                 {% for item, field in form_fields.items() | sort -%}
-                    {%- for attr, vals in field.items() -%}
-                    Column("{{ vals['name'] }}", {{ vals['db_type'] }}),
+                    {%- set num_fields = form_fields.items() | length -%}
+                    {% for attr, vals in field.items() -%}
+                    Column('{{ vals["name"] }}', {{ vals['db_type'] }}){%- if item < num_fields -%}, {% endif -%}
                     {% endfor -%}
-                {% endfor -%}    
+                {% endfor %}    
                 )
     def ingest_bigquery_query(self):
         select_clause = [
@@ -306,11 +307,11 @@ class SpatialJoinBins(Bins):
                     Column("actual_download", Float),
                     Column("actual_upload", Float),
                     Column("min_rtt", Integer),
-                {% for item, field in form_fields.items() | sort -%}
-                    {%- for attr, vals in field.items() -%}
-                    Column("{{ vals['name'] }}", {{ vals['db_type'] }}),
-                    {% endfor -%}
-                {% endfor -%}    
+                    {% for item, field in form_fields.items() | sort -%}
+                        {% for attr, vals in field.items() -%}
+                        Column("{{ vals['name'] }}", {{ vals['db_type'] }}),
+                        {% endfor -%}
+                    {% endfor -%}   
                     keep_existing = True)
 
             joining = join(full_table, extra_data,
