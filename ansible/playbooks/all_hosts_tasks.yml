@@ -44,8 +44,8 @@
   unarchive:
     remote_src: yes
     src: http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum2.zip
-    dest: /tmp/
-    creates: /tmp/GeoIPASNum2.csv
+    dest: /opt/
+    creates: /opt/GeoIPASNum2.csv
 
 - name: Generate Letsencrypt certs
   command: "certbot certonly --standalone -n -d {{ site_fqdn }} -m {{ site_contact }} --agree-tos"
