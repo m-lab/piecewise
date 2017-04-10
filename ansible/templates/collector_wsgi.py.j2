@@ -351,17 +351,16 @@ def admin_extra_data():
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
     {% for item, field in form_fields.items() | sort -%}
-        {% for attr, vals in field.items() -%}
-        {% if vals['field_type'] == 'select_list' -%}
-            {{ vals['name'] }}_types = [
-            {%- set num_opts = vals.options.items() | length -%}
-            {%- for opt, items in vals.options.items() | sort -%}
-                {%- for k, v in items.items() -%}'{{ k }}'{%- if opt < num_opts -%}, {% endif -%}{%- endfor -%}
-            {% endfor -%}
-            ]
+        {%- for attr, vals in field.items() -%}
+        {% if vals['field_type'] == 'select_list' %}
+        {%- set num_opts = vals.options.items() | length -%}
+        {{ vals['name'] }}_types = [
+        {%- for opt, items in vals.options.items() | sort -%}
+            {%- for k, v in items.items() -%}'{{ k }}'{%- if opt < num_opts -%}, {% endif -%}{%- endfor -%}
+        {%- endfor -%}]
         {% endif -%}
-        {% endfor -%}
-    {% endfor %} 
+        {%- endfor -%}
+    {%- endfor %} 
 
     try:
         if request.args.get('longitude') and request.args.get('latitude'):
@@ -402,13 +401,9 @@ def append_extra_data():
     {% if vals['field_type'] == 'select_list' -%}
 
     if request.args.get('{{ vals["name"] }}') in {{ vals['name'] }}_types:
-        {{ vals['name'] }} = request.args.get("{{ vals['name'] }}")
+        {{ vals['name'] }} = request.args.get("{{ vals['name']|e }}")
     else:
         {{ vals['name'] }} = None
-
-    except Exception, e:
-    {{ vals['name'] }} = None
-    app.logger.exception(e)
 
     {% elif vals['field_type'] == 'text' and vals['db_type'] == 'String' %}
 
@@ -421,7 +416,7 @@ def append_extra_data():
     {% elif vals['field_type'] == 'text' and vals['db_type'] == 'Integer' %}
 
     try:
-        {{ vals['name'] }} = int(float(request.args.get('{{ vals["name"] }}')))
+        {{ vals['name'] }} = int(float(request.args.get('{{ vals["name"]|e }}')))
     except Exception, e:
         {{ vals['name'] }} = None
         app.logger.exception(e)
