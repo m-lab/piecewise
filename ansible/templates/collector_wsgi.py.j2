@@ -350,6 +350,7 @@ def admin_extra_data():
 
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
+    {% set select_list_params %}
     {% for item, field in form_fields.items() | sort -%}
         {%- for attr, vals in field.items() -%}
         {% if vals['field_type'] == 'select_list' %}
@@ -358,9 +359,13 @@ def append_extra_data():
         {%- for opt, items in vals.options.items() | sort -%}
             {%- for k, v in items.items() -%}'{{ k }}'{%- if opt < num_opts -%}, {% endif -%}{%- endfor -%}
         {%- endfor -%}]
+        {% else -%}
         {% endif -%}
         {%- endfor -%}
-    {%- endfor %} 
+    {%- endfor %}
+    {% endset %}
+
+    {{ select_list_params }}
 
     try:
         if request.args.get('longitude') and request.args.get('latitude'):
@@ -396,9 +401,9 @@ def append_extra_data():
     else:
         bigquery_key = None
 
-    {% for item, field in form_fields.items() | sort -%}
+{% for item, field in form_fields.items() | sort -%}
     {% for attr, vals in field.items() -%}
-    {% if vals['field_type'] == 'select_list' -%}
+    {% if vals['field_type'] == 'select_list' %}
 
     if request.args.get('{{ vals["name"] }}') in {{ vals['name'] }}_types:
         {{ vals['name'] }} = request.args.get("{{ vals['name']|e }}")
