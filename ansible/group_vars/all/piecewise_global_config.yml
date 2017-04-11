@@ -15,16 +15,16 @@ project_name: piecewise
 
 # Information about the fork and branch to deploy.
 # Specify any valid git remote (typically a github username)
-remote: https://github.com/critzo
+remote: https://github.com/opentechinstitute
 
 # Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
 # pushed to the remote git_repo before it can be deployed.
-piecewise_commit: template-form-fields
+piecewise_commit: master
 
 git_repo: "{{ remote }}/{{ project_name }}.git"
 
 # BigQuery Project Number to use
-bigquery_project_num: mlab-sandbox
+bigquery_project_num: <your big query project number or name>
 
 # Your Postgres database name and user can be customized if necessary.  
 database_name: piecewise
@@ -40,7 +40,7 @@ database_user_group: postgres
 #
 # For production installs we usually use the server's fqdn once we have it configured
 # in DNS.  
-site_fqdn: "104.197.237.109"
+site_fqdn: ""
 
 # The variables below will be used to generate SSL certificates. When deploying to 
 # development hosts, the country, state and city are used by open SSL to generate a 
@@ -51,11 +51,11 @@ site_fqdn: "104.197.237.109"
 # When deploying to a production host. The site_contact and the site_fqdn variables are 
 # used by EFF's certbot tool to automate the request for valid SSL certificates from 
 # the LetsEncrypt CA.
-site_contact: critzo@opentechinstitute.org
-site_country: US
-site_state: District of Columbia
-site_city: Washington
-site_ou: OTI
+site_contact: <your email address>
+site_country: <your country>
+site_state: <your state>
+site_city: <your city>
+site_ou: <your organization name>
 
 # Path for self-signed certificates to be used in development deployments
 self_signed_ssl_cert_path: /etc/ssl/certs/selfsigned.{{ site_fqdn }}.cert
