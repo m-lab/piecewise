@@ -64,7 +64,6 @@
   template:
     src: "templates/nginx_development_default.j2"
     dest: /etc/nginx/sites-available/default
-    force: yes
   when: 
     - env == "development"
 
@@ -72,7 +71,6 @@
   template:
     src: "templates/nginx_production_default.j2"
     dest: /etc/nginx/sites-available/default
-    force: yes
   when: 
     - env == "production"
 

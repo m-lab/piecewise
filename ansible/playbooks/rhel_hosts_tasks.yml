@@ -81,19 +81,16 @@
 - name: Deploy Uwsgi service configuration file for RHEL 7 / Centos systems
   copy:
     src: "files/rhel7/lib/systemd/system/uwsgi.service"
-    dest: /lib/systemd/system/
+    dest: /etc/systemd/system/
     owner: root
     group: root
 
 - name: Deploy Uwsgi ini configuration files for RHEL 7 / Centos systems
   copy:
-    src: "{{ item }}"
+    src: "files/rhel7/etc/uwsgi.d/"
     dest: /etc/uwsgi.d/
     owner: root
     group: root
-  with_items:
-    - "files/rhel7/etc/uwsgi.d/collector.ini"
-    - "files/rhel7/etc/uwsgi.d/piecewise.ini"
 
 ## NGINX configs for RHEL 7
 - name: Deploy standard Nginx conf file, replacing the default
@@ -102,13 +99,11 @@
     dest: /etc/nginx/nginx.conf
     owner: root
     group: root
-    force: yes
 
 - name: For RHEL 7 development systems, create the nginx default site for Piecewise
   template:
     src: "templates/nginx_development_default.j2"
     dest: /etc/nginx/conf.d/default.conf
-    force: yes
   when: 
     - env == "development"
 
@@ -116,6 +111,5 @@
   template:
     src: "templates/nginx_production_default.j2"
     dest: /etc/nginx/conf.d/default.conf
-    force: yes
   when: 
     - env == "production"
