@@ -15,7 +15,7 @@ project_name: piecewise
 
 # Information about the fork and branch to deploy.
 # Specify any valid git remote (typically a github username)
-remote: https://github.com/critzo
+remote: https://github.com/opentechinstitute
 
 # Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
 # pushed to the remote git_repo before it can be deployed.
@@ -24,7 +24,7 @@ piecewise_commit: master
 git_repo: "{{ remote }}/{{ project_name }}.git"
 
 # BigQuery Project Number to use
-bigquery_project_num: mlab-sandbox
+bigquery_project_num: <your big query project number or name>
 
 # Your Postgres database name and user can be customized if necessary.  
 database_name: piecewise
@@ -40,7 +40,7 @@ database_user_group: postgres
 #
 # For production installs we usually use the server's fqdn once we have it configured
 # in DNS.  
-site_fqdn: "104.197.237.109"
+site_fqdn: ""
 
 # The variables below will be used to generate SSL certificates. When deploying to 
 # development hosts, the country, state and city are used by open SSL to generate a 
@@ -51,11 +51,11 @@ site_fqdn: "104.197.237.109"
 # When deploying to a production host. The site_contact and the site_fqdn variables are 
 # used by EFF's certbot tool to automate the request for valid SSL certificates from 
 # the LetsEncrypt CA.
-site_contact: critzo@opentechinstitute.org
-site_country: US
-site_state: District of Columbia
-site_city: Washington
-site_ou: OTI
+site_contact: <your email address>
+site_country: <your country>
+site_state: <your state>
+site_city: <your city>
+site_ou: <your organization name>
 
 # Path for self-signed certificates to be used in development deployments
 self_signed_ssl_cert_path: /etc/ssl/certs/selfsigned.{{ site_fqdn }}.cert
@@ -208,6 +208,98 @@ mapscript_month_names:
   12: Dec
 
 ###
+# WEBSITE FORM CUSTOMIZATIONS
+#
+# The section below allows you to customize the HTML form preceding the test
+
+form_fields:
+  1:
+    isp_user:
+      field_type: select_list
+      db_type: String
+      name: isp_user
+      id: isp_user
+      text: "Who is your Internet Serice Provider?"
+      options:
+        1:
+          default: "------"
+        2:
+          comcast: "Comcast"
+        3:
+          centurylink: "CenturyLink"
+        4:
+          wave: "Wave"
+        5:
+          other: "Other"
+      required: yes
+  2:
+    other_isp:
+      field_type: text
+      db_type: String
+      name: other_isp
+      id: other_isp
+      text: "If your ISP is not listed, please enter it here: " 
+      required: no
+  3:
+    connection_type:
+      field_type: select_list
+      db_type: String
+      name: connection_type
+      id: connection_type
+      text: "How do you connect to the Internet?"
+      options:
+        1:
+          default: "------"
+        2:
+          wired: "Wired connection"
+        3:
+          wireless_single: "Wireless connection - 1 device"
+        4:
+          wireless_multiple: "Wireless connection - shared among multiple devices or households"
+      required: yes
+  4:
+    cost_of_service:
+      field_type: select_list
+      db_type: String
+      name: cost_of_service
+      id: cost_of_service
+      text: "How much do you pay, per month?"
+      options: 
+        1:
+          default: "------"
+        2:
+          less_than_25: "Less than $25"
+        3:
+          bet_25_50: "$25-$50"
+        4:
+          bet_50_75: "$50-$75"
+        5:
+          bet_75_100: "$75-$100"
+        6:
+          above_100: "$100 +"
+        7:
+          dont_know: "Don't know"
+      required: yes
+  5:
+    advertised_download:
+      field_type: text
+      db_type: Integer
+      name: advertised_download
+      id: advertised_download
+      text: "What is your advertised download speed?"
+      size: 3
+      required: no
+  6:
+    advertised_upload:
+      field_type: text
+      db_type: Integer
+      name: advertised_upload
+      id: advertised_upload
+      text: "What is your advertised upload speed?"
+      size: 3
+      required: no
+
+###
 # WEBSITE TEXT CUSTOMIZATIONS
 #
 # The section below allows you to customize various text and other elements of the website
@@ -218,15 +310,15 @@ site_name: "Seattle Broadband Map"
 # 'intro_text' defines the heading text that precedes the HTML survey form, provided to users
 # before they may take the test.
 intro_text: >
-  "The City of Seattle is collecting information from residents about broadband 
+  The City of Seattle is collecting information from residents about broadband 
   experiences across the City. To contribute, please answer the following 
-  questions and then take our Broadband Speed Test:"
+  questions and then take our Broadband Speed Test:
 
 # 'consent_message' defines the message displayed next to the consent checkbox
 consent_message: >
-  'I understand that the data collected from this test will be anonymized and aggregated 
+  I understand that the data collected from this test will be anonymized and aggregated 
   for publication to the Broadband Map and 
-  <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.'
+  <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.
 
 # The variables below define the messages and labels provided to the user before and 
 # after the test.

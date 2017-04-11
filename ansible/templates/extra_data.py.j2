@@ -17,16 +17,17 @@ extra_data = Table('extra_data', metadata,
         Column('bigquery_key', String),
         Column('bigquery_test_id', String),
         Column('location', Geometry("Point", srid=4326)),
-        Column('isp', String),
-        Column('connection_type', String),
-        Column('advertised_download', Integer),
         Column('actual_download', Float),
-        Column('advertised_upload', Integer),
         Column('actual_upload', Float),
         Column('min_rtt', Integer),
-        Column('location_type', String),
-        Column('isp_user',String),
         Column('client_ip', BigInteger),
-        Column('cost_of_service', String))
+        Column('isp', String),
+        {% for item, field in form_fields.items() | sort -%}
+            {%- set num_fields = form_fields.items() | length -%}
+            {% for attr, vals in field.items() -%}
+            Column('{{ vals["name"] }}', {{ vals['db_type'] }}){%- if item < num_fields -%}, {% endif -%}
+            {% endfor -%}
+        {% endfor -%}
+        )
 metadata.drop_all()
 metadata.create_all()

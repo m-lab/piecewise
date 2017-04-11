@@ -179,8 +179,8 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   document.getElementById('extra-data').style.display = "block";
   document.getElementById('approx-loc').style.display = "none";
 
-  var child = document.getElementById('ndt');
-  document.getElementById('sidebar').removeChild(child);
+  // var child = document.getElementById('ndt');
+  // document.getElementById('sidebar').removeChild(child);
 };
 
 NDTmeter.prototype.onerror = function (error_message) {

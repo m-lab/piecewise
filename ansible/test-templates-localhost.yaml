@@ -1,0 +1,11 @@
+---
+# This playbook, when run using 'ansible/inventory/localhost' and passing the variable 'test_path',
+# allows a local developer to preview templated files to ensure output is as expected. 
+#
+# Run using the following command, customizing 'test_path' to a location on your machine where
+# templated output files should be saved.
+#
+# $ ansible-playbook -i ansible/inventory/localhost ansible/test-templates-localhost.yaml --extra-vars "test_path=/path/to/save/pw_templates"
+- hosts: all
+  tasks:
+    - include: playbooks/test_templates.yml

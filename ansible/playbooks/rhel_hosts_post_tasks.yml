@@ -1,5 +1,4 @@
 ---
-## Reload system daemons or services
 - name: Reload daemons for RHEL 7 / Centos systems
   service:
     name: "{{ item }}"

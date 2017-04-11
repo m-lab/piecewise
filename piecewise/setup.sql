@@ -43,5 +43,5 @@ CREATE TABLE maxmind (
     label varchar);
 CREATE INDEX maxmind_ip_range_idx ON maxmind USING GIST (ip_range);
 
-COPY maxmind (ip_low, ip_high, label) FROM '/tmp/GeoIPASNum2.csv' WITH (FORMAT csv, HEADER false, encoding 'latin1');
+COPY maxmind (ip_low, ip_high, label) FROM '/opt/GeoIPASNum2.csv' WITH (FORMAT csv, HEADER false, encoding 'latin1');
 UPDATE maxmind SET ip_range = int8range(ip_low, ip_high);
