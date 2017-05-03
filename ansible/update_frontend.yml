@@ -19,7 +19,7 @@
         
         Type ctrl-c, then select C to continue or A to abort the playbook.
 
-  - name: Deploy Piecewise Python web front-end
+  - name: Deploy Piecewise web front-end
     copy:
       src: "../piecewise_web"
       dest: "{{ base_path }}/"
