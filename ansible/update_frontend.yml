@@ -1,0 +1,50 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+
+  tasks:
+  - pause:
+      prompt: |
+        This playbook will update the following files:
+        - piecewise_web/*
+
+        And re-template:
+        - index.html
+        - js/center.js
+        
+        If you are adding new form fields or updating existing ones, 
+        you must also run update_backend.yml to update the Piecewise 
+        database backend.
+        
+        Type ctrl-c, then select C to continue or A to abort the playbook.
+
+  - name: Fetch updated piecewise repo
+    git: 
+      repo: https://github.com/opentechinstitute/piecewise.git 
+      dest: /opt/piecewise.git/
+      version: master
+
+  - name: Deploy updated piecewise website code
+    file:
+      src: /opt/piecewise.git/piecewise_web
+      dest: /opt/piecewise_web
+
+  - name: Update the map center
+    template:
+      src: "templates/map_center.js.j2"
+      dest: "{{ site_path }}/js/center.js"
+
+  - name: Update site index page
+    template:
+      src: "templates/index.html.j2"
+      dest: "{{ site_path }}/index.html"
+
+  - name: Restart services
+    service: 
+      name: "{{ item }}"
+      state: restarted
+    with_items: 
+      - uwsgi
+      - nginx
+      

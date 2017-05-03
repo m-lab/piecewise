@@ -15,10 +15,9 @@
     version: "{{ piecewise_commit }}"
 
 - name: Deploy Piecewise
-  file:
+  copy:
     src: "{{ base_path }}/{{ project_name }}.git/{{ item }}"
     dest: "{{ base_path }}/{{ item }}"
-    state: link
   with_items:
     - piecewise
     - piecewise_web
