@@ -219,7 +219,7 @@ form_fields:
       db_type: String
       name: isp_user
       id: isp_user
-      text: "Who is your Internet Serice Provider?"
+      text: "Who is your Internet Service Provider?"
       options:
         1:
           default: "------"
