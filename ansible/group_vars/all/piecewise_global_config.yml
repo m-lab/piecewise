@@ -332,8 +332,8 @@ rtt_result_label: "Minimum Round Trip Time:"
 rtt_result_unit: "ms"
 thank_you_heading: "Thank you!"
 thank_you_message: >
-  "Your test results will be combined with others and will appear on the map 
-  at the end of the month."
+  Your test results will be combined with others and will appear on the map 
+  at the end of the month.
 
 # 'next_action_' variables define the action items present to the user after they run the test.
 next_action_message: "What do you want to do next?"
