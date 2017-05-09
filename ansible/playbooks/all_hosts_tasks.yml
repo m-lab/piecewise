@@ -14,15 +14,20 @@
     dest: "{{ base_path }}/piecewise.git"
     version: "{{ piecewise_commit }}"
 
-- name: Deploy Piecewise
-  file:
-    src: "{{ base_path }}/{{ project_name }}.git/{{ item }}"
-    dest: "{{ base_path }}/{{ item }}"
-    state: link
-  with_items:
-    - piecewise
-    - piecewise_web
-    - collector
+- name: Deploy Piecewise Python code
+  copy:
+    src: "../piecewise"
+    dest: "{{ base_path }}/"
+
+- name: Deploy Piecewise Python web front-end
+  copy:
+    src: "../piecewise_web"
+    dest: "{{ base_path }}/"
+
+- name: Deploy Piecewise Python code
+  copy:
+    src: "../collector"
+    dest: "{{ base_path }}/"
 
 - name: Install required python modules for piecewise and telescope
   pip:
