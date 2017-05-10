@@ -24,7 +24,8 @@
 		<tr>
 			<th><a id="sort-id" href="/admin/?sort=id&order=asc">ID</a></th>
 			<th><a id="sort-verified" href="/admin/?sort=verified&order=desc">Verified</a></th>
-			<th><a id="sort-location_type" href="/admin/?sort=isp_user&order=desc">User Reported ISP</a></th>
+			<th><a id="sort-location_type" href="/admin/?sort=isp_user&order=desc">User Selected ISP</a></th>
+			<th><a id="sort-location_type" href="/admin/?sort=other_isp&order=desc">User Other Reported ISP</a></th>
 			<th><a id="sort-connection_type" href="/admin/?sort=connection_type&order=desc">Connection Type</a></th>
 			<th><a id="sort-advertised_download" href="/admin/?sort=advertised_download&order=desc">Advertised Download</a></th>
 			<th><a id="sort-advertised_upload" href="/admin/?sort=advertised_upload&order=desc">Advertised Upload</a></th>
@@ -49,6 +50,7 @@ var fields = [
 	'id',
 	'verified',
 	'isp_user',
+	'other_isp',
 	'connection_type',
 	'advertised_download',
 	'advertised_upload',
