@@ -54,7 +54,7 @@ server {
 	location /collector/retrieve {
 		try_files $uri @collector;
 		auth_basic "Custom Data";
-		auth_basic_user_file {{base_path}}/piecewise.git/htpasswd;
+		auth_basic_user_file {{base_path}}/piecewise/htpasswd;
 	}
 
 	location / {
@@ -68,7 +68,7 @@ server {
 
 	location /admin {
 		auth_basic "Custom Data Admin";
-		auth_basic_user_file {{base_path}}/piecewise.git/htpasswd;
+		auth_basic_user_file {{base_path}}/piecewise/htpasswd;
 	}
 
 	# NOTE: replace domains below with vars
