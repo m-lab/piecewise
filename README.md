@@ -14,7 +14,17 @@ Piecewise code can be found on Github: [https://github.com/opentechinstitute/pie
 
 ## Get Started Documentation
 
-To get started with installing and configuring Piecewise, please review the links below to our current documentation. We suggest that you read all the documents in the order below.
+Piecewise can be installed and run on any Linux server or virtual machine. 
+The process of setting up a new Piecewise server involves:
+
+* Setting up a virtual machine or server
+* Creating required accounts
+* Forking Piecewise code to your Github account and cloning a copy on your local computer
+* Obtaining geographic information and data, and adding it to your local copy of Piecewise
+* Customizing Piecewise config files
+* Deploying customized code to your virtual machine or server
+* Post installation administration and management
+
 
 * [Installing Piecewise](docs/install.md)
 * [Setup external service accounts required to run Piecewise](service-accounts.md)
@@ -27,7 +37,7 @@ Additionally, [Advanced Piecewise Customization](docs/customizing-piecewise.md) 
 
 You can also learn more about [How Piecewise Works](docs/how-piecewise-works.md) and about the [statistics Piecewise generates](docs/piecewise-statistics.md)
 
-## Organization
+## Project Organization
 
 Piecewise contains the following Python modules:
 
@@ -46,10 +56,6 @@ Piecewise contains the following Python modules:
 Contributions from external developers are welcome.
 
 If you are a developer and are interested in contributing upstream to Piecewise, please review our [open issues](https://github.com/opentechinstitute/piecewise/issues) and [milestones](https://github.com/opentechinstitute/piecewise/milestones), and [contact us](mailto:support@opentechinstitute.org) for more information if needed. A more detailed roadmap for Piecewise is forthcoming.
-
-### Current Development Status (updated 4/28/2016)
-
-Our current goal is to develop existing and new features for Piecewise so that setting up a new instance is as siimple as cloning or forking the repository, followed by running a setup script. Please see the issues for the [refactor milestone](https://github.com/opentechinstitute/piecewise/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22Refactor+for+generalized+instantiation%22) on Github.
 
 ### Guidelines for External Contributors
 

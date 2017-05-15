@@ -1,121 +1,160 @@
-#######
-# PIECEWISE SYSTEM CONFIGURATION
-#######
-
-# Certain tasks may operate in a less secure (but more convenient) manner, eg.
-# enabling passwordless sudo or generating self-signed ssl certs, when testing
-# locally, in Vagrant. But not in production!
+#####################################
+# 1. PIECEWISE SYSTEM CONFIGURATION #
+#####################################
 #
-# Supported values: production, development
+# In this section you will update variables that configure the Piecewise application
+# for the remote VM or server.
+#
+
 env: development
+# env   Instructs Ansible whether this is a server/VM in development or in production.
+#
+#       Supported values: production, development
+#
+#       Use development if you only have an IP address for your server/VM.
+#       Use production if you have configured DNS to provide a domain name for your server/VM.
+#
 
-# The project name should be the name of your forked repository.
-# This var is referenced by a few other vars, eg. git_repo, hostname, site_fqdn.
 project_name: piecewise
+# project_name  
+#       The name of your forked repository. This is likely 'piecewise', unless you have renamed
+#       the repository after forking it from https://github.com/opentechinsstute.org/piecewise
+# TO DO: may no longer be needed. confirm.
 
-# Information about the fork and branch to deploy.
-# Specify any valid git remote (typically a github username)
 remote: https://github.com/opentechinstitute
+# remote  
+#       The URL where your repository is available. You can use any valid git remote. 
+#       For example: https://github.com/opentechinstitute 
+# TO DO: may no longer be needed. confirm.
 
-# Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
-# pushed to the remote git_repo before it can be deployed.
 piecewise_commit: master
+# piecewise_commit
+#       Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be
+#       pushed to the remote git_repo before it can be deployed.
+# TO DO: may no longer be needed. confirm.
 
 git_repo: "{{ remote }}/{{ project_name }}.git"
+# TO DO: may no longer be needed. confirm.
 
-# BigQuery Project Number or Project Name
 bigquery_project_num: 
+# bigquery_project_num
+#       The BigQuery Project Number or Project Name from your project details in the
+#       Google Cloud Console at https://console.cloud.google.com
+#       This can be the numeric project number or the project name text.
 
-# Your Postgres database name and user can be customized if necessary.  
 database_name: piecewise
 database_user: postgres
 database_user_group: postgres
+#       These variables define the Postgres database name, user and system group for  
+#       the database user. These can be safely left as the default, unless you desire to 
+#       change them.  
 
-# site_fqdn should contain either: 
-#   - the fully qualified domain name of your production server 
-#   - the IP address of your development or production server
+site_fqdn: 
+# site_fqdn 
+#       FQDN stands for Fully Qualified Domain Name. 
+#       This value should contain either:
+#       - the domain name of your production server, ie: www.mywebsite.com
+#       - the IP address of your development or production server, ie: 111.222.333.444
 #
-# Typically we use IP address for development, either on a server/VM on our LAN
-# or a development server/VM on a cloud service like Linode, GCE, Amazon, etc. 
+#       Use an IP address for development, either on a server/VM on our LAN or a 
+#       development server/VM on a cloud service like Linode, GCE, Amazon, etc. 
 #
-# For production installs we usually use the server's fqdn once we have it configured
-# in DNS.  
-site_fqdn: <IP or domain name>
+#       Once you have the server's domain name in DNS working, you can use it.
 
-# The variables below will be used to generate SSL certificates. When deploying to 
-# development hosts, the country, state and city are used by open SSL to generate a 
-# self-signed certificate. This is useful when you don't have an DNS name set up yet 
-# and want to deploy using the host's IP address, or to a server not accessible to 
-# the Internet. 
-#
-# When deploying to a production host. The site_contact and the site_fqdn variables are 
-# used by EFF's certbot tool to automate the request for valid SSL certificates from 
-# the LetsEncrypt CA.
-site_contact: <email@your.org.com>
-site_country: <two letter county>
-site_state: <name of your state>
-site_city: <name of your city>
-site_ou: <name of your organization>
+#-------------------------------------------->>
 
-# Path for self-signed certificates to be used in development deployments
+########################
+# 1.1 SSL CERTIFICATES #
+########################
+# The variables in this section will be used to generate SSL certificates. When 
+# deploying to development hosts, the country, state and city are used by openssl to
+# generate a self-signed certificate. This is useful when you don't have an DNS name
+# set up yet and want to deploy using the host's IP address, or to a server not
+# accessible to the Internet.
+#
+
+site_contact: email@your.org.com
+site_country: two letter county
+site_state: name of your state
+site_city: name of your city
+site_ou: name of your organization
+# site_contact    These variables are provided to enable automatic generation of 
+#     _country    SSL certificates, either self-signed for development hosts or
+#     ...         valid certificates through the Let's Encrypt CA for production hosts.
+
 self_signed_ssl_cert_path: /etc/ssl/certs/selfsigned.{{ site_fqdn }}.cert
 self_signed_ssl_key_path: /etc/ssl/private/selfsigned.{{ site_fqdn }}.key
+# When env = 'development', these variables set the directory on the 
+# server/VM where self-signed SSL certificates will be saved. 
+# In most cases you will not need to change these values from the default.
 
-# If we're deploying to production, we'll use LetsEncrypt certs instead. 
-letsencrypt_ssl_cert_path: /etc/letsencrypt/live/{{ site_fqdn }}/fullchain.pem
 letsencrypt_ssl_key_path: /etc/letsencrypt/live/{{ site_fqdn }}/privkey.pem
+# When env = 'production', these variables set the directory on the 
+# server/VM where Let's Encrypt SSL certificates will be saved.
+# In most cases you will not need to change these values from the default.
 
-########
-# DEPLOYMENT FILE LOCATIONS
-########
+#################################
+# 1.2 DEPLOYMENT FILE LOCATIONS #
+#################################
+# The variables in this section determine where specific components will be deployed on
+# the remote sytem. These can be largely unchanged, unless your system requires 
+# different paths.
 
-# These paths specify where specific components will be deployed. 
-# These can be largely unchanged, unless your system requires different paths.
-
-# Where the base files from your repo will be copied on the remote server.
 base_path: /opt
+# Where the base files from your repo will be copied on the remote server.
 
-# Temporary location where the Git repo will be cloned and the build scripts
-# will be run before going live.
 temp_path: "{{ base_path }}/tmp"
+# Temporary location on the remote server where files may be extracted temporarily.
+# TO DO: may no longer be needed. confirm.
 
-# Where the production site symlink will exist.
 site_path: "{{ base_path }}/piecewise_web"
+# Where the website files should be on the server.
 
-########
-# MAPPING & AGGREGATION CUSTOMIZATIONS
-########
+#-------------------------------------------->>
 
-###
-# Geodata and Database Information
-#
+###########################################
+# 2. MAPPING & AGGREGATION CUSTOMIZATIONS #
+###########################################
+# The variables in this section define the geographic information needed by the Piecwise
+# server backend. They also define the regions to use to calculate aggregate statistics
+# for M-Lab data submitted.
+
+########################################
+# 2.1 Geodata and Database Information #
+########################################
 # The section below defines variables used to import your geodata into the database.
-
+# 
+# The values you set here assume you have located shapefiles for your region.
+# You will need the filenames and knowledge of the field names and datatypes in the
+# shapefiles for these variables.
+#
 # Save the geofiles you intend to use for your Piecewise aggregations of
 # M-Lab data in the folder: /local_customizations/geofiles/
 
-# Add the name of the shapefile file to be used.
 shape_file: CENSUS10_blkgrp_WGS.shp
+# shape_file  The filename of the shapefile Piecewise should use for your aggregations.
 
-# The variables below are used when importing your shapefile into postgres.
-#
-# 'dbKey' should be the field name of the unique key in your shape file.
-# 'dbKeyDataType' should be the data type of dbKey
-# 'shape_projection' specifies the SRS reprojection/transform to use for this shapefile.
-# 'geometry_type' specifies the geometry type for this layer
-# 'layer_name' is the name you wish to be used for this shapefile layer in postgres
 dbKey: geoid10
 dbKeyDataType: string
 shape_projection: "EPSG:4326"
 geometry_type: MultiPolygon
 layer_name: seattle_blkgrpce10
-
-# The variables below define the aggregation name and table name for aggregate statistics
 aggregation_name: "by_census_block"
 aggregation_stats_table_name: "block_statistics"
+# dbKey             The field name of the unique key in your shape file.
+# dbKeyDataType     The data type of dbKey.
+# shape_projection  The SRS reprojection/transform to use for this shapefile.
+# geometry_type     The geometry type for this layer
+# layer_name        The name you wish to be used for this shapefile layer in postgres.
+# aggregation_name  The name you wish to use to name this aggregation
+# aggregation_stats_table_name    The table name to use for aggregate statistics.
 
-# Define the latitude and longitude for the southwest and northeast corners of a bounding 
-# box, defining the region where you are interested in pulling M-Lab NDT data.
+##############################################
+# 2.2 Geographic Coordinates and Date Ranges #
+##############################################
+# Variables in this section define the geographic area and date range you would
+# like to use in this Piecewise server. 
+
 map_coordinate_southwest: 
   lat: 47.3630134401
   lon: -122.6733398438
@@ -123,73 +162,80 @@ map_coordinate_southwest:
 map_coordinate_northeast: 
   lat: 47.8076208172
   lon: -121.9509887695
-
-# The four variable below are derived from your bounding box coordinates above.
+# The coordinates above define the latitude and longitude for the southwest and 
+# northeast corners of a bounding box, defining the region from which you are 
+# interested in pulling M-Lab NDT data.
+#
+# These four variables are used to format the variable map_bounding_box below. 
 map_bounding_box: "{{ map_coordinate_southwest.lon }},{{ map_coordinate_southwest.lat }},{{ map_coordinate_northeast.lon }},{{ map_coordinate_northeast.lat }}"
+# You do not need to edit the value for map_bounding_box.
 
-# The two dates below define the date range for M-Lab NDT test data. 
-#
-# For a production server deployment, it is advisable to set 'map_data_data_end_date'
-# to a date well in the future, for example: "Dec 31 2050 00:00:00".
-#
-# During development, we usually set a smaller date range to enable faster ingesting
-# of M-Lab data during the final steps of deployment.
 map_data_start_date: "Jan 1 2017 00:00:00"
 map_data_end_date: "Mar 13 2017 00:00:00"
-
-###
-# WEBSITE MAP INFORMATION
+# map_data_start_date   The range of dates for your server to get M-Lab NDT test data.
+# map_data_end_date
 #
-# The section below defines variables to be used on the website map.
+# During development, we usually set a smaller date range to enable faster ingesting
+# of M-Lab data to test the application.
+#
+# For a production server, it is advisable to set 'map_data_data_end_date'
+# to a date well in the future, for example: "Dec 31 2050 00:00:00".
 
-# Piecewise requires a topojson file for the website to use. This topojson file must
-# be created from the shapefile you defined above. 
-# Save your topojson file into the folder /local_customizations/geofiles
-# and then enter its filename here.
+#-------------------------------------------->>
+
+############################
+# 3. WEBSITE CUSTOMIZATION #
+############################
+# The section below defines variables to be used on the website.
+
+######################################
+# 3.1 Website Geographic Information #
+######################################
+
 topojson_file: seattle_census10_blockgroups.topojson
+# topojson_file   The file name of a topojson format geo file that is 
+#                 - created using the shapefile defined above
+#                 - saved in the folder /local_customizations/geofiles/ 
 
-# 'geoKey' is the field name in your topojson file which corresponds to the unique key 
-# in your shapefile, and is typically the same as dbKey, but in CAPITAL LETTERS.
 geoKey: GEOID10
+# geoKey    The field name in your topojson file which corresponds to the unique key 
+#           in your shapefile. 
+#           This is typically the same as dbKey, but in CAPITAL LETTERS.
 
-# 'mapscript_start_year' is the first year you are interested in showing in the year dropdown
-# 'mapscript_start_month' lets you define the order of months in the UI.
 mapscript_start_year: 2016
 mapscript_start_month: 1
+# mapscript_start_year  The first year that should be displayed in the 'year' dropdown.
+# mapscript_start_month Define the start month in the timeline.
 
-# 'mapscript_base_layer' defines the type of base layer to be used on the map.
-# Either Mapbox.com or OpenStreetMaps base layers are supported. 
-#
-# Set mapscript_base_layer to either: 'mapbox' OR 'osm'
 mapscript_base_layer: osm
+# mapscript_base_layer  Defines the type of base layer to be used on the map.
+#                       Either Mapbox.com or OpenStreetMaps base layers are supported. 
+#                       Set mapscript_base_layer to either: 'mapbox' OR 'osm'
 
-# If you would like to customize the OSM base layer API url, for example if you
-# are hosting custom maps and tiles on your own tile server, update the variable below.
-# The default OSM url is provided.
 mapscript_osm_api_url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-
-# If you are using a Mapbox base layer, set the API URL for your Mapbox tiles here.
 mapscript_mapbox_api_url: ""
+# If you would like to customize the OSM base layer API url, for example if you
+# are hosting custom maps and tiles on your own tile server, update mapscript_osm_api_url.
+# The default OSM url is provided.
 
-# 'mapscript_min_data_points' allows you to set a minimum number of tests which must be 
-# present in any aggregate area defined by your shapefile in order to be displayed on the 
-# aggregate website map. 
+# If you are using a Mapbox base layer, set the API URL for your Mapbox tiles above.
+
 mapscript_min_data_points: 5
+# Sets the minimum number of tests which must be present in any aggregate area defined by
+# your shapefile in order to be displayed on the aggregate website map.
 
-# 'mapscript_zoom_level' sets the initial zoom level for the map
 mapscript_zoom_level: 11
+# Sets the initial zoom level for the map display.
 
-# These variables name the map layers on the website. 'mapscript_layer_name' is used as 
-# a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
-# UI if the layer controls are displayed for the user. By default, Piecewise will deploy
-# with one layer, and will not show the layer controls.
 mapscript_layer_name: "census_block_groups"
 mapscript_layer_name_pretty: "Census block groups"
+# These variables name the map layers on the website. 'mapscript_layer_name' is used as 
+# a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
+# UI if the layer controls are displayed for the user.
 
-# In the future, support for other types of geo data, such as the geojson format may be
-# included in Piecewise. Currently, the mapscript json type should always be 'topojson'. 
 mapscript_json_type: "topojson"
-
+# In the future, support for other types of geodata, such as the geojson format may be
+# included in Piecewise. Currently, the mapscript json type should always be 'topojson'. 
 
 # This dictionary of month names/abbreviations lets you configure how month names appear 
 # on the website map controls. 
@@ -207,10 +253,62 @@ mapscript_month_names:
   11: Nov
   12: Dec
 
-###
-# WEBSITE FORM CUSTOMIZATIONS
+####################
+# 3.2 Website Form #
+####################
+# The section below allows you to customize the HTML form preceding the test.
+# These values are used to create the HTML form on the webpage, and to set up the
+# fields in a database table where submissions are stored. 
+
+# Select lists and text fields are the only types of HTML form elements 
+# currently supported. For each type of field, all values are required to be present.
+# For example the field definition below is missing db_type and is incorrect:
+#    5:
+#     advertised_download:
+#        field_type: text
+#        name: advertised_download
+#        id: advertised_download
+#        text: "What is your advertised download speed?"
+#        size: 3
+#        required: no
+
+# Each form field is defined by a nested YAML dictionary structure. 
+# Use the structure provided, and change only the values. For example:
 #
-# The section below allows you to customize the HTML form preceding the test
+#  1:
+#    isp_user:
+#      field_type: select_list
+#      db_type: String
+#      name: isp_user
+#      id: isp_user
+#      text: "Select your ISP"
+#      options:
+#        1:
+#          default: "------"
+#        2:
+#          verizon: "Verizon"
+#        3:
+#          att: "AT&amp;T"
+#        4:
+#          comcast: "Comcast"
+#        5:
+#          tmobile: "T-Mobile"
+#        6:
+#          other: "Other"
+#     required: yes
+# 
+
+# Fields are rendered in the order they appear here. Use the first numeric index
+# after 'form_fields:' to arrange the order of fields. For example, to reverse the
+# display of download and upload speed fields:
+# 
+# form_fields:
+#   ... 
+#   5:
+#     advertised_upload:
+#     ...
+#   6:
+#     advertised_download:
 
 form_fields:
   1:
@@ -299,26 +397,26 @@ form_fields:
       size: 3
       required: no
 
-###
-# WEBSITE TEXT CUSTOMIZATIONS
-#
-# The section below allows you to customize various text and other elements of the website
+####################
+# 3.3 Website Text #
+####################
+# The section below allows you to customize various text and other elements of the website.
 
-# 'site_name' is used as the HTML page title element
 site_name: "Seattle Broadband Map"
+# Defines the HTML page title element
 
-# 'intro_text' defines the heading text that precedes the HTML survey form, provided to users
-# before they may take the test.
 intro_text: >
   The City of Seattle is collecting information from residents about broadband 
   experiences across the City. To contribute, please answer the following 
   questions and then take our Broadband Speed Test:
+# Defines the heading text that precedes the HTML survey form, provided to users
+# before they may take the test.
 
-# 'consent_message' defines the message displayed next to the consent checkbox
 consent_message: >
   I understand that the data collected from this test will be anonymized and aggregated 
   for publication to the Broadband Map and 
   <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.
+# Defines the message displayed next to the consent checkbox.
 
 # The variables below define the messages and labels provided to the user before and 
 # after the test.
@@ -354,9 +452,9 @@ social_share_reddit: "http://reddit.com/submit?url=http://www.seattle.gov/broadb
 social_share_linkedin: "http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test"
 social_share_email: "mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test"
 
-# 'icon_' and 'mapview_icon_' variables define the text accompanying the icons in the user interface
+# 'icon_' and 'mapview_icon_' variables define the text accompanying the icons in the user interface.
 #
-# 'icon_' variables set the text values and '?' link accompanying icons on the initial map display
+# 'icon_' variables set the text values and '?' link accompanying icons on the initial map display.
 icon_test_label: "Take the Speed Test"
 icon_test_alt_text: "Take the Speed Test"
 icon_browse_label: "Browse the Broadband Map"
@@ -374,3 +472,4 @@ mapview_icon_learn_link: "http://www.seattle.gov/broadband/broadband-speed-test/
 # They should remain unchanged for now. More work on positioning for Leaflet elements will follow.
 mapcontrols_zoom_pos: topright
 mapcontrols_legend_pos: bottomleft
+#-------------------------------------------->>
