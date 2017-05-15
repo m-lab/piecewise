@@ -17,23 +17,15 @@ Piecewise code can be found on Github: [https://github.com/opentechinstitute/pie
 Piecewise can be installed and run on any Linux server or virtual machine. 
 The process of setting up a new Piecewise server involves:
 
-* Setting up a virtual machine or server
-* Creating required accounts
-* Forking Piecewise code to your Github account and cloning a copy on your local computer
-* Obtaining geographic information and data, and adding it to your local copy of Piecewise
-* Customizing Piecewise config files
-* Deploying customized code to your virtual machine or server
-* Post installation administration and management
-
-
-* [Installing Piecewise](docs/install.md)
-* [Setup external service accounts required to run Piecewise](service-accounts.md)
-* [Configuring your instance for your location](docs/config.md)
-* [Deploying your Piecewise instance](docs/deploy.md)
-* [Post installation tasks and ongoing maintenance/administration](post-install-and-administration.md)
-
-
-Additionally, [Advanced Piecewise Customization](docs/customizing-piecewise.md) covers how to customize additional components of the Piecewise application in greater detail.
+* [Server/VM System Requirements and Accounts Setup](docs/system-requirements.md)
+  * Setting up a virtual machine or server
+  * Creating required accounts
+  * Forking Piecewise code to your Github account and cloning a copy on your local computer
+* [Configuring/Customizing Piecewise Code](docs/config.md)
+  * Obtaining geographic information and data, and adding it to your local copy of Piecewise
+  * Customizing Piecewise config files
+* [Deploying Piecewise](docs/deploy.md)
+* [Post installation administration and management](post-install-and-administration.md)
 
 You can also learn more about [How Piecewise Works](docs/how-piecewise-works.md) and about the [statistics Piecewise generates](docs/piecewise-statistics.md)
 
