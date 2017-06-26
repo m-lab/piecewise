@@ -127,7 +127,8 @@ Throughout the Piecewise global configuration file, a comment is provided for ea
 * In some cases a group of fields is listed with required following them, all variables listed are required.
 * For your convenience, a list of all required fields is provided below in the order they appear in the Piecewise global configuration file.
 
-|| Variable || Required/Default || Description ||
+| Variable | Required/Default | Description |
+| -------- | ---------------- | ----------- |
 | env: | !REQUIRED! | Instructs Ansible whether this is a server/VM in development or in production. Supported values: production, development |
 | project_name: | #DEFAULT# | The name of your forked repository. This is likely 'piecewise', unless you have renamed the repository after forking it from https://github.com/opentechinsstute.org/piecewise |
 | remote: | !REQUIRED! | The URL where your repository is available. You can use any valid git remote.|
