@@ -57,7 +57,7 @@ Once subscribed to M-Lab Discuss, **your account will be whitelisted to query th
 
 2. Clone your fork onto your local computer
 
-```$ git clone https://github.com/opentechinstitute/piecewise.git```
+```$ git clone https://github.com/<YOUR FORK>/piecewise.git```
 
 3. Change into the piecewise directory
 
