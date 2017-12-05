@@ -46,7 +46,7 @@ piecewise_commit: master
 git_repo: "{{ remote }}/{{ project_name }}.git"
 # TO DO: may no longer be needed. confirm.
 
-bigquery_project_num: 
+bigquery_project_num: 581276032543
 # !REQUIRED!
 #
 # bigquery_project_num
@@ -63,7 +63,7 @@ database_user_group: postgres
 #       the database user. These can be safely left as the default, unless you desire to 
 #       change them.
 
-site_fqdn: 
+site_fqdn: 35.192.50.48
 # !REQUIRED!
 #
 # site_fqdn 
@@ -89,11 +89,11 @@ site_fqdn:
 # accessible to the Internet.
 #
 
-site_contact: email@your.org.com
-site_country: two letter county
-site_state: name of your state
-site_city: name of your city
-site_ou: name of your organization
+site_contact: critzo@opentechinstitute.org
+site_country: US
+site_state: District of Columbia
+site_city: Washington
+site_ou: Open Technology Institute
 # !REQUIRED!
 #
 # site_contact    These variables are provided to enable automatic generation of 
@@ -159,18 +159,18 @@ site_path: "{{ base_path }}/piecewise_web"
 # Save the geofiles you intend to use for your Piecewise aggregations of
 # M-Lab data in the folder: /local_customizations/geofiles/
 
-shape_file: CENSUS10_blkgrp_WGS.shp
+shape_file: VEN_adm2-1.shp
 # !REQUIRED!
 #
 # shape_file  The filename of the shapefile Piecewise should use for your aggregations.
 
-dbKey: geoid10
+dbKey: id_2str
 dbKeyDataType: string
 shape_projection: "EPSG:4326"
 geometry_type: MultiPolygon
-layer_name: seattle_blkgrpce10
-aggregation_name: "by_census_block"
-aggregation_stats_table_name: "block_statistics"
+layer_name: venezuela_municipalities
+aggregation_name: "by_ven_muni"
+aggregation_stats_table_name: "ven_muni_stats"
 # !REQUIRED!
 #
 # dbKey             The field name of the unique key in your shape file.
@@ -188,13 +188,13 @@ aggregation_stats_table_name: "block_statistics"
 # like to use in this Piecewise server. 
 
 map_coordinate_southwest: 
-  lat: 47.3630134401
-  lon: -122.6733398438
+  lat: 0.6475291
+  lon: -73.3515581
 # !REQUIRED!
 #
 map_coordinate_northeast: 
-  lat: 47.8076208172
-  lon: -121.9509887695
+  lat: 12.6886
+  lon: -59.805666
 # !REQUIRED!
 #
 # The coordinates above define the latitude and longitude for the southwest and 
@@ -205,8 +205,8 @@ map_coordinate_northeast:
 map_bounding_box: "{{ map_coordinate_southwest.lon }},{{ map_coordinate_southwest.lat }},{{ map_coordinate_northeast.lon }},{{ map_coordinate_northeast.lat }}"
 # You do not need to edit the value for map_bounding_box.
 
-map_data_start_date: "Jan 1 2017 00:00:00"
-map_data_end_date: "Mar 13 2017 00:00:00"
+map_data_start_date: "Jan 1 2016 00:00:00"
+map_data_end_date: "Dec 31 2055 00:00:00"
 # !REQUIRED!
 #
 # map_data_start_date   The range of dates for your server to get M-Lab NDT test data.
@@ -229,14 +229,14 @@ map_data_end_date: "Mar 13 2017 00:00:00"
 # 3.1 Website Geographic Information #
 ######################################
 
-topojson_file: seattle_census10_blockgroups.topojson
+topojson_file: VEN_adm2-1.topojson
 # !REQUIRED!
 #
 # topojson_file   The file name of a topojson format geo file that is 
 #                 - created using the shapefile defined above
 #                 - saved in the folder /local_customizations/geofiles/ 
 
-geoKey: GEOID10
+geoKey: ID_2str
 # !REQUIRED!
 #
 # geoKey    The field name in your topojson file which corresponds to the unique key 
@@ -273,20 +273,20 @@ mapscript_min_data_points: 5
 # Sets the minimum number of tests which must be present in any aggregate area defined by
 # your shapefile in order to be displayed on the aggregate website map.
 
-mapscript_zoom_level: 11
+mapscript_zoom_level: 7
 # # DEFAULT #
 #
 # Sets the initial zoom level for the map display.
 
-mapscript_layer_name: "census_block_groups"
-mapscript_layer_name_pretty: "Census block groups"
+mapscript_layer_name: "venezuela_municipalities"
+mapscript_layer_name_pretty: "Venezuela Municipalities"
 # !REQUIRED!
 #
 # These variables name the map layers on the website. 'mapscript_layer_name' is used as 
 # a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
 # UI if the layer controls are displayed for the user.
 
-mapscript_json_type: "topojson"
+mapscript_json_type: "geojson"
 # # DEFAULT #
 #
 # In the future, support for other types of geodata, such as the geojson format may be
@@ -296,18 +296,18 @@ mapscript_json_type: "topojson"
 # on the website map controls. 
 # # DEFAULT #
 mapscript_month_names: 
-  1: Jan
-  2: Feb
-  3: Mar
-  4: Apr
-  5: May
-  6: Jun
-  7: Jul
-  8: Aug
-  9: Sep
-  10: Oct
-  11: Nov
-  12: Dec
+  1: enero
+  2: febrero
+  3: marzo
+  4: abril
+  5: mayo
+  6: junio
+  7: julio
+  8: agosto
+  9: septiembre
+  10: octubre
+  11: noviembre
+  12: diciembre
 
 ####################
 # 3.2 Website Form #
@@ -368,90 +368,70 @@ mapscript_month_names:
 
 form_fields:
   1:
-    isp_user:
-      field_type: select_list
+    nombre:
+      field_type: text
       db_type: String
-      name: isp_user
-      id: isp_user
-      text: "Who is your Internet Service Provider?"
-      options:
-        1:
-          default: "------"
-        2:
-          comcast: "Comcast"
-        3:
-          centurylink: "CenturyLink"
-        4:
-          wave: "Wave"
-        5:
-          other: "Other"
+      name: nombre
+      id: nombre
+      text: "Nombre: "
       required: yes
   2:
-    other_isp:
+    email:
       field_type: text
       db_type: String
-      name: other_isp
-      id: other_isp
-      text: "If your ISP is not listed, please enter it here: " 
-      required: no
+      name: email
+      id: email
+      text: "E-mail: " 
+      required: yes
   3:
-    connection_type:
-      field_type: select_list
+    pais:
+      field_type: text
       db_type: String
-      name: connection_type
-      id: connection_type
-      text: "How do you connect to the Internet?"
-      options:
-        1:
-          default: "------"
-        2:
-          wired: "Wired connection"
-        3:
-          wireless_single: "Wireless connection - 1 device"
-        4:
-          wireless_multiple: "Wireless connection - shared among multiple devices or households"
-      required: yes
+      name: pais
+      id: pais
+      text: "Pa&#237;s: " 
+      required: yes  
   4:
-    cost_of_service:
-      field_type: select_list
+    estado:
+      field_type: text
       db_type: String
-      name: cost_of_service
-      id: cost_of_service
-      text: "How much do you pay, per month?"
-      options: 
-        1:
-          default: "------"
-        2:
-          less_than_25: "Less than $25"
-        3:
-          bet_25_50: "$25-$50"
-        4:
-          bet_50_75: "$50-$75"
-        5:
-          bet_75_100: "$75-$100"
-        6:
-          above_100: "$100 +"
-        7:
-          dont_know: "Don't know"
-      required: yes
+      name: estado
+      id: estado
+      text: "Estado: " 
+      required: yes  
   5:
-    advertised_download:
+    ciudad:
       field_type: text
-      db_type: Integer
-      name: advertised_download
-      id: advertised_download
-      text: "What is your advertised download speed?"
-      size: 3
-      required: no
+      db_type: String
+      name: ciudad
+      id: ciudad
+      text: "Ciudad: " 
+      required: yes   
   6:
-    advertised_upload:
+    provider:
       field_type: text
-      db_type: Integer
-      name: advertised_upload
-      id: advertised_upload
-      text: "What is your advertised upload speed?"
-      size: 3
+      db_type: String
+      name: provider
+      id: provider
+      text: "Proveedor de servicio de internet: "
+      required: yes
+  7:
+    provider_plan:
+      field_type: text
+      db_type: String
+      name: provider_plan
+      id: provider_plan
+      text: "Plan de navegación contratado (si lo conoce): "
       required: no
+  8:
+    comments:
+      field_type: text
+      db_type: String
+      name: comments
+      id: comments
+      text: "Dudas y Comentarios: "
+      required: no
+
 # !REQUIRED!
 #
 
@@ -460,50 +440,61 @@ form_fields:
 ####################
 # The section below allows you to customize various text and other elements of the website.
 
-site_name: "Seattle Broadband Map"
+site_name: "Test de velocidad de IPYS"
 # #DEFAULT#
 #
 # Defines the HTML page title element
 
 intro_text: >
-  The City of Seattle is collecting information from residents about broadband 
-  experiences across the City. To contribute, please answer the following 
-  questions and then take our Broadband Speed Test:
+  Queremos que seas parte de nuestro equipo. S&#250;mate a nuestra de red de 
+  voluntarios y colabora nuestro proyecto Navegar con libertad.
+
+instructions_text: >
+  Estamos haciendo un registro colaborativo de la velocidad de Internet 
+  en Venezuela, que ofrecen los diversos proveedores. Tu aporte será muy
+  valioso para nosotros. Es f&#225;cil. Son solo 4 pasos.
+
+  Paso 1. Nuestro sitio le ha pedido que comparta su ubicaci&#243;n, haga clic 
+  en Permitir para proporcionar una mayor precisi&#243;n.<br>
+  Paso 2. Completa la informaci&#243;n requerida, aprieta el bot&#243;n de enviar resultados 
+  y comparte los resultados con nosotros.<br>
+  Paso 3. Ubicar la prueba de velocidad que aparece abajo de estas indicaciones.<br> 
+  Paso 4. Aprieta el bot&#243;n  “start test” (Este paso te puede tomar un par de minutos).
+   
 # #DEFAULT#
 #
 # Defines the heading text that precedes the HTML survey form, provided to users
 # before they may take the test.
 
 consent_message: >
-  I understand that the data collected from this test will be anonymized and aggregated 
-  for publication to the Broadband Map and 
-  <a href="https://data.seattle.gov" target="_blank">Data.Seattle.Gov</a>.
+  Entiendo que los datos recopilados de esta prueba se anonimizar&#225;n y agregar&#225;n para 
+  su publicaci&#243;n.
 # #DEFAULT#
 #
 # Defines the message displayed next to the consent checkbox.
 
 # The variables below define the messages and labels provided to the user before and 
 # after the test.
-run_test_heading: "Test your speed!"
-test_result_heading: "Your test results"
-download_result_label: "Download speed:"
+run_test_heading: "Pon a prueba tu velocidad!"
+test_result_heading: "Sus resultados de prueba"
+download_result_label: "Velocidad de Descarga:"
 download_result_unit: "Mbps"
-upload_result_label: "Upload speed:"
+upload_result_label: "Velocidad de carga:"
 upload_result_unit: "Mbps"
-rtt_result_label: "Minimum Round Trip Time:"
+rtt_result_label: "Tiempo m&#237;nimo de ida y vuelta:"
 rtt_result_unit: "ms"
-thank_you_heading: "Thank you!"
+thank_you_heading: "Gracias!"
 thank_you_message: >
-  Your test results will be combined with others and will appear on the map soon.
+  Los resultados de sus pruebas se combinar&#225;n con otros y aparecer&#225;n en el mapa pronto.
 # #DEFAULT#
 #
 
 # 'next_action_' variables define the action items present to the user after they run the test.
-next_action_message: "What do you want to do next?"
-next_action_show_map_text: "View all results to-date on a map of Seattle"
-next_action_learn_about_text: "Learn more about this test and how to improve your speed"
-next_action_learn_about_link: "https://www.seattle.gov/broadband-speed-test-about"
-next_action_social_share_text: "Share this test with your friends, colleagues, and neighbors"
+next_action_message: "Qu&#233; quieres hacer después?"
+next_action_show_map_text: "Ver todos los resultados hasta la fecha en un mapa de Venezuela"
+next_action_learn_about_text: "Aprenda m&#225;s sobre esta prueba y c&#243;mo mejorar su velocidad"
+next_action_learn_about_link: "http://ipysvenezuela.org/navegarconlibertad/"
+next_action_social_share_text: none
 # #DEFAULT#
 #
 
@@ -512,33 +503,33 @@ next_action_social_share_text: "Share this test with your friends, colleagues, a
 # If you set any of these to 'none', they will be excluded from the website.
 # If you don't want any social share options, set all of the items below to 'none'
 # and also set 'next_action_social_share_text' to 'none' (without quotes) above.
-social_share_twitter: "http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea"
-social_share_gplus: "https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test"
-social_share_facebook: "http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test"
-social_share_stumbleupon: "http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
-social_share_reddit: "http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
-social_share_linkedin: "http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test"
-social_share_email: "mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test"
+social_share_twitter: none #"http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea"
+social_share_gplus: none #"https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test"
+social_share_facebook: none #"http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test"
+social_share_stumbleupon: none #"http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
+social_share_reddit: none #"http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
+social_share_linkedin: none #"http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test"
+social_share_email: none #"mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test"
 # #DEFAULT#
 #
 
 # 'icon_' and 'mapview_icon_' variables define the text accompanying the icons in the user interface.
 #
 # 'icon_' variables set the text values and '?' link accompanying icons on the initial map display.
-icon_test_label: "Take the Speed Test"
-icon_test_alt_text: "Take the Speed Test"
-icon_browse_label: "Browse the Broadband Map"
-icon_browse_alt_text: "Browse the Broadband Map"
-icon_learn_label: "Learn More"
-icon_learn_alt_text: "Learn more about this test."
-icon_learn_link: "http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test"
+icon_test_label: "Toma la prueba de velocidad"
+icon_test_alt_text: "Toma la prueba de velocidad"
+icon_browse_label: "Navega por el mapa"
+icon_browse_alt_text: "Navega por el mapa"
+icon_learn_label: "Aprende m&#225;s"
+icon_learn_alt_text: "Aprenda m&#225;s sobre esta prueba."
+icon_learn_link: "http://ipysvenezuela.org/navegarconlibertad/"
 # #DEFAULT#
 #
 
 # 'mapview_icon_' variables set the text values and '?' link on the mapview display
-mapview_icon_test_alt_text: "Take the Speed Test"
-mapview_icon_learn_alt_text: "Learn more about this test."
-mapview_icon_learn_link: "http://www.seattle.gov/broadband/broadband-speed-test/about-the-broadband-speed-test"
+mapview_icon_test_alt_text: "Toma la prueba de velocidad"
+mapview_icon_learn_alt_text: "Aprenda m&#225;s sobre esta prueba."
+mapview_icon_learn_link: "http://ipysvenezuela.org/navegarconlibertad/"
 # #DEFAULT#
 #
 
