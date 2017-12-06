@@ -238,11 +238,13 @@ function getNdtServer () {
 	};
 };
 </script>
+
 <div id="map">
   <div id="mapview-icons">
   <a href="index.html" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}"><img src="images/speed.svg" id="mapview-test-icon" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}" /></a>
   <a href="{{ mapview_icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ mapview_icon_learn_alt_text }}" title="{{ mapview_icon_learn_alt_text }}" /></a>
 </div>
+
 <script>
   // This is the Piecewise mapping script.
 
@@ -292,7 +294,7 @@ function getNdtServer () {
     '{{ mapscript_layer_name }}': {
       'name': '{{ mapscript_layer_name_pretty }}',
       'polygonFile': 'geofiles/{{ topojson_file }}',
-      'dataUrl': 'stats/q/{{ aggregation_name }}?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=month&f.time_slices=',
+      'dataUrl': 'stats/q/{{ aggregation_name }}?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=year&f.time_slices=',
       'dbKey': '{{ dbKey }}',
       'geoKey': '{{ geoKey }}',
       'cache': null,
@@ -415,5 +417,6 @@ for (var geoLayer in geoLayers) {
   setupLayer(geoLayer);
 }
 </script>
+
 </body>
 </html>

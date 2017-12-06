@@ -267,7 +267,7 @@ mapscript_mapbox_api_url: ""
 
 # If you are using a Mapbox base layer, set the API URL for your Mapbox tiles above.
 
-mapscript_min_data_points: 5
+mapscript_min_data_points: 2
 # # DEFAULT #
 #
 # Sets the minimum number of tests which must be present in any aggregate area defined by
@@ -296,18 +296,20 @@ mapscript_json_type: "geojson"
 # on the website map controls. 
 # # DEFAULT #
 mapscript_month_names: 
-  1: enero
-  2: febrero
-  3: marzo
-  4: abril
-  5: mayo
-  6: junio
-  7: julio
-  8: agosto
-  9: septiembre
-  10: octubre
-  11: noviembre
-  12: diciembre
+   1: 2016
+   2: 2017
+#  1: enero
+#  2: febrero
+#  3: marzo
+#  4: abril
+#  5: mayo
+#  6: junio
+#  7: julio
+#  8: agosto
+#  9: septiembre
+#  10: octubre
+#  11: noviembre
+#  12: diciembre
 
 ####################
 # 3.2 Website Form #
@@ -452,14 +454,14 @@ intro_text: >
 instructions_text: >
   Estamos haciendo un registro colaborativo de la velocidad de Internet 
   en Venezuela, que ofrecen los diversos proveedores. Tu aporte será muy
-  valioso para nosotros. Es f&#225;cil. Son solo 4 pasos.
+  valioso para nosotros. Es f&#225;cil. Son solo 4 pasos.<br><br>
 
   Paso 1. Nuestro sitio le ha pedido que comparta su ubicaci&#243;n, haga clic 
   en Permitir para proporcionar una mayor precisi&#243;n.<br>
   Paso 2. Completa la informaci&#243;n requerida, aprieta el bot&#243;n de enviar resultados 
   y comparte los resultados con nosotros.<br>
   Paso 3. Ubicar la prueba de velocidad que aparece abajo de estas indicaciones.<br> 
-  Paso 4. Aprieta el bot&#243;n  “start test” (Este paso te puede tomar un par de minutos).
+  Paso 4. Haga clic en el botón "play" para iniciar la prueba (Este paso te puede tomar un par de minutos).
    
 # #DEFAULT#
 #
@@ -494,7 +496,7 @@ next_action_message: "Qu&#233; quieres hacer después?"
 next_action_show_map_text: "Ver todos los resultados hasta la fecha en un mapa de Venezuela"
 next_action_learn_about_text: "Aprenda m&#225;s sobre esta prueba y c&#243;mo mejorar su velocidad"
 next_action_learn_about_link: "http://ipysvenezuela.org/navegarconlibertad/"
-next_action_social_share_text: none
+next_action_social_share_text: "Compartir en las redes sociales"
 # #DEFAULT#
 #
 
@@ -503,9 +505,9 @@ next_action_social_share_text: none
 # If you set any of these to 'none', they will be excluded from the website.
 # If you don't want any social share options, set all of the items below to 'none'
 # and also set 'next_action_social_share_text' to 'none' (without quotes) above.
-social_share_twitter: none #"http://twitter.com/share?url=http://www.seattle.gov/broadband-speed-test&text=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&via=CivicTechSea"
+social_share_twitter: "http://twitter.com/share?url=http://ipysvenezuela.org/navegarconlibertad&text=Probé%20mi%20velocidad%20de%20Internet%20con%20la%20prueba%20de%20velocidad%20IPYS%20de%20M-Lab&via=ipysvenezuela"
 social_share_gplus: none #"https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test"
-social_share_facebook: none #"http://www.facebook.com/sharer/sharer.php?u=http://www.seattle.gov/broadband-speed-test"
+social_share_facebook: "http://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/IpysVenezuela/?fref=ts"
 social_share_stumbleupon: none #"http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
 social_share_reddit: none #"http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
 social_share_linkedin: none #"http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test"

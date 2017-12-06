@@ -22,16 +22,16 @@ function NDTmeter(body_element) {
   };
 
   this.NDT_STATUS_LABELS = {
-    'preparing_s2c': 'Preparing download',
-    'preparing_c2s': 'Preparing upload',
-    'running_s2c': 'Measuring download speed',
-    'running_c2s': 'Measuring upload speed',
-    'finished_s2c': 'Finished download',
-    'finished_c2s': 'Finished upload',
-    'preparing_meta': 'Preparing metadata',
-    'running_meta': 'Sending metadata',
-    'finished_meta': 'Finished metadata',
-    'finished_all': 'Test complete'
+    'preparing_s2c': 'Preparación de la prueba de descarga',
+    'preparing_c2s': 'Preparación de la prueba de carga',
+    'running_s2c': 'Medición de la velocidad de descarga',
+    'running_c2s': 'Medición de la velocidad de carga',
+    'finished_s2c': 'Prueba de descarga finalizadad',
+    'finished_c2s': 'Prueba de carga final',
+    'preparing_meta': 'Preparar metadatos',
+    'running_meta': 'Envío de metadatos',
+    'finished_meta': 'Metadatos finalizados',
+    'finished_all': 'Prueba completa'
   };
 
   this.create();

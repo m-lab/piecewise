@@ -22,7 +22,7 @@ function addLegend() {
 
 	legend.onAdd = function(map) {
 	    var div = L.DomUtil.create('div', 'info legend'),
-	        grades = [0, 5, 10, 25, 50];
+	        grades = [0, 1, 3, 5];
 
 	    var i;
 		div.innerHTML = '';
@@ -33,7 +33,7 @@ function addLegend() {
 				'&ndash;' + grades[i - 1] + ' Mbps<br/>' : '+ Mbps<br/>');
 	    }
 		div.innerHTML += '<i style="background: black; opacity: .2">' +
-		'</i>Insuff. data';
+		'</i>Datos insuficientes';
 	    return div;
 	};
 
@@ -90,10 +90,10 @@ function addControls() {
 		L.DomEvent.disableClickPropagation(sliderMonth);
 
 
-		labelMetric.innerHTML = 'Show me';
+		labelMetric.innerHTML = 'Muéstrame';
 		selectMetric.innerHTML = '<option value="download_median">' +
-			'Download speeds</option><option value="upload_median">' +
-			'Upload speeds</option>';
+			'Velocidades de descarga</option><option value="upload_median">' +
+			'Velocidades de carga</option>';
 		selectMetric.setAttribute('id', 'selectMetric');
 		selectMetric.setAttribute('class', 'form-control');
 
@@ -215,10 +215,9 @@ function updateLayers(e, mode) {
  * @returns {string} A string representing the color
  */
 function getPolygonColor(val) {
-    return val >= 50 ? '#F57F17' :
-           val >= 25  ? '#F9A825' :
-           val >= 10  ? '#FBC02D' :
-           val >= 5  ? '#FFEB3B' :
+    return val >= 5  ? '#00a802' :
+           val >= 3  ? '#ffd400' :
+           val >= 1  ? '#ff0400' :
            val >= 0   ? '#FFEE58' : 'transparent';
 }
 
@@ -430,18 +429,18 @@ function seedLayerCache(year) {
  * @returns {string} Textual information for the popup
  */
 function makePopup(props) {
-	var popup = '<h3 class="league-gothic">Internet Measurements in this Census Block, in '+ $('#sliderMonth').slider('value') +'/'+ $('#selectYear').val() + ' :</h3>'+
-		' <p><strong>Download ('+ Math.round(props.download_count * 10) / 10 +' samples)</strong><br />'+
-		' Median: ' + Math.round(props.download_median * 10) / 10 + ' Mbps <br />' +
-		' Max: ' + props.download_max + ' Mbps<br /><br />' +
-		' <strong>Upload ('+ Math.round(props.upload_count * 10) / 10 + ' samples)</strong><br />' +
-		' Median: ' + Math.round(props.upload_median * 10) / 10 + ' Mbps <br/>' +
-		' Max: ' + props.upload_max + ' Mbps<br /><br />' +
-		'<strong>Average Round Trip Time:</strong> ' + Math.round(props.rtt_avg) + ' ms <br/></p>';
+	var popup = '<h3 class="league-gothic">Mediciones de Internet en esta área, en '+ $('#sliderMonth').slider('value') +'/'+ $('#selectYear').val() + ' :</h3>'+
+		' <p><strong>Descargar ('+ Math.round(props.download_count * 10) / 10 +' muestras)</strong><br />'+
+		' Mediana: ' + Math.round(props.download_median * 10) / 10 + ' Mbps <br />' +
+		' Máximo: ' + props.download_max + ' Mbps<br /><br />' +
+		' <strong>Subir ('+ Math.round(props.upload_count * 10) / 10 + ' muestras)</strong><br />' +
+		' Mediana: ' + Math.round(props.upload_median * 10) / 10 + ' Mbps <br/>' +
+		' Máximo: ' + props.upload_max + ' Mbps<br /><br />' +
+		'<strong>Tiempo promedio de ida y vuelta:</strong> ' + Math.round(props.rtt_avg) + ' ms <br/></p>';
 	return popup;
 }
 function makeBlankPopup() {
-        var popup = "<h3 class='league-gothic'>This area doesn't have enough data yet!</h3><p>Help make our map more accurate by <a id='testSpeedEmptyPrompt' href='#' onClick='javascript:showTestingPanel()'>running your test</a> from an address in this area</a>!</p>";
+        var popup = "<h3 class='league-gothic'>¡Esta área no tiene suficientes datos todavía!</h3><p>Ayuda a que nuestro mapa sea más preciso ejecutando <a id='testSpeedEmptyPrompt' href='#' onClick='javascript:showTestingPanel()'>tu prueba</a> desde una dirección en esta área!</p>";
 	return popup;
 }
 /**
