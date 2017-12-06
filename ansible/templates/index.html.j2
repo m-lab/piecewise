@@ -343,8 +343,8 @@ function getNdtServer () {
 
   // Be sure that we actually have data for the current month.  If not, then fall
   // back to the previous month.
-  var start = Date.UTC(currentYear, currentMonth - 1, 1) / 1000;
-  var end = Math.floor(Date.now() / 1000);
+  var start = Date.UTC(currentYear) / 1000;
+  var end = Math.floor(Date.UTC(currentYear + 1) / 1000);
   var dataUrl = geoLayers[defaultLayer]['dataUrl'] + start + ',' + end;
   $.ajax({
   	url: dataUrl,

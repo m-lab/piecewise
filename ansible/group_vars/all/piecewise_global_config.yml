@@ -8,7 +8,7 @@
 # Required fields are indicated with the text "# !REQUIRED!" just below the variable name.
 # If a field is marked Required, you must enter a value or change the default value.
 
-env: development
+env: production
 # !REQUIRED!
 #
 # env   Instructs Ansible whether this is a server/VM in development or in production.
@@ -63,7 +63,7 @@ database_user_group: postgres
 #       the database user. These can be safely left as the default, unless you desire to 
 #       change them.
 
-site_fqdn: 35.192.50.48
+site_fqdn: ipysvenezuela.opentechinstitute.org
 # !REQUIRED!
 #
 # site_fqdn 
@@ -108,6 +108,7 @@ self_signed_ssl_key_path: /etc/ssl/private/selfsigned.{{ site_fqdn }}.key
 # server/VM where self-signed SSL certificates will be saved. 
 # In most cases you will not need to change these values from the default.
 
+letsencrypt_ssl_cert_path: /etc/letsencrypt/live/{{ site_fqdn }}/fullchain.pem
 letsencrypt_ssl_key_path: /etc/letsencrypt/live/{{ site_fqdn }}/privkey.pem
 # #DEFAULT#
 #
