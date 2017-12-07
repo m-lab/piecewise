@@ -209,6 +209,7 @@ div.leaflet-control-layers-base, div.leaflet-control-layers-separator {
 }
 .sliderElements .mapControls {
   float: left;
+  display: none;
 }
 span.mapControls {
 	margin-top: 3px;

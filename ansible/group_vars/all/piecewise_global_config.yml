@@ -165,7 +165,7 @@ shape_file: VEN_adm2-1.shp
 #
 # shape_file  The filename of the shapefile Piecewise should use for your aggregations.
 
-dbKey: id_2str
+dbKey: ID_2str
 dbKeyDataType: string
 shape_projection: "EPSG:4326"
 geometry_type: MultiPolygon
@@ -230,7 +230,7 @@ map_data_end_date: "Dec 31 2055 00:00:00"
 # 3.1 Website Geographic Information #
 ######################################
 
-topojson_file: VEN_adm2-1.topojson
+topojson_file: VEN_adm2-1.geojson
 # !REQUIRED!
 #
 # topojson_file   The file name of a topojson format geo file that is 
@@ -287,7 +287,7 @@ mapscript_layer_name_pretty: "Venezuela Municipalities"
 # a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
 # UI if the layer controls are displayed for the user.
 
-mapscript_json_type: "topojson"
+mapscript_json_type: "geojson"
 # # DEFAULT #
 #
 # In the future, support for other types of geodata, such as the geojson format may be

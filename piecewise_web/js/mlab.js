@@ -22,7 +22,7 @@ function addLegend() {
 
 	legend.onAdd = function(map) {
 	    var div = L.DomUtil.create('div', 'info legend'),
-	        grades = [1, 4, 5];
+	        grades = [0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5];
 
 	    var i;
 		div.innerHTML = '';
@@ -218,7 +218,12 @@ function updateLayers(e, mode) {
 function getPolygonColor(val) {
     return val >= 5  ? '#00a802' :
            val >= 4  ? '#ffd400' :
-           val >= 1  ? '#ff0400' : 'transparent';
+           val >= 1  ? '#ff0400' : 
+           val >= 0.9  ? '#995d1d' :
+           val >= 0.7  ? '#848702' :
+           val >= 0.5  ? '#635301' :
+           val >= 0.3  ? '#633a01' :
+           val >= 0.1  ? '#630101' : 'transparent';
 }
 
 /**
