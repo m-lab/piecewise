@@ -22,7 +22,7 @@ function addLegend() {
 
 	legend.onAdd = function(map) {
 	    var div = L.DomUtil.create('div', 'info legend'),
-	        grades = [0, 1, 3, 5];
+	        grades = [1, 4, 5];
 
 	    var i;
 		div.innerHTML = '';
@@ -76,14 +76,15 @@ function addControls() {
 
 		var	checkAnimate = L.DomUtil.create('div', 'mapControls', controls),sliderMonth = L.DomUtil.create('div', 'mapControls', controls),dateOptions = '';
 
+		// Creates the Year select list
 		var yearSelected;
 		for ( var year in dates ) {
 			yearSelected =  year == currentYear ? 'selected="selected"' : '';
 			dateOptions += '<option value="' + year + '"' + yearSelected +
 				'>' + year + '</option>';
 		}
-
-		checkAnimate.innerHTML = '<span id="playAnimation" class="paused"></span>';
+		// enable/disable the animation button?
+		checkAnimate.innerHTML = '';//<span id="playAnimation" class="paused"></span>';
 
 		sliderMonth.setAttribute('id', 'sliderMonth');
 		// Prevent the entire map from dragging when the slider is dragged.
@@ -216,9 +217,8 @@ function updateLayers(e, mode) {
  */
 function getPolygonColor(val) {
     return val >= 5  ? '#00a802' :
-           val >= 3  ? '#ffd400' :
-           val >= 1  ? '#ff0400' :
-           val >= 0   ? '#FFEE58' : 'transparent';
+           val >= 4  ? '#ffd400' :
+           val >= 1  ? '#ff0400' : 'transparent';
 }
 
 /**
@@ -275,10 +275,15 @@ function setPolygonLayer(layer, year, month, metric, mode, resolution) {
 		$('#spinner').css('display', 'block');
 	}
 
+	// This is where we set the values for start/end ranges
 	month = month < 10 ? '0' + month : month;
+	curYear = $('#selectYear').val();
+	s = new Date(curYear);
+	e = new Date(curYear);
+
 	if ( polygonType != 'hex' ) {
-		var start = Date.UTC(year, month - 1, 1) / 1000;
-		var end = Date.UTC(year, month, 1, 0, 0, -1) / 1000;
+		var start = Date.UTC(curYear) / 1000;
+		var end = e.setFullYear(e.getFullYear() +1) / 1000;
 		dataUrl = geoLayers[layer]['dataUrl'] + start + ',' + end;
 	} else {
 		dataUrl = 'json/' + year + '_' + month + '-' + resolution + '.' +
@@ -337,7 +342,7 @@ function setPolygonLayer(layer, year, month, metric, mode, resolution) {
 		});
 
 		// Add the layer controls if this is on page load, and if this
-                // is the default layer we are dealing with then go ahead and add it
+        // is the default layer we are dealing with then go ahead and add it
 		// to the map.
 		if ( mode == 'new' ) {
 			layerCtrl.addOverlay(geoLayers[layer]['layer'], geoLayers[layer]['name']);

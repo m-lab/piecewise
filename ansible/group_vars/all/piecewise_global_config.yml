@@ -287,7 +287,7 @@ mapscript_layer_name_pretty: "Venezuela Municipalities"
 # a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
 # UI if the layer controls are displayed for the user.
 
-mapscript_json_type: "geojson"
+mapscript_json_type: "topojson"
 # # DEFAULT #
 #
 # In the future, support for other types of geodata, such as the geojson format may be
@@ -449,21 +449,12 @@ site_name: "Test de velocidad de IPYS"
 # Defines the HTML page title element
 
 intro_text: >
-  Queremos que seas parte de nuestro equipo. S&#250;mate a nuestra de red de 
-  voluntarios y colabora nuestro proyecto Navegar con libertad.
+  Ayúdanos a construir el mapa de la navegación de internet en Venezuela
 
 instructions_text: >
-  Estamos haciendo un registro colaborativo de la velocidad de Internet 
-  en Venezuela, que ofrecen los diversos proveedores. Tu aporte será muy
-  valioso para nosotros. Es f&#225;cil. Son solo 4 pasos.<br><br>
-
-  Paso 1. Nuestro sitio le ha pedido que comparta su ubicaci&#243;n, haga clic 
-  en Permitir para proporcionar una mayor precisi&#243;n.<br>
-  Paso 2. Completa la informaci&#243;n requerida, aprieta el bot&#243;n de enviar resultados 
-  y comparte los resultados con nosotros.<br>
-  Paso 3. Ubicar la prueba de velocidad que aparece abajo de estas indicaciones.<br> 
-  Paso 4. Haga clic en el botón "play" para iniciar la prueba (Este paso te puede tomar un par de minutos).
-   
+  IPYS Venezuela junto a MLAB realizan una radiografía de la calidad de la conexión en 
+  Venezuela. Súmate a esta iniciativa corriendo este test de velocidad desde tu conexión 
+  fija o móvil.    
 # #DEFAULT#
 #
 # Defines the heading text that precedes the HTML survey form, provided to users
@@ -507,12 +498,12 @@ next_action_social_share_text: "Compartir en las redes sociales"
 # If you don't want any social share options, set all of the items below to 'none'
 # and also set 'next_action_social_share_text' to 'none' (without quotes) above.
 social_share_twitter: "http://twitter.com/share?url=http://ipysvenezuela.org/navegarconlibertad&text=Probé%20mi%20velocidad%20de%20Internet%20con%20la%20prueba%20de%20velocidad%20IPYS%20de%20M-Lab&via=ipysvenezuela"
-social_share_gplus: none #"https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test"
+social_share_gplus: "none" #"https://plus.google.com/share?url=http://www.seattle.gov/broadband-speed-test"
 social_share_facebook: "http://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/IpysVenezuela/?fref=ts"
-social_share_stumbleupon: none #"http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
-social_share_reddit: none #"http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
-social_share_linkedin: none #"http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test"
-social_share_email: none #"mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test"
+social_share_stumbleupon: "none" #"http://www.stumbleupon.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
+social_share_reddit: "none" #"http://reddit.com/submit?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test"
+social_share_linkedin: "none" #"http://www.linkedin.com/shareArticle?url=http://www.seattle.gov/broadband-speed-test&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&summary=I%20tested%20my%20Internet%20speeds%20with%20the%20Seattle%20Broadband%20Speed%20Test&source=http://www.seattle.gov/broadband-speed-test"
+social_share_email: "none" #"mailto:?subject=Take%20the%20Seattle%20Broadband%20Speed Test&body=I%20just%20took%20the%20Seattle%20Broadband%20Speed%20Test,%20and%20you%20should%20too!%20Take%20the%20test%20and%20contribute%20to%20a%20map%20of%20broadband%20speeds%20across%20the%20city. http://www.seattle.gov/broadband-speed-test"
 # #DEFAULT#
 #
 
