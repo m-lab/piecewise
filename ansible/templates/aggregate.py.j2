@@ -136,14 +136,7 @@ class Aggregator(object):
                 Column('actual_download', Float),
                 Column('actual_upload', Float),
                 Column('min_rtt', Integer),
-                Column('client_ip', BigInteger),
-                {%- for item, field in form_fields.items() | sort -%}
-                    {%- set num_fields = form_fields.items() | length -%}
-                    {%- for attr, vals in field.items() -%}
-                    Column('{{ vals["name"] }}', {{ vals['db_type'] }})
-                    {%- if item < num_fields -%},{% endif %}
-                    {%- endfor %}
-                {%- endfor %}    
+                Column('client_ip', BigInteger)
                 )
     def ingest_bigquery_query(self):
         select_clause = [
