@@ -57,12 +57,6 @@ extra_data = Table('extra_data', metadata,
     Column('min_rtt', Integer),
     Column('client_ip', BigInteger),
     Column('isp', String),
-    {% for item, field in form_fields.items() | sort -%}
-    {%- set num_fields = form_fields.items() | length -%}
-    {%- for attr, vals in field.items() -%}
-    Column('{{ vals["name"] }}', {{ vals['db_type'] }}){%- if item < num_fields -%}, {% endif -%}
-    {% endfor -%}
-    {% endfor -%}  
     )
 metadata.create_all()
 
@@ -95,11 +89,6 @@ class ExtraData(Base):
     actual_upload = Column('actual_upload', Float)
     min_rtt = Column('min_rtt', Integer)
     client_ip = Column('client_ip', BigInteger)
-    {% for item, field in form_fields.items() | sort -%}
-    {%- for attr, vals in field.items() -%}
-    {{ vals['name'] }} = Column('{{ vals["name"] }}', {{ vals['db_type'] }})
-    {% endfor -%}
-    {% endfor %}
 
 class Maxmind(Base):
     __tablename__ = 'maxmind'
@@ -218,11 +207,6 @@ def retrieve_extra_data():
         record['actual_download'] = row.ExtraData.actual_download
         record['actual_upload'] = row.ExtraData.actual_upload
         record['min_rtt'] = row.ExtraData.min_rtt
-        {% for item, field in form_fields.items() | sort -%}
-        {%- for attr, vals in field.items() -%}
-        record['{{ vals["name"] }}'] = row.ExtraData.{{ vals['name'] }}
-        {% endfor -%}
-        {% endfor -%}
         for aggregation in aggregations:
             record[aggregation['table']] = eval('row.%s' % aggregation['key'])
         records.append(record)
@@ -291,12 +275,7 @@ def admin_extra_data():
         offset = 0
 
     order_by = ExtraData.id.desc()
-    sort_fields = ['id', 'timestamp', 'actual_download', 'actual_upload', 'min_rtt', 
-        {%- for item, field in form_fields.items() | sort -%}
-        {%- for attr, vals in field.items() -%}
-        '{{ vals["name"] }}',
-        {%- endfor -%}
-        {%- endfor -%} 'verified']
+    sort_fields = ['id', 'timestamp', 'actual_download', 'actual_upload', 'min_rtt',  'verified']
 
     if request.args.get('sort'):
         if request.args.get('sort') in sort_fields:
@@ -335,11 +314,6 @@ def admin_extra_data():
         record['actual_download'] = row[0].actual_download
         record['actual_upload'] = row[0].actual_upload
         record['min_rtt'] = row[0].min_rtt
-        {% for item, field in form_fields.items() | sort -%}
-        {% for attr, vals in field.items() -%}
-        record['{{ vals["name"] }}'] = row[0].{{ vals['name'] }}
-        {% endfor -%}
-        {% endfor -%}
         records.append(record)
 
     if len(records):
@@ -350,22 +324,6 @@ def admin_extra_data():
 
 @app.route("/collect", methods=['GET'])
 def append_extra_data():
-{% set select_list_params %}
-{% for item, field in form_fields.items() | sort -%}
-    {%- for attr, vals in field.items() -%}
-    {% if vals['field_type'] == 'select_list' %}
-    {%- set num_opts = vals.options.items() | length -%}
-    {{ vals['name'] }}_types = [
-    {%- for opt, items in vals.options.items() | sort -%}
-        {%- for k, v in items.items() -%}'{{ k }}'{%- if opt < num_opts -%}, {% endif -%}{%- endfor -%}
-    {%- endfor -%}]
-    {% else -%}
-    {% endif -%}
-    {%- endfor -%}
-{%- endfor %}
-{% endset %}
-
-    {{ select_list_params }}
 
     try:
         if request.args.get('longitude') and request.args.get('latitude'):
@@ -401,35 +359,6 @@ def append_extra_data():
     else:
         bigquery_key = None
 
-{% for item, field in form_fields.items() | sort -%}
-    {% for attr, vals in field.items() -%}
-    {% if vals['field_type'] == 'select_list' %}
-
-    if request.args.get('{{ vals["name"] }}') in {{ vals['name'] }}_types:
-        {{ vals['name'] }} = request.args.get("{{ vals['name']|e }}")
-    else:
-        {{ vals['name'] }} = None
-
-    {% elif vals['field_type'] == 'text' and vals['db_type'] == 'String' %}
-
-    try:
-        {{ vals['name'] }} = request.args.get('{{ vals["name"] }}')
-    except Exception, e:
-        {{ vals['name'] }} = None
-        app.logger.exception(e)
-
-    {% elif vals['field_type'] == 'text' and vals['db_type'] == 'Integer' %}
-
-    try:
-        {{ vals['name'] }} = int(float(request.args.get('{{ vals["name"]|e }}')))
-    except Exception, e:
-        {{ vals['name'] }} = None
-        app.logger.exception(e)
-
-    {% endif %}
-    {% endfor %}
-{% endfor %} 
-
     try:
         with db_engine.begin() as conn:
             query = extra_data.insert(dict(
@@ -438,13 +367,7 @@ def append_extra_data():
                 client_ip = int(ipaddress.ip_address(unicode(request.remote_addr))),
                 actual_download = actual_download,
                 actual_upload = actual_upload,
-                min_rtt = min_rtt,
-                {% for item, field in form_fields.items() | sort -%}
-                {%- set num_fields = form_fields.items() | length -%}
-                {% for attr, vals in field.items() -%}
-                {{ vals['name'] }} = {{ vals['name'] }}{%- if item < num_fields -%}, {% endif -%}
-                {% endfor -%}
-                {% endfor -%}
+                min_rtt = min_rtt
             ))
             conn.execute(query)
         return ("", 201, {})
