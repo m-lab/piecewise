@@ -300,12 +300,7 @@ class SpatialJoinBins(Bins):
                     Column("location", Geometry("Point", srid=4326)),
                     Column("actual_download", Float),
                     Column("actual_upload", Float),
-                    Column("min_rtt", Integer),
-                    {% for item, field in form_fields.items() | sort -%}
-                        {% for attr, vals in field.items() -%}
-                        Column("{{ vals['name'] }}", {{ vals['db_type'] }}),
-                        {% endfor -%}
-                    {% endfor -%}   
+                    Column("min_rtt", Integer), 
                     keep_existing = True)
 
             joining = join(full_table, extra_data,
