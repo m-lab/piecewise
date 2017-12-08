@@ -230,7 +230,7 @@ map_data_end_date: "Dec 31 2055 00:00:00"
 # 3.1 Website Geographic Information #
 ######################################
 
-topojson_file: VEN_adm2-1.geojson
+topojson_file: VEN_adm2-1.topojson
 # !REQUIRED!
 #
 # topojson_file   The file name of a topojson format geo file that is 
@@ -287,7 +287,7 @@ mapscript_layer_name_pretty: "Venezuela Municipalities"
 # a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
 # UI if the layer controls are displayed for the user.
 
-mapscript_json_type: "geojson"
+mapscript_json_type: "topojson"
 # # DEFAULT #
 #
 # In the future, support for other types of geodata, such as the geojson format may be
@@ -369,71 +369,71 @@ mapscript_month_names:
 #   6:
 #     advertised_download:
 
-form_fields:
-  1:
-    nombre:
-      field_type: text
-      db_type: String
-      name: nombre
-      id: nombre
-      text: "Nombre: "
-      required: yes
-  2:
-    email:
-      field_type: text
-      db_type: String
-      name: email
-      id: email
-      text: "E-mail: " 
-      required: yes
-  3:
-    pais:
-      field_type: text
-      db_type: String
-      name: pais
-      id: pais
-      text: "Pa&#237;s: " 
-      required: yes  
-  4:
-    estado:
-      field_type: text
-      db_type: String
-      name: estado
-      id: estado
-      text: "Estado: " 
-      required: yes  
-  5:
-    ciudad:
-      field_type: text
-      db_type: String
-      name: ciudad
-      id: ciudad
-      text: "Ciudad: " 
-      required: yes   
-  6:
-    provider:
-      field_type: text
-      db_type: String
-      name: provider
-      id: provider
-      text: "Proveedor de servicio de internet: "
-      required: yes
-  7:
-    provider_plan:
-      field_type: text
-      db_type: String
-      name: provider_plan
-      id: provider_plan
-      text: "Plan de navegación contratado (si lo conoce): "
-      required: no
-  8:
-    comments:
-      field_type: text
-      db_type: String
-      name: comments
-      id: comments
-      text: "Dudas y Comentarios: "
-      required: no
+#form_fields:
+#  1:
+#    nombre:
+#      field_type: text
+#      db_type: String
+#      name: nombre
+#      id: nombre
+#      text: "Nombre: "
+#      required: yes
+#  2:
+#    email:
+#      field_type: text
+#      db_type: String
+#      name: email
+#      id: email
+#      text: "E-mail: " 
+#      required: yes
+#  3:
+#    pais:
+#      field_type: text
+#      db_type: String
+#      name: pais
+#      id: pais
+#      text: "Pa&#237;s: " 
+#      required: yes  
+#  4:
+#    estado:
+#      field_type: text
+#      db_type: String
+#      name: estado
+#      id: estado
+#      text: "Estado: " 
+#      required: yes  
+#  5:
+#    ciudad:
+#      field_type: text
+#      db_type: String
+#      name: ciudad
+#      id: ciudad
+#      text: "Ciudad: " 
+#      required: yes   
+#  6:
+#    provider:
+#      field_type: text
+#      db_type: String
+#      name: provider
+#      id: provider
+#      text: "Proveedor de servicio de internet: "
+#      required: yes
+#  7:
+#    provider_plan:
+#      field_type: text
+#      db_type: String
+#      name: provider_plan
+#      id: provider_plan
+#      text: "Plan de navegación contratado (si lo conoce): "
+#      required: no
+#  8:
+#    comments:
+#      field_type: text
+#      db_type: String
+#      name: comments
+#      id: comments
+#      text: "Dudas y Comentarios: "
+#      required: no
 
 # !REQUIRED!
 #

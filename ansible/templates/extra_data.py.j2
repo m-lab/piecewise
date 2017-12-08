@@ -22,12 +22,6 @@ extra_data = Table('extra_data', metadata,
         Column('min_rtt', Integer),
         Column('client_ip', BigInteger),
         Column('isp', String),
-        {% for item, field in form_fields.items() | sort -%}
-            {%- set num_fields = form_fields.items() | length -%}
-            {% for attr, vals in field.items() -%}
-            Column('{{ vals["name"] }}', {{ vals['db_type'] }}){%- if item < num_fields -%}, {% endif -%}
-            {% endfor -%}
-        {% endfor -%}
         )
 metadata.drop_all()
 metadata.create_all()
