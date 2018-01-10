@@ -165,7 +165,7 @@ shape_file: VEN_adm2-1.shp
 #
 # shape_file  The filename of the shapefile Piecewise should use for your aggregations.
 
-dbKey: ID_2str
+dbKey: id_2str
 dbKeyDataType: string
 shape_projection: "EPSG:4326"
 geometry_type: MultiPolygon
