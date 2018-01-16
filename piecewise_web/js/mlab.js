@@ -22,7 +22,7 @@ function addLegend() {
 
 	legend.onAdd = function(map) {
 	    var div = L.DomUtil.create('div', 'info legend'),
-	        grades = [1, 4, 5];
+	        grades = [0.1, 1, 4, 5];
 
 	    var i;
 		div.innerHTML = '';
@@ -32,7 +32,7 @@ function addLegend() {
 				'"></i> ' + (i == grades.length ? '0' : grades[i]) + (grades[i - 1] ?
 				'&ndash;' + grades[i - 1] + ' Mbps<br/>' : '+ Mbps<br/>');
 	    }
-		div.innerHTML += '<i style="background: black; opacity: .2">' +
+		div.innerHTML += '<i style="background: black; opacity: .5">' +
 		'</i>Datos insuficientes';
 	    return div;
 	};
@@ -79,7 +79,7 @@ function addControls() {
 		// Creates the Year select list
 		var yearSelected;
 		for ( var year in dates ) {
-			yearSelected =  year == currentYear ? 'selected="selected"' : '';
+			yearSelected = currentYear ? 'selected="selected"' : '';
 			dateOptions += '<option value="' + year + '"' + yearSelected +
 				'>' + year + '</option>';
 		}
@@ -218,7 +218,8 @@ function updateLayers(e, mode) {
 function getPolygonColor(val) {
     return val >= 5  ? '#00a802' :
            val >= 4  ? '#ffd400' :
-           val >= 1  ? '#ff0400' : 'transparent';
+           val >= 1  ? '#ff0400' :
+           val >= 0.1  ? '#680100' : 'transparent';
 }
 
 /**

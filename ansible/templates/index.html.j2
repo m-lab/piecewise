@@ -344,7 +344,7 @@ function getNdtServer () {
   // auto-generate various form controls.
   var dates = {};
   var thisYear = startYear;
-  while (thisYear <= currentYear) {
+  while (thisYear <= currentYear+1) {
     if (thisYear == currentYear) {
       var months = [];
       for (i = 1; i <= currentMonth; i++) { months.push(i) };
