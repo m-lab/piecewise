@@ -22,7 +22,7 @@ function addLegend() {
 
 	legend.onAdd = function(map) {
 	    var div = L.DomUtil.create('div', 'info legend'),
-	        grades = [0.1, 1, 4, 5];
+	        grades = [0, .5, 1, 4, 5];
 
 	    var i;
 		div.innerHTML = '';
@@ -47,6 +47,20 @@ function addLegend() {
 	    return div;
 */
 	legend.addTo(map);
+}
+
+/**
+ * Determines the color of a polygon based on a passed metric.
+ *
+ * @param {number} val Metric to evaluate
+ * @returns {string} A string representing the color
+ */
+function getPolygonColor(val) {
+    return val >= 5  ? '#00a802' :
+           val >= 4  ? '#ffd400' :
+           val >= 1  ? '#ff0400' :
+           val >= 0.5  ? '#680100' : 
+           val >= 0  ? '#260000' : 'transparent';
 }
 
 /**
@@ -207,19 +221,6 @@ function updateLayers(e, mode) {
 		setPolygonLayer(geoLayer, year, month, metric, mode, resolution);
 	}
 
-}
-
-/**
- * Determines the color of a polygon based on a passed metric.
- *
- * @param {number} val Metric to evaluate
- * @returns {string} A string representing the color
- */
-function getPolygonColor(val) {
-    return val >= 5  ? '#00a802' :
-           val >= 4  ? '#ffd400' :
-           val >= 1  ? '#ff0400' :
-           val >= 0.1  ? '#680100' : 'transparent';
 }
 
 /**
