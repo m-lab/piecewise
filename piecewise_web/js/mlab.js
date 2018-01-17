@@ -444,10 +444,11 @@ function makePopup(props) {
 		' Promedio: ' + Math.round(props.upload_avg * 10) / 10 + ' Mbps <br/>' +
 		' Máximo: ' + props.upload_max + ' Mbps<br /><br />' +
 		'<strong>Tiempo promedio de ida y vuelta:</strong> ' + Math.round(props.rtt_avg) + ' ms <br/></p>';
+		console.log(props);
 	return popup;
 }
 function makeBlankPopup() {
-        var popup = "<h3 class='league-gothic'>¡Esta área no tiene suficientes datos todavía!</h3><p>Ayuda a que nuestro mapa sea más preciso ejecutando <a id='testSpeedEmptyPrompt' href='#' onClick='javascript:showTestingPanel()'>tu prueba</a> desde una dirección en esta área!</p>";
+        var popup = "<h3 class='league-gothic'>¡Esta área no tiene suficientes datos todavía!</h3><p>Ayuda a que nuestro mapa sea más preciso ejecutando <a id='testSpeedEmptyPrompt' href='index.html'>tu prueba</a> desde una dirección en esta área!</p>";
 	return popup;
 }
 /**
