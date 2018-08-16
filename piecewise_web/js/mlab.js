@@ -32,7 +32,7 @@ function addLegend() {
 				'"></i> ' + (i == grades.length ? '0' : grades[i]) + (grades[i - 1] ?
 				'&ndash;' + grades[i - 1] + ' Mbps<br/>' : '+ Mbps<br/>');
 	    }
-		div.innerHTML += '<i style="background: black; opacity: .5">' +
+		div.innerHTML += '<i style="background: black; opacity: .25">' +
 		'</i>Datos insuficientes';
 	    return div;
 	};
@@ -60,7 +60,7 @@ function getPolygonColor(val) {
            val >= 4  ? '#ffd400' :
            val >= 1  ? '#ff0400' :
            val >= 0.5  ? '#680100' : 
-           val >= 0  ? '#260000' : 'transparent';
+           val >= 0  ? '#260000' : '7f7f7f';
 }
 
 /**
@@ -315,7 +315,7 @@ function setPolygonLayer(layer, year, month, metric, mode, resolution) {
 
 			if ( ! value ) {
 				polygonStyle.weight = 0.2;
-				polygonStyle.fillOpacity = 0.015;
+				polygonStyle.fillOpacity = 0.1;
 				polygonStyle.color = 'black';
 				l.bindPopup(makeBlankPopup());
 			} else if ( metric == 'download_median' &&
@@ -438,9 +438,11 @@ function seedLayerCache(year) {
 function makePopup(props) {
 	var popup = '<h3 class="league-gothic">Mediciones de Internet en '+ props.NAME_1 +', '+ props.NAME_2 +', en '+ $('#selectYear').val() + ' :</h3>'+
 		' <p><strong>Descargar ('+ Math.round(props.download_count * 10) / 10 +' muestras)</strong><br />'+
+		' Mediana: ' + Math.round(props.download_median * 10) / 10 + ' Mbps <br />' +
 		' Promedio: ' + Math.round(props.download_avg * 10) / 10 + ' Mbps <br />' +
 		' Máximo: ' + props.download_max + ' Mbps<br /><br />' +
 		' <strong>Subir ('+ Math.round(props.upload_count * 10) / 10 + ' muestras)</strong><br />' +
+		' Mediana: ' + Math.round(props.upload_median * 10) / 10 + ' Mbps <br />' +
 		' Promedio: ' + Math.round(props.upload_avg * 10) / 10 + ' Mbps <br/>' +
 		' Máximo: ' + props.upload_max + ' Mbps<br /><br />' +
 		'<strong>Tiempo promedio de ida y vuelta:</strong> ' + Math.round(props.rtt_avg) + ' ms <br/></p>';

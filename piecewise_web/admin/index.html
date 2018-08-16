@@ -24,13 +24,12 @@
 		<tr>
 			<th><a id="sort-id" href="/admin/?sort=id&order=asc">ID</a></th>
 			<th><a id="sort-verified" href="/admin/?sort=verified&order=desc">Verified</a></th>
-			<th><a id="sort-selected_isp" href="/admin/?sort=isp_user&order=desc">User Selected ISP</a></th>
-			<th><a id="sort-other_isp" href="/admin/?sort=other_isp&order=desc">User Other Reported ISP</a></th>
-			<th><a id="sort-connection_type" href="/admin/?sort=connection_type&order=desc">Connection Type</a></th>
-			<th><a id="sort-advertised_download" href="/admin/?sort=advertised_download&order=desc">Advertised Download</a></th>
-			<th><a id="sort-advertised_upload" href="/admin/?sort=advertised_upload&order=desc">Advertised Upload</a></th>
-			<th><a id="sort-cost_of_service" href="/admin/?sort=cost_of_service&order=desc">Cost of Service</a></th>
 			<th><a id="sort-timestamp" href="/admin/?sort=timestamp&order=desc">Date</a></th>
+			<th><a id="sort-download" href="/admin/?sort=actual_download&order=desc">Download</a></th>
+			<th><a id="sort-upload" href="/admin/?sort=actual_upload&order=desc">Upload</a></th>
+			<th><a id="sort-minrtt" href="/admin/?sort=min_rtt&order=desc">Minimum Round Trip Time</a></th>
+			<th><a id="sort-isp" href="/admin/?sort=isp&order=desc">ISP</a></th>
+			<th><a id="sort-clientip" href="/admin/?sort=client_ip&order=desc">Client IP</a></th>
 			<th>Latitude</th>
 			<th>Longitude</th>
 			<th>BigQuery Key</th>
@@ -49,13 +48,12 @@
 var fields = [
 	'id',
 	'verified',
-	'isp_user',
-	'other_isp',
-	'connection_type',
-	'advertised_download',
-	'advertised_upload',
-	'cost_of_service',
 	'timestamp',
+	'actual_download',
+	'actual_upload',
+	'min_rtt',
+	'isp',
+	'client_ip',
 	'latitude',
 	'longitude',
 	'bigquery_key',
