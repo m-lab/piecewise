@@ -1,1 +1,1 @@
-35.226.64.107 ansible_ssh_user=critzo
+172.104.26.100 ansible_ssh_user=root

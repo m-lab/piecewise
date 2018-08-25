@@ -1,6 +1,6 @@
 ---
 ## Install base packages
-- name: Update apt and install packages for Debian 8 hosts
+- name: Update apt and install packages for Debian hosts
   apt:
     update_cache: yes
     name: "{{ item }}"
@@ -12,12 +12,15 @@
     - nginx
     - uwsgi-plugin-python
     - git
-    - python-pip
     - python-psycopg2
     - python-dev
     - gdal-bin
     - unzip
     - python-apt
+
+# TO DO: install python-pip using easy_install instead of apt
+# $ easy_install pip
+# $ ln /usr/local/bin/pip /usr/bin/pip
 
 ## Generate and Install SSL/TLS Certificates
 #
@@ -51,7 +54,7 @@
     group: root
 
 ## Fix Postgres config file permissions
-- name: Fix postgres configuration permissions for Debian 8 systems
+- name: Fix postgres configuration permissions for Debian systems
   file:
     path: /etc/postgresql/9.4/main/pg_hba.conf
     state: file
@@ -59,15 +62,15 @@
     group: "{{ database_user_group }}"
     mode: 0640
 
-## NGINX configs for Debian 8
-- name: For Debian 8 development systems, create the nginx default site for Piecewise
+## NGINX configs for Debian
+- name: For Debian development systems, create the nginx default site for Piecewise
   template:
     src: "templates/nginx_development_default.j2"
     dest: /etc/nginx/sites-available/default
   when: 
     - env == "development"
 
-- name: For Debian 8 production systems, create the nginx default site for Piecewise
+- name: For Debian production systems, create the nginx default site for Piecewise
   template:
     src: "templates/nginx_production_default.j2"
     dest: /etc/nginx/sites-available/default

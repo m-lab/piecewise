@@ -1,6 +1,6 @@
 ---
 ## Reload system daemons or services
-- name: Restart services for Debian 8 systems
+- name: Restart services for Debian systems
   service:
     name: "{{ item }}"
     state: restarted

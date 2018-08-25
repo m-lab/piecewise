@@ -14,7 +14,8 @@
       when:
         - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
         - ansible_distribution_major_version == "7"
-    
+    # Steve Mansour's servers are at CentOS 7
+
     ## Run all hosts tasks common regardless of host OS
     - include: playbooks/all_hosts_tasks.yml
       become: true

@@ -1,13 +1,5 @@
 ---
 ## Obtain Piecewise, M-Lab's Telescope Utility, and the current MaxMind CSV
-- name: Fetch M-Lab's Telescope Utility
-  git:
-    repo: https://github.com/m-lab/telescope.git
-    dest: "{{ base_path }}/telescope/"
-
-- name: Create an alias for telescope in the deploy users' profile
-  shell: echo 'alias telescope="PYTHONPATH=/opt/telescope python /opt/telescope/main.py"' >> .profile
-
 - name: Deploy Piecewise Python code
   copy:
     src: "../piecewise"
@@ -23,20 +15,12 @@
     src: "../collector"
     dest: "{{ base_path }}/"
 
-- name: Install required python modules for piecewise and telescope
+- name: Install required python modules
   pip:
     requirements: "{{ item }}"
     state: latest
   with_items:
-    - "{{ base_path }}/telescope/requirements.txt"
     - "{{ base_path }}/{{ project_name }}/requirements.txt"
-
-- name: Install additional python modules
-  pip: 
-    name: "{{ item }}"
-    state: latest
-  with_items: 
-    - ipaddress
 
 - name: Get the latest MaxMind CSV
   unarchive:
