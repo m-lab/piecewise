@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>{{ site_name }}</title>
+  <title>Pennsylvania Broadband Mapping Initiative</title>
   <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
   <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -32,37 +32,110 @@
 <div id="welcome-container">
   <div id="header">
     <div id="intro">
-      <h3>{{ intro_text }}</h3>
-      <p>{{ instructions_text }}</p>
+      <h3>Taking part in the Pennsylvania Broadband Mapping Initiative?  Check your Internet speed in roughly 30 seconds!
+</h3>
+      <p>The Measurement Lab (M-Lab) platform is run by the scientific community. We make all test results publicly available via the MeasurementLab.net website  to help promote Internet research. M-Lab's Network Diagnostic Tool collects a number  of measures of different facets of your Internet connection. The information published includes each device’s IP address, but does not include personal identifying information about you as an Internet user.
+  
+</p>
     </div>
   </div>
   <div id="sidebar">
     <form action="/collector/collect" method="get" id="collector">
       <div id="extra-data" class="ndt-related">
-      <table>
-      {% for item, field in form_fields.items()   -%}
-        {% for attr, vals in field.items() -%}    
-        <tr>
-          <td>{{ vals['text'] }}</td>
+      <table id="form_fields">
+      <tr>
+          <td>Are you testing from your home, a business, or a community institution like a school or library?</td>
           <td>
-        {% if vals['field_type'] == 'select_list' -%}
-          <select id="{{ vals['id'] }}" name="{{ vals['name'] }}" class="form-control">
-          {% for opt, item in vals.options.items() | sort -%}
-            <option value="{{ opt }}"{%- if opt == 'default' %} selected {%- endif -%}>{{ item }}</option>
-          {%- endfor -%}
-          </select>
-        {% elif vals['field_type'] == 'text' -%}
-          <input id="{{ vals['id'] }}" type="text" name="{{ vals['name'] }}" class="form-control"{%- if vals['size'] is defined %} size="{{ vals['size'] }}"{%- endif -%}/>
-        {% endif -%}
-          </td>
+        <select id="test_loc" name="test_loc" class="form-control">
+          <option value="a_default">------</option><option value="b_home">Home</option><option value="c_school">School</option><option value="d_library">Library</option><option value="e_work">Work</option><option value="f_other">Other location</option></select>
+        </td>
         </tr>
-        {% endfor -%} 
-      {% endfor -%}
-      </table>
+        <tr>
+          <td>If you're not testing from your home, Do you have internet service at home?</td>
+          <td>
+        <select id="service_at_home" name="service_at_home" class="form-control">
+          <option value="a_default">------</option><option value="b_home_serv_yes">Yes</option><option value="c_home_serv_no">No</option></select>
+        </td>
+        </tr>
+        <tr>
+          <td>If you do not have internet service at home, why not?</td>
+          <td>
+        <select id="no_serv_reason" name="no_serv_reason" class="form-control">
+          <option value="a_default">------</option><option value="b_cost">Cost</option><option value="c_no_device">Do not have a computer/device</option><option value="d_no_expertise">Do not know how to use it</option><option value="e_no_interest">Do not want the internet</option><option value="f_mobile_only">Only have a mobile</option></select>
+        </td>
+        </tr>
+        <tr>
+          <td>If testing from your home, how many people in your household use the internet?</td>
+          <td>
+        <select id="household_num" name="household_num" class="form-control">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10+</option><option value="default" selected>------</option></select>
+        </td>
+        </tr>
+        <tr>
+          <td>What type of household do you live in?</td>
+          <td>
+        <select id="household_type" name="household_type" class="form-control">
+          <option value="apartment_building">Apartment Building</option><option value="default" selected>------</option><option value="multi_fam_home">Multi-family home</option><option value="other">Other</option><option value="single_fam_home">Single-family home</option></select>
+        </td>
+        </tr>
+        <tr>
+          <td>If you selected 'other', please describe your household type:</td>
+          <td>
+        <input id="household_type_other" type="text" name="household_type_other" class="form-control"/>
+        </td>
+        </tr>
+        <tr>
+          <td>What company provides your internet service at home?</td>
+          <td>
+        <input id="isp_user" type="text" name="isp_user" class="form-control"/>
+        </td>
+        </tr>
+        <tr>
+          <td>What type of internet service is it?</td>
+          <td>
+        <select id="service_type" name="service_type" class="form-control">
+          <option value="cable">Cable</option><option value="default" selected>------</option><option value="dsl">DSL</option><option value="fiber">Fiber</option><option value="mobile">Mobile (cellular)</option><option value="satellite">Satellite</option><option value="wireless_isp">Wireless/WISP</option></select>
+        </td>
+        </tr>
+        <tr>
+          <td>What is the download speed of your internet service subscription?</td>
+          <td>
+        <select id="download_speed" name="download_speed" class="form-control">
+          <option value="100_mbps">100+ Mbps</option><option value="10_mbps">10 Mbps</option><option value="25_mbps">25 Mbps</option><option value="50_mbps">50 Mbps</option><option value="other">Other</option></select>
+        </td>
+        </tr>
+        <tr>
+          <td>What is the upload speed of your internet service subscription?</td>
+          <td>
+        <select id="upload_speed" name="upload_speed" class="form-control">
+          <option value="100_mbps">100+ Mbps</option><option value="10_mbps">10 Mbps</option><option value="1_mbps">1 Mbps</option><option value="25_mbps">25 Mbps</option><option value="3_mbps">3 Mbps</option><option value="50_mbps">50 Mbps</option><option value="other">Other</option></select>
+        </td>
+        </tr>
+        <tr>
+          <td>Other download speed (if not listed above):</td>
+          <td>
+        <input id="other_download" type="text" name="other_download" class="form-control"/>
+        </td>
+        </tr>
+        <tr>
+          <td>Other upload speed (if not listed above):</td>
+          <td>
+        <input id="other_upload" type="text" name="other_upload" class="form-control"/>
+        </td>
+        </tr>
+        <tr>
+          <td>How much does it cost per month?</td>
+          <td>
+        <select id="service_cost" name="service_cost" class="form-control">
+          <option value="100_plus">$100+</option><option value="bet_25_50">$25-50</option><option value="bet_50_75">$50-75</option><option value="bet_75_100">$75-100</option><option value="default" selected>------</option><option value="dont_know">I don't know</option><option value="less_than_25">Less than $25</option></select>
+        </td>
+        </tr>
+        </table>
 
         <div class="container" id="consent-text">
         <p>
-          <span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> {{ consent_message }}
+          <span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> I agree to the <a href="http://www.measurementlab.net/privacy/">M-Lab privacy policy</a>, which includes retention and publication of IP addresses, in addition to speed test results.
+
         </p>
         </div>
         <input name="latitude" id="latitude" type="hidden" />
@@ -77,70 +150,57 @@
           <div id="ndt-svg"></div>
         </div>
 	    <div id="approx-loc">
-	      <h3 class="league-gothic">{{ run_test_heading }}</h3>
+	      <h3 class="league-gothic">Test your speed!</h3>
 	      <div id="ndt-status"></div>
 	    </div>
 	    <div id="ndt-results" class="ndt-related">
 	      <div class="container">
 	        <div id="your-results">
-	          <h3 class="league-gothic">{{ test_result_heading }}</h3>
-	          <p>{{ download_result_label }} <span id="s2cRate"></span> {{ download_result_unit }}</p>
-	          <p>{{ upload_result_label }} <span id="c2sRate"></span> {{ upload_result_unit }}</p>
-	          <p>{{ rtt_result_label }} <span id="MinRTT"></span> {{ rtt_result_unit }}</p>
+	          <h3 class="league-gothic">Your test results</h3>
+	          <p>Download speed: <span id="s2cRate"></span> Mbps</p>
+	          <p>Upload speed: <span id="c2sRate"></span> Mbps</p>
+	          <p>Minimum Round Trip Time: <span id="MinRTT"></span> ms</p>
 	        </div>
 	        <div id="thankyou">
-	          <h3 class="league-gothic">{{ thank_you_heading }}</h3>
-	          <strong>{{ thank_you_message }}</strong><br /><br />
-	          <strong>{{ next_action_message }}</strong>
+	          <h3 class="league-gothic">Thank you!</h3>
+	          <strong>Your test results will be combined with others and will appear on the map soon.
+</strong><br /><br />
+	          <strong>What do you want to do next?</strong>
 	          <ul>
-	            <li><a href="#" onclick="showMap()">{{ next_action_show_map_text }}</a></li>
-	            <li><a href="{{ next_action_learn_about_link }}" target="_parent">{{ next_action_learn_about_text }}</a></li>
-	            <li><a href="#" onclick="showSocialShare()">{{ next_action_social_share_text }}</a></li>
+	            <li><a href="#" onclick="showMap()">View all results to-date on a map of Pennsylvania</a></li>
+	            <li><a href="https://broadbandtest.us/" target="_parent">Learn more about this test and how to improve your speed</a></li>
+	            <li><a href="#" onclick="showSocialShare()">none</a></li>
 	          </ul>
 	          <div id="socialshare">
 	          <!-- Social Button HTML -->
-	          {% if social_share_twitter is not none -%}
 	          <!-- Twitter -->
-	            <a href="{{ social_share_twitter }}"" target="_blank" class="share-btn twitter">
+	            <a href="none"" target="_blank" class="share-btn twitter">
 	            <i class="fa fa-twitter"></i>
 	            </a>
-	          {% endif %}
-	          {%- if social_share_gplus is not none -%}
 	          <!-- Google Plus -->
-	            <a href="{{ social_share_gplus }}" target="_blank" class="share-btn google-plus">
+	            <a href="none" target="_blank" class="share-btn google-plus">
 	            <i class="fa fa-google-plus"></i>
 	            </a>
-	          {% endif %}
-	          {%- if social_share_facebook is not none -%}
 	          <!-- Facebook -->
-	            <a href="{{ social_share_facebook }}" target="_blank" class="share-btn facebook">
+	            <a href="none" target="_blank" class="share-btn facebook">
 	            <i class="fa fa-facebook"></i>
 	            </a>
-	          {% endif %}
-	          {%- if social_share_stumbleupon is not none -%}
 	          <!-- StumbleUpon (url, title) -->
-	            <a href="{{ social_share_stumbleupon }}" target="_blank" class="share-btn stumbleupon">
+	            <a href="none" target="_blank" class="share-btn stumbleupon">
 	            <i class="fa fa-stumbleupon"></i>
 	            </a>
-	          {% endif %}
-	          {%- if social_share_reddit is not none -%}
 	          <!-- Reddit (url, title) -->
-	            <a href="{{ social_share_reddit }}" target="_blank" class="share-btn reddit">
+	            <a href="none" target="_blank" class="share-btn reddit">
 	            <i class="fa fa-reddit"></i>
 	            </a>
-	          {% endif %}
-	          {%- if social_share_linkedin is not none -%}
 	          <!-- LinkedIn -->
-	            <a href="{{ social_share_linkedin }}" target="_blank" class="share-btn linkedin">
+	            <a href="none" target="_blank" class="share-btn linkedin">
 	            <i class="fa fa-linkedin"></i>
 	            </a>
-	          {% endif %}
-	          {%- if social_share_email is not none -%}
 	          <!-- Email -->
-	            <a href="{{ social_share_email }}" target="_blank" class="share-btn email">
+	            <a href="none" target="_blank" class="share-btn email">
 	            <i class="fa fa-envelope"></i>
 	            </a>
-	          {% endif -%}
 	          </div>
 	        </div> <!-- thankyou div -->
 	      </div>
@@ -149,13 +209,13 @@
     </form>
     <div id="icons">
       <div id="take-test" onclick="runTest()">
-        <img src="images/speed.svg" id="test-icon" alt="{{ icon_test_label }}" title="{{ icon_test_label }}" /><span class="button-label">{{ icon_test_label }}</span>
+        <img src="images/speed.svg" id="test-icon" alt="Take the Speed Test" title="Take the Speed Test" /><span class="button-label">Take the Speed Test</span>
       </div>
       <div id="explore-map" onclick="showMap()">
-        <img src="images/compass.png" id="exploreMap" alt="{{ icon_browse_label }}" title="{{ icon_browse_label }}" /><span class="button-label">{{ icon_browse_label }}</span>
+        <img src="images/compass.png" id="exploreMap" alt="Browse the Broadband Map" title="Browse the Broadband Map" /><span class="button-label">Browse the Broadband Map</span>
       </div>
       <div id="learn-more">
-        <a href="{{ icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ icon_learn_alt_text }}" title="{{ icon_learn_alt_text }}" /><span class="button-label">{{ icon_learn_label }}</span></a>
+        <a href="https://broadbandtest.us/" target="_parent" ><img src="images/about.svg" alt="Learn more about this test." title="Learn more about this test." /><span class="button-label">Learn More</span></a>
       </div>
     </div>
   </div>
@@ -238,8 +298,8 @@ function getNdtServer () {
 
 <div id="map">
   <div id="mapview-icons">
-  <a href="index.html" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}"><img src="images/speed.svg" id="mapview-test-icon" alt="{{ mapview_icon_test_alt_text }}" title="{{ mapview_icon_test_alt_text }}" /></a>
-  <a href="{{ mapview_icon_learn_link }}" target="_parent" ><img src="images/about.svg" alt="{{ mapview_icon_learn_alt_text }}" title="{{ mapview_icon_learn_alt_text }}" /></a>
+  <a href="index.html" alt="Take the Speed Test" title="Take the Speed Test"><img src="images/speed.svg" id="mapview-test-icon" alt="Take the Speed Test" title="Take the Speed Test" /></a>
+  <a href="https://broadbandtest.us/" target="_parent" ><img src="images/about.svg" alt="Learn more about this test." title="Learn more about this test." /></a>
 </div>
 
 <script>
@@ -254,7 +314,7 @@ function getNdtServer () {
 
   // polygonType is a variable name defining your aggregation regions.
   // Change the name to reflect the aggregated regions you are using if needed.
-  var polygonType = '{{ mapscript_layer_name }}';
+  var polygonType = 'pa_state_upper_house';
 
   // Either 'topojson' or 'geojson'.  The Node.js script creates both TopoJSON and
   // GeoJSON files.  TopoJSON files are significantly smaller in size, but need to
@@ -263,12 +323,12 @@ function getNdtServer () {
   // client-side to convert the TopJSON to GeoJSON.  I would conjecture that
   // the network is the most limiting factor and that generally TopoJSON will be
   // the right choice.  TODO: prove this theory.
-  var jsonType = '{{ mapscript_json_type }}';
+  var jsonType = 'topojson';
 
   // The minimum number of data points in any given polygon for a it to be
   // considered statistically relevant.  These cells will either not be displayed
   // or will be displayed with a different styling.
-  var minDataPoints = '{{ mapscript_min_data_points }}';
+  var minDataPoints = '1';
 
   // Defines how each overlay is treated on load.  If an overlay is enabled, then
   // there will be a checkbox for it in the layers control. 'defaultOn' determines
@@ -288,19 +348,19 @@ function getNdtServer () {
 
   // Defines the layers that are going to be added to the map.
   var geoLayers = {
-    '{{ mapscript_layer_name }}': {
-      'name': '{{ mapscript_layer_name_pretty }}',
-      'polygonFile': 'geofiles/{{ topojson_file }}',
-      'dataUrl': 'stats/q/{{ aggregation_name }}?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=year&f.time_slices=',
-      'dbKey': '{{ dbKey }}',
-      'geoKey': '{{ geoKey }}',
+    'pa_state_upper_house': {
+      'name': 'Pennsylvania State Upper House Districts',
+      'polygonFile': 'geofiles/US_PA_2017_upper_house.topojson',
+      'dataUrl': 'stats/q/pa_state_upper_house_districts?format=json&stats=AverageRTT,DownloadCount,MedianDownload,AverageDownload,UploadCount,MedianUpload,AverageUpload,DownloadMax,UploadMax&b.spatial_join=key&b.time_slices=year&f.time_slices=',
+      'dbKey': 'geoid',
+      'geoKey': 'GEOID',
       'cache': null,
       'layer': null
     },
   };
 
   // Which of the geoLayers should be the one added to the map by default
-  var defaultLayer = '{{ mapscript_layer_name }}';
+  var defaultLayer = 'pa_state_upper_house';
 
   // If set to true, then prefetch the GeoJSON files into a local cache.  WARNING:
   // You may not want to enable if you expect mobile, low bandwidth, or otherwise
@@ -310,17 +370,13 @@ function getNdtServer () {
   // The inteval (in milliseconds) to use when animating the map.
   var animateInterval = 1500;
 
-  var zoom = {{ mapscript_zoom_level }};
+  var zoom = 8;
 
   // These are the labels that will be used for the month slider in the control
   // box in the lower left corner.
   //
 
-  var monthNames = [
-    {%- for key, value in mapscript_month_names.items() -%}
-      '{{ value }}' {%- if not loop.last %}, {% endif -%}
-    {%- endfor -%}
-  ];
+  var monthNames = ['2018'];
 
   // An object which will hold cached GeoJSON files so that we don't have to fetch
   // them from the server more than once.  This could potentially be problematic
@@ -329,8 +385,8 @@ function getNdtServer () {
   var geometryCache = null;
 
   // The oldest year and month for which we have data.
-  var startYear = {{ mapscript_start_year }};
-  var startMonth = {{ mapscript_start_month }};
+  var startYear = 2018;
+  var startMonth = 1;
 
   // Get current year/month into variables
   var currentYear = new Date().getFullYear();
@@ -379,33 +435,24 @@ function getNdtServer () {
 // Create the map
 var map = L.map('map', {zoomControl: false}).setView(center, zoom);
 map.scrollWheelZoom.disable();
-var control = L.control.zoom({position: '{{ mapcontrols_zoom_pos }}'});
+var control = L.control.zoom({position: 'topright'});
 map.addControl(control);
 
 // Set the base tile layer type
-{% if 'mapbox' in mapscript_base_layer %}
-  // Use Mapbox as a base tile layer
-  var baseTileLayer = L.tileLayer(
-    '{{ mapscript_mapbox_api_url }}', {
-  	  attribution: '&copy; <a href="http://mapbox.com/">Mapbox</a>'
-    }
-  );
-{% elif 'osm' in mapscript_base_layer %}
 // Use Open Street Maps as a base tile layer
   var baseTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   });
-{% endif %}
 
 // Set the default base tile layer.
 map.addLayer(baseTileLayer);
 
 // Add other base tile layer providers as needed
 var baseLayers = {
-  '{{ mapscript_base_layer }}': baseTileLayer
+  'osm': baseTileLayer
 };
 
-var layerCtrl = L.control.layers(baseLayers, null, { collapsed: false, position: '{{ mapcontrols_legend_pos }}' });
+var layerCtrl = L.control.layers(baseLayers, null, { collapsed: false, position: 'bottomleft' });
 addControls();
 layerCtrl.addTo(map);
 addLegend();

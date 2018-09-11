@@ -22,12 +22,6 @@ extra_data = Table('extra_data', metadata,
         Column('min_rtt', Integer),
         Column('client_ip', BigInteger),
         Column('isp', String),
-        {% for item, field in form_fields.items() | sort -%}
-            {%- set num_fields = form_fields.items() | length -%}
-            {% for attr, vals in field.items() -%}
-            Column('{{ vals["name"] }}', {{ vals['db_type'] }}){%- if item < num_fields -%}, {% endif -%}
-            {% endfor -%}
-        {% endfor -%}
-        )        
+        Column('test_loc', String), Column('service_at_home', String), Column('no_serv_reason', String), Column('household_num', String), Column('household_type', String), Column('household_type_other', String), Column('isp_user', String), Column('service_type', String), Column('download_speed', String), Column('upload_speed', String), Column('other_download', String), Column('other_upload', String), Column('service_cost', String))        
 metadata.drop_all()
 metadata.create_all()

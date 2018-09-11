@@ -20,6 +20,7 @@
   <script src='js/center.js'></script>
   <script src="js/jquery-ui.min.js"></script>
   <script src="js/jquery-ui-slider-pips.min.js"></script>
+  <script src="https://unpkg.com/tangram/dist/tangram.min.js"></script>
 </head>
 
 <body>
@@ -39,27 +40,6 @@
   <div id="sidebar">
     <form action="/collector/collect" method="get" id="collector">
       <div id="extra-data" class="ndt-related">
-      <table>
-      {% for item, field in form_fields.items()   -%}
-        {% for attr, vals in field.items() -%}    
-        <tr>
-          <td>{{ vals['text'] }}</td>
-          <td>
-        {% if vals['field_type'] == 'select_list' -%}
-          <select id="{{ vals['id'] }}" name="{{ vals['name'] }}" class="form-control">
-          {% for opt, item in vals.options.items() | sort -%}
-            <option value="{{ opt }}"{%- if opt == 'default' %} selected {%- endif -%}>{{ item }}</option>
-          {%- endfor -%}
-          </select>
-        {% elif vals['field_type'] == 'text' -%}
-          <input id="{{ vals['id'] }}" type="text" name="{{ vals['name'] }}" class="form-control"{%- if vals['size'] is defined %} size="{{ vals['size'] }}"{%- endif -%}/>
-        {% endif -%}
-          </td>
-        </tr>
-        {% endfor -%} 
-      {% endfor -%}
-      </table>
-
         <div class="container" id="consent-text">
         <p>
           <span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> {{ consent_message }}

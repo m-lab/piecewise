@@ -63,7 +63,7 @@ database_user_group: postgres
 #       the database user. These can be safely left as the default, unless you desire to 
 #       change them.
 
-site_fqdn: 172.104.26.100
+site_fqdn: 35.208.241.53
 # !REQUIRED!
 #
 # site_fqdn 
@@ -207,7 +207,7 @@ map_coordinate_northeast:
 map_bounding_box: "{{ map_coordinate_southwest.lon }},{{ map_coordinate_southwest.lat }},{{ map_coordinate_northeast.lon }},{{ map_coordinate_northeast.lat }}"
 # You do not need to edit the value for map_bounding_box.
 
-map_data_start_date: "Jan 1 2016 00:00:00"
+map_data_start_date: "Jan 1 2018 00:00:00"
 map_data_end_date: "Dec 31 2055 00:00:00"
 # !REQUIRED!
 #
@@ -231,7 +231,7 @@ map_data_end_date: "Dec 31 2055 00:00:00"
 # 3.1 Website Geographic Information #
 ######################################
 
-topojson_file: US_PA_2017_upper_house.json
+topojson_file: US_PA_2017_upper_house.topojson
 # !REQUIRED!
 #
 # topojson_file   The file name of a topojson format geo file that is 
@@ -299,8 +299,8 @@ mapscript_json_type: "topojson"
 # # DEFAULT #
 mapscript_month_names: 
    1: 2018
-   2: 2017
-   3: 2016
+#   2: 2017
+#   3: 2016
 #   4: 2015
 #   5: 2014
 #   6: 2013
@@ -378,113 +378,190 @@ mapscript_month_names:
 #   6:
 #     advertised_download:
 
-#form_fields:
-#  1:
-#    test_location:
-#      field_type: select_list
-#      db_type: String
-#      name: test_loc
-#      id: test_loc
-#      text: "Are you testing from your home, a business, or a community institution like a school or library?"
-#      options:
-#        1:
-#          default: "------"
-#        2:
-#          home: "Home"
-#        3:
-#          school: "School"
-#        4:
-#          library: "Library"
-#        5:
-#          work: "Work"
-#        6:
-#         other: "Other community institution"
-#     required: yes
-#   2:
-#    if_loc_not_home:
+form_fields:
+  1:
+    test_location:
+      field_type: select_list
+      page: 1
+      db_type: String
+      name: test_loc
+      id: test_loc
+      text: "Are you testing from your home, a business, or a community institution like a school or library?"
+      options:
+        a_default: "------"
+        b_home: "Home"
+        c_school: "School"
+        d_library: "Library"
+        e_work: "Work"
+        f_other: "Other location"
 
-#If testing from a business or community institution:
-#- Do you have internet service at home? (yes/no)
-#- If you do not have internet service at home, why not?
-#  Cost
-#  Do not have a device
-#  Do not know how to use it
-#  Do not want the internet
-#  Only have a mobile
+  2: 
+    service_at_home:
+      field_type: select_list
+      page: 1
+      db_type: String
+      name: service_at_home
+      id: service_at_home
+      text: "If you're not testing from your home, Do you have internet service at home?"
+      options:
+        a_default: "------"
+        b_home_serv_yes: "Yes"
+        c_home_serv_no: "No"
 
-#If testing from your home:
-#- How many people in your household use the internet?
-#- What is level of service do you have? (upload speed, download speed)
-#- How much does it cost per month?
+  3: 
+    no_serv_reason:
+      field_type: select_list
+      db_type: String
+      page: 1
+      name: no_serv_reason
+      id: no_serv_reason
+      text: "If you do not have internet service at home, why not?"
+      options:
+        a_default: "------"
+        b_cost: "Cost"
+        c_no_device: "Do not have a computer/device"
+        d_no_expertise: "Do not know how to use it"
+        e_no_interest: "Do not want the internet"
+        f_mobile_only: "Only have a mobile"
 
-#form_fields:
-#  1:
-#    nombre:
-#      field_type: text
-#      db_type: String
-#      name: nombre
-#      id: nombre
-#      text: "Nombre: "
-#      required: yes
-#  2:
-#    email:
-#      field_type: text
-#      db_type: String
-#      name: email
-#      id: email
-#      text: "E-mail: " 
-#      required: yes
-#  3:
-#    pais:
-#      field_type: text
-#      db_type: String
-#      name: pais
-#      id: pais
-#      text: "Pa&#237;s: " 
-#      required: yes  
-#  4:
-#    estado:
-#      field_type: text
-#      db_type: String
-#      name: estado
-#      id: estado
-#      text: "Estado: " 
-#      required: yes  
-#  5:
-#    ciudad:
-#      field_type: text
-#      db_type: String
-#      name: ciudad
-#      id: ciudad
-#      text: "Ciudad: " 
-#      required: yes   
-#  6:
-#    provider:
-#      field_type: text
-#      db_type: String
-#      name: provider
-#      id: provider
-#      text: "Proveedor de servicio de internet: "
-#      required: yes
-#  7:
-#    provider_plan:
-#      field_type: text
-#      db_type: String
-#      name: provider_plan
-#      id: provider_plan
-#      text: "Plan de navegación contratado (si lo conoce): "
-#      required: no
-#  8:
-#    comments:
-#      field_type: text
-#      db_type: String
-#      name: comments
-#      id: comments
-#      text: "Dudas y Comentarios: "
-#      required: no
+  4:
+    household_num:
+      field_type: select_list
+      db_type: String
+      page: 1
+      name: household_num
+      id: household_num
+      text: "If testing from your home, how many people in your household use the internet?"
+      options:
+        default: "------"
+        1: "1"
+        2: "2"
+        3: "3"
+        4: "4"
+        5: "5"
+        6: "6"
+        7: "7"
+        8: "8"          
+        9: "9"
+        10: "10+" 
 
-# !REQUIRED!
-#
+  5:
+    household_type:
+      field_type: select_list
+      page: 1
+      db_type: String
+      name: household_type
+      id: household_type
+      text: "What type of household do you live in?"
+      options:
+        a_default: "------"
+        b_apartment_building: "Apartment Building"
+        c_single_fam_home: "Single-family home"
+        d_multi_fam_home: "Multi-family home"
+        e_other: "Other"
+
+  6:
+    household_type_other:
+      field_type: text
+      page: 1
+      db_type: String
+      name: household_type_other
+      id: household_type_other
+      text: "If you selected 'other', please describe your household type:"
+
+  7:
+    isp_user:
+      field_type: text
+      page: 2
+      db_type: String
+      name: isp_user
+      id: isp_user
+      text: "What company provides your internet service at home?"
+
+  8:
+    service_type:
+      field_type: select_list
+      page: 2
+      db_type: String
+      name: service_type
+      id: service_type
+      text: "What type of internet service is it?"
+      options:
+        a_default: "------"
+        b_mobile: "Mobile (cellular)"
+        c_dsl: "DSL"
+        d_cable: "Cable"
+        e_wireless_isp: "Wireless/WISP"
+        f_satellite: "Satellite"
+        g_fiber: "Fiber"
+
+  9:
+    download_speed:
+      field_type: select_list
+      page: 2
+      db_type: String
+      name: download_speed
+      id: download_speed
+      text: "What is the download speed of your internet service subscription?"
+      options:
+        a_default: "------"
+        b_10_mbps: "10 Mbps"
+        c_25_mbps: "25 Mbps"
+        d_50_mbps: "50 Mbps"
+        e_100_mbps: "100+ Mbps"
+        f_other: "Other"        
+
+  10:
+    upload_speed:
+      field_type: select_list
+      page: 2
+      db_type: String
+      name: upload_speed
+      id: upload_speed
+      text: "What is the upload speed of your internet service subscription?"
+      options:
+        a_default: "------"
+        b_1_mbps: "1 Mbps"
+        c_3_mbps: "3 Mbps"
+        d_10_mbps: "10 Mbps"
+        e_25_mbps: "25 Mbps"
+        f_50_mbps: "50 Mbps"
+        g_100_mbps: "100+ Mbps"
+        h_other: "Other"
+
+  11:
+    other_download:
+      field_type: text
+      page: 2
+      db_type: String
+      name: other_download
+      id: other_download
+      text: "Other download speed (if not listed above):"
+
+  12:
+    other_upload:
+      field_type: text
+      db_type: String
+      name: other_upload
+      id: other_upload
+      text: "Other upload speed (if not listed above):"
+
+  13:
+    service_cost:
+      field_type: select_list
+      page: 2
+      db_type: String
+      name: service_cost
+      id: service_cost
+      text: "How much does it cost per month?"
+      options:
+        a_default: "------"
+        b_less_than_25: "Less than $25"
+        c_bet_25_50: "$25-50"
+        d_bet_50_75: "$50-75"
+        e_bet_75_100: "$75-100"
+        f_100_plus: "$100+"
+        g_dont_know: "I don't know"
 
 ####################
 # 3.3 Website Text #
