@@ -33,6 +33,17 @@ html, body {
 */
 }
 
+.form-field {
+  width: 100%;
+}
+.field-container {
+  width: 44%;
+  height: 3em;
+  float: left; 
+  margin-left: 1em; 
+  margin-right: 1em;
+}
+
 #ndt {
 	width: 100%;
 	margin-bottom: 2em;

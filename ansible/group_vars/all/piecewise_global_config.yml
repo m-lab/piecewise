@@ -509,9 +509,18 @@ form_fields:
         c_25_mbps: "25 Mbps"
         d_50_mbps: "50 Mbps"
         e_100_mbps: "100+ Mbps"
-        f_other: "Other"        
+        f_other: "Other"  
 
   10:
+    other_download:
+      field_type: text
+      page: 2
+      db_type: String
+      name: other_download
+      id: other_download
+      text: "Other download speed (if not listed above):"              
+
+  11:
     upload_speed:
       field_type: select_list
       page: 2
@@ -528,15 +537,6 @@ form_fields:
         f_50_mbps: "50 Mbps"
         g_100_mbps: "100+ Mbps"
         h_other: "Other"
-
-  11:
-    other_download:
-      field_type: text
-      page: 2
-      db_type: String
-      name: other_download
-      id: other_download
-      text: "Other download speed (if not listed above):"
 
   12:
     other_upload:
