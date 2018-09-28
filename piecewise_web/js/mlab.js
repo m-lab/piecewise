@@ -436,12 +436,12 @@ function seedLayerCache(year) {
  * @returns {string} Textual information for the popup
  */
 function makePopup(props) {
-	var popup = '<h3 class="league-gothic">Internet Measurements in PA, '+ props.NAME +', in '+ $('#selectYear').val() + ' :</h3>'+
+	var popup = '<h3 class="league-gothic">Internet Measurements in PA, lower house district '+ props.NAME +', in '+ $('#selectYear').val() + ' :</h3>'+
 		' <p><strong>Download ('+ Math.round(props.download_count * 10) / 10 +' samples)</strong><br />'+
 		' Median: ' + Math.round(props.download_median * 10) / 10 + ' Mbps <br />' +
 		' Average: ' + Math.round(props.download_avg * 10) / 10 + ' Mbps <br />' +
 		' Maximum: ' + props.download_max + ' Mbps<br /><br />' +
-		' <strong>Uplpad ('+ Math.round(props.upload_count * 10) / 10 + ' samples)</strong><br />' +
+		' <strong>Upload ('+ Math.round(props.upload_count * 10) / 10 + ' samples)</strong><br />' +
 		' Median: ' + Math.round(props.upload_median * 10) / 10 + ' Mbps <br />' +
 		' Average: ' + Math.round(props.upload_avg * 10) / 10 + ' Mbps <br/>' +
 		' Maximum: ' + props.upload_max + ' Mbps<br /><br />' +
@@ -575,7 +575,8 @@ $( window ).resize(function() {
 $(function() {
 /* Sets initial status on load for various divs */
 	$('#testSpeed, #approx-loc, #ndt-div, #ndt-results, #desktop-legend, .info.legend.leaflet-control, .leaflet-bottom.leaflet-left, .info.controls.leaflet-control, #mapview-icons, #socialshare, .leaflet-top.leaflet-left, .leaflet-top.leaflet-right, .leaflet-control-layers').addClass('hidden');
-	$('#container-service_at_home, #container-no_serv_reason, #container-household_num, #container-household_type, #container-household_type_other, #container-isp_user, #container-service_type, #container-download_speed, #container-upload_speed, #container-other_download, #container-other_upload, #container-service_cost').addClass('hidden');
+	$('#container-test_loc').addClass('displayed');
+	$('#container-service_at_home, #container-no_serv_reason, #container-household_num, #container-household_type, #container-household_type_other, #container-isp_user, #container-service_type, #container-download_speed, #container-other_download, #container-upload_speed, #container-other_upload, #container-service_cost').addClass('hidden');
 	//$('.leaflet-top.leaflet-right').attr('id','layers-box');
 	$('#header').addClass('initial');
 
@@ -677,7 +678,17 @@ function validateExtraDataForm() {
 $( document ).ready(function() {
 	$("select#test_loc").change(function() {
         var selected = $('select#test_loc').find('option:selected');
-		if ( (selected[0].value == 'b_home') || (selected[0].value == 'a_default') ) {
+		if ( selected[0].value == 'b_home' ) {
+			if ($('div#container-service_at_home').hasClass('displayed')) {
+				$('div#container-service_at_home').removeClass('displayed')
+				$('div#container-service_at_home').addClass('hidden')
+				$('select[name]=service_at_home').val('a_default')
+			}
+			if ($('div#container-no_serv_reason').hasClass('displayed')) {
+				$('div#container-no_serv_reason').removeClass('displayed')
+				$('div#container-no_serv_reason').addClass('hidden')
+				$('select[name]=no_serv_reason').val('a_default')
+			}
 			if ($('div#container-household_num').hasClass('hidden')) {
 				$('div#container-household_num').removeClass('hidden')
 				$('div#container-household_num').addClass('displayed')
@@ -706,11 +717,48 @@ $( document ).ready(function() {
 				$('div#container-service_cost').removeClass('hidden')
 				$('div#container-service_cost').addClass('displayed')
 			}
+		}
+		else if (selected[0].value == 'a_default') {
 			if ($('div#container-service_at_home').hasClass('displayed')) {
 				$('div#container-service_at_home').removeClass('displayed')
 				$('div#container-service_at_home').addClass('hidden')
+				$('select[name]=service_at_home').val('a_default')
 			}
-
+			if ($('div#container-household_num').hasClass('displayed')) {
+				$('div#container-household_num').removeClass('displayed')
+				$('div#container-household_num').addClass('hidden')
+				$('select[name]=household_num').val('default')
+			}
+			if ($('div#container-household_type').hasClass('displayed')) {
+				$('div#container-household_type').removeClass('displayed')
+				$('div#container-household_type').addClass('hidden')
+				$('select[name]=household_type').val('a_default')
+			}
+			if ($('div#container-isp_user').hasClass('displayed')) {
+				$('div#container-isp_user').removeClass('displayed')
+				$('div#container-isp_user').addClass('hidden')
+				$('select[name]=isp_user').val('')
+			}
+			if ($('div#container-service_type').hasClass('displayed')) {
+				$('div#container-service_type').removeClass('displayed')
+				$('div#container-service_type').addClass('hidden')
+				$('select[name]=service_type').val('a_default')
+			}
+			if ($('div#container-download_speed').hasClass('displayed')) {
+				$('div#container-download_speed').removeClass('displayed')
+				$('div#container-download_speed').addClass('hidden')
+				$('select[name]=download_speed').val('a_default')
+			}
+			if ($('div#container-upload_speed').hasClass('displayed')) {
+				$('div#container-upload_speed').removeClass('displayed')
+				$('div#container-upload_speed').addClass('hidden')
+				$('select[name]=upload_speed').val('a_default')
+			}
+			if ($('div#container-service_cost').hasClass('displayed')) {
+				$('div#container-service_cost').removeClass('displayed')
+				$('div#container-service_cost').addClass('hidden')
+				$('select[name]=service_cost').val('a_default')
+			}
 		}
 		else {
 			if ($('div#container-service_at_home').hasClass('hidden')) {
@@ -724,26 +772,42 @@ $( document ).ready(function() {
 			if ($('div#container-household_type').hasClass('displayed')) {
 				$('div#container-household_type').removeClass('displayed')
 				$('div#container-household_type').addClass('hidden')
+				$('select[name]=household_type').val('a_default')
 			}
 			if ($('div#container-isp_user').hasClass('displayed')) {
 				$('div#container-isp_user').removeClass('displayed')
 				$('div#container-isp_user').addClass('hidden')
+				$('input[name]=isp_user').val('')
 			}
 			if ($('div#container-service_type').hasClass('displayed')) {
 				$('div#container-service_type').removeClass('displayed')
 				$('div#container-service_type').addClass('hidden')
+				$('select[name]=service_type').val('a_default')
 			}
 			if ($('div#container-download_speed').hasClass('displayed')) {
 				$('div#container-download_speed').removeClass('displayed')
 				$('div#container-download_speed').addClass('hidden')
+				$('select[name]=download_speed').val('a_default')
+			}
+			if ($('div#container-other_download').hasClass('displayed')) {
+				$('div#container-other_download').removeClass('displayed')
+				$('div#container-other_download').addClass('hidden')
+				$('input[name]=other_download').val('')
 			}
 			if ($('div#container-upload_speed').hasClass('displayed')) {
 				$('div#container-upload_speed').removeClass('displayed')
 				$('div#container-upload_speed').addClass('hidden')
+				$('select[name]=upload_speed').val('a_default')
+			}
+			if ($('div#container-other_upload').hasClass('displayed')) {
+				$('div#container-other_upload').removeClass('displayed')
+				$('div#container-other_upload').addClass('hidden')
+				$('input[name]=other_upload').val('')
 			}
 			if ($('div#container-service_cost').hasClass('displayed')) {
 				$('div#container-service_cost').removeClass('displayed')
 				$('div#container-service_cost').addClass('hidden')
+				$('select[name]=service_cost').val('a_default')
 			}
 		}
 	});
@@ -770,13 +834,14 @@ $( document ).ready(function() {
 				$('div#container-household_type_other').removeClass('hidden')
 				$('div#container-household_type_other').addClass('displayed')
 			}
-			else {
+		}	
+		else if (selected[0].value != 'e_other') {
 			if ($('div#container-household_type_other').hasClass('displayed')) {
 				$('div#container-household_type_other').removeClass('displayed')
 				$('div#container-household_type_other').addClass('hidden')
+				$('input[name]=household_type_other').val('')
 			}
 		}
-	}
 	});
 
 	$("select#download_speed").change(function() {
@@ -786,11 +851,12 @@ $( document ).ready(function() {
 				$('div#container-other_download').removeClass('hidden')
 				$('div#container-other_download').addClass('displayed')
 			}
-			else {
+		}
+		else if (selected[0].value != 'f_other') {
 			if ($('div#container-other_download').hasClass('displayed')) {
 				$('div#container-other_download').removeClass('displayed')
 				$('div#container-other_download').addClass('hidden')
-			}	
+				$('input[name]=other_download').val('')
 		}
 	}
 	});
@@ -802,11 +868,12 @@ $( document ).ready(function() {
 				$('div#container-other_upload').removeClass('hidden')
 				$('div#container-other_upload').addClass('displayed')
 			}
-			else {
+		}
+		else if (selected[0].value != 'h_other') {
 			if ($('div#container-other_upload').hasClass('displayed')) {
 				$('div#container-other_upload').removeClass('displayed')
 				$('div#container-other_upload').addClass('hidden')
-			}	
+				$('input[name]=other_upload').val('')
 		}
 	}
 	});

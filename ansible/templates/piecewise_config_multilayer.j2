@@ -3,6 +3,28 @@
     "database_uri" : "postgresql+psycopg2://{{ database_user }}:@/{{ database_name }}",
     "cache_table_name": "results",
     "aggregations": [{
+    {% for item, field in geolayers.items() %}
+        {% for attr, vals in field.items() -%}
+            "name": "{{ aggregation_name }}",
+            "statistics_table_name": "{{ aggregation_stats_table_name }}",
+            "bins": [
+                { "type" : "spatial_join", "table" : "{{ layer_name }}", "geometry_column" : "wkb_geometry", "key" : "{{ dbKey }}", "key_type": "{{ dbKeyDataType }}", "join_custom_data" : true },
+                { "type" : "time_slices", "resolution" : "month" },
+                { "type" : "isp_bins", "maxmind_table" : "maxmind", 
+        {% endfor -%}
+                "rewrites" : {
+        {% set num_mappings = asn_map.items() | length %}
+        {% for name, asn in asn_map.items() %}
+                    "{{ name }}": ["{{ asn }}"]{% if ,
+    {% endfor -%}
+    }],
+    
+            {%- set num_fields = form_fields.items() | length -%}
+            {% for attr, vals in field.items() -%}
+            Column('{{ vals["name"] }}', {{ vals['db_type'] }}){%- if item < num_fields -%}, {% endif -%}
+
+
+    "aggregations": [{
         "name": "{{ aggregation_name }}",
         "statistics_table_name": "{{ aggregation_stats_table_name }}",
         "bins": [

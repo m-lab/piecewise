@@ -8,7 +8,7 @@
 # Required fields are indicated with the text "# !REQUIRED!" just below the variable name.
 # If a field is marked Required, you must enter a value or change the default value.
 
-env: development
+env: production
 # !REQUIRED!
 #
 # env   Instructs Ansible whether this is a server/VM in development or in production.
@@ -63,7 +63,8 @@ database_user_group: postgres
 #       the database user. These can be safely left as the default, unless you desire to 
 #       change them.
 
-site_fqdn: 35.208.241.53
+#site_fqdn: 172.104.26.100
+site_fqdn: pa.broadbandtest.us
 # !REQUIRED!
 #
 # site_fqdn 
@@ -160,8 +161,8 @@ site_path: "{{ base_path }}/piecewise_web"
 # Save the geofiles you intend to use for your Piecewise aggregations of
 # M-Lab data in the folder: /local_customizations/geofiles/
 
-shape_file: US_PA_2017_upper_house.shp #cb_2017_42_sldl_500k-lower.shp
-            #cb_2017_42_sldl_500k-Upper
+shape_file: US_PA_2017_lower_house.shp 
+
 # !REQUIRED!
 #
 # shape_file  The filename of the shapefile Piecewise should use for your aggregations.
@@ -170,9 +171,50 @@ dbKey: geoid
 dbKeyDataType: string
 shape_projection: "EPSG:4326"
 geometry_type: MultiPolygon
-layer_name: pa_state_upper_house_districts
-aggregation_name: "pa_state_upper_house_districts"
-aggregation_stats_table_name: "pa_state_upper_house_districts_stats"
+layer_name: pa_state_lower_house_districts
+aggregation_name: "pa_state_lower_house_districts"
+aggregation_stats_table_name: "pa_state_lower_house_districts_stats"
+
+### Geolayers - change from single layer to multiple geolayer support using yaml struct
+#               similar to how the form fields are constructed.
+
+geolayers:
+  1:
+    shape_file: US_PA_2017_lower_house.shp
+    dbKey: geoid
+    dbKeyDataType: string
+    shape_projection: "EPSG:4326"
+    geometry_type: MultiPolygon
+    layer_name: pa_state_lower_house_districts
+    aggregation_name: "pa_state_lower_house_districts"
+    aggregation_stats_table_name: "pa_state_lower_house_districts_stats"
+    topojson_file: pa_lower_house.topojson
+    geoKey: GEOID
+    mapscript_layer_name: "pa_state_lower_house"
+    mapscript_layer_name_pretty: "Pennsylvania State Lower House Districts"
+    mapscript_json_type: "topojson"
+
+  2:  
+    shape_file: US_PA_2017_upper_house.shp 
+    dbKey: geoid
+    dbKeyDataType: string
+    shape_projection: "EPSG:4326"
+    geometry_type: MultiPolygon
+    layer_name: pa_state_upper_house_districts
+    aggregation_name: "pa_state_upper_house_districts"
+    aggregation_stats_table_name: "pa_state_upper_house_districts_stats"
+    topojson_file: pa_upper_house.topojson
+    geoKey: GEOID
+    mapscript_layer_name: "pa_state_upper_house"
+    mapscript_layer_name_pretty: "Pennsylvania State Upper House Districts"
+    mapscript_json_type: "topojson"
+
+asn_map:
+  1:
+    Cantv: "AS8048 CANTV Servicios, Venezuela"
+  2:
+    CIX: "AS265641 TELECOMUNICACIONES ROCARLI C.A (CIX BROADBAND)"
+
 # !REQUIRED!
 #
 # dbKey             The field name of the unique key in your shape file.
@@ -231,7 +273,7 @@ map_data_end_date: "Dec 31 2055 00:00:00"
 # 3.1 Website Geographic Information #
 ######################################
 
-topojson_file: pa_upper_house.topojson
+topojson_file: pa_lower_house.topojson
 # !REQUIRED!
 #
 # topojson_file   The file name of a topojson format geo file that is 
@@ -244,6 +286,20 @@ geoKey: GEOID
 # geoKey    The field name in your topojson file which corresponds to the unique key 
 #           in your shapefile. 
 #           This is typically the same as dbKey, but in CAPITAL LETTERS.
+
+mapscript_layer_name: "pa_state_lower_house"
+mapscript_layer_name_pretty: "Pennsylvania State Lower House Districts"
+# !REQUIRED!
+#
+# These variables name the map layers on the website. 'mapscript_layer_name' is used as 
+# a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
+# UI if the layer controls are displayed for the user.
+
+mapscript_json_type: "topojson"
+# # DEFAULT #
+#
+# In the future, support for other types of geodata, such as the geojson format may be
+# included in Piecewise. Currently, the mapscript json type should always be 'topojson'. 
 
 mapscript_start_year: 2018
 mapscript_start_month: 1
@@ -269,7 +325,7 @@ mapscript_mapbox_api_url: ""
 
 # If you are using a Mapbox base layer, set the API URL for your Mapbox tiles above.
 
-mapscript_min_data_points: 1
+mapscript_min_data_points: 25
 # # DEFAULT #
 #
 # Sets the minimum number of tests which must be present in any aggregate area defined by
@@ -279,20 +335,6 @@ mapscript_zoom_level: 8
 # # DEFAULT #
 #
 # Sets the initial zoom level for the map display.
-
-mapscript_layer_name: "pa_state_upper_house"
-mapscript_layer_name_pretty: "Pennsylvania State Upper House Districts"
-# !REQUIRED!
-#
-# These variables name the map layers on the website. 'mapscript_layer_name' is used as 
-# a layer name in the JavaScript code, and 'mapscript_layer_name_pretty' is used in the 
-# UI if the layer controls are displayed for the user.
-
-mapscript_json_type: "topojson"
-# # DEFAULT #
-#
-# In the future, support for other types of geodata, such as the geojson format may be
-# included in Piecewise. Currently, the mapscript json type should always be 'topojson'. 
 
 # This dictionary of month names/abbreviations lets you configure how month names appear 
 # on the website map controls. 
@@ -308,18 +350,6 @@ mapscript_month_names:
 #   8: 2011
 #   9: 2010
 #   10: 2009
-#  1: enero
-#  2: febrero
-#  3: marzo
-#  4: abril
-#  5: mayo
-#  6: junio
-#  7: julio
-#  8: agosto
-#  9: septiembre
-#  10: octubre
-#  11: noviembre
-#  12: diciembre
 
 ####################
 # 3.2 Website Form #
