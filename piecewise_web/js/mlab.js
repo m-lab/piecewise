@@ -22,8 +22,8 @@ function addLegend() {
 
 	legend.onAdd = function(map) {
 	    var div = L.DomUtil.create('div', 'info legend'),
-	        grades = [0, 5, 10, 25, 50];
-
+	        grades = [0, 3, 5, 10, 25];
+/*
 	    var i;
 		div.innerHTML = '';
 	    for ( i = grades.length - 1; i >= 0; i-- ) {
@@ -32,8 +32,16 @@ function addLegend() {
 				'"></i> ' + (i == grades.length ? '0' : grades[i]) + (grades[i - 1] ?
 				'&ndash;' + grades[i - 1] + ' Mbps<br/>' : '+ Mbps<br/>');
 	    }
-		div.innerHTML += '<i style="background: black; opacity: .25">' +
+		div.innerHTML += '<i style="background: black; opacity: .50">' +
 		'</i>Insufficient Data';
+*/		
+		div.innerHTML = '<i style="background:#bc0000;"></i> 0-3 Mbps '+
+				'(FCC Minimum for "Broadband" UPLOAD Speed)<br/>' +
+				'<i style="background:#b75e00;"></i> 3-5 Mbps<br/>' +
+				'<i style="background:#ff8200;"></i> 5-10 Mbps<br/>' +
+				'<i style="background:#ffb05e;"></i> 10-25 Mbps<br/>' +
+				'<i style="background:#36BC18;"></i> ' + 
+				'25+ Mbps (FCC Minimum for "Broadband" DOWNLOAD Speed)<br/>'
 	    return div;
 	};
 
@@ -56,11 +64,11 @@ function addLegend() {
  * @returns {string} A string representing the color
  */
 function getPolygonColor(val) {
-    return val >= 50 ? '#F57F17' :
-           val >= 25  ? '#F9A825' :
-           val >= 10  ? '#FBC02D' :
-           val >= 5  ? '#FFEB3B' :
-           val >= 0   ? '#FFEE58' : 'transparent';
+    return val >= 25 ? '#36BC18' :
+           val >= 10  ? '#ffb05e' :
+           val >= 5  ? '#ff8200' :
+           val >= 3  ? '#b75e00' :
+           val >= 0   ? '#bc0000' : '#bc0000';
 }
 
 /**
@@ -312,6 +320,7 @@ function setPolygonLayer(layer, year, month, metric, mode, resolution) {
 
 			polygonStyle.weight = 1;
 			polygonStyle.fillOpacity = 0.5;
+			polygonStyle.boundary = 15;
 
 			if ( ! value ) {
 				polygonStyle.weight = 0.2;
@@ -321,12 +330,12 @@ function setPolygonLayer(layer, year, month, metric, mode, resolution) {
 			} else if ( metric == 'download_median' &&
 					cell.properties['download_count'] < minDataPoints ) {
 				polygonStyle.weight = 0.5;
-				polygonStyle.fillOpacity = 0.05;
+				polygonStyle.fillOpacity = 0.50;
 				polygonStyle.color = 'black';
 			} else if ( metric == 'upload_median' &&
 					cell.properties['upload_count'] < minDataPoints ) {
 				polygonStyle.weight = 0.5;
-				polygonStyle.fillOpacity = 0.05;
+				polygonStyle.fillOpacity = 0.50;
 				polygonStyle.color = 'black';
 			} else {
 				polygonStyle.color = getPolygonColor(value);
