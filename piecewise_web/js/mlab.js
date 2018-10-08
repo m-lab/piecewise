@@ -35,9 +35,9 @@ function addLegend() {
 		div.innerHTML += '<i style="background: black; opacity: .50">' +
 		'</i>Insufficient Data';
 */		
-		div.innerHTML = '<i style="background:#bc0000;"></i> 0-3 Mbps '+
-				'(FCC Minimum for "Broadband" UPLOAD Speed)<br/>' +
-				'<i style="background:#b75e00;"></i> 3-5 Mbps<br/>' +
+		div.innerHTML = '<i style="background:#bc0000;"></i> 0-3 Mbps<br/>' +
+				'<i style="background:#b75e00;"></i> 3-5 Mbps ' +
+				'(FCC Minimum for "Broadband" UPLOAD Speed) <br/>' +
 				'<i style="background:#ff8200;"></i> 5-10 Mbps<br/>' +
 				'<i style="background:#ffb05e;"></i> 10-25 Mbps<br/>' +
 				'<i style="background:#36BC18;"></i> ' + 
