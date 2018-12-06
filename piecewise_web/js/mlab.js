@@ -691,7 +691,7 @@ $( document ).ready(function() {
 			if ($('div#container-service_at_home').hasClass('displayed')) {
 				$('div#container-service_at_home').removeClass('displayed')
 				$('div#container-service_at_home').addClass('hidden')
-				$('select[name]=service_at_home').val('a_default')
+				$('select[name="service_at_home"]').val('a_default')
 			}
 			if ($('div#container-no_serv_reason').hasClass('displayed')) {
 				$('div#container-no_serv_reason').removeClass('displayed')
