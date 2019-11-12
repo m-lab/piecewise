@@ -1,0 +1,26 @@
+{
+  "name": "piecewise",
+  "version": "1.0.0",
+  "description": "A tool for digesting and aggregating user-volunteered Internet performance test results data from Measurement Lab, and visualizing aggregate data on the web.",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/throneless-tech/piecewise.git"
+  },
+  "author": "MLab, Josh King, Rae Gaines",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/throneless-tech/piecewise/issues"
+  },
+  "homepage": "https://github.com/throneless-tech/piecewise#readme",
+  "dependencies": {
+    "d3": "^5.12.0",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-slider-pips": "0.0.1-security"
+  }
+}

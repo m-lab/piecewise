@@ -1,3 +1,6 @@
 .vagrant/
 *.pyc
 *.retry
+
+# Front end
+/node_modules
