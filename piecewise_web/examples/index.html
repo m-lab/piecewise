@@ -1,5 +1,6 @@
+<!doctype html>
 <html>
-<head>
+  <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
@@ -18,8 +19,9 @@
         stroke: #000;
     }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <script src="main.js"></script>
     <h2>Piecewise</h2>
     <div>
     <select name='resolution' id='resolution'>
@@ -33,88 +35,88 @@
     <input type="date" name="before" id="before" min="2015-01-01" max="2015-01-31" value="2015-01-31">
     </input>
     </div>
-</body>
-<script>
-(function() {
-    var margin = { top: 50, bottom: 50, left: 50, right: 50 };
-    var width = 900 - margin.left - margin.right,
+  </body>
+  <script>
+    (function() {
+      var margin = { top: 50, bottom: 50, left: 50, right: 50 };
+      var width = 900 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
-    var svg = d3.select("body").append("svg")
+      var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom);
-    var x = d3.time.scale()
+      var x = d3.time.scale()
         .range([0, width]);
-    var y = d3.scale.linear()
+      var y = d3.scale.linear()
         .range([height, 0]);
 
-    var line = d3.svg.line();
-    var path, xAxisNode, yAxisNode;
+      var line = d3.svg.line();
+      var path, xAxisNode, yAxisNode;
 
-    var yAxis = d3.svg.axis().orient('left');
-    var xAxis = d3.svg.axis().orient('bottom'); //.ticks(5);
+      var yAxis = d3.svg.axis().orient('left');
+      var xAxis = d3.svg.axis().orient('bottom'); //.ticks(5);
 
-    d3.csv('/stats/q?format=csv&stats=MedianRTT&b.time_slices=3600', function(data) {
+      d3.csv('/stats/q?format=csv&stats=MedianRTT&b.time_slices=3600', function(data) {
         data = retype(data);
         x.domain([d3.min(data, function(d) { return d.time_slice; }), d3.max(data, function(d) { return d.time_slice; })]);
         y.domain([0, d3.max(data, function(d) { return d.MedianRTT; })]);
         xAxis.scale(x);
         yAxis.scale(y);
         yAxisNode = svg.append('g')
-            .attr('class', 'y axis')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-            .call(yAxis);
+          .attr('class', 'y axis')
+          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+          .call(yAxis);
         xAxisNode = svg.append('g')
-            .attr('class', "x axis")
-            .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
-            .call(xAxis);
+          .attr('class', "x axis")
+          .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
+          .call(xAxis);
         line
-            .x(function(d) { return x(d.time_slice); })
-            .y(function(d) { return y(d.MedianRTT); })
-            .interpolate('basis');
+          .x(function(d) { return x(d.time_slice); })
+          .y(function(d) { return y(d.MedianRTT); })
+          .interpolate('basis');
         path = svg.append("g")
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-            .append("path");
+          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+          .append("path");
         path.attr("d", line(data));
-    });
+      });
 
-    var resPicker = document.getElementById('resolution');
-    var afterPicker = document.getElementById('after');
-    var beforePicker = document.getElementById('before');
+      var resPicker = document.getElementById('resolution');
+      var afterPicker = document.getElementById('after');
+      var beforePicker = document.getElementById('before');
 
-    function update() {
+      function update() {
         var res = resPicker.value,
-            after = date(afterPicker.value),
-            before = date(beforePicker.value) + (24 * 60 * 60);
+          after = date(afterPicker.value),
+          before = date(beforePicker.value) + (24 * 60 * 60);
         afterPicker.max = beforePicker.value;
         beforePicker.min = afterPicker.value;
         d3.csv('/stats/q?format=csv&stats=MedianRTT&b.time_slices=' + res + '&f.time_slices=' + after + ',' + before, function(response) {
-            var data = retype(response);
-            x.domain([d3.min(data, function(d) { return d.time_slice; }), d3.max(data, function(d) { return d.time_slice; })]);
-            y.domain([0, d3.max(data, function(d) { return d.MedianRTT; })]);
-            xAxis.scale(x);
-            yAxis.scale(y);
-            yAxisNode.call(yAxis);
-            xAxisNode.call(xAxis);
-            path.attr("d", line(data));
+          var data = retype(response);
+          x.domain([d3.min(data, function(d) { return d.time_slice; }), d3.max(data, function(d) { return d.time_slice; })]);
+          y.domain([0, d3.max(data, function(d) { return d.MedianRTT; })]);
+          xAxis.scale(x);
+          yAxis.scale(y);
+          yAxisNode.call(yAxis);
+          xAxisNode.call(xAxis);
+          path.attr("d", line(data));
         });
-    }
+      }
 
-    function date(s) {
+      function date(s) {
         return (new Date(s)).getTime() / 1000;
-    }
+      }
 
-    function retype(d) {
-        d.map(function(r) { 
-            d.time_slice = new Date(d.time_slice * 1000);
-            d.MedianRTT = +d.MedianRTT
-        }); 
+      function retype(d) {
+        d.map(function(r) {
+          d.time_slice = new Date(d.time_slice * 1000);
+          d.MedianRTT = +d.MedianRTT
+        });
         d.sort(function(a,b) { return b.time_slice - a.time_slice; })
         return d;
-    }
+      }
 
-    resPicker.onchange = update;
-    afterPicker.onchange = update;
-    beforePicker.onchange = update;
-})();
-</script>
+      resPicker.onchange = update;
+      afterPicker.onchange = update;
+      beforePicker.onchange = update;
+    })();
+  </script>
 </html>
