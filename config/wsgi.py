@@ -1,9 +1,9 @@
 import decimal
 from flask import Flask, request
 from flask.json import dumps
-from piecewise.aggregate import AverageRTT
-from piecewise.config import parse_date
-from piecewise.query import query
+from config.aggregate import AverageRTT
+from config.config import parse_date
+from config.query import query
 from sqlalchemy import create_engine, select, MetaData, Table, Column, String, Integer
 import StringIO
 import csv
@@ -16,8 +16,8 @@ if not app.debug:
     app.logger.addHandler(handler)
 
 import json
-import piecewise.config
-config = piecewise.config.read_system_config()
+import config.config
+config = config.config.read_system_config()
 
 @app.route("/q/<aggregation>")
 def query_statistics(aggregation):
@@ -29,7 +29,7 @@ def query_statistics(aggregation):
         elif k.startswith("b."):
             bins[k[2:]] = v
     stats = request.args.get("stats","").split(",")
-    stats = [piecewise.config.known_statistics[s] for s in stats]
+    stats = [config.config.known_statistics[s] for s in stats]
 
     results = query(config, aggregation, stats, bins, filters)
     if request.args.get("format", "json") == "csv":
@@ -85,5 +85,5 @@ def _rows_to_geojson(rows):
         "features" : [row_to_feature(r) for r in rows]
     }
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
     app.run(debug=True)

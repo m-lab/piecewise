@@ -1,5 +1,5 @@
-import piecewise.bigquery
-import piecewise.aggregate
+import config.bigquery
+import config.aggregate
 from sqlalchemy import create_engine, func, select, text, Column, Float, Integer, MetaData, String, Table
 from sqlalchemy.sql.expression import join, and_
 import calendar
@@ -19,27 +19,27 @@ def ingest(config):
     metadata.create_all(engine)
 
     query = config.ingest_bigquery_query()
-    bigquery_service = piecewise.bigquery.client()
+    bigquery_service = config.bigquery.client()
 
     start_time = time.time()
     query_reference = bigquery_service.jobs().insert(
-            projectId = piecewise.bigquery.PROJECT_NUMBER,
+            projectId = config.bigquery.PROJECT_NUMBER,
             body = make_request(query)).execute()
     jobId = query_reference['jobReference']['jobId']
 
-    check_job = bigquery_service.jobs().get(projectId = piecewise.bigquery.PROJECT_NUMBER, jobId = jobId)
+    check_job = bigquery_service.jobs().get(projectId = config.bigquery.PROJECT_NUMBER, jobId = jobId)
     job_status = check_job.execute()
-    print 'Waiting for BigQuery, this could take several minutes.'
+    print ('Waiting for BigQuery, this could take several minutes.')
     while job_status['status']['state'] != 'DONE':
-        print '.',
+        print ('.',)
         sys.stdout.flush()
         time.sleep(10)
         job_status = check_job.execute()
     finish_time = time.time()
-    print ''
-    print 'Took %d s to complete'.format(finish_time - start_time)
+    print ('')
+    print ('Took %d s to complete'.format(finish_time - start_time))
 
-    query_response = bigquery_service.jobs().getQueryResults(projectId = piecewise.bigquery.PROJECT_NUMBER, jobId = jobId, maxResults = 10000).execute()
+    query_response = bigquery_service.jobs().getQueryResults(projectId = config.bigquery.PROJECT_NUMBER, jobId = jobId, maxResults = 10000).execute()
     inserter = records.insert()
     page_count = 0
     record_count = 0
@@ -50,16 +50,16 @@ def ingest(config):
         page_count = page_count + 1
         record_count = record_count + len(query_response['rows'])
         total_rows = query_response['totalRows']
-        print 'Storing page {0} of results in postgres, total of {1}/{2} records'.format(page_count, record_count, total_rows)
+        print ('Storing page {0} of results in postgres, total of {1}/{2} records'.format(page_count, record_count, total_rows))
 
         with engine.begin() as conn:
             rows = [config.bigquery_row_to_postgres_row(r) for r in query_response['rows']]
             conn.execute(inserter, rows)
-            
+
         page_token = query_response.get('pageToken')
         del query_response
         if page_token is not None:
-            query_response = bigquery_service.jobs().getQueryResults(projectId = piecewise.bigquery.PROJECT_NUMBER, jobId = jobId, maxResults = 1000, pageToken = page_token).execute()
+            query_response = bigquery_service.jobs().getQueryResults(projectId = config.bigquery.PROJECT_NUMBER, jobId = jobId, maxResults = 1000, pageToken = page_token).execute()
         else:
             break
 
@@ -83,8 +83,8 @@ def associate(config):
         engine.execute(query)
 
 if __name__ == '__main__':
-    import piecewise.config
-    config = piecewise.config.read_system_config()
+    import config.config
+    config = config.config.read_system_config()
     ingest(config)
-    piecewise.aggregate.aggregate(config)
+    config.aggregate.aggregate(config)
     associate(config)

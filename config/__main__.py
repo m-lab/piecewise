@@ -1,10 +1,10 @@
 import argparse
 
 from sqlalchemy import create_engine, MetaData
-import piecewise.aggregate
-import piecewise.config
-import piecewise.ingest
-import piecewise.query
+import config.aggregate
+import config.config
+# import config.ingest
+import config.query
 
 def refine(config, args):
     modified_aggregations = []
@@ -24,39 +24,39 @@ def refine(config, args):
                 continue
             modified_stats.append(s)
 
-        modified_agg = piecewise.aggregate.Aggregation(
+        modified_agg = config.aggregate.Aggregation(
                 name = agg.name,
                 statistics_table_name = agg.statistics_table_name,
                 bins = modified_bins,
                 statistics = modified_stats)
         modified_aggregations.append(modified_agg)
-    return piecewise.aggregate.Aggregator(
+    return config.aggregate.Aggregator(
             database_uri = config.database_uri,
             cache_table_name = config.cache_table_name,
             filters = config.filters,
             aggregations = modified_aggregations)
 
 def do_ingest(args):
-    config = piecewise.config.read_system_config()
+    config = config.config.read_system_config()
     config = refine(config, args)
     if not args.debug:
-        piecewise.ingest.ingest(config)
+        config.ingest.ingest(config)
     else:
         print "Displaying bigquery SQL instead of performing query"
         print config.ingest_bigquery_query()
 
 def do_aggregate(args):
-    config = piecewise.config.read_system_config()
+    config = config.config.read_system_config()
     config = refine(config, args)
     if not args.debug:
-        piecewise.aggregate.aggregate(config)
+        config.aggregate.aggregate(config)
     else:
         print "Displaying Postgres SQL instead of performing query"
-        piecewise.aggregate.aggregate(config, args.debug)
+        config.aggregate.aggregate(config, args.debug)
 
 def do_query(args):
-    from piecewise.aggregate import AverageRTT
-    config = piecewise.config.read_system_config()
+    from config.aggregate import AverageRTT
+    config = config.config.read_system_config()
     config = refine(config, args)
     aggregation = None
     for agg in config.aggregations:
@@ -64,7 +64,7 @@ def do_query(args):
             aggregation = agg
 
     if args.stats is not None:
-        statistics = [piecewise.config.known_statistics[s] for s in args.stats]
+        statistics = [config.config.known_statistics[s] for s in args.stats]
     else:
         statistics = aggregation.statistics
 
@@ -79,7 +79,7 @@ def do_query(args):
         filters = dict()
 
     if not args.debug:
-        results = piecewise.query.query(config, name, statistics, bins, filters)
+        results = config.query.query(config, name, statistics, bins, filters)
         for row in results:
             print row
     else:
@@ -95,7 +95,7 @@ def do_load(args):
     do_aggregate(args)
 
 def do_display_config(args):
-    config = piecewise.config.read_system_config()
+    config = config.config.read_system_config()
     config = refine(config, args)
     print 'Postgres connection: {}'.format(config.database_uri)
     print 'Results cache table: {}'.format(config.cache_table_name)
@@ -114,7 +114,7 @@ def do_display_config(args):
             print '\t\t{}'.format(s)
 
 def add_ingest_args(parser):
-    pass 
+    pass
 
 def add_aggregate_args(parser):
     pass

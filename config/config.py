@@ -6,8 +6,8 @@ import calendar
 import json
 import os
 import time
-import piecewise.aggregate
-from piecewise.aggregate import Aggregator, Aggregation, Bins, Statistic, Filter
+import config.aggregate
+from config.aggregate import Aggregator, Aggregation, Bins, Statistic, Filter
 from sqlalchemy import String, Integer
 
 def parse_date(utc_time):
@@ -40,7 +40,7 @@ def _read_bin(bin_spec):
     typ = bin_spec['type']
     if typ == 'spatial_grid':
         resolution = bin_spec['resolution']
-        return piecewise.aggregate.SpatialGridBins(resolution)
+        return config.aggregate.SpatialGridBins(resolution)
     elif typ == 'spatial_hexes':
         raise Exception('Spatial hex bins not yet implemented')
     elif typ == 'spatial_join':
@@ -50,29 +50,29 @@ def _read_bin(bin_spec):
         join_custom_data = bin_spec.get('join_custom_data', False)
         key_type = bin_spec.get("key_type", "integer")
         key_type = known_key_types[key_type]
-        return piecewise.aggregate.SpatialJoinBins(table, geometry_column, key, join_custom_data, key_type)
+        return config.aggregate.SpatialJoinBins(table, geometry_column, key, join_custom_data, key_type)
     elif typ == 'time_slices':
         resolution = bin_spec['resolution']
-        return piecewise.aggregate.TemporalBins(resolution)
+        return config.aggregate.TemporalBins(resolution)
     elif typ == 'isp_bins':
         maxmind_table = bin_spec['maxmind_table']
         rewrites = bin_spec.get("rewrites", [])
-        return piecewise.aggregate.ISPBins(maxmind_table, rewrites)
+        return config.aggregate.ISPBins(maxmind_table, rewrites)
     raise Exception("Unknown bin type {0}".format(typ))
 
 known_statistics = {
-       'AverageRTT' : piecewise.aggregate.AverageRTT,
-       'AverageDownload' : piecewise.aggregate.AverageDownload,
-       'AverageUpload' : piecewise.aggregate.AverageUpload,
-       'MedianRTT' : piecewise.aggregate.MedianRTT,
-       'MedianDownload' : piecewise.aggregate.MedianDownload,
-       'MedianUpload' : piecewise.aggregate.MedianUpload,
-       'DownloadCount' : piecewise.aggregate.DownloadCount,
-       'UploadCount' : piecewise.aggregate.UploadCount,
-       'DownloadMin' : piecewise.aggregate.DownloadMin,
-       'DownloadMax' : piecewise.aggregate.DownloadMax,
-       'UploadMin' : piecewise.aggregate.UploadMin,
-       'UploadMax' : piecewise.aggregate.UploadMax
+       'AverageRTT' : config.aggregate.AverageRTT,
+       'AverageDownload' : config.aggregate.AverageDownload,
+       'AverageUpload' : config.aggregate.AverageUpload,
+       'MedianRTT' : config.aggregate.MedianRTT,
+       'MedianDownload' : config.aggregate.MedianDownload,
+       'MedianUpload' : config.aggregate.MedianUpload,
+       'DownloadCount' : config.aggregate.DownloadCount,
+       'UploadCount' : config.aggregate.UploadCount,
+       'DownloadMin' : config.aggregate.DownloadMin,
+       'DownloadMax' : config.aggregate.DownloadMax,
+       'UploadMin' : config.aggregate.UploadMin,
+       'UploadMax' : config.aggregate.UploadMax
    }
 
 known_key_types = {
@@ -88,11 +88,11 @@ def _read_filter(filter_spec):
     if typ == 'temporal':
         after = parse_date(filter_spec['after'])
         before = parse_date(filter_spec['before'])
-        return piecewise.aggregate.TemporalFilter(after, before)
+        return config.aggregate.TemporalFilter(after, before)
     elif typ == 'bbox':
-        return piecewise.aggregate.BBoxFilter(filter_spec['bbox'])
+        return config.aggregate.BBoxFilter(filter_spec['bbox'])
     elif typ == 'geojson':
-        return piecewise.aggregate.GeoJsonFilter(filter_spec['geojson'])
+        return config.aggregate.GeoJsonFilter(filter_spec['geojson'])
     elif typ == 'raw':
-        return piecewise.aggregate.RawFilter(filter_spec['query'])
+        return config.aggregate.RawFilter(filter_spec['query'])
     raise Exception("Unknown filter type {0}".format(typ))

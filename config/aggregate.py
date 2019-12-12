@@ -8,7 +8,7 @@ import datetime
 import itertools
 import re
 import time
-import piecewise.maxmind
+import config.maxmind
 
 def aggregate(config, debug=False):
     from sqlalchemy.schema import CreateTable
@@ -20,7 +20,7 @@ def aggregate(config, debug=False):
             agg.build_aggregate_table(engine, metadata, records)
         else:
             query = agg.build_aggregate_query(engine, metadata, records)
-            print query.compile(engine)
+            print (query.compile(engine))
 
 class ST_MakeBox2D(GenericFunction):
     name = 'ST_MakeBox2D'
@@ -109,7 +109,7 @@ class Aggregator(object):
         self.aggregations = aggregations
 
     def make_cache_table(self, metadata):
-        return Table(self.cache_table_name, metadata, 
+        return Table(self.cache_table_name, metadata,
                 Column('id', BigInteger, primary_key = True),
                 Column('time', DateTime),
                 Column('location', Geometry("POINT", srid=4326)),
@@ -296,8 +296,8 @@ class SpatialJoinBins(Bins):
         geom = Column(self.geometry_column, Geometry())
         bins_table = Table(self.table, full_table.metadata, fk, geom)
 
-        if self.join_custom_data: 
-            extra_data = Table("extra_data", full_table.metadata, 
+        if self.join_custom_data:
+            extra_data = Table("extra_data", full_table.metadata,
                     Column("timestamp", DateTime),
                     Column("verified", Boolean),
                     Column("bigquery_key", String),
