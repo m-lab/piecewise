@@ -1,5 +1,5 @@
-@import "~bootstrap";
 @import "mapbox";
+@import "~bootstrap/scss/bootstrap";
 
 #Map {
   height: 500px;

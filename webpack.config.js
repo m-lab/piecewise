@@ -4,7 +4,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/i,
+        test: /\.(s*)css$/i,
         use: [
           {loader: 'style-loader'},
           {loader: 'css-loader'},
@@ -24,7 +24,7 @@ module.exports = {
       },
     ],
   },
-  entry: './piecewise_web/js/index.js',
+  entry: './static/js/index.js',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
