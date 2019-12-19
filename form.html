@@ -1,0 +1,559 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" src="/static/css/main.css">
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <h2>Piecewise</h2>
+    <form class="" action="index.html" method="post">
+      <div id="extra-data" class="ndt-related">
+        <div class="container" id="all-form-fields">
+          <div class="form-field" id="container-survey_participant_id">
+            <div class="field-container">Tax ID</div>
+            <div class="field-container">
+              <input id="survey_participant_id" type="text" name="survey_participant_id" class="form-control "title="Tax ID" />
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_device">
+            <div class="field-container">
+              Insert device question
+            </div>
+            <div class="field-container">
+              <input id="survey_device" type="text" name="survey_device" class="form-control "title="Insert device question" />
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_service_type">
+            <div class="field-container">To the best of your knowledge, how do you currently get internet access at your property?</div>
+            <div class="field-container">
+              <select id="survey_service_type" name="survey_service_type" class="form-control " title="To the best of your knowledge, how do you currently get internet access at your property?">
+                <option value="a_default">------</option>
+                <option value="b_fiber">Fiber</option>
+                <option value="c_cable">Cable</option>
+                <option value="d_dsl">DSL</option><option value="e_mobile">Celluar</option>
+                <option value="f_unknown">Unknown</option>
+                <option value="g_no_access">Do not have access at this property</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_provider">
+            <div class="field-container">Which company provides your current internet service?</div>
+            <div class="field-container">
+              <select id="survey_provider" name="survey_provider" class="form-control " title="Which company provides your current internet service?">
+              <option value="a_default">------</option>
+              <option value="b_spectrum">Charter/Spectrum</option>
+              <option value="c_att">AT&T</option>
+              <option value="d_verizon">Verizon</option>
+              <option value="e_hughes">HughesNet</option>
+              <option value="f_comcast">Comcast Xfinity</option>
+              <option value="g_dish">Dish Network</option>
+              <option value="h_sprint">Sprint / T-Mobile</option>
+              <option value="i_unknown">Unknown</option>
+            </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_subscribe_upload">
+            <div class="field-container">To the best of your knowledge, what upload speed do you currently subscribe to?  (eg 10 Mbps down, 1 Mbps up)?  Please leave this blank if you do not know.</div>
+            <div class="field-container">
+              <input id="survey_subscribe_upload" type="text" name="survey_subscribe_upload" class="form-control "title="To the best of your knowledge, what upload speed do you currently subscribe to?  (eg 10 Mbps down, 1 Mbps up)?  Please leave this blank if you do not know." />
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_subscribe_download">
+            <div class="field-container">To the best of your knowledge, what download speed do you currently subscribe to?  (eg 10 Mbps down, 1 Mbps up)?  Please leave this blank if you do not know.</div>
+            <div class="field-container">
+              <input id="survey_subscribe_download" type="text" name="survey_subscribe_download" class="form-control "title="To the best of your knowledge, what download speed do you currently subscribe to?  (eg 10 Mbps down, 1 Mbps up)?  Please leave this blank if you do not know." />
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_improve">
+            <div class="field-container">What would you most like to see improved on your current internet service?</div>
+            <div class="field-container">
+              <select id="survey_improve" name="survey_improve" class="form-control " title="What would you most like to see improved on your current internet service?">
+                <option value="a_default">------</option>
+                <option value="b_increase_speed">Increate speed</option>
+                <option value="c_lower_price">Lower price</option>
+                <option value="d_reliablity">More reliable service</option>
+                <option value="e_service">Better customer service</option>
+                <option value="f_nothing">Nothing</option>
+                <option value="g_no_service">I have no internet service</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_current_cost">
+            <div class="field-container">How much does your internet service cost per month?</div>
+            <div class="field-container">
+              <select id="survey_current_cost" name="survey_current_cost" class="form-control " title="How much does your internet service cost per month?">
+                <option value="a_default">------</option>
+                <option value="b_less_than_25">Less than $25/month</option>
+                <option value="c_25_to_50">$25-50/month</option>
+                <option value="d_51_to_75">$51-75/month</option>
+                <option value="e_76_to_100">$76-100/month</option>
+                <option value="f_over_100">$100+/month</option>
+                <option value="g_unknown">I don't know</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_max_cost">
+            <div class="field-container">What is the maximum monthly price you are willing to pay for 100 Mbps service?</div>
+            <div class="field-container">
+              <select id="survey_max_cost" name="survey_max_cost" class="form-control " title="How much does your internet service cost per month?">
+                <option value="a_default">------</option>
+                <option value="b_less_than_25">Less than $25/month</option>
+                <option value="c_25_to_50">$25-50/month</option>
+                <option value="d_51_to_75">$51-75/month</option>
+                <option value="e_76_to_100">$76-100/month</option>
+                <option value="f_over_100">$100+/month</option>
+                <option value="g_unknown">I don't know</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_new_carrier">
+            <div class="field-container">For the price indicated above, how willing are you to select a new carrier for 100 Mbps service?</div>
+            <div class="field-container">
+              <select id="survey_new_carrier" name="survey_new_carrier" class="form-control " title="For the price indicated above, how willing are you to select a new carrier for 100 Mbps service?">
+                <option value="a_default">------</option>
+                <option value="b_not_willing">Not at all willing</option>
+                <option value="c_somewhat_hesitant">Somewhat hesitant</option>
+                <option value="d_neutral">Neutral</option>
+                <option value="e_somewhat_willing">Somewhat willing</option>
+                <option value="f_extremely_willing">Extremely willing</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_satisfaction">
+            <div class="field-container">Overall – considering performance, cost, and any other factors – how satisfied are you with your internet service provider?</div>
+            <div class="field-container">
+              <select id="survey_satisfaction" name="survey_satisfaction" class="form-control " title="Overall – considering performance, cost, and any other factors – how satisfied are you with your internet service provider?">
+                <option value="a_default">------</option>
+                <option value="b_very_satisfied">Very satisfied</option>
+                <option value="c_satisfied">Satisfied</option>
+                <option value="d_neutral">Neutral</option>
+                <option value="e_dissatisfied">Dissatisfied</option>
+                <option value="f_very_dissatisfied">Very dissatisfied</option>
+                <option value="g_no_service">I have no internet service</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_homework">
+            <div class="field-container">Homework</div>
+            <div class="field-container">
+              <select id="survey_usage_homework" name="survey_usage_homework" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_web_email">
+            <div class="field-container">Browser the web/email</div>
+            <div class="field-container">
+              <select id="survey_usage_web_email" name="survey_usage_web_email" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_education">
+            <div class="field-container">Continuing education</div>
+            <div class="field-container">
+              <select id="survey_usage_education" name="survey_usage_education" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_job_search">
+            <div class="field-container">Job search</div>
+            <div class="field-container">
+              <select id="survey_usage_job_search" name="survey_usage_job_search" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_remote_work">
+            <div class="field-container">Working remotely</div>
+            <div class="field-container">
+              <select id="survey_usage_remote_work" name="survey_usage_remote_work" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_social_media">
+            <div class="field-container">Social Media</div>
+            <div class="field-container">
+              <select id="survey_usage_social_media" name="survey_usage_social_media" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_shopping">
+            <div class="field-container">Online shopping</div>
+            <div class="field-container">
+              <select id="survey_usage_shopping" name="survey_usage_shopping" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_research">
+            <div class="field-container">Research</div>
+            <div class="field-container">
+              <select id="survey_usage_research" name="survey_usage_research" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_video_share">
+            <div class="field-container">Upload/share video</div>
+            <div class="field-container">
+              <select id="survey_usage_video_share" name="survey_usage_video_share" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_healthcare">
+            <div class="field-container">Healthcare</div>
+            <div class="field-container">
+              <select id="survey_usage_healthcare" name="survey_usage_healthcare" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_banking">
+            <div class="field-container">Online banking/bill pay</div>
+            <div class="field-container">
+              <select id="survey_usage_banking" name="survey_usage_banking" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_video_stream">
+            <div class="field-container">Watch/stream video</div>
+            <div class="field-container">
+              <select id="survey_usage_video_stream" name="survey_usage_video_stream" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_gaming">
+            <div class="field-container">Gaming</div>
+            <div class="field-container">
+              <select id="survey_usage_gaming" name="survey_usage_gaming" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_usage_gov_services">
+            <div class="field-container">Government services</div>
+            <div class="field-container">
+              <select id="survey_usage_gov_services" name="survey_usage_gov_services" class="form-control cb-usage" title="I can currently use my internet service to do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_homework">
+            <div class="field-container">Homework</div>
+            <div class="field-container">
+              <select id="survey_better_access_homework" name="survey_better_access_homework" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_web_email">
+            <div class="field-container">Browser the web/email</div>
+            <div class="field-container">
+              <select id="survey_better_access_web_email" name="survey_better_access_web_email" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_education">
+            <div class="field-container">Continuing education</div>
+            <div class="field-container">
+              <select id="survey_better_access_education" name="survey_better_access_education" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_job_search">
+            <div class="field-container">Job search</div>
+            <div class="field-container">
+              <select id="survey_better_access_job_search" name="survey_better_access_job_search" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_remote_work">
+            <div class="field-container">Working remotely</div>
+            <div class="field-container">
+              <select id="survey_better_access_remote_work" name="survey_better_access_remote_work" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_social_media">
+            <div class="field-container">Social Media</div>
+            <div class="field-container">
+              <select id="survey_better_access_social_media" name="survey_better_access_social_media" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_shopping">
+            <div class="field-container">Online shopping</div>
+            <div class="field-container">
+              <select id="survey_better_access_shopping" name="survey_better_access_shopping" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_research">
+            <div class="field-container">Research</div>
+            <div class="field-container">
+              <select id="survey_better_access_research" name="survey_better_acccess_research" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_video_share">
+            <div class="field-container">Upload/share video</div>
+            <div class="field-container">
+              <select id="survey_better_access_video_share" name="survey_better_access_video_share" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_healthcare">
+            <div class="field-container">Healthcare</div>
+            <div class="field-container">
+              <select id="survey_better_access_healthcare" name="survey_better_access_healthcare" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_banking">
+            <div class="field-container">Online banking/bill pay</div>
+            <div class="field-container">
+              <select id="survey_better_access_banking" name="survey_better_access_banking" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_video_stream">
+            <div class="field-container">Watch/stream video</div>
+            <div class="field-container">
+              <select id="survey_better_access_video_stream" name="survey_better_access_video_stream" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_access_gaming">
+            <div class="field-container">Gaming</div>
+            <div class="field-container">
+              <select id="survey_better_access_gaming" name="survey_better_access_gaming" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_better_acccess_gov_services">
+            <div class="field-container">Government services</div>
+            <div class="field-container">
+              <select id="survey_better_acccess_gov_services" name="survey_better_access_gov_services" class="form-control cb-ba" title="If I had better internet access I would do the following online (select all that apply)">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_sufficient_service">
+            <div class="field-container">In your opinion, is there sufficient internet service provider options available to you at your location?</div>
+            <div class="field-container">
+              <select id="survey_sufficient_service" name="survey_sufficient_service" class="form-control " title="In your opinion, is there sufficient internet service provider options available to you at your location?">
+                <option value="a_default">------</option>
+                <option value="b_yes">Yes</option>
+                <option value="c_no">No</option>
+                <option value="d_maybe">Maybe</option>
+                <option value="e_unknown">I don't know</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_no_residents">
+            <div class="field-container">If this is a residential address, how many persons live at this address?</div>
+            <div class="field-container">
+              <select id="survey_no_residents" name="survey_no_residents" class="form-control " title="If this is a residential address, how many persons live at this address?">
+                <option value="a_default">------</option>
+                <option value="b_0">0</option>
+                <option value="b_1">1</option>
+                <option value="b_2">2</option>
+                <option value="b_3">3</option>
+                <option value="b_4">4</option>
+                <option value="b_5">5</option>
+                <option value="b_6">6</option>
+                <option value="b_7">7</option>
+                <option value="b_8">8</option>
+                <option value="b_9">9+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field" id="container-survey_k12_students">
+            <div class="field-container">If this is a residential address, how many persons live at this address?</div>
+            <div class="field-container">
+              <select id="survey_k12_students" name="survey_k12_students" class="form-control " title="If this is a residential address, how many persons live at this address?">
+                <option value="a_default">------</option>
+                <option value="b_0">0</option>
+                <option value="b_1">1</option>
+                <option value="b_2">2</option>
+                <option value="b_3">3</option>
+                <option value="b_4">4</option>
+                <option value="b_5">5</option>
+                <option value="b_6">6</option>
+                <option value="b_7">7</option>
+                <option value="b_8">8</option>
+                <option value="b_9">9+</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="container" id="consent-text">
+          <label>
+            <span class="required">*</span> <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" /> <span>I agree to the <a href="http://www.measurementlab.net/privacy/">M-Lab privacy policy</a>, which includes retention and publication of IP addresses, in addition to speed test results.</span>
+          </label>
+          <ul>
+            <li class="text-muted">Even with the most accurate location data from our speedtests, providing your exact street address ensures data integrity.</li>
+            <li class="text-muted">By providing your email address, you may be contacted later regarding future optional studies.</li>
+          </ul>
+        </div>
+        <input name="latitude" id="latitude" type="hidden" />
+        <input name="longitude" id="longitude" type="hidden" />
+        <input name="actual_download" id="actual_download" type="hidden" />
+        <input name="actual_upload" id="actual_upload" type="hidden" />
+        <input name="min_rtt" id="min_rtt" type="hidden" />
+        <input name="bigquery_key" id="bigquery_key" type="hidden" />
+      </div>
+      <div id="test-container" class="container">
+        <div class="row">
+          <div class="">
+            <div id="ndt-div">
+              <div id="ndt-svg"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="">
+            <div id="approx-loc">
+              <div>
+                <h3 class="league-gothic">Test your speed!</h3>
+                <p>Hit the "play" button to begin the speed test.</p>
+              </div>
+              <div class="well">
+                <p>Many factors may impact upload/download speed tests, at any given test period. This speed test measures how well your current connection works between your computer/device and the testing server itself – providing a general measure of how fast (or slow) your internet connection is.  This test doesn't necessarily mean that this is the bandwidth you should always expect between you and anywhere else.  Two things to ensure the most accurate test results:</p>
+                <ol>
+                  <li>Minimizing the "noise" during an internet speed test, which is what the several tips above help you do, certainly contributes to a more accurate speed test result.</li>
+                  <li>Testing and retesting typically provide the best results</li>
+                </ol>
+                <p>If you are seeing results that differ from other speed tests, the MLab <a href="https://www.merit.edu/services/moonshot/rural-broadband-faqs/">FAQ</a> provides helpful information to help understand why.</p>
+                <p>Results are an accumlation of all MLab tests. Any test taken with an MLab testing application (i.e. the speed test within Google search resutls) will be presented in these results.</p>
+                <p>The results displayed are aggregated every 24 hours. Therefore, new survey data will not be immediately available.</p>
+                <p>For the most accurate test results: If possible, connect to the Internet directly via a cable, DSL, or fiber modem</p>
+              </div>
+              <div id="ndt-status"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div id="ndt-results" class="ndt-related">
+            <div id="your-results">
+              <h3 class="league-gothic">Your test results</h3>
+              <p>Download speed: <span id="s2cRate"></span> Mbps</p>
+              <p>Upload speed: <span id="c2sRate"></span> Mbps</p>
+              <p>Minimum Round Trip Time: <span id="MinRTT"></span> ms</p>
+            </div>
+            <div id="thankyou">
+              <h3 class="league-gothic">Thank you!</h3>
+              <strong>Your test results will be combined with others and will appear on the map soon.</strong>
+              <strong>What do you want to do next?</strong>
+              <ul>
+                <li><a href="#" onclick="showMap()">View all results to-date on a map of Michigan</a></li>
+                <li><a href="https://broadbandtest.us/" target="_parent">Learn more about this test and how to improve your speed</a></li>
+                <li>Share this test with your friends and neighbors</li>
+              </ul>
+              <div id="socialshare">
+              <!-- Social Button HTML -->
+              <!-- Twitter -->
+                <a href="https://twitter.com/home?status=Check%20your%20broadband%20speed%20with%20the%20Michigan%20Moonshot%20Speed%20Test https%3A//mi.broadbandtest.us/"" target="_blank" class="share-btn twitter">
+                <i class="fa fa-twitter"></i>
+                </a>
+              <!-- Facebook -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//www.merit.edu/services/moonshot/" target="_blank" class="share-btn facebook">
+                <i class="fa fa-facebook"></i>
+                </a>
+              <!-- Reddit (url, title) -->
+                <a href="http://reddit.com/submit?url=http://mi.broadbandtest.us/&title=I%20tested%20my%20Internet%20speeds%20with%20the%20Michigan%20Moonshot%20Broadband%20Speed%20Test" target="_blank" class="share-btn reddit">
+                <i class="fa fa-reddit"></i>
+                </a>
+              <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//www.merit.edu/services/moonshot/&title=Michigan%20Moonshot&summary=Check%20your%20broadband%20speed%20with%20the%20Michigan%20Moonshot%20Speed%20Test.%20Learn%20more%20about%20the%20Michigan%20Moonshot%20Citizen%20Scientist%20project.&source=Merit%20Network,%20inc." target="_blank" class="share-btn linkedin">
+                <i class="fa fa-linkedin"></i>
+                </a>
+              <!-- Email -->
+                <a href="mailto:?subject=Help%20bring%20internet%20to%20rural%20Michigan&body=Help%20connect%20rural%20Michigan%20to%20the%20internet%21%20Please%20consider%20completing%20this%20%2A2-minute%2A%20survey%20https%3A//mi.broadbandtest.us%20to%20add%20your%20connectivity%20availability%20to%20the%20Michigan%20Moonshot%20Citizen%20Scientist%20database.%0A%0A%20%20More%20than%20380%2C000%20homes%20in%20rural%20Michigan%20do%20not%20have%20access%20to%20broadband.%20%20Accurate%20connectivity%20data%20is%20the%20first%20step%20in%20assessing%20community%20needs%20and%20building%20support%20for%20funding%20sources.%20Current%20FCC%20data%20aggregation%20processes%20may%20misrepresent%20broadband%20availability.%20These%20can%20be%20overcome%20by%20collecting%20consumer-sourced%20data%20through%20surveys%20such%20as%20this%20one.%0A%0ALearn%20more%20about%20the%20Michigan%20Moonshot%20here%20https%3A//www.merit.edu/services/collaboration/moonshot/." target="_blank" class="share-btn email">
+                <i class="fa fa-envelope"></i>
+                </a>
+              </div>
+            </div> <!-- thankyou div -->
+          </div>
+        </div>
+	  </div>
+    </form>
+    <script type="text/javascript" src="main.js"></script>
+  </body>
+</html>

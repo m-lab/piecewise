@@ -3,36 +3,10 @@
   <head>
     <link rel="stylesheet" src="/static/css/main.css">
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <style>
-    path {
-        stroke: #000;
-        fill: none;
-    }
-
-    .tick line {
-        stroke: #000;
-    }
-
-    .domain path {
-        stroke: #000;
-    }
-    </style>
   </head>
   <body>
     <h2>Piecewise</h2>
     <div id="Map">
-    </div>
-    <div>
-      <select name='resolution' id='resolution'>
-          <option value='3600' selected>Hourly</option>
-          <option value='21600'>6-Hourly</option>
-          <option value='86400'>Daily</option>
-          <option value='604800'>Weekly</option>
-      </select>
-      <input type="date" name="after" id="after" min="2015-01-01" max="2015-01-31" value="2015-01-01">
-      </input>
-      <input type="date" name="before" id="before" min="2015-01-01" max="2015-01-31" value="2015-01-31">
-      </input>
     </div>
     <script type="text/javascript" src="main.js"></script>
   </body>

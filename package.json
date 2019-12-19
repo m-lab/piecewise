@@ -25,6 +25,7 @@
   "dependencies": {
     "bootstrap": "^4.4.1",
     "d3": "^5.12.0",
+    "dotenv": "^8.2.0",
     "jquery": "^3.4.1",
     "jquery-ui": "^1.12.1",
     "jquery-ui-slider-pips": "0.0.1-security",
