@@ -1,10 +1,10 @@
-.hidden {
-  // height: 0;
-  // opacity: 0;
-  // position: relative;
-  // visibility: hidden;
-  // width: 0;
-  // z-index: -999;
+.visually-hidden {
+  height: 0;
+  opacity: 0;
+  position: relative;
+  visibility: hidden;
+  width: 0;
+  z-index: -999;
 }
 
 .transparent-background {
@@ -18,6 +18,40 @@
   &-white {
     background-color: #fff;
   }
+}
+
+.main {
+  position: relative;
+}
+
+.loader {
+  background-color: #fff;
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  opacity: 90%;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+
+  &-spinner {
+    animation: spin 2s linear infinite;
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    height: 120px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 120px;
+  }
+
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 

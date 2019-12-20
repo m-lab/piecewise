@@ -4,5 +4,3 @@ import 'bootstrap';
 import './form.js';
 import './map.js';
 import './mlab.js';
-// import './ndt_d3.js';
-// import './ndt.js';

@@ -1,4 +1,5 @@
 require('dotenv').config();
+require("babel-polyfill");
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -39,7 +40,10 @@ module.exports = {
       }
     ],
   },
-  entry: './static/js/index.js',
+  entry: [
+    "babel-polyfill",
+    './static/js/index.js'
+  ],
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
