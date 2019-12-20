@@ -1,0 +1,55 @@
+.hidden {
+  // height: 0;
+  // opacity: 0;
+  // position: relative;
+  // visibility: hidden;
+  // width: 0;
+  // z-index: -999;
+}
+
+.transparent-background {
+  background-color: #fff;
+  opacity: 90%
+}
+
+
+.bg {
+
+  &-white {
+    background-color: #fff;
+  }
+}
+
+
+//**********************************************
+// Map
+//**********************************************
+
+#Map {
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: -1;
+}
+
+.marker {
+  background-color: #567890;
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.mapboxgl-popup {
+  max-width: 200px;
+}
+
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}

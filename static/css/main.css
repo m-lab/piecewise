@@ -1,32 +1,5 @@
 @import "mapbox";
+@import "helpers";
 @import "~bootstrap/scss/bootstrap";
 /* @import "mlab";
 @import "ndt_d3"; */
-
-#Map {
-  bottom: 0;
-  height: 100%;
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: 50px;
-  width: 100%;
-}
-
-.marker {
-  background-color: #567890;
-  background-size: cover;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.mapboxgl-popup {
-  max-width: 200px;
-}
-
-.mapboxgl-popup-content {
-  text-align: center;
-  font-family: 'Open Sans', sans-serif;
-}
