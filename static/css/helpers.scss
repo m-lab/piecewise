@@ -20,6 +20,13 @@
   }
 }
 
+.submit {
+  font-size: 2em;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .main {
   position: relative;
 }
@@ -29,7 +36,6 @@
   bottom: 0;
   height: 100%;
   left: 0;
-  opacity: 90%;
   position: fixed;
   right: 0;
   top: 0;
@@ -52,6 +58,14 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+#results {
+  background-color: #fff;
+  left: 0;
+  position: fixed;
+  top: 0;
+  z-index: 10;
 }
 
 
