@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 // purely launch workaround for #114
 function getCurrentValues() {
 	var currentMetricOption = $('#selectMetric option:selected').text();
