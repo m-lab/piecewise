@@ -1,9 +1,12 @@
 from logging.config import fileConfig
+import os
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+
+from piecewise.db.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -17,12 +20,23 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+
+def get_url():
+    env = os.getenv("PIECEWISE_ENV")
+    if env == "development":
+        return "sqlite:///./test.db"
+    user = os.getenv("PIECEWISE_POSTGRES_USER", "piecewise")
+    password = os.getenv("PIECEWISE_POSTGRES_PASS", "piecewise")
+    server = os.getenv("PIECEWISE_POSTGRES_SERVER", "db")
+    db = os.getenv("PIECEWISE_POSTGRES_DB", "piecewise")
+    return f"postgresql://{user}:{password}@{server}/{db}"
 
 
 def run_migrations_offline():
@@ -37,7 +51,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = get_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -56,16 +70,19 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+    configuration = config.get_section(config.config_ini_section)
+    url = get_url()
+    print(url)
+    configuration["sqlalchemy.url"] = get_url()
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection,
+                          target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
-from app.db.models.user import User
-from app.db.schemas.user import UserCreate
-from app.utils.security import get_password_hash
+from piecewise.db.models.user import User
+from piecewise.db.schemas.user import UserCreate
+from piecewise.utils.security import get_password_hash
 
 
 def get_user(db: Session, user_id: int):

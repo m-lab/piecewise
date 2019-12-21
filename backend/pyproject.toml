@@ -5,6 +5,9 @@ description = "A tool for digesting and aggregating user-volunteered Internet pe
 authors = ["Josh King <josh@throneless.tech>, Rae Gaines <rae@throneless.tech>"]
 license = "Apache-2.0"
 
+[tool.poetry.scripts]
+piecewise = 'piecewise.__main__:main'
+
 [tool.poetry.dependencies]
 python = "^3.7"
 fastapi = "^0.45.0"

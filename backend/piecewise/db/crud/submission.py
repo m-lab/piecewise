@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.db.models.submission import Submission
-from app.db.schemas.submission import SubmissionCreate
+from piecewise.db.models.submission import Submission
+from piecewise.db.schemas.submission import SubmissionCreate
 
 
 def get_submissions(db: Session, skip: int = 0, limit: int = 100):
@@ -9,6 +9,7 @@ def get_submissions(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_submission(db: Session, submission: SubmissionCreate):
+    print("CREATE_SUBMISSION")
     db_item = Submission(**submission.dict())
     db.add(db_item)
     db.commit()

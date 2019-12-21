@@ -5,7 +5,7 @@ from os import getenv
 
 from pydantic import BaseSettings
 
-import app.config.defaults as default
+import piecewise.config.defaults as default
 
 
 class Settings(BaseSettings):
