@@ -1,6 +1,8 @@
 .vagrant/
 *.pyc
 *.retry
+*.egg-info
+test.db
 
 # Front end
 /dist
