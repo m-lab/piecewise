@@ -8,7 +8,8 @@
 
 'use strict';
 
-function NDTjs(server, serverPort, serverProtocol, serverPath, callbacks,
+const loader = document.getElementById('Loader');
+const NDTjs = function(server, serverPort, serverProtocol, serverPath, callbacks,
                updateInterval) {
   this.server = server;
   this.serverPort = serverPort || 3001;
@@ -275,7 +276,7 @@ NDTjs.prototype.ndtC2sTest = function () {
    * C2S test.
    */
   return function (messageType, messageContent) {
-    that.logger('CALLED C2S with ' + messageType + ' (' +
+    console.log('CALLED C2S with ' + messageType + ' (' +
                 that.NDT_MESSAGES[messageType] + ') ' + messageContent.msg +
                 ' in state ' + state);
     if (state === 'WAIT_FOR_TEST_PREPARE' &&
@@ -301,7 +302,7 @@ NDTjs.prototype.ndtC2sTest = function () {
     }
     if (state === 'WAIT_FOR_TEST_MSG' && messageType === that.TEST_MSG) {
       that.results.c2sRate = Number(messageContent.msg);
-      that.logger('C2S rate calculated by server: ' + that.results.c2sRate);
+      console.log('C2S rate calculated by server: ' + that.results.c2sRate);
       state = 'WAIT_FOR_TEST_FINALIZE';
       return false;
     }
@@ -311,7 +312,7 @@ NDTjs.prototype.ndtC2sTest = function () {
       state = 'DONE';
       return true;
     }
-    that.logger('C2S: State = ' + state + ' type = ' + messageType + '(' +
+    console.log('C2S: State = ' + state + ' type = ' + messageType + '(' +
         that.NDT_MESSAGES[messageType] + ') message = ', messageContent);
   };
 };
@@ -335,7 +336,7 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
   * C2S test.
   */
   return function (messageType, messageContent) {
-    that.logger('CALLED S2C with ' + messageType + ' (' +
+    console.log('CALLED S2C with ' + messageType + ' (' +
                 that.NDT_MESSAGES[messageType] + ') in state ' + state);
     if (state === 'WAIT_FOR_TEST_PREPARE' &&
         messageType === that.TEST_PREPARE) {
@@ -344,7 +345,7 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
       testConnection = that.createWebsocket(that.serverProtocol, that.server,
                                             serverPort, that.serverPath, 's2c');
       testConnection.onopen = function () {
-        that.logger('Successfully opened S2C test connection.');
+        console.log('Successfully opened S2C test connection.');
         testStart = Date.now() / 1000;
       };
       testConnection.onmessage = function (response) {
@@ -383,7 +384,7 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
       return false;
     }
     if (state === 'WAIT_FOR_FIRST_TEST_MSG' && messageType === that.TEST_MSG) {
-      that.logger('Got message: ' + JSON.stringify(messageContent));
+      console.log('Got message: ' + JSON.stringify(messageContent));
       state = 'WAIT_FOR_TEST_MSG_OR_TEST_FINISH';
 
       if (testEnd === undefined) {
@@ -392,8 +393,8 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
       // Calculation per spec, compared between client and server
       // understanding.
       that.results.s2cRate = 8 * receivedBytes / 1000 / (testEnd - testStart);
-      that.logger('S2C rate calculated by client: ' + that.results.s2cRate);
-      that.logger('S2C rate calculated by server: ' +
+      console.log('S2C rate calculated by client: ' + that.results.s2cRate);
+      console.log('S2C rate calculated by server: ' +
                   messageContent.ThroughputValue);
       ndtSocket.send(that.makeNdtMessage(that.TEST_MSG,
                                          String(that.results.s2cRate)));
@@ -410,10 +411,10 @@ NDTjs.prototype.ndtS2cTest = function (ndtSocket) {
     if (state === 'WAIT_FOR_TEST_MSG_OR_TEST_FINISH' &&
         messageType === that.TEST_FINALIZE) {
       that.callbacks.onstatechange('finished_s2c', that.results);
-      that.logger('NDT S2C test is complete: ' +  messageContent.msg);
+      console.log('NDT S2C test is complete: ' +  messageContent.msg);
       return true;
     }
-    that.logger('S2C: State = ' + state + ' type = ' + messageType + '(' +
+    console.log('S2C: State = ' + state + ' type = ' + messageType + '(' +
       that.NDT_MESSAGES[messageType] + ') message = ', messageContent);
   };
 };
@@ -450,7 +451,7 @@ NDTjs.prototype.ndtMetaTest = function (ndtSocket) {
     if (state === 'WAIT_FOR_TEST_FINALIZE' &&
         messageType === that.TEST_FINALIZE) {
       that.callbacks.onstatechange('finished_meta', that.results);
-      that.logger('NDT META test complete.');
+      console.log('NDT META test complete.');
       return true;
     }
     errorMessage = 'Bad state and message combo for META test: ' +
@@ -468,7 +469,7 @@ NDTjs.prototype.startTest = function () {
     that = this;
 
   this.checkBrowserSupport();
-  this.logger('Test started.  Waiting for connection to server...');
+  console.log('Test started.  Waiting for connection to server...');
   this.callbacks.onstart(this.server);
   ndtSocket = this.createWebsocket(this.serverProtocol, this.server,
                                    this.serverPort, this.serverPath, 'ndt');
@@ -477,7 +478,7 @@ NDTjs.prototype.startTest = function () {
    * TEST_S2C, TEST_C2S, and TEST_META.
    */
   ndtSocket.onopen = function () {
-    that.logger('Opened connection on port ' + that.serverPort);
+    console.log('Opened connection on port ' + that.serverPort);
     // Sign up for every test except for TEST_MID and TEST_SFW - browsers can't
     // open server sockets, which makes those tests impossible, because they
     // require the server to open a connection to a port on the client.
@@ -495,7 +496,7 @@ NDTjs.prototype.startTest = function () {
       messageType = message[0],
       messageContent = JSON.parse(message[3]);
 
-    that.logger('type = ' + messageType + ' (' +
+    console.log('type = ' + messageType + ' (' +
                 that.NDT_MESSAGES[messageType] + ') body = "' +
                 messageContent.msg + '"');
     if (activeTest === undefined && testsToRun.length > 0) {
@@ -503,10 +504,10 @@ NDTjs.prototype.startTest = function () {
     }
     if (activeTest !== undefined) {
       // Pass the message to the sub-test
-      that.logger('Calling a subtest');
+      console.log('Calling a subtest');
       if (activeTest(messageType, messageContent) === true) {
         activeTest = undefined;
-        that.logger('Subtest complete');
+        console.log('Subtest complete');
       }
       return;
     }
@@ -525,11 +526,11 @@ NDTjs.prototype.startTest = function () {
           throw that.TestFailureException('Server terminated test ' +
             'with SRV_QUEUE 9977');
         }
-        that.logger('Got SRV_QUEUE. Ignoring and waiting for ' +
+        console.log('Got SRV_QUEUE. Ignoring and waiting for ' +
           'MSG_LOGIN.');
       } else if (messageType === that.MSG_LOGIN) {
         if (messageContent.msg[0] !== 'v') {
-          that.logger('Bad msg ' + messageContent.msg);
+          console.log('Bad msg ' + messageContent.msg);
         }
         state = 'WAIT_FOR_TEST_IDS';
       } else {
@@ -556,7 +557,7 @@ NDTjs.prototype.startTest = function () {
       state = 'WAIT_FOR_MSG_RESULTS';
     } else if (state === 'WAIT_FOR_MSG_RESULTS' &&
                messageType === that.MSG_RESULTS) {
-      that.logger(messageContent);
+      console.log(messageContent);
       var lines = messageContent.msg.split('\n');
       for (i = 0; i < lines.length; i++) {
           var line = lines[i];
@@ -570,7 +571,8 @@ NDTjs.prototype.startTest = function () {
       ndtSocket.close();
       that.callbacks.onstatechange('finished_all', that.results);
       that.callbacks.onfinish(that.results);
-      that.logger('All tests successfully completed.');
+      loader.classList.add('visually-hidden');
+      console.log('All tests successfully completed.');
     } else {
       errorMessage = 'No handler for message ' + messageType +
           ' in state ' + state;
@@ -582,4 +584,7 @@ NDTjs.prototype.startTest = function () {
     errorMessage = that.parseNdtMessage(response.data)[3].msg;
     throw that.TestFailureException(errorMessage);
   };
+
 };
+
+export default NDTjs;

@@ -1,5 +1,9 @@
 /* jshint esversion: 6, asi: true */
 // ndt7core is a simple ndt7 client API.
+
+import Worker from './ndt7-download.worker.js';
+// import Worker from './ndt7-upload.worker.js';
+
 const ndt7core = (function() {
   return {
     // run runs the specified test with the specified base URL and calls
@@ -7,7 +11,7 @@ const ndt7core = (function() {
     run: function(baseURL, testName, callback) {
       callback('starting', {Origin: 'client', Test: testName})
       let done = false
-      let worker = new Worker('ndt7-' + testName + '.js')
+      let worker = new Worker()
       function finish() {
         if (!done) {
           done = true

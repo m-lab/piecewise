@@ -21,10 +21,20 @@
 }
 
 .submit {
+  box-shadow: 3px 3px 5px #ccc;
   font-size: 2em;
   display: block;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
+
+  &-text {
+    left: 50%;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .main {
@@ -32,15 +42,20 @@
 }
 
 .loader {
-  background-color: #fff;
-  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
   height: 100%;
-  left: 0;
   position: fixed;
-  right: 0;
-  top: 0;
   width: 100%;
-  z-index: 9999;
+  z-index: 20;
+
+  &-content {
+    background-color: #fff;
+    left: 50%;
+    min-width: 80%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 
   &-spinner {
     animation: spin 2s linear infinite;
@@ -65,9 +80,13 @@
   left: 0;
   position: fixed;
   top: 0;
-  z-index: 10;
+  z-index: 5;
 }
 
+#ErrorMessage {
+  color: red;
+  font-weight: bold;
+}
 
 //**********************************************
 // Map

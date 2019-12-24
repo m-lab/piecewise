@@ -1,0 +1,3 @@
+[console_scripts]
+piecewise = piecewise.__main__:main
+

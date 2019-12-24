@@ -46,12 +46,13 @@ function runUpload(callback) {
 }
 
 
+const main = document.getElementsByClassName('main')[0];
 const survey = document.getElementById('SurveyForm');
 const map = document.getElementById('Map');
 const results = document.getElementById('results');
+const loader = document.getElementById('Loader');
 
 if (!!survey && !!map) {
-  survey.classList.add('transparent-background');
 
   survey.addEventListener('submit', logSubmit);
 
@@ -59,20 +60,12 @@ if (!!survey && !!map) {
     event.preventDefault();
     console.log(`Form Submitted! Time stamp: ${event.timeStamp}`);
 
-    await runDownload(function() { runUpload(); })
+    // await runDownload(function() { runUpload(); })
 
-    let loader = document.getElementById('Loader');
-    console.log('loading map...');
 
-    loader.classList.remove('visually-hidden');
-
-    setTimeout(function(){
-      console.log('map loaded');
-      loader.classList.add('visually-hidden');
-    }, 3000);
-
-    survey.classList.remove('transparent-background');
+    main.classList.add('visually-hidden');
     survey.classList.add('visually-hidden');
+    loader.classList.remove('visually-hidden');
     results.classList.remove('visually-hidden');
 
 

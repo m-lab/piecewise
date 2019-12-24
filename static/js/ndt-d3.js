@@ -3,7 +3,9 @@
 
 'use strict';
 
-function NDTmeter(body_element) {
+import * as d3 from "d3";
+
+const NDTmeter = function(body_element) {
   this.meter = undefined;
   this.arc = undefined;
   this.state = undefined;
@@ -72,7 +74,7 @@ NDTmeter.prototype.create = function () {
       .attr("offset", "0.5")
       .attr("stop-color", "#90C1AC");
 
-  this.arc = d3.svg.arc()
+  this.arc = d3.arc()
     .startAngle(0)
     .endAngle(0)
     .innerRadius(innerRad)
@@ -171,7 +173,7 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   }
 
   // Sends user and test data to server... defined in mlab.js
-  submitExtraData();
+  // submitExtraData();
 
   d3.selectAll("#progress-meter .foreground").classed("complete", true);
   document.getElementById('ndt-div').style.display = "none";
@@ -249,3 +251,6 @@ NDTmeter.prototype.meter_movement = function () {
 };
 
 /* vim: set ts=2 tw=80 sw=2 expandtab : */
+
+
+export default NDTmeter

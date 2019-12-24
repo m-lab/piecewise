@@ -10,13 +10,14 @@
   <body>
     <div class="main container-fluid">
       <div class="bg-white p-5">
+        <div id="ErrorMessage"></div>
         <h1>Piecewise</h1>
         <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband, you can help out by answering a few short questions designed to measure the extent of the problem. Due to a myriad of inaccuracies in current broadband availability data collected by the federal government, the truth is unknown about who has good broadband and who doesn’t. This inaccurate data hurts communities who deserve a shot at broadband funding. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
       </div>
       <!-- <div id="no-websocket">
         <p>Your browser does not appear to support WebSockets. Please check your browser configuration or try a different browser.</p>
       </div> -->
-    <form class="pt-5 pb-5" id="SurveyForm" action="index.html" method="post">
+    <form class="transparent-background pt-5 pb-5" id="SurveyForm" action="index.html" method="post">
       <div id="extra-data" class="ndt-related">
         <div class="container" id="all-form-fields">
           <div class="form-field mb-4" id="container-survey_service_type">
@@ -278,7 +279,9 @@
           <div class="row">
             <div class="">
               <div id="approx-loc">
-                <button class="submit mt-5 mb-5" type="submit" name="button">Test your speed!</button>
+                <button id="SubmitSurvey"  class="submit mt-5 mb-5" type="submit" name="button">
+                  <span class="submit-text">Test your speed!</span>
+                </button>
                 <div class="well">
                   <p>Many factors may impact upload/download speed tests, at any given test period. This speed test measures how well your current connection works between your computer/device and the testing server itself – providing a general measure of how fast (or slow) your internet connection is.  This test doesn't necessarily mean that this is the bandwidth you should always expect between you and anywhere else.  Two things to ensure the most accurate test results:</p>
                   <ol>
@@ -290,53 +293,31 @@
                   <p>The results displayed are aggregated every 24 hours. Therefore, new survey data will not be immediately available.</p>
                   <p>For the most accurate test results: If possible, connect to the Internet directly via a cable, DSL, or fiber modem</p>
                 </div>
-                <div id="ndt-status"></div>
               </div>
             </div>
           </div>
 	       </div>
       </form>
     </div>
-    <div id="Loader" class="loader p-5 visually-hidden">
+  </div>
+  <div id="Loader" class="loader visually-hidden">
+    <div class="loader-content p-5">
       <p>Loading...</p>
       <div class="loader-spinner"></div>
+      <div id="ndt-status"></div>
     </div>
-
   </div>
   <div id="results" class="summary page visually-hidden p-3">
 
     <h2>Your test results</h2>
 
-    <div class="view-selector">
-      <span class="summary button">Summary</span>
-      <span class="details button">Details</span>
-      <span class="advanced button">Advanced</span>
-    </div>
-
-    <div id="result-pages">
-
-      <div class="result-page summary">
-
-        <div class="upload result">
-          <h3>Upload speed</h3>
-          <p>
-            <span class="number" id="upload-speed">0.00</span>
-            <span class="units" id="upload-speed-units">mb/s</span>
-          </p>
+    <div id="ndt-results">
+      <div class="container">
+        <div id="your-results">
+          <p>Download speed: <span id="s2cRate"></span>mbps</p>
+          <p>Upload speed: <span id="c2sRate"></span>mpbs</p>
+          <p>Roundtrip time: <span id="MinRTT"></span>ms</p>
         </div>
-
-        <div class="download result">
-          <h3>Download speed</h3>
-          <p>
-            <span class="number" id="download-speed">0.00</span>
-            <span class="units" id="download-speed-units">mb/s</span>
-        </div>
-
-        <div class="other">
-          <p class="latency"><b>Network latency:</b> <span id="latency">0.0</span> msec round trip time</p>
-          <p class="jitter"><b>Jitter:</b> <span id="jitter">0.0 msec</span></p>
-        </div>
-
       </div>
 
       <div class="result-page details" id="test-details"></div>
