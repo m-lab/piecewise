@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
     font-family: 'league_gothicregular';
     src: url('../fonts/leaguegothic-regular-webfont.eot');
     src: url('../fonts/leaguegothic-regular-webfont.eot?#iefix') format('embedded-opentype'),
@@ -9,7 +9,7 @@
     font-weight: normal;
     font-style: normal;
 
-}
+} */
 
 html, body {
 	height: 100%;
@@ -217,7 +217,8 @@ span.mapControls {
 #playAnimation {
 	margin-top:0;
 	height:30px;
-	background-image: url(images/animate-map-play-pause.svg);
+  background-color: #cccccc;
+	/* background-image: url(images/animate-map-play-pause.svg); */
 	width:30px;
 	display:block;
 	background-position:0 30px;
@@ -276,19 +277,23 @@ span.ui-slider-handle.ui-state-default.ui-corner-all:focus {
 }
 
 .icon-speed {
-  background-image: url(images/speed.svg);
+  background-color: #cccccc;
+  /* background-image: url(images/speed.svg); */
   background-size: cover;
 }
 .icon-about {
-  background-image: url(images/about.svg);
+  background-color: #cccccc;
+  /* background-image: url(images/about.svg); */
   background-size: cover;
 }
 .icon-zoom-in {
-  background-image: url(images/zoom-in.svg);
+  background-color: #cccccc;
+  /* background-image: url(images/zoom-in.svg); */
   background-size: cover;
 }
 .icon-zoom-out {
-  background-image: url(images/zoom-out.svg);
+  background-color: #cccccc;
+  /* background-image: url(images/zoom-out.svg); */
   background-size: cover;
 }
 #test-icon-sm {
@@ -509,7 +514,8 @@ span.ui-slider-handle.ui-state-default.ui-corner-all:focus {
 
 .leaflet-control-zoom-in, .leaflet-control-zoom-out {
     border: 0;
-    background-image:url(images/zoom-in.svg);
+    background-color: #cccccc;
+    /* background-image:url(images/zoom-in.svg); */
 }
 
 .leaflet-bar a, .leaflet-control-layers-toggle, .leaflet-popup-close-button, .map-tooltip.closable .close, .mapbox-button-icon:before, .mapbox-icon, .leaflet-bar a:hover:first-child, .leaflet-bar a:hover:last-child {
@@ -556,7 +562,7 @@ a.leaflet-popup-close-button {
   top:-13px;
   right:-13px;
   margin:0;
-  background-color: white;ssssss
+  background-color: white;
   opacity: 1;
 }
 .leaflet-popup-content-wrapper {
@@ -929,7 +935,7 @@ a.leaflet-popup-close-button {
   }
 }
 
-@media(min-width:360px and max-width:969px) {
+@media(min-width:360px) and (max-width:969px) {
   .sliderElements {
     width:80%;
   }
@@ -1014,37 +1020,37 @@ a.leaflet-popup-close-button {
 
 .share-btn.twitter     {
   background: #55acee;
-  background-image: url("/images/twitter.png");
+  /* background-image: url("/images/twitter.png"); */
   background-size: 35px 35px;
 }
 .share-btn.google-plus {
   background: #dd4b39;
-  background-image: url("/images/googleplus.png");
+  /* background-image: url("/images/googleplus.png"); */
   background-size: 35px 35px;
 }
 .share-btn.facebook    {
   background: #3B5998;
-  background-image: url("/images/facebook.png");
+  /* background-image: url("/images/facebook.png"); */
   background-size: 35px 35px;
 }
 .share-btn.linkedin    {
   background: #4875B4;
-  background-image: url("/images/linkedin.png");
+  /* background-image: url("/images/linkedin.png"); */
   background-size: 35px 35px;
 }
 .share-btn.stumbleupon {
   background: #EB4823;
-  background-image: url("/images/stumbleupon.png");
+  /* background-image: url("/images/stumbleupon.png"); */
   background-size: 35px 35px;
 }
 .share-btn.reddit {
   background: #ff5700;
-  background-image: url("/images/reddit.png");
+  /* background-image: url("/images/reddit.png"); */
   background-size: 35px 35px;
 }
 .share-btn.email       {
   background: #444444;
-  background-image: url("/images/email.png");
+  /* background-image: url("/images/email.png"); */
   background-size: 35px 35px;
 }
 .container {
