@@ -1,6 +1,7 @@
 require('dotenv').config();
 require("babel-polyfill");
 const path = require('path');
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
@@ -65,6 +66,9 @@ module.exports = {
       filename: 'form.html',
     }),
     new HtmlWebpackHarddiskPlugin(),
+    new webpack.EnvironmentPlugin([
+      'PIECEWISE_BACKEND_URL'
+    ])
   ],
   devServer: {
     contentBase: path.resolve(__dirname, "dist"),
