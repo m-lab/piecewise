@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  # Build the backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # expose:
+    #   - ${APP_BACKEND_PORT}
+    # environment:
+    #   API_HOST: ${BACKEND_URL}
+    #   APP_SERVER_PORT: ${APP_BACKEND_PORT}
+    # ports:
+    #   - ${APP_BACKEND_PORT}: ${APP_BACKEND_PORT}
+
+  # Build the frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile

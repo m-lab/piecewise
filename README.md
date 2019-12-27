@@ -14,7 +14,37 @@ Piecewise code can be found on Github: [https://github.com/opentechinstitute/pie
 
 ## Get Started Documentation
 
-Piecewise can be installed and run on any Linux server or virtual machine. 
+Piecewise can be deployed locally or via a Docker container.
+
+### To deploy via Docker
+In a new shell, run:
+```
+docker-compose build
+docker-compose up
+```
+
+### To deploy locally
+
+Install poetry if it does not yet exist on your machine:
+`pip install poetry`
+
+If you're running the application for the first time, run:
+`poetry install`
+
+Then navigate to the backend directory and run Piecewise:
+`cd backend && poetry run piecewise
+`
+
+In a new tab, navigate to the frontend directory:
+`cd ../frontend`
+
+If you're running the application for the first time, run:
+`npm install`
+
+To run the front end concurrently with the backend, run:
+`npm run start:dev`
+
+Piecewise can be installed and run on any Linux server or virtual machine.
 The process of setting up a new Piecewise server involves:
 
 * [Server/VM System Requirements and Accounts Setup](docs/system-requirements.md)

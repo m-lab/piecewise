@@ -1,5 +1,6 @@
 require('dotenv').config();
 require("babel-polyfill");
+
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -51,7 +52,7 @@ module.exports = env => {
     },
     entry: [
       "babel-polyfill",
-      './frontend/static/js/index.js'
+      './static/js/index.js'
     ],
     output: {
       filename: 'main.js',
@@ -61,12 +62,12 @@ module.exports = env => {
       new MiniCssExtractPlugin(),
       new HtmlWebpackPlugin({
         alwaysWriteToDisk: true,
-        template: path.resolve(__dirname, 'frontend/templates/index.html'),
+        template: path.resolve(__dirname, 'templates/index.html'),
         filename: 'index.html',
         inject: true
       }),
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, 'frontend/templates/form.html'),
+        template: path.resolve(__dirname, 'templates/form.html'),
         filename: 'form.html',
       }),
       new HtmlWebpackHarddiskPlugin(),
@@ -76,7 +77,7 @@ module.exports = env => {
     ],
     devServer: {
       contentBase: path.resolve(__dirname, "dist"),
-      index: "./frontend/templates/index.html"
+      index: "./templates/index.html"
     }
   }
 };
