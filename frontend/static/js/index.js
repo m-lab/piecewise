@@ -1,6 +1,7 @@
 import css from '../css/main.css';
 import 'bootstrap';
 
+import './critical.js';
 import './map.js';
 
 // ndt scripts
