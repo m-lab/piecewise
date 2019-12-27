@@ -44,30 +44,3 @@ function runDownload(callback) {
 function runUpload(callback) {
   runSomething('upload', callback)
 }
-
-
-const main = document.getElementsByClassName('main')[0];
-const survey = document.getElementById('SurveyForm');
-const map = document.getElementById('Map');
-const results = document.getElementById('results');
-const loader = document.getElementById('Loader');
-
-if (!!survey && !!map) {
-
-  survey.addEventListener('submit', logSubmit);
-
-  async function logSubmit(event) {
-    event.preventDefault();
-    console.log(`Form Submitted! Time stamp: ${event.timeStamp}`);
-
-    // await runDownload(function() { runUpload(); })
-
-
-    main.classList.add('visually-hidden');
-    survey.classList.add('visually-hidden');
-    loader.classList.remove('visually-hidden');
-    results.classList.remove('visually-hidden');
-
-
-  }
-}
