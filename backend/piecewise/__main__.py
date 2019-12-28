@@ -33,8 +33,8 @@ def get_app() -> FastAPI:
     app.include_router(get_api_router(), prefix=settings.api_v1_route)
 
     # Configure static files path
-    static_files = StaticFiles(directory=settings.static_dir)
-    app.mount(path=settings.static_mount_path, app=static_files, name="static")
+    #static_files = StaticFiles(directory=settings.static_dir)
+    #app.mount(path=settings.static_mount_path, app=static_files, name="static")
 
     # Add CORS middleware
     app.add_middleware(
