@@ -1,6 +1,6 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
-RUN pip install poetry==0.12.17
+RUN pip install poetry==0.12.17 pyparsing attrs importlib-metadata requests:w
 
 ENV PIECEWISE_ENV="production"
 ENV MODULE_NAME="piecewise.__main__"
