@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({path: '../.env'})
 require("babel-polyfill");
 
 const path = require('path');
@@ -9,7 +9,7 @@ const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
 module.exports = env => {
 
-  console.log('NODE_ENV: ', process.env.NODE_ENV);
+  console.log('NODE_ENV: ', process.env.PIECEWISE_ENV);
 
   return {
     module: {
@@ -72,7 +72,7 @@ module.exports = env => {
       }),
       new HtmlWebpackHarddiskPlugin(),
       new webpack.EnvironmentPlugin([
-        'PIECEWISE_BACKEND_URL'
+        'BACKEND_URL'
       ])
     ],
     devServer: {

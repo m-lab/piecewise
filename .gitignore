@@ -7,4 +7,6 @@ test.db
 
 # Front end
 /dist
+/frontend/dist
 /node_modules
+/frontend/node_modules
