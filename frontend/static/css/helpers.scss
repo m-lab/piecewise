@@ -106,8 +106,9 @@
 .marker {
   background-color: #567890;
   background-size: cover;
-  width: 50px;
-  height: 50px;
+  box-shadow: 2px 2px 2px #fff;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   cursor: pointer;
 }
