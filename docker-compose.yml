@@ -31,6 +31,7 @@ services:
       PIECEWISE_POSTGRES_HOST: piecewise-database
       PIECEWISE_POSTGRES_USER: piecewise
       PIECEWISE_POSTGRES_PASS: ${PIECEWISE_POSTGRES_PASS}
+      PIECEWISE_POSTGRES_PORT: 5432
       PIECEWISE_POSTGRES_DB: piecewise
 
   # Build the frontend

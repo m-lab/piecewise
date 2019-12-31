@@ -3,7 +3,7 @@ from functools import lru_cache
 from typing import List
 from os import getenv
 
-from pydantic import BaseSettings
+from pydantic import BaseSettings, Field
 
 import piecewise.config.defaults as default
 
@@ -34,11 +34,11 @@ class DevelopmentSettings(Settings):
 
 class StagingSettings(Settings):
     debug: bool = True
-    postgres_user: str
-    postgres_pass: str
-    postgres_host: str
-    postgres_port: int
-    postgres_db: str
+    postgres_user: str = Field(..., env="PIECEWISE_POSTGRES_USER")
+    postgres_pass: str = Field(..., env="PIECEWISE_POSTGRES_PASS")
+    postgres_host: str = Field(..., env="PIECEWISE_POSTGRES_HOST")
+    postgres_port: int = Field(..., env="PIECEWISE_POSTGRES_PORT")
+    postgres_db: str = Field(..., env="PIECEWISE_POSTGRES_DB")
 
     @property
     def db_url(self) -> str:
@@ -47,11 +47,11 @@ class StagingSettings(Settings):
 
 class ProductionSettings(Settings):
     debug: bool = False
-    postgres_user: str
-    postgres_pass: str
-    postgres_host: str
-    postgres_port: int
-    postgres_db: str
+    postgres_user: str = Field(..., env="PIECEWISE_POSTGRES_USER")
+    postgres_pass: str = Field(..., env="PIECEWISE_POSTGRES_PASS")
+    postgres_host: str = Field(..., env="PIECEWISE_POSTGRES_HOST")
+    postgres_port: int = Field(..., env="PIECEWISE_POSTGRES_PORT")
+    postgres_db: str = Field(..., env="PIECEWISE_POSTGRES_DB")
 
     @property
     def db_url(self) -> str:
