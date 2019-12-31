@@ -26,6 +26,8 @@ services:
     networks:
       - piecewise-private
       - piecewise-public
+    ports:
+      - ${PIECEWISE_BACKEND_PORT}:80
     environment:
       PIECEWISE_ENV: production
       PIECEWISE_POSTGRES_HOST: piecewise-database
