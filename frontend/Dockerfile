@@ -20,6 +20,6 @@ EXPOSE 80
 
 COPY --from=build-stage /app/dist/ /usr/share/nginx/html
 
-COPY --from=build-stage /nginx.conf /etc/nginx/conf.d/default.template
+COPY /nginx.conf /etc/nginx/conf.d/default.template
 
-CMD envsubst < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'
+CMD envsubst '$PIECEWISE_BACKEND_URL' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'
