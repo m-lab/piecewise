@@ -29,14 +29,15 @@ target_metadata = Base.metadata
 
 
 def get_url():
-    env = os.getenv("PIECEWISE_ENV")
+    env = os.getenv("PIECEWISE_ENV", "development")
     if env == "development":
         return "sqlite:///./test.db"
     user = os.getenv("PIECEWISE_POSTGRES_USER", "piecewise")
     password = os.getenv("PIECEWISE_POSTGRES_PASS", "piecewise")
-    server = os.getenv("PIECEWISE_POSTGRES_SERVER", "db")
+    host = os.getenv("PIECEWISE_POSTGRES_HOST", "db")
+    port = os.getenv("PIECEWISE_POSTGRES_PORT", "5432")
     db = os.getenv("PIECEWISE_POSTGRES_DB", "piecewise")
-    return f"postgresql://{user}:{password}@{server}/{db}"
+    return f"postgresql://{user}:{password}@{host}:{port}/{db}"
 
 
 def run_migrations_offline():

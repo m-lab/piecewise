@@ -72,7 +72,7 @@ module.exports = env => {
       }),
       new HtmlWebpackHarddiskPlugin(),
       new webpack.EnvironmentPlugin([
-        'BACKEND_URL'
+        'PIECEWISE_BACKEND_URL'
       ])
     ],
     devServer: {

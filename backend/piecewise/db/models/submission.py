@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -21,7 +21,7 @@ class Submission(Base):
     actual_download = Column(Integer)
     actual_upload = Column(Integer)
     min_rtt = Column(Integer)
-    latitude = Column(Float(precision=64))
-    longitude = Column(Float(precision=64))
+    latitude = Column(Numeric)
+    longitude = Column(Numeric)
     owner_id = Column(Integer, ForeignKey("user.id"))
     owner = relationship("User", back_populates="submissions")

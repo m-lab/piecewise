@@ -1,21 +1,58 @@
 version: "3.7"
 
 services:
+  database:
+    image: postgres:12
+    container_name: piecewise-database
+    restart: unless-stopped
+    networks:
+      - piecewise-private
+    environment:
+      POSTGRES_USER: piecewise
+      POSTGRES_PASSWORD: ${PIECEWISE_POSTGRES_PASS}
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - "piecewise-data:/var/lib/postgresql/data"
+
   # Build the backend
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # expose:
-    #   - ${APP_BACKEND_PORT}
-    # environment:
-    #   API_HOST: ${BACKEND_URL}
-    #   APP_SERVER_PORT: ${APP_BACKEND_PORT}
-    # ports:
-    #   - ${APP_BACKEND_PORT}: ${APP_BACKEND_PORT}
+    image: measurementlab/piecewise-backend:local
+    container_name: piecewise-backend
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - piecewise-private
+      - piecewise-public
+    environment:
+      PIECEWISE_ENV: production
+      PIECEWISE_POSTGRES_HOST: piecewise-database
+      PIECEWISE_POSTGRES_USER: piecewise
+      PIECEWISE_POSTGRES_PASS: ${PIECEWISE_POSTGRES_PASS}
+      PIECEWISE_POSTGRES_DB: piecewise
 
   # Build the frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: measurementlab/piecewise-frontend:local
+    container_name: piecewise-frontend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - ${PIECEWISE_FRONTEND_PORT}:80
+    environment:
+      PIECEWISE_BACKEND_URL: "http://piecewise-backend/api/v1"
+    networks:
+      - piecewise-public
+
+volumes:
+  piecewise-data:
+
+networks:
+  piecewise-private:
+    internal: true
+  piecewise-public:
