@@ -36,24 +36,26 @@ class StagingSettings(Settings):
     debug: bool = True
     postgres_user: str
     postgres_pass: str
-    postgres_server: str
+    postgres_host: str
+    postgres_port: int
     postgres_db: str
 
     @property
     def db_url(self) -> str:
-        return f"postgresql://{self.postgres_user}:{self.postgres_pass}@{self.postgres_server}/{self.postgres_db}"
+        return f"postgresql://{self.postgres_user}:{self.postgres_pass}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
 
 
 class ProductionSettings(Settings):
     debug: bool = False
     postgres_user: str
     postgres_pass: str
-    postgres_server: str
+    postgres_host: str
+    postgres_port: int
     postgres_db: str
 
     @property
     def db_url(self) -> str:
-        return f"postgresql://{self.postgres_user}:{self.postgres_pass}@{self.postgres_server}/{self.postgres_db}"
+        return f"postgresql://{self.postgres_user}:{self.postgres_pass}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
 
 
 @lru_cache()
