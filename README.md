@@ -14,6 +14,8 @@ Piecewise code can be found on Github: [https://github.com/opentechinstitute/pie
 
 ## Get Started Documentation
 
+Copy the `.env.example` file to your own `.env` file and change settings as needed.
+
 Piecewise can be deployed locally or via a Docker container.
 
 ### To deploy via Docker
@@ -61,17 +63,6 @@ You can also learn more about [How Piecewise Works](docs/how-piecewise-works.md)
 
 ## Project Organization
 
-Piecewise contains the following Python modules:
-
-* `piecewise.aggregate` defines statistics and binning dimensions.
-* `piecewise.bigquery` contains setup code for the bigquery client library from Google.
-* `piecewise.config` contains code for reading JSON and using it to control the ingest and query operations.
-* `piecewise.ingest` issues queries against the M-Lab tables on Google BigQuery and converts the results to rows in a local Postgres database.
-* `piecewise.maxmind` defines code for loading and querying the maxmind IP database.
-* `piecewise.query` issues queries against Postgres databases populated by the `ingest` module.
-  These may resample the data dynamically.
-* `piecewise.wsgi` exposes the `query` functionality as a web service for consumption by JavaScript applications.
-  The `piecewise_web` directory in this repository contains some sample visualizations using the d3 library.
 
 ## Contributions
 
