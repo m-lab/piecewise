@@ -43,10 +43,10 @@ if (!!survey && !!mapContainer) {
 
   const map = new mapboxgl.Map({
     container: 'Map',
-    center: [-98, 38],
+    center: [-79.2407191, 35.2712601],
     maxBounds: bounds,
     style: 'mapbox://styles/rgaines/ck3umm5lo10451cnyh5sixye6',
-    zoom: 3,
+    zoom: 6,
   });
 
   map.on('load', function() {
