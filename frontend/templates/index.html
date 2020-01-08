@@ -28,6 +28,7 @@
             <div class="field-container">
               <select id="survey_service_type" name="survey_service_type" class="form-control " title="To the best of your knowledge, how do you currently get internet access at your property?">
                 <option value="default">------</option>
+                <option value="other">Other - My ISP is not listed here</option>
                 <option value="APX_Net_Inc">APX Net, Inc</option>
                 <option value="AT&T_North_Carolina">AT&T North Carolina</option>
                 <option value="AccessMedia3">AccessMedia3</option>
@@ -40,7 +41,6 @@
                 <option value="Blue_Ridge_Mountain_EMC">Blue Ridge Mountain EMC</option>
                 <option value="Bluewave_Communciations">Bluewave Communications</option>
                 <option value="Broadview_Networks_Holdings_Inc">Broadview Networks Holdings, Inc.</option>
-                <option value="Buggs_Island_Telephone">Buggs Island Telephone</option>
                 <option value="Buggs_Island_Telephone_Cooperative">Buggs Island Telephone Cooperative</option>
                 <option value="Bullseye">Bullseye</option>
                 <option value="CBTS_Technology_Solutions_LLC">CBTS Technology Solutions LLC</option>
@@ -67,8 +67,8 @@
                 <option value="Earthlink_Business_LLC">EarthLink Business, LLC</option>
                 <option value="Electronics_Service_Company">Electronics Service Company</option>
                 <option value="Ellerbe_Telephone_Company">Ellerbe Telephone Company</option>
-                <option value="Fayetteville_Public_Works_Commission">FAYETTEVILLE PUBLIC WORKS COMMISSION</option>
-                <option value="Fybercom_LLC">FYBERCOM LLC</option>
+                <option value="Fayetteville_Public_Works_Commission">Fayetteville Public Works Commission</option>
+                <option value="Fybercom_LLC">Fybercom LLC</option>
                 <option value="Fastlink_Communications_LLC">Fastlink Communications, LLC</option>
                 <option value="Fibrant">Fibrant</option>
                 <option value="FirstLight_Fiber">FirstLight Fiber</option>
@@ -76,7 +76,7 @@
                 <option value="Frontier_Communications_Corporation">Frontier Communications Corporation</option>
                 <option value="GCI_Communication_Corp">GCI Communication Corp.</option>
                 <option value="Gamewood">Gamewood</option>
-                <option value="Google Fiber North Carolina, LLC">Google_Fiber_North_Carolina_LLC</option>
+                <option value="Google_Fiber_North_Carolina_LLC">Google Fiber North Carolina, LLC</option>
                 <option value="Greenlight">Greenlight</option>
                 <option value="Gtek_Communications">Gtek Communications</option>
                 <option value="Hotwire_Communications_Ltd">Hotwire Communications Ltd.</option>
@@ -105,11 +105,9 @@
                 <option value="PANGAEA_Internet">PANGAEA Internet</option>
                 <option value="Panterra">Panterra</option>
                 <option value="Piedmont_Communications">Piedmont Communications</option>
-                <option value="Piedmont_Communications_Services_Inc">Piedmont Communications Services Inc.</option>
                 <option value="Proximiti_Communications_Inc">Proximiti Communications, Inc.</option>
                 <option value="RIVERSTREET_NETWORKS">RIVERSTREET NETWORKS</option>
                 <option value="Randolph_Telephone_Membership_Corporation">Randolph Telephone Membership Corporation</option>
-                <option value="Randolph_Telephone_Telecommunications_Incorporated">Randolph Telephone Telecommunications Incorporated</option>
                 <option value="RidgeComms">RidgeComms</option>
                 <option value="RiverStreet_Communications_Of_NC_Inc">RiverStreet Communications Of NC, Inc.</option>
                 <option value="Roanoke_Connect">Roanoke Connect</option>
@@ -139,14 +137,9 @@
                 <option value="Wake_Wireless">Wake Wireless</option>
                 <option value="Wilkes_Communications_Inc">Wilkes Communications Inc.</option>
                 <option value="Windstream_Communications_Inc">Windstream Communications Inc.</option>
-                <option value="Windstream_Concord_Telephone_Company">Windstream Concord Telephone Company</option>
-                <option value="Windstream_Lexcom_Communications_Inc">Windstream Lexcom Communications Inc.</option>
-                <option value="Windstream_North_Carolina_LLC">Windstream North Carolina LLC</option>
-                <option value="Windstream_NuVox_Inc">Windstream NuVox, Inc.</option>
                 <option value="X1_Communications">X1 Communications</option>
                 <option value="Yadtel">Yadtel</option>
                 <option value="Zayo_Enterprise_Networks">Zayo Enterprise Networks</option>
-                <option value="ZayoGroupLLC">ZayoGroupLLC</option>
                 <option value="Zito_Media_LP">Zito Media LP</option>
               </select>
             </div>
@@ -188,11 +181,11 @@
             <div class="form-inline">
               <div class="col-auto form-inline">
                 <label class="mr-2" for="survey_subscribe_upload">Upload Speed</label>
-                <input id="survey_subscribe_upload" type="text" name="survey_subscribe_upload" class="form-control" placeholder="20 mbps" title="If you know the advertised speeds of your subscription, please enter them here (upload speed)" />
+                <input id="survey_subscribe_upload" type="text" name="survey_subscribe_upload" class="form-control" placeholder="20 Mbps" title="If you know the advertised speeds of your subscription, please enter them here (upload speed)" />
               </div>
               <div class="col-auto form-inline">
                 <label class="mr-2" for="survey_subscribe_download">Download Speed</label>
-                <input id="survey_subscribe_download" type="text" name="survey_subscribe_download" class="form-control" placeholder="100 mbps" title="If you know the advertised speeds of your subscription, please enter them here:" />
+                <input id="survey_subscribe_download" type="text" name="survey_subscribe_download" class="form-control" placeholder="100 Mbps" title="If you know the advertised speeds of your subscription, please enter them here:" />
               </div>
             </div>
           </div>
@@ -259,10 +252,6 @@
             <span class="required">*</span>
             <input class="pr-4" type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" required>
             <label for="data_acknowledgement"> I agree to the <a href="https://www.measurementlab.net/privacy/">M-Lab privacy policy</a>, which includes retention and publication of IP addresses, in addition to speed test results.</label>
-            <ul>
-              <li class="text-muted">Even with the most accurate location data from our speed tests, providing your exact street address ensures data integrity.</li>
-              <li class="text-muted">By providing your email address, you may be contacted later regarding future optional studies.</li>
-            </ul>
           </div>
           <input name="latitude" id="latitude" type="hidden" />
           <input name="longitude" id="longitude" type="hidden" />
@@ -286,15 +275,15 @@
                   <span class="submit-text">Test your speed!</span>
                 </button>
                 <div class="well">
-                  <p>Many factors may impact upload/download speed tests, at any given test period. This speed test measures how well your current connection works between your computer/device and the testing server itself – providing a general measure of how fast (or slow) your Internet connection is. This test doesn't necessarily mean that this is the bandwidth you should always expect between you and anywhere else.  Two things to ensure the most accurate test results:</p>
+                  <p>Many factors may impact upload/download speed tests, at any given test period. This speed test measures how well your current connection works between your computer/device and the testing server itself – providing a general measure of how fast (or slow) your Internet connection is. This test doesn't necessarily mean that this is the bandwidth you should always expect between you and anywhere else. To ensure the most accurate test results:</p>
                   <ol>
-                    <li>Minimizing the "noise" during an Internet speed test, which is what the several tips above help you do, certainly contributes to a more accurate speed test result.</li>
-                    <li>Testing and re-testing typically provide the best results</li>
+                    <li>If possible, connect your computer to your ISP modem or router directly with an Ethernet cord.</li>
+                    <li>Minimize the "noise" during an Internet speed test, which is what the several tips above help you do, certainly contributes to a more accurate speed test result.</li>
+                    <li>Test periodically at different times of the day can help show your connection's speed trends over time.</li>
                   </ol>
                   <p>If you are seeing results that differ from other speed tests, the M-Lab <a href="https://www.measurementlab.net/faq/#why-are-my-m-lab-results-different-from-other-speed-tests">FAQ</a> provides helpful information to help understand why.</p>
-                  <p>Results are an accumlation of all M-Lab tests. Any test taken with an M-Lab testing application (i.e. the speed test within Google search resutls) will be presented in these results.</p>
-                  <p>The results displayed are aggregated every 24 hours. Therefore, new survey data will not be immediately available.</p>
-                  <p>For the most accurate test results: If possible, connect to the Internet directly via a cable, DSL, or fiber modem</p>
+                  <p>The map shows aggregate test results from all accumlated M-Lab tests. Any test taken with an M-Lab testing application (i.e. the speed test within Google search results) will be presented on the map.</p>
+                  <p>Test results from this website will not be immediately available on the map, but will be shown as a separate map layer once enough new survey data is collected.</p>
                 </div>
               </div>
             </div>
