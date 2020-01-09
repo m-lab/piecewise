@@ -47,15 +47,16 @@ module.exports = env => {
           }
         },
         {
+          test: /\.html$/,
+          loader: 'html-loader'
+        },
+        {
           test: /\.(png|svg|jpg|gif)$/,
           loader: 'file-loader',
           options: {
             esModule: false,
+            publicPath: '/static/images/'
           }
-        },
-        {
-          test: /\.html$/,
-          loader: 'html-loader'
         }
       ]
     },

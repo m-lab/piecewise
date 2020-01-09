@@ -1018,7 +1018,7 @@ a.leaflet-popup-close-button {
   outline: none;
 }
 
-.share-btn.twitter     {
+.share-btn.twitter {
   background: #55acee;
   background-image: url("/static/images/twitter.png");
   background-size: 35px 35px;
