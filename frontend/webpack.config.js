@@ -41,14 +41,23 @@ module.exports = env => {
         {
           test: /\.m?js$/,
           exclude: /(node_modules|bower_components)/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env']
-            }
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
           }
+        },
+        {
+          test: /\.(png|svg|jpg|gif)$/,
+          loader: 'file-loader',
+          options: {
+            esModule: false,
+          }
+        },
+        {
+          test: /\.html$/,
+          loader: 'html-loader'
         }
-      ],
+      ]
     },
     entry: [
       "babel-polyfill",
