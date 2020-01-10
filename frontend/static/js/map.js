@@ -62,7 +62,6 @@ if (!!survey && !!mapContainer) {
     survey.addEventListener('submit', logSubmit);
 
     function logSubmit(event) {
-      event.preventDefault();
       console.log(`Form Submitted! Time stamp: ${event.timeStamp}`);
 
       main.classList.add('visually-hidden');
