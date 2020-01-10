@@ -1020,37 +1020,37 @@ a.leaflet-popup-close-button {
 
 .share-btn.twitter {
   background: #55acee;
-  background-image: url("../../static/images/twitter.png");
+  background-image: url("../images/twitter.png");
   background-size: 35px 35px;
 }
 .share-btn.google-plus {
   background: #dd4b39;
-  background-image: url("../../static/images/googleplus.png");
+  background-image: url("../images/googleplus.png");
   background-size: 35px 35px;
 }
 .share-btn.facebook    {
   background: #3B5998;
-  background-image: url("../../static/images/facebook.png");
+  background-image: url("../images/facebook.png");
   background-size: 35px 35px;
 }
 .share-btn.linkedin    {
   background: #4875B4;
-  background-image: url("../../static/images/linkedin.png");
+  background-image: url("../images/linkedin.png");
   background-size: 35px 35px;
 }
 .share-btn.stumbleupon {
   background: #EB4823;
-  background-image: url("../../static/images/stumbleupon.png");
+  background-image: url("../images/stumbleupon.png");
   background-size: 35px 35px;
 }
 .share-btn.reddit {
   background: #ff5700;
-  background-image: url("../../static/images/reddit.png");
+  background-image: url("../images/reddit.png");
   background-size: 35px 35px;
 }
 .share-btn.email       {
   background: #444444;
-  background-image: url("../../static/images/email.png");
+  background-image: url("../images/email.png");
   background-size: 35px 35px;
 }
 .container {
