@@ -1,16 +1,13 @@
-require('dotenv').config({path: '../.env'})
 require("babel-polyfill");
 
 const path = require('path');
 const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
 module.exports = env => {
-
-  console.log('NODE_ENV: ', process.env.PIECEWISE_ENV);
-
   return {
     module: {
       rules: [
@@ -73,6 +70,9 @@ module.exports = env => {
       path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
+      new Dotenv({
+        path: '../.env'
+      }),
       new MiniCssExtractPlugin(),
       new HtmlWebpackPlugin({
         alwaysWriteToDisk: true,
@@ -85,9 +85,7 @@ module.exports = env => {
         filename: 'form.html',
       }),
       new HtmlWebpackHarddiskPlugin(),
-      // new webpack.EnvironmentPlugin([
-      //   'PIECEWISE_BACKEND_URL'
-      // ])
+      // new webpack.EnvironmentPlugin(['PIECEWISE_BACKEND_URL']),
     ],
     devServer: {
       contentBase: path.resolve(__dirname, "dist"),

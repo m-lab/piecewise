@@ -1,3 +1,3 @@
 window.onload = function() {
-  document.getElementById("SurveyForm").action = '/api/v1/submissions' ;
+  document.getElementById("SurveyForm").action = $PIECEWISE_BACKEND_URL;
 }
