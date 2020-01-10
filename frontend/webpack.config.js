@@ -48,13 +48,17 @@ module.exports = env => {
         },
         {
           test: /\.html$/,
-          loader: 'html-loader'
+          loader: 'html-loader',
+          options: {
+            root: __dirname
+          }
         },
         {
           test: /\.(png|svg|jpg|gif)$/,
           loader: 'file-loader',
           options: {
             esModule: false,
+            outputPath: '/static/images/',
             publicPath: '/static/images/'
           }
         }
