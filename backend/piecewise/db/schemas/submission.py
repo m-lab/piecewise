@@ -1,25 +1,26 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
 class SubmissionBase(BaseModel):
-    survey_service_type: str
-    survey_outages: str
-    survey_disruptions: str
-    survey_subscribe_upload: str
-    survey_subscribe_download: str
-    survey_bundle: str
-    survey_current_cost: str
-    survey_satisfaction: str
-    survey_carrier_choice: str
-    survey_story: str
-    survey_email: str
-    survey_phone: str
-    actual_download: int
-    actual_upload: int
-    min_rtt: int
-    latitude: float
-    longitude: float
-    bigquery_key: str
+    survey_service_type: Optional[str]
+    survey_outages: Optional[str]
+    survey_disruptions: Optional[str]
+    survey_subscribe_upload: Optional[str]
+    survey_subscribe_download: Optional[str]
+    survey_bundle: Optional[str]
+    survey_current_cost: Optional[str]
+    survey_satisfaction: Optional[str]
+    survey_carrier_choice: Optional[str]
+    survey_story: Optional[str]
+    survey_email: Optional[str]
+    survey_phone: Optional[str]
+    actual_download: float
+    actual_upload: float
+    min_rtt: float
+    latitude: Optional[float]
+    longitude: Optional[float]
+    bigquery_key: Optional[str]
 
 
 class SubmissionCreate(SubmissionBase):

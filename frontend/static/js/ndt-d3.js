@@ -5,6 +5,24 @@
 
 import * as d3 from "d3";
 
+function submitExtraData() {
+	var formData = $('#SurveyForm').serialize();
+  console.log("formData");
+	$.ajax({
+		method: 'POST',
+		url: $('#SurveyForm').attr('action'),
+		data: formData,
+		statusCode: {
+			201: function() {
+				console.log('Data submitted successfully.');
+			}
+		},
+		error: function(jqXHR, status, msg) {
+			console.log('Something went wrong: ' + status + ' ' + msg);
+		}
+	});
+}
+
 const NDTmeter = function(body_element) {
   this.meter = undefined;
   this.arc = undefined;
@@ -173,7 +191,7 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   }
 
   // Sends user and test data to server... defined in mlab.js
-  // submitExtraData();
+  submitExtraData();
 
   d3.selectAll("#progress-meter .foreground").classed("complete", true);
   document.getElementById('ndt-div').style.display = "none";

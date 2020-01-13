@@ -35,6 +35,7 @@ services:
       PIECEWISE_POSTGRES_PASS: ${PIECEWISE_POSTGRES_PASS}
       PIECEWISE_POSTGRES_PORT: 5432
       PIECEWISE_POSTGRES_DB: piecewise
+      PIECEWISE_ORIGINS: "*"
 
   # Build the frontend
   frontend:

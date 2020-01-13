@@ -7,7 +7,7 @@ settings = get_settings()
 
 
 def get_session(url: str) -> Session:
-    engine = create_engine(url, connect_args={"check_same_thread": False})
+    engine = create_engine(url)
     maker = scoped_session(
         sessionmaker(autocommit=False, autoflush=False, bind=engine))
     return maker

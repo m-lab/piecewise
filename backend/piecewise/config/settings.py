@@ -1,11 +1,14 @@
 from dotenv import find_dotenv, load_dotenv
 from functools import lru_cache
+import logging
 from typing import List
 from os import getenv
 
 from pydantic import BaseSettings, Field
 
 import piecewise.config.defaults as default
+
+logger = logging.getLogger(__name__)
 
 
 class Settings(BaseSettings):
@@ -14,17 +17,14 @@ class Settings(BaseSettings):
     name: str = default.NAME
     static_dir: str = default.STATIC_DIR
     static_mount_path: str = default.STATIC_MOUNT_PATH
-
-    _origins: str = ""  # Should be a comma-separated list of origins
-
-    @property
-    def origins(self) -> List[str]:
-        return [x.strip() for x in self._origins.split(",") if x]
+    origins: str = Field(
+        ...,
+        env="PIECEWISE_ORIGINS")  # Should be a comma-separated list of origins
 
     class Config:
         env_prefix = default.NAME.upper() + "_"
         case_sensitive = True
-        fields = {"_origins": {"env": env_prefix + "origins"}}
+        # fields = {"_origins": {"env": env_prefix + "ORIGINS"}}
 
 
 class DevelopmentSettings(Settings):

@@ -33,13 +33,15 @@ def get_app() -> FastAPI:
     app.include_router(get_api_router(), prefix=settings.api_v1_route)
 
     # Configure static files path
-    #static_files = StaticFiles(directory=settings.static_dir)
-    #app.mount(path=settings.static_mount_path, app=static_files, name="static")
+    # static_files = StaticFiles(directory=settings.static_dir)
+    # app.mount(path=settings.static_mount_path, app=static_files, name="static")
+
+    origins = [x.strip() for x in str(settings.origins).split(",") if x]
 
     # Add CORS middleware
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.origins,
+        allow_origins=origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -48,18 +50,6 @@ def get_app() -> FastAPI:
     @app.get("/", include_in_schema=False)
     def redirect_to_docs() -> RedirectResponse:
         return RedirectResponse("/docs")
-
-    # @app.on_event("startup")
-    # async def connect_to_database() -> None:
-    #    database = get_database(settings.db_url)
-    #    if not database.is_connected:
-    #        await database.connect()
-
-    # @app.on_event("shutdown")
-    # async def shutdown() -> None:
-    #    database = get_database(settings.db_url)
-    #    if database.is_connected:
-    #        await database.disconnect()
 
     return app
 

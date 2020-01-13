@@ -1,7 +1,7 @@
+import logging
 from typing import List
 
-from fastapi import APIRouter, Depends, Form, HTTPException
-import sys
+from fastapi import APIRouter, Depends, Form
 from sqlalchemy.orm import Session
 
 from piecewise.db.crud.submission import create_submission, get_submissions
@@ -10,6 +10,8 @@ from piecewise.db.schemas.submission import (
     SubmissionCreate,
     SubmissionUpdate,
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -30,24 +32,24 @@ def get(
 @router.post("/", response_model=SubmissionUpdate)
 def submit(*,
            db: Session = Depends(get_database),
-           survey_service_type: str = Form(...),
-           survey_outages: str = Form(...),
-           survey_disruptions: str = Form(...),
-           survey_subscribe_upload: str = Form(...),
-           survey_subscribe_download: str = Form(...),
-           survey_bundle: str = Form(...),
-           survey_current_cost: str = Form(...),
-           survey_satisfaction: str = Form(...),
-           survey_carrier_choice: str = Form(...),
-           survey_story: str = Form(...),
-           survey_email: str = Form(...),
-           survey_phone: str = Form(...),
-           actual_download: int = Form(...),
-           actual_upload: int = Form(...),
-           min_rtt: int = Form(...),
-           latitude: float = Form(...),
-           longitude: float = Form(...),
-           bigquery_key: str = Form(...)):
+           survey_service_type: str = Form(None),
+           survey_outages: str = Form(None),
+           survey_disruptions: str = Form(None),
+           survey_subscribe_upload: str = Form(None),
+           survey_subscribe_download: str = Form(None),
+           survey_bundle: str = Form(None),
+           survey_current_cost: str = Form(None),
+           survey_satisfaction: str = Form(None),
+           survey_carrier_choice: str = Form(None),
+           survey_story: str = Form(None),
+           survey_email: str = Form(None),
+           survey_phone: str = Form(None),
+           actual_download: float = Form(...),
+           actual_upload: float = Form(...),
+           min_rtt: float = Form(...),
+           latitude: float = Form(None),
+           longitude: float = Form(None),
+           bigquery_key: str = Form(None)):
     """
     Create new item.
     """

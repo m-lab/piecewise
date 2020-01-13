@@ -550,74 +550,74 @@ function showSocialShare() {
 	$('#socialshare').addClass('visible');
 }
 
-$( window ).resize(function() {
-	if ($('#header').hasClass('initial')) {
-		return;
-	}
-	else if (($(document).width() > 501)) {
-		$('.metricControls, .sliderElements, .leaflet-top.leaflet-left').show();
-	}
-	else if (($(document).width() < 500)) {
-		$('.metricControls, .sliderElements, .leaflet-top.leaflet-left').hide();
-	}
+//$( window ).resize(function() {
+//	if ($('#header').hasClass('initial')) {
+//		return;
+//	}
+//	else if (($(document).width() > 501)) {
+//		$('.metricControls, .sliderElements, .leaflet-top.leaflet-left').show();
+//	}
+//	else if (($(document).width() < 500)) {
+//		$('.metricControls, .sliderElements, .leaflet-top.leaflet-left').hide();
+//	}
+//
+//});
 
-});
-
-$(function() {
-/* Sets initial status on load for various divs */
-	$('#testSpeed, #approx-loc, #ndt-div, #ndt-results, #desktop-legend, .info.legend.leaflet-control, .leaflet-bottom.leaflet-left, .info.controls.leaflet-control, #mapview-icons, #socialshare, .leaflet-top.leaflet-left, .leaflet-top.leaflet-right, .leaflet-control-layers').addClass('hidden');
-	//$('.leaflet-top.leaflet-right').attr('id','layers-box');
-	$('#header').addClass('initial');
-
-/* mobile bits */
-	var mobileContainer = '<div id="mobile-container"></div>';
-	$('#map').append(mobileContainer);
-	var mobileMenuExtra = '<div id="mobile-menu">&equiv;</div>';
-	$('.info.controls.leaflet-control').append(mobileMenuExtra);
-/*mobile bits */
-
-/* copying the mapbox legend into the mobile container to override placement for mobile devices */
-	var attribution = $('div.leaflet-control-attribution.leaflet-control');
-	$('div.info.legend.leaflet-control').append(attribution);
-	$('div.info.legend.leaflet-control').clone().appendTo('#mobile-container');
-	$('div.info.legend.leaflet-control').first().attr('id', 'desktop-legend');
-/* copying the mapbox legend into the mobile container */
-
-	/* reset the display to initial desired state
-	closeAllTheThings();*/
-
-	$('#mobile-menu').click(function() {
-		closeAllTheThings();
-		$('#mobile-container, .sliderElements, .metricControls, #desktop-legend, .leaflet-control-layers').toggle();
-	});
-/*
-	$('#exploreMap').click(function() {
-		showHideControls();
-		$('#header').addClass('hidden');
-		$('#layers-box').show();
-		$('.leaflet-top.leaflet-left, .leaflet-top.leaflet-right').show();
-		$('#testSpeed, #exploreMap').toggle();
-	});
-	$('#testSpeed').click(function() {
-		showHideControls();
-		showTestingPanel();
-		$('#header').addClass('hidden');
-		$('#layers-box').show();
-		$('.leaflet-top.leaflet-left').show();
-		$('#testSpeed, #exploreMap').toggle();
-	});
-    $('#testSpeedEmptyPrompt').click(function() {
-    	$('#header').removeClass('initial');
-    	showHideControls();
-    	showTestingPanel();
-    	$('#testSpeed, #exploreMap').toggle();
- 	 });
-*/
-	$('#isp_user, #connection_type, #cost_of_service, #data_acknowledgement').change(function() {
-		var formState = validateExtraDataForm();
-		$('#take-test').toggle(formState);
-	});
-});
+//$(function() {
+///* Sets initial status on load for various divs */
+//	$('#testSpeed, #approx-loc, #ndt-div, #ndt-results, #desktop-legend, .info.legend.leaflet-control, .leaflet-bottom.leaflet-left, .info.controls.leaflet-control, #mapview-icons, #socialshare, .leaflet-top.leaflet-left, .leaflet-top.leaflet-right, .leaflet-control-layers').addClass('hidden');
+//	//$('.leaflet-top.leaflet-right').attr('id','layers-box');
+//	$('#header').addClass('initial');
+//
+///* mobile bits */
+//	var mobileContainer = '<div id="mobile-container"></div>';
+//	$('#map').append(mobileContainer);
+//	var mobileMenuExtra = '<div id="mobile-menu">&equiv;</div>';
+//	$('.info.controls.leaflet-control').append(mobileMenuExtra);
+///*mobile bits */
+//
+///* copying the mapbox legend into the mobile container to override placement for mobile devices */
+//	var attribution = $('div.leaflet-control-attribution.leaflet-control');
+//	$('div.info.legend.leaflet-control').append(attribution);
+//	$('div.info.legend.leaflet-control').clone().appendTo('#mobile-container');
+//	$('div.info.legend.leaflet-control').first().attr('id', 'desktop-legend');
+///* copying the mapbox legend into the mobile container */
+//
+//	/* reset the display to initial desired state
+//	closeAllTheThings();*/
+//
+//	$('#mobile-menu').click(function() {
+//		closeAllTheThings();
+//		$('#mobile-container, .sliderElements, .metricControls, #desktop-legend, .leaflet-control-layers').toggle();
+//	});
+///*
+//	$('#exploreMap').click(function() {
+//		showHideControls();
+//		$('#header').addClass('hidden');
+//		$('#layers-box').show();
+//		$('.leaflet-top.leaflet-left, .leaflet-top.leaflet-right').show();
+//		$('#testSpeed, #exploreMap').toggle();
+//	});
+//	$('#testSpeed').click(function() {
+//		showHideControls();
+//		showTestingPanel();
+//		$('#header').addClass('hidden');
+//		$('#layers-box').show();
+//		$('.leaflet-top.leaflet-left').show();
+//		$('#testSpeed, #exploreMap').toggle();
+//	});
+//    $('#testSpeedEmptyPrompt').click(function() {
+//    	$('#header').removeClass('initial');
+//    	showHideControls();
+//    	showTestingPanel();
+//    	$('#testSpeed, #exploreMap').toggle();
+// 	 });
+//*/
+//	$('#isp_user, #connection_type, #cost_of_service, #data_acknowledgement').change(function() {
+//		var formState = validateExtraDataForm();
+//		$('#take-test').toggle(formState);
+//	});
+//});
 
 function uncheckAcknowledgement(){
 	var datacheck = document.getElementById('data_acknowledgement');
@@ -628,10 +628,10 @@ function uncheckAcknowledgement(){
 
 
 function submitExtraData() {
-	var formData = $('#collector').serialize();
+	var formData = $('#SurveyForm').serialize();
 	$.ajax({
-		method: 'GET',
-		url: $('#collector').attr('action'),
+		method: 'POST',
+		url: $('#SurveyForm').attr('action'),
 		data: formData,
 		statusCode: {
 			201: function() {

@@ -1,5 +1,3 @@
-import { $, jQuery } from 'jquery';
-
 import NDTmeter from './ndt-d3.js';
 import NDTjs from './ndt-browser-client.js';
 

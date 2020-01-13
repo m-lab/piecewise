@@ -86,6 +86,10 @@ module.exports = env => {
       }),
       new HtmlWebpackHarddiskPlugin(),
       // new webpack.EnvironmentPlugin(['PIECEWISE_BACKEND_URL']),
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery'
+      })
     ],
     devServer: {
       contentBase: path.resolve(__dirname, "dist"),
