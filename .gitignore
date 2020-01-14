@@ -1,4 +1,7 @@
+# Secrets!
 .env
+
+# Back end
 .vagrant/
 *.pyc
 *.retry
@@ -10,3 +13,6 @@ test.db
 /frontend/dist
 /node_modules
 /frontend/node_modules
+
+# Other junk
+*.DS_Store

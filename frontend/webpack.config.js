@@ -58,7 +58,7 @@ module.exports = env => {
             outputPath: '/static/images/',
             publicPath: '/static/images/'
           }
-        }
+        },
       ]
     },
     entry: [
