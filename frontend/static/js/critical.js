@@ -1,3 +1,7 @@
-window.onload = function() {
-  document.getElementById("SurveyForm").action = "$PIECEWISE_BACKEND_URL";
-}
+"use strict";
+
+const url = process.env.PIECEWISE_BACKEND_URL || "$PIECEWISE_BACKEND_URL"
+
+document.getElementById("SurveyForm").action = url;
+
+module.exports = url;

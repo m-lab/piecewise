@@ -1,4 +1,6 @@
-var mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
+import url from './critical.js';
+
+const mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
 
 mapboxgl.accessToken = 'pk.eyJ1IjoicmdhaW5lcyIsImEiOiJjamZuenFmZXIwa2JuMndwZXd1eGQwcTNuIn0.TbNK-TNQxiGUlWFdzEEavw';
 
@@ -25,7 +27,7 @@ const getjson = function(url, callback) {
     xhr.send();
 };
 
-getjson('$PIECEWISE_BACKEND_URL', (error, data) => {
+getjson(url, (error, data) => {
   if (error !== null) {
     alert('Something went wrong: ' + error);
   } else {
