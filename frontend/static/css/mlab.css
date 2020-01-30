@@ -15,6 +15,7 @@ html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
+  position: relative;
 }
 
 #map {
@@ -313,7 +314,7 @@ span.ui-slider-handle.ui-state-default.ui-corner-all:focus {
   margin-top:15px;
 }
 
-#approx-loc {
+/* #approx-loc {
   width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -329,7 +330,7 @@ span.ui-slider-handle.ui-state-default.ui-corner-all:focus {
 
 #approx-loc p {
   margin:0;
-}
+} */
 
 #ndt {
   display:none;
@@ -442,7 +443,7 @@ span.ui-slider-handle.ui-state-default.ui-corner-all:focus {
   top:65px;
 }
 
-#icon-container, #header h2, #approx-loc {
+#icon-container, #header h2, { /*  #approx-loc { */
   float:left;
 }
 
@@ -475,13 +476,13 @@ span.ui-slider-handle.ui-state-default.ui-corner-all:focus {
 #header button {
   margin:20px;
 }
-#approx-loc {
+/* #approx-loc {
   width:40%;
   margin-top:10px;
   padding-right:10px;
-}
+} */
 
-#icon-container, .leaflet-bottom.leaflet-left, #approx-loc, .leaflet-top.leaflet-right {
+#icon-container, .leaflet-bottom.leaflet-left, /*#approx-loc,*/ .leaflet-top.leaflet-right {
 
 }
 
@@ -846,9 +847,9 @@ a.leaflet-popup-close-button {
   #mobile-menu, #mobile-container {
     display:none !important;
   }
-  #approx-loc {
+  /* #approx-loc {
     float: right;
-  }
+  } */
   #icon-container {
     width:13%;
   }
@@ -867,7 +868,7 @@ a.leaflet-popup-close-button {
   .sliderElements {
     width:70%;
   }
-  #ndt h4, #ndt > p, #approx-loc {
+  #ndt h4, #ndt > p, /*#approx-loc*/ {
   /*#ndt h4, #ndt p, #about-ndt p {
     font-size: 0.8em;*/
     width:65%;
@@ -1166,11 +1167,11 @@ a.leaflet-popup-close-button {
   #progress-meter text.information {
     font-size: 2em;
   }
-  #approx-loc {
+  /* #approx-loc {
     width:60%;
     margin:0;
     padding:0;
-  }
+  } */
   #ndt-results p {
     margin:0
   }

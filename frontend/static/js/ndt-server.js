@@ -1,7 +1,7 @@
 import NDTmeter from './ndt-d3.js';
 import NDTjs from './ndt-browser-client.js';
 
-const survey = document.getElementById('SurveyForm');
+const survey = document.getElementById('Consent');
 
 if (!!survey) {
   survey.addEventListener('submit', runTests);

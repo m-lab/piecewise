@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/throneless-tech/piecewise#readme",
   "dependencies": {
+    "@threespot/expand-toggle": "^1.6.2",
+    "@threespot/freeze-scroll": "^1.0.3",
     "bootstrap": "^4.4.1",
     "d3": "^5.14.2",
     "d3-quadtree": "^1.0.7",

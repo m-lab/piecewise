@@ -1,3 +1,10 @@
+// Variables
+$screen-min-width: 768px;
+
+//**********************************************
+// For screen readers only
+//**********************************************
+
 .visually-hidden {
   height: 0;
   opacity: 0;
@@ -7,39 +14,31 @@
   z-index: -999;
 }
 
-.transparent-background {
-  background-color: #fff;
-  opacity: 90%
-}
-
+//**********************************************
+// Background colors
+//**********************************************
 
 .bg {
+  &-transparent {
+    background-color: #fff !important;
+    opacity: 90%
+  }
 
   &-white {
-    background-color: #fff;
+    background-color: #fff !important;
   }
 }
 
-.submit {
-  box-shadow: 3px 3px 5px #ccc;
-  font-size: 2em;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
-  width: 5em;
+//**********************************************
+// Elements styled by classes
+//**********************************************
 
-  &-text {
-    left: 50%;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.main {
-  position: relative;
+.fill {
+  left: 0;
+  overflow: visible;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .loader {
@@ -71,21 +70,66 @@
 
 }
 
+.main {
+  position: relative;
+}
+
+.overlay {
+  overflow: visible !important;
+
+  &-content {
+    background-color: #fff;
+    left: 50%;
+    padding: 1em;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+  }
+
+  &:before {
+    background-color: #000;
+    bottom: 0;
+    content: '';
+    height: 100%;
+    left: 0;
+    opacity: 0.7;
+    overflow: visible;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  @media (max-width: $screen-min-width) {
+    position: relative;
+  }
+}
+
+.submit {
+  box-shadow: 1px 1px 1px #000;
+  font-size: 2em;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+
+  &-text {
+    left: 50%;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+//**********************************************
+// Elements styled by IDs
+//**********************************************
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-#results {
-  background-color: rgba(255,255,255,0.85);
-  position: fixed;
-  width: 100%;
-  z-index: 5;
-}
-
-#ErrorMessage {
-  color: red;
-  font-weight: bold;
 }
 
 #branding {
@@ -98,36 +142,14 @@
   height: 60px;
 }
 
-//**********************************************
-// Map
-//**********************************************
+#ErrorMessage {
+  color: red;
+  font-weight: bold;
+}
 
-#Map {
-  bottom: 0;
-  height: 100%;
-  left: 0;
+#results {
+  background-color: rgba(255,255,255,0.85);
   position: fixed;
-  right: 0;
-  top: 0;
   width: 100%;
-  z-index: -1;
-}
-
-.marker {
-  background-color: #567890;
-  background-size: cover;
-  box-shadow: 2px 2px 2px #fff;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.mapboxgl-popup {
-  max-width: 200px;
-}
-
-.mapboxgl-popup-content {
-  text-align: center;
-  font-family: 'Open Sans', sans-serif;
+  z-index: 5;
 }

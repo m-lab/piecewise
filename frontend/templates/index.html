@@ -7,8 +7,9 @@
     <link rel="stylesheet" src="/static/css/main.css">
   </head>
   <body>
+    <div id="Map"></div>
     <div class="main container-fluid">
-      <div class="bg-white p-5">
+      <div id="Welcome" class="expandable bg-white p-5">
         <div id="ErrorMessage"></div>
         <h1>North Carolina Local Broadband Speed Test</h1>
         <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband Internet access, you can help out by answering a few short questions designed to measure the extent of the problem and provide evidence that more investment is essential. Due to many inaccuracies in current broadband availability data collected by the federal government, there is no accurate map showing where high-quality Internet access is available. When it comes to prices, neither the state nor federal government collect and share that information. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
@@ -18,10 +19,71 @@
           <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="Measurement Lab" title="Measurement Lab" /></a>
         </div>
       </div>
+
+      <div class="bg-white mt-2 p-5 text-center">
+        <button class="button" type="button" data-expands="Consent" data-expands-class="is-expanded" data-expands-height>
+          <span data-expands-text="Back home">Take the test</span>
+        </button>
+        <button class="button" type="button" data-expands="Welcome" data-expands-class="is-expanded" data-expands-height data-expanded>
+          <span data-expands-text="More info">View Results</span>
+        </button>
+      </div>
+
       <!-- <div id="no-websocket">
         <p>Your browser does not appear to support WebSockets. Please check your browser configuration or try a different browser.</p>
       </div> -->
-    <form class="transparent-background p-5" id="SurveyForm" method="post">
+    </div>
+
+    <div id="Consent" class="container-fluid expandable p-5 overlay">
+      <div class="overlay-content">
+        <p>To put your speed test results on the map, we'd like to use your location.</p>
+        <form class="" action="index.html" method="post">
+          <div>
+            <input type="checkbox" id="browserLocation" name="browserLocation"
+                   checked>
+            <label for="browserLocation">Use my browser location</label>
+          </div>
+          <div>
+            <input type="checkbox" id="noBrowserLocation" name="noBrowserLocation">
+            <label for="noBrowserLocation">Do not use my location</label>
+          </div>
+          <div id="consent-text">
+            <span class="required">*</span>
+            <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" required>
+            <label for="data_acknowledgement"> I agree to the <a href="https://www.measurementlab.net/privacy/">M-Lab privacy policy</a>, which includes retention and publication of IP addresses, in addition to speed test results.</label>
+          </div>
+          <div class="visually-hidden">
+            <input name="latitude" id="latitude" type="hidden" />
+            <input name="longitude" id="longitude" type="hidden" />
+            <input name="actual_download" id="actual_download" type="hidden" />
+            <input name="actual_upload" id="actual_upload" type="hidden" />
+            <input name="min_rtt" id="min_rtt" type="hidden" />
+            <input name="bigquery_key" id="bigquery_key" type="hidden" />
+          </div>
+          <div id="approx-loc">
+            <button id="SubmitSurvey"  class="submit mt-5 mb-5" type="submit" name="button">
+              <span class="submit-text">Test your speed!</span>
+            </button>
+            <div>
+              <p>Many factors may impact upload/download speed tests, at any given test period. This speed test measures how well your current connection works between your computer/device and the testing server itself – providing a general measure of how fast (or slow) your Internet connection is. This test doesn't necessarily mean that this is the bandwidth you should always expect between you and anywhere else. To ensure the most accurate test results:</p>
+              <ol>
+                <li>If possible, connect your computer to your ISP modem or router directly with an Ethernet cord.</li>
+                <li>Minimize the "noise" during an Internet speed test, which is what the several tips above help you do, certainly contributes to a more accurate speed test result.</li>
+                <li>Test periodically at different times of the day can help show your connection's speed trends over time.</li>
+              </ol>
+              <p>If you are seeing results that differ from other speed tests, the M-Lab <a href="https://www.measurementlab.net/faq/#why-are-my-m-lab-results-different-from-other-speed-tests">FAQ</a> provides helpful information to help understand why.</p>
+              <p>The map shows aggregate test results from all accumlated M-Lab tests. Any test taken with an M-Lab testing application (i.e. the speed test within Google search results) will be presented on the map.</p>
+              <p>Test results from this website will not be immediately available on the map, but will be shown as a separate map layer once enough new survey data is collected.</p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <form class="container-fluid p-5 expandable fill" id="SurveyForm" method="post">
+      <button class="button mb-5" type="button" data-expands="SurveyForm" data-expands-class="is-expanded" data-expands-height>
+        <span data-expands-text="Take the test">Back home</span>
+      </button>
       <div id="extra-data" class="ndt-related">
         <div class="container" id="all-form-fields">
           <div class="form-field mb-4" id="container-survey_service_type">
@@ -249,18 +311,6 @@
               </div>
             </div>
           </div>
-
-          <div class="form-inline" id="consent-text">
-            <span class="required">*</span>
-            <input class="pr-4" type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" required>
-            <label for="data_acknowledgement"> I agree to the <a href="https://www.measurementlab.net/privacy/">M-Lab privacy policy</a>, which includes retention and publication of IP addresses, in addition to speed test results.</label>
-          </div>
-          <input name="latitude" id="latitude" type="hidden" />
-          <input name="longitude" id="longitude" type="hidden" />
-          <input name="actual_download" id="actual_download" type="hidden" />
-          <input name="actual_upload" id="actual_upload" type="hidden" />
-          <input name="min_rtt" id="min_rtt" type="hidden" />
-          <input name="bigquery_key" id="bigquery_key" type="hidden" />
         </div>
         <div id="test-container" class="container">
           <div class="row">
@@ -270,29 +320,9 @@
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="">
-              <div id="approx-loc">
-                <button id="SubmitSurvey"  class="submit mt-5 mb-5" type="submit" name="button">
-                  <span class="submit-text">Test your speed!</span>
-                </button>
-                <div class="well">
-                  <p>Many factors may impact upload/download speed tests, at any given test period. This speed test measures how well your current connection works between your computer/device and the testing server itself – providing a general measure of how fast (or slow) your Internet connection is. This test doesn't necessarily mean that this is the bandwidth you should always expect between you and anywhere else. To ensure the most accurate test results:</p>
-                  <ol>
-                    <li>If possible, connect your computer to your ISP modem or router directly with an Ethernet cord.</li>
-                    <li>Minimize the "noise" during an Internet speed test, which is what the several tips above help you do, certainly contributes to a more accurate speed test result.</li>
-                    <li>Test periodically at different times of the day can help show your connection's speed trends over time.</li>
-                  </ol>
-                  <p>If you are seeing results that differ from other speed tests, the M-Lab <a href="https://www.measurementlab.net/faq/#why-are-my-m-lab-results-different-from-other-speed-tests">FAQ</a> provides helpful information to help understand why.</p>
-                  <p>The map shows aggregate test results from all accumlated M-Lab tests. Any test taken with an M-Lab testing application (i.e. the speed test within Google search results) will be presented on the map.</p>
-                  <p>Test results from this website will not be immediately available on the map, but will be shown as a separate map layer once enough new survey data is collected.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+
 	       </div>
       </form>
-    </div>
   </div>
   <div id="Loader" class="loader visually-hidden">
     <div class="loader-content p-5">
@@ -356,8 +386,6 @@
       </div> <!-- thankyou div -->
 
     </div>
-    </div>
-    <div id="Map">
     </div>
   </body>
 </html>

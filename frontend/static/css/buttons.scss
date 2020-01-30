@@ -1,0 +1,27 @@
+//**********************************************
+// Button styles
+//**********************************************
+
+// Variables
+$screen-min-width: 768px;
+
+.button {
+  border: 1px solid #000;
+  box-shadow: 1px 1px 1px #000;
+
+  @media (min-width: $screen-min-width) {
+    padding: 1em;
+
+    &:not(:first-child) {
+      margin-left: 1em;
+    }
+  }
+
+  @media (max-width: $screen-min-width) {
+    width: 100%;
+
+    &:not(:first-child) {
+      margin-top: 0.25em;
+    }
+  }
+}
