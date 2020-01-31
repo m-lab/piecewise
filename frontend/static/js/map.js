@@ -1,6 +1,9 @@
 import url from './critical.js';
+import scroll from "@threespot/freeze-scroll";
 
 const mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
+
+scroll.freeze();
 
 mapboxgl.accessToken = 'pk.eyJ1IjoicmdhaW5lcyIsImEiOiJjamZuenFmZXIwa2JuMndwZXd1eGQwcTNuIn0.TbNK-TNQxiGUlWFdzEEavw';
 
@@ -62,13 +65,13 @@ getjson(url, (error, data) => {
 
 const mapContainer = document.getElementById('Map');
 const main = document.getElementsByClassName('main')[0];
-const survey = document.getElementById('SurveyForm');
-const results = document.getElementById('results');
+const consentForm = document.getElementById('Consent');
+const surveyForm = document.getElementById('SurveyForm');
 const loader = document.getElementById('Loader');
 
 // only create map if the survey and map container exist on the page
 // if so, build the Mapbox map
-if (!!survey && !!mapContainer) {
+if (!!consentForm && !!mapContainer) {
 
   const map = new mapboxgl.Map({
     container: 'Map',
@@ -123,47 +126,50 @@ if (!!survey && !!mapContainer) {
       console.log('off item');
     });
 
-    survey.addEventListener('submit', logSubmit);
+    consentForm.addEventListener('submit', logSubmit);
 
     function logSubmit(event) {
       console.log(`Form Submitted! Time stamp: ${event.timeStamp}`);
 
+      scroll.unfreeze();
+
       main.classList.add('visually-hidden');
-      survey.classList.add('visually-hidden');
+      consentForm.classList.add('visually-hidden');
+      surveyForm.classList.remove('visually-hidden');
       loader.classList.remove('visually-hidden');
-      results.classList.remove('visually-hidden');
 
       const userLatitude = document.getElementById('latitude').value;
       const userLongitude = document.getElementById('longitude').value;
 
-      console.log('LOCATION: ', userLatitude, userLongitude);
+      if (!!userLatitude & !!userLongitude) {
 
-      const userData = {
-        "type": "FeatureCollection",
-        "features": [{
-          "type": "Feature",
-          "geometry": {
-            "type": "LineString",
-            "coordinates": [
-              [userLongitude, userLatitude],
-            ]
-          }
-        }]
+        const userData = {
+          "type": "FeatureCollection",
+          "features": [{
+            "type": "Feature",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [userLongitude, userLatitude],
+              ]
+            }
+          }]
+        }
+
+        userData.features.forEach(function(marker) {
+
+          // create a HTML element for each feature
+          var el = document.createElement('div');
+          el.className = 'marker';
+
+          // make a marker for each feature and add to the map
+          new mapboxgl.Marker(el)
+            .setLngLat(marker.geometry.coordinates.flat())
+            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+              .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
+            .addTo(map);
+        });
       }
-
-      userData.features.forEach(function(marker) {
-
-        // create a HTML element for each feature
-        var el = document.createElement('div');
-        el.className = 'marker';
-
-        // make a marker for each feature and add to the map
-        new mapboxgl.Marker(el)
-          .setLngLat(marker.geometry.coordinates.flat())
-          .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-            .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
-          .addTo(map);
-      });
     }
   });
 }

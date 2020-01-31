@@ -9,6 +9,7 @@
 'use strict';
 
 const loader = document.getElementById('Loader');
+const results = document.getElementById('results');
 const NDTjs = function(server, serverPort, serverProtocol, serverPath, callbacks,
                updateInterval) {
   this.server = server;
@@ -572,6 +573,7 @@ NDTjs.prototype.startTest = function () {
       that.callbacks.onstatechange('finished_all', that.results);
       that.callbacks.onfinish(that.results);
       loader.classList.add('visually-hidden');
+      results.classList.remove('visually-hidden');
       console.log('All tests successfully completed.');
     } else {
       errorMessage = 'No handler for message ' + messageType +

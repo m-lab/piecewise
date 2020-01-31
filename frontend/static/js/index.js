@@ -4,6 +4,7 @@ import 'bootstrap';
 import './critical.js';
 import './modals.js';
 import './map.js';
+import './skip-survey.js';
 
 // ndt scripts
 import './ndt.js'

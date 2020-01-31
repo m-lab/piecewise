@@ -1,10 +1,11 @@
 import NDTmeter from './ndt-d3.js';
 import NDTjs from './ndt-browser-client.js';
 
-const survey = document.getElementById('Consent');
+const consentForm = document.getElementById('Consent');
+const surveyForm = document.getElementById('SurveyForm');
 
-if (!!survey) {
-  survey.addEventListener('submit', checkLocationConsent);
+if (!!consentForm) {
+  consentForm.addEventListener('submit', checkLocationConsent);
 }
 
 let ndtServer,
@@ -19,10 +20,12 @@ let ndtServer,
 
 getNdtServer()
 
-const NDT_meter = new NDTmeter('#SubmitSurvey');
+const NDT_meter = new NDTmeter('#SubmitConsent');
 
 function checkLocationConsent () {
   event.preventDefault();
+
+  console.log(consentForm);
 
   const useLocation = document.getElementById('yes').checked;
 
