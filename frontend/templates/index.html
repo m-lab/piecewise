@@ -39,13 +39,14 @@
         <p>To put your speed test results on the map, we'd like to use your location.</p>
         <form class="" action="index.html" method="post">
           <div>
-            <input type="checkbox" id="browserLocation" name="browserLocation"
+            <input type="radio" id="yes" name="useBrowserLocation" value="yes"
                    checked>
-            <label for="browserLocation">Use my browser location</label>
+            <label for="yes">Use my browser location</label>
           </div>
+
           <div>
-            <input type="checkbox" id="noBrowserLocation" name="noBrowserLocation">
-            <label for="noBrowserLocation">Do not use my location</label>
+            <input type="radio" id="no" name="useBrowserLocation" value="no">
+            <label for="no">Do not use my location</label>
           </div>
           <div id="consent-text">
             <span class="required">*</span>

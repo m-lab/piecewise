@@ -4,7 +4,7 @@ import NDTjs from './ndt-browser-client.js';
 const survey = document.getElementById('Consent');
 
 if (!!survey) {
-  survey.addEventListener('submit', runTests);
+  survey.addEventListener('submit', checkLocationConsent);
 }
 
 let ndtServer,
@@ -21,18 +21,28 @@ getNdtServer()
 
 const NDT_meter = new NDTmeter('#SubmitSurvey');
 
-function runTests(event) {
+function checkLocationConsent () {
   event.preventDefault();
 
-	const NDT_client = new NDTjs(ndtServer, ndtPort, ndtProtocol, ndtPath, NDT_meter, ndtUpdateInterval);
-	NDT_client.startTest();
-};
+  const useLocation = document.getElementById('yes').checked;
 
-if ("geolocation" in navigator) {
-	navigator.geolocation.getCurrentPosition(success, error);
+  console.log(useLocation);
+
+  if (!!useLocation) {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(success, error);
+    }
+  } else { runTests(); }
 }
 
+function runTests(event) {
+  const NDT_client = new NDTjs(ndtServer, ndtPort, ndtProtocol, ndtPath, NDT_meter, ndtUpdateInterval);
+
+  NDT_client.startTest();
+};
+
 function success(position) {
+  const NDT_client = new NDTjs(ndtServer, ndtPort, ndtProtocol, ndtPath, NDT_meter, ndtUpdateInterval);
 
 	document.getElementById('latitude').value = position.coords.latitude;
 	document.getElementById('longitude').value = position.coords.longitude;
@@ -48,7 +58,7 @@ function success(position) {
 			if (xhr.status === 200) {
 				currentLoc = JSON.parse(xhr.responseText);
 				console.log("Location received");
-
+        NDT_client.startTest();
 				// currentLocText.text(currentLoc.address.road + currentLoc.address.neighbourhood + currentLoc.address.suburb + currentLoc.address.city + currentLoc.address.state);
 				document.getElementsByClassName('loader-content')[0].append("Searching from: " + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state);
 			} else {
