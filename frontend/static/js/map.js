@@ -83,48 +83,50 @@ if (!!consentForm && !!mapContainer) {
 
   map.on('load', function() {
 
-    map.addSource('points', {
-      'type': 'geojson',
-      'data': geojson
-    })
+    if (!!geojson) {
+      map.addSource('points', {
+        'type': 'geojson',
+        'data': geojson
+      })
 
-    map.addLayer({
-      'id': 'points',
-      'type': 'circle',
-      'source': 'points',
-      'paint': {
-        'circle-radius': 10,
-        'circle-color': '#ff442b',
-        'circle-opacity': 0.6
-      }
-    });
+      map.addLayer({
+        'id': 'points',
+        'type': 'circle',
+        'source': 'points',
+        'paint': {
+          'circle-radius': 10,
+          'circle-color': '#ff442b',
+          'circle-opacity': 0.6
+        }
+      });
 
-    geojson.features.forEach(function(marker) {
+      geojson.features.forEach(function(marker) {
 
-      // create a HTML element for each feature
-      var el = document.createElement('div');
-      el.className = 'marker';
+        // create a HTML element for each feature
+        var el = document.createElement('div');
+        el.className = 'marker';
 
-      // make a marker for each feature and add to the map
-      new mapboxgl.Marker(el)
-        .setLngLat(marker.geometry.coordinates.flat())
-        .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-          .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
-        .addTo(map);
+        // make a marker for each feature and add to the map
+        new mapboxgl.Marker(el)
+          .setLngLat(marker.geometry.coordinates.flat())
+          .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+            .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
+          .addTo(map);
+      });
 
-    });
+      // Change the cursor to a pointer when the mouse is over the places layer.
+      map.on('mouseenter', 'points', function() {
+        map.getCanvas().style.cursor = 'pointer';
+        console.log('on item');
+      });
 
-    // Change the cursor to a pointer when the mouse is over the places layer.
-    map.on('mouseenter', 'points', function() {
-      map.getCanvas().style.cursor = 'pointer';
-      console.log('on item');
-    });
+      // Change it back to a pointer when it leaves.
+      map.on('mouseleave', 'points', function() {
+        map.getCanvas().style.cursor = '';
+        console.log('off item');
+      });
+    }
 
-    // Change it back to a pointer when it leaves.
-    map.on('mouseleave', 'points', function() {
-      map.getCanvas().style.cursor = '';
-      console.log('off item');
-    });
 
     consentForm.addEventListener('submit', logSubmit);
 
