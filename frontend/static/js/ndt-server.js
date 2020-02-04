@@ -25,11 +25,7 @@ const NDT_meter = new NDTmeter('#SubmitConsent');
 function checkLocationConsent () {
   event.preventDefault();
 
-  console.log(consentForm);
-
   const useLocation = document.getElementById('yes').checked;
-
-  console.log(useLocation);
 
   if (!!useLocation) {
     if ("geolocation" in navigator) {
