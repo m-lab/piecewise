@@ -12,57 +12,6 @@ const bounds = [
   [-46, 72] // Northeast coordinates
 ];
 
-let geojson;
-
-// fetch data from api
-const getjson = function(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'json';
-    xhr.onload = function() {
-      var status = xhr.status;
-      if (status === 200) {
-        callback(null, xhr.response);
-      } else {
-        callback(status, xhr.response);
-      }
-    };
-    xhr.send();
-};
-
-getjson(url, (error, data) => {
-  if (error !== null) {
-    alert('Something went wrong: ' + error);
-  } else {
-    geojson = data;
-
-    const allPoints = geojson.map(point => ({
-        'type': 'Feature',
-        'geometry': {
-            'type': 'Point',
-            'coordinates': [
-              [point.longitude, point.latitude]
-            ],
-        },
-        properties: {
-          isp_user: point.survey_service_type,
-          other_isp: point.survey_service_type_other,
-          cost_of_service: point.survey_current_cost,
-          advertised_download: point.survey_subscribe_download,
-          advertised_upload: point.survey_subscribe_upload,
-          actual_download: point.actual_download,
-          actual_upload: point.actual_upload,
-          min_rtt: point.min_rtt,
-        }
-    }));
-
-    geojson = {
-      "type": "FeatureCollection",
-      "features": allPoints
-    }
-  }
-})
-
 const mapContainer = document.getElementById('Map');
 const main = document.getElementsByClassName('main')[0];
 const consentForm = document.getElementById('Consent');
@@ -72,6 +21,57 @@ const loader = document.getElementById('Loader');
 // only create map if the survey and map container exist on the page
 // if so, build the Mapbox map
 if (!!consentForm && !!mapContainer) {
+
+  let geojson;
+
+  // fetch data from api
+  const getjson = function(url, callback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+        var status = xhr.status;
+        if (status === 200) {
+          callback(null, xhr.response);
+        } else {
+          callback(status, xhr.response);
+        }
+      };
+      xhr.send();
+  };
+
+  getjson(url, (error, data) => {
+    if (error !== null) {
+      alert('Something went wrong: ' + error);
+    } else {
+      geojson = data;
+
+      const allPoints = geojson.map(point => ({
+          'type': 'Feature',
+          'geometry': {
+              'type': 'Point',
+              'coordinates': [
+                [point.longitude, point.latitude]
+              ],
+          },
+          properties: {
+            isp_user: point.survey_service_type,
+            other_isp: point.survey_service_type_other,
+            cost_of_service: point.survey_current_cost,
+            advertised_download: point.survey_subscribe_download,
+            advertised_upload: point.survey_subscribe_upload,
+            actual_download: point.actual_download,
+            actual_upload: point.actual_upload,
+            min_rtt: point.min_rtt,
+          }
+      }));
+
+      geojson = {
+        "type": "FeatureCollection",
+        "features": allPoints
+      }
+    }
+  })
 
   const map = new mapboxgl.Map({
     container: 'Map',
