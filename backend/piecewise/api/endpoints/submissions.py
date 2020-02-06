@@ -31,6 +31,7 @@ def get(
 
 @router.post("/", response_model=SubmissionUpdate)
 def submit(*,
+           id: integer = Form(None),
            db: Session = Depends(get_database),
            survey_service_type: str = Form(None),
            survey_outages: str = Form(None),
@@ -50,30 +51,60 @@ def submit(*,
            latitude: float = Form(None),
            longitude: float = Form(None),
            bigquery_key: str = Form(None)):
-    """
-    Create new item.
-    """
-    sub_in = SubmissionCreate(
-        db=db,
-        survey_service_type=survey_service_type,
-        survey_outages=survey_outages,
-        survey_disruptions=survey_disruptions,
-        survey_subscribe_upload=survey_subscribe_upload,
-        survey_subscribe_download=survey_subscribe_download,
-        survey_bundle=survey_bundle,
-        survey_current_cost=survey_current_cost,
-        survey_satisfaction=survey_satisfaction,
-        survey_carrier_choice=survey_carrier_choice,
-        survey_story=survey_story,
-        survey_email=survey_email,
-        survey_phone=survey_phone,
-        actual_download=actual_download,
-        actual_upload=actual_upload,
-        min_rtt=min_rtt,
-        latitude=latitude,
-        longitude=longitude,
-        bigquery_key=bigquery_key,
-    )
+    if id: # if data stored in dom
+        """
+        Update an item.
+        """
+        sub_in = SubmissionUpdate(
+            db=db,
+            id=id,
+            survey_service_type=survey_service_type,
+            survey_outages=survey_outages,
+            survey_disruptions=survey_disruptions,
+            survey_subscribe_upload=survey_subscribe_upload,
+            survey_subscribe_download=survey_subscribe_download,
+            survey_bundle=survey_bundle,
+            survey_current_cost=survey_current_cost,
+            survey_satisfaction=survey_satisfaction,
+            survey_carrier_choice=survey_carrier_choice,
+            survey_story=survey_story,
+            survey_email=survey_email,
+            survey_phone=survey_phone,
+            actual_download=actual_download,
+            actual_upload=actual_upload,
+            min_rtt=min_rtt,
+            latitude=latitude,
+            longitude=longitude,
+            bigquery_key=bigquery_key,
+        )
 
-    sub = create_submission(db=db, submission=sub_in)
+        sub = update_submission(db=db, submission=sub_in)
+    else:
+        """
+        Create new item.
+        """
+        sub_in = SubmissionCreate(
+            db=db,
+            survey_service_type=survey_service_type,
+            survey_outages=survey_outages,
+            survey_disruptions=survey_disruptions,
+            survey_subscribe_upload=survey_subscribe_upload,
+            survey_subscribe_download=survey_subscribe_download,
+            survey_bundle=survey_bundle,
+            survey_current_cost=survey_current_cost,
+            survey_satisfaction=survey_satisfaction,
+            survey_carrier_choice=survey_carrier_choice,
+            survey_story=survey_story,
+            survey_email=survey_email,
+            survey_phone=survey_phone,
+            actual_download=actual_download,
+            actual_upload=actual_upload,
+            min_rtt=min_rtt,
+            latitude=latitude,
+            longitude=longitude,
+            bigquery_key=bigquery_key,
+        )
+
+
+        sub = create_submission(db=db, submission=sub_in)
     return sub

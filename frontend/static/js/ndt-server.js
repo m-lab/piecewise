@@ -12,23 +12,33 @@ if (!!surveyForm) {
   surveyForm.addEventListener('submit', submitExtraData)
 }
 
+let obj = localStorage.getItem('formData');
+
+// console.log('retrievedObject: ', JSON.parse(obj));
+
+
 function submitExtraData(event) {
   event.preventDefault();
-	var formData = $('#SurveyForm').serialize();
-  console.log(formData);
-	$.ajax({
-		method: 'POST',
-		url: $('#SurveyForm').attr('action'),
-		data: formData,
-		statusCode: {
-			201: function() {
-				console.log('Data submitted successfully.');
-			}
-		},
-		error: function(jqXHR, status, msg) {
-			console.log('Something went wrong: ' + status + ' ' + msg);
-		}
-	});
+  let formData = $('#ConsentForm').serialize();
+
+  if (localStorage.getItem('formData')) {
+    formData = formData.concat(localStorage.getItem('formData'))
+  }
+
+  $.ajax({
+    method: 'POST',
+    url: $('#ConsentForm').attr('action'),
+    data: formData,
+    statusCode: {
+      200: function(data) {
+        localStorage.setItem('formData', JSON.stringify(data));
+        console.log('Data submitted successfully: ', data);
+      }
+    },
+    error: function(jqXHR, status, msg) {
+      console.log('Something went wrong: ' + status + ' ' + msg);
+    }
+  });
 }
 
 let ndtServer,
