@@ -15,3 +15,11 @@ def create_submission(db: Session, submission: SubmissionCreate):
     db.commit()
     db.refresh(db_item)
     return db_item
+
+def update_submission(db: Session, submission: SubmissionCreate):
+    print("UPDATE_SUBMISSION")
+    db_item = Submission.query.filter_by(username=form.user.id).first()
+    db.update(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item

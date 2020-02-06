@@ -6,11 +6,11 @@
 import * as d3 from "d3";
 
 function submitExtraData() {
-	var formData = $('#SurveyForm').serialize();
-  console.log("formData");
+	var formData = $('#ConsentForm').serialize();
+  console.log(formData);
 	$.ajax({
 		method: 'POST',
-		url: $('#SurveyForm').attr('action'),
+		url: $('#ConsentForm').attr('action'),
 		data: formData,
 		statusCode: {
 			201: function() {

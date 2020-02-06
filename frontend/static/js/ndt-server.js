@@ -8,6 +8,29 @@ if (!!consentForm) {
   consentForm.addEventListener('submit', checkLocationConsent);
 }
 
+if (!!surveyForm) {
+  surveyForm.addEventListener('submit', submitExtraData)
+}
+
+function submitExtraData(event) {
+  event.preventDefault();
+	var formData = $('#SurveyForm').serialize();
+  console.log(formData);
+	$.ajax({
+		method: 'POST',
+		url: $('#SurveyForm').attr('action'),
+		data: formData,
+		statusCode: {
+			201: function() {
+				console.log('Data submitted successfully.');
+			}
+		},
+		error: function(jqXHR, status, msg) {
+			console.log('Something went wrong: ' + status + ' ' + msg);
+		}
+	});
+}
+
 let ndtServer,
 	ndtServerIp,
 	ndtPort = "3010",
