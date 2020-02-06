@@ -7,17 +7,9 @@
     <link rel="stylesheet" src="/static/css/main.css">
   </head>
   <body>
-    <div id="Map"></div>
-    <div id="Loader" class="loader visually-hidden">
-      <div class="loader-content p-5">
-        <p>Loading...</p>
-        <div class="loader-spinner"></div>
-        <div id="ndt-status"></div>
-      </div>
-    </div>
-    <div class="main container-fluid">
-      <div class="pos-fixed pos-fixed-top pos-fixed-left">
-        <div id="Welcome" class="expandable bg-white p-5">
+    <div class="background"></div>
+    <div class="main container-fluid pos-fixed">
+        <div id="Welcome" class="expandable bg-white p5">
           <div id="ErrorMessage"></div>
           <h1>North Carolina Local Broadband Speed Test</h1>
           <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband Internet access, you can help out by answering a few short questions designed to measure the extent of the problem and provide evidence that more investment is essential. Due to many inaccuracies in current broadband availability data collected by the federal government, there is no accurate map showing where high-quality Internet access is available. When it comes to prices, neither the state nor federal government collect and share that information. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
@@ -28,7 +20,7 @@
           </div>
         </div>
 
-        <div class="bg-white mt-2 p-5 text-center">
+        <div class="bg-white mt-2 p5 text-center">
           <button class="button" type="button" data-expands="Consent" data-expands-class="is-expanded" data-expands-height>
             <span data-expands-text="Back home">Take the test</span>
           </button>
@@ -36,13 +28,12 @@
             <span data-expands-text="More info">View Results</span>
           </button>
         </div>
-      </div>
       <!-- <div id="no-websocket">
         <p>Your browser does not appear to support WebSockets. Please check your browser configuration or try a different browser.</p>
       </div> -->
     </div>
 
-    <div id="Consent" class="container-fluid expandable p-5 overlay">
+    <div id="Consent" class="container-fluid expandable p5 overlay pos-fixed">
       <div class="overlay-content">
         <p>To put your speed test results on the map, we'd like to use your location.</p>
         <form id="ConsentForm" class="" method="post">
@@ -70,7 +61,7 @@
             <input name="bigquery_key" id="bigquery_key" type="hidden" />
           </div>
           <div id="approx-loc">
-            <button id="SubmitConsent"  class="submit mt-5 mb-5" type="submit" name="button">
+            <button id="SubmitConsent"  class="submit button mt-5 mb-5" type="submit" name="button">
               <span class="submit-text">Test your speed!</span>
             </button>
             <div>
@@ -88,7 +79,14 @@
         </form>
       </div>
     </div>
-    <div id="results" class="summary page visually-hidden p-3">
+    <div id="Loader" class="loader visually-hidden pos-fixed">
+      <div class="loader-content p2">
+        <p>Loading...</p>
+        <div class="loader-spinner"></div>
+        <div id="ndt-status"></div>
+      </div>
+    </div>
+    <div id="results" class="summary page visually-hidden p3 pos-fixed">
 
       <h2>Your test results</h2>
 
@@ -144,7 +142,7 @@
 
       </div>
     </div>
-    <form class="bg-white m-5 p-5 pos-relative visually-hidden" id="SurveyForm" method="post">
+    <form class="survey bg-white m5 p5 visually-hidden" id="SurveyForm" method="post">
       <div class="mb-5">
         <button id="SkipSurvey" class="button" type="button">
           Skip survey
@@ -393,5 +391,6 @@
         </button>
       </form>
   </div>
+  <div id="Map"></div>
   </body>
 </html>

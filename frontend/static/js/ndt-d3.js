@@ -71,17 +71,16 @@ NDTmeter.prototype.update_display = function (status, information) {
 NDTmeter.prototype.create = function () {
 
   var ndtDiv = d3.select('#ndt-div');
-  var width = ndtDiv.property('offsetWidth') -
-    (ndtDiv.style('padding-left').replace(/px/,'') * 2);
-  var twoPi = 2 * Math.PI;
+  var width = 0; // ndtDiv.property('offsetWidth') - (ndtDiv.style('padding-left').replace(/px/,'') * 2);
+  var twoPi = 0; //2 * Math.PI;
   var innerRad = (width * 0.40);
   var outerRad = (width * 0.50);
 
   var svg = d3.select(this.body_element).append("svg")
     .attr("viewBox", "0 0 " + width + " " + width )
     .attr("preserveAspectRatio", "xMidYMid meet")
-    .append("g")
-      .attr("transform", "translate(" + width / 2 + "," + width / 2 + ")");
+    .attr("height", "0")
+    .attr("width", "0")
 
   var gradient = svg
     .append("linearGradient")
@@ -104,15 +103,9 @@ NDTmeter.prototype.create = function () {
     .outerRadius(outerRad);
   this.meter = svg.append("g")
     .attr("id", "progress-meter")
-    .attr("fill", "url(#gradient)");
   this.meter.append("path")
-    .attr("class", "background")
-    .attr("d", this.arc.endAngle(twoPi));
   this.meter.append("path").attr("class", "foreground");
   this.meter.append("text")
-    .attr("text-anchor", "middle")
-    .attr("dy", "0.3em")
-    .attr("dx", "0.1em")
     .attr("class", "information");
 
   this.reset_meter();

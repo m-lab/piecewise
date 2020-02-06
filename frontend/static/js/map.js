@@ -3,8 +3,6 @@ import scroll from "@threespot/freeze-scroll";
 
 const mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
 
-scroll.freeze();
-
 mapboxgl.accessToken = 'pk.eyJ1IjoicmdhaW5lcyIsImEiOiJjamZuenFmZXIwa2JuMndwZXd1eGQwcTNuIn0.TbNK-TNQxiGUlWFdzEEavw';
 
 const bounds = [

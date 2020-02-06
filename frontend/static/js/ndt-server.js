@@ -3,6 +3,7 @@ import NDTjs from './ndt-browser-client.js';
 
 const consentForm = document.getElementById('Consent');
 const surveyForm = document.getElementById('SurveyForm');
+const background = document.getElementsByClassName('background')[0];
 
 if (!!consentForm) {
   consentForm.addEventListener('submit', checkLocationConsent);
@@ -19,6 +20,8 @@ let obj = localStorage.getItem('formData');
 
 function submitExtraData(event) {
   event.preventDefault();
+  surveyForm.classList.add('visually-hidden');
+  background.classList.add('visually-hidden');
   let formData = $('#ConsentForm').serialize();
 
   if (localStorage.getItem('formData')) {
