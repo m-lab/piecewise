@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from piecewise.db.models.submission import Submission
 from piecewise.db.schemas.submission import SubmissionCreate
+from piecewise.db.schemas.submission import SubmissionUpdate
 
 
 def get_submissions(db: Session, skip: int = 0, limit: int = 100):

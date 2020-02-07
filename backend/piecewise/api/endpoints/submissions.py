@@ -31,7 +31,7 @@ def get(
 
 @router.post("/", response_model=SubmissionUpdate)
 def submit(*,
-           id: integer = Form(None),
+           id: float = Form(None),
            db: Session = Depends(get_database),
            survey_service_type: str = Form(None),
            survey_outages: str = Form(None),
