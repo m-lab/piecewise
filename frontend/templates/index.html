@@ -7,27 +7,39 @@
     <link rel="stylesheet" src="/static/css/main.css">
   </head>
   <body>
+    <div id="Map"></div>
     <div class="background"></div>
-    <div class="main container-fluid pos-fixed">
-        <div id="Welcome" class="expandable bg-white p5">
-          <div id="ErrorMessage"></div>
-          <h1>North Carolina Local Broadband Speed Test</h1>
-          <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband Internet access, you can help out by answering a few short questions designed to measure the extent of the problem and provide evidence that more investment is essential. Due to many inaccuracies in current broadband availability data collected by the federal government, there is no accurate map showing where high-quality Internet access is available. When it comes to prices, neither the state nor federal government collect and share that information. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
-          <p>Please answer these questions to the best of your ability - but feel free to skip a question if you do not know. It may help to find a recent bill for your Internet service provider before you start. We are most interested in what you are using to connect to the Internet in your home or office. To get the most accurate location data, we ask you to allow your browser to share your location. This is not essential but it is very helpful for creating more accurate maps.</p>
-          <div id="branding">
-            <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="Institute for Local Self Reliance" title="Institute for Local Self Reliance"/></a>
-            <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="Measurement Lab" title="Measurement Lab" /></a>
+    <div class="main container-fluid">
+      <div id="Welcome" class="expandable bg-white">
+        <div id="branding" class="mb-3">
+          <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
+          <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="" aria-hidden="true" title="Measurement Lab" /></a>
+        </div>
+        <div id="ErrorMessage"></div>
+        <h1>North Carolina Local Broadband Speed Test</h1>
+        <div class="welcome-content">
+          <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband, you can help out by answering a few short questions designed to measure the extent of the problem. Due to a myriad of inaccuracies in current broadband availability data collected by the federal government, the truth is unknown about who has good broadband and who doesn’t. This inaccurate data hurts communities who deserve a shot at broadband funding. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
+          <p>To get the most accurate location data, we ask you to allow your browser to share your location. This is not essential but it is very helpful for creating more accurate maps. Depending on your browser, you'll see a window similar to the images below, requesting your consent to share your location. If you are using Private Browsing mode or Incognito mode, you may need to disable that preference for this website.</p>
+        </div>
+        <div id="screenshots">
+          <div class="screenshot">
+            <img class="screenshot-image" src="/static/images/screenshot-firefox.png" alt="" aria-hidden="true" />
+            <p class="screenshot-caption">Screengrab of location ask in Firefox.</p>
+          </div>
+          <div class="screenshot">
+            <img class="screenshot-image" src="/static/images/screenshot-chrome.png" alt="" aria-hidden="true" />
+            <p class="screenshot-caption">Screengrab of location ask in Chrome.</p>
           </div>
         </div>
-
-        <div class="bg-white mt-2 p5 text-center">
-          <button class="button" type="button" data-expands="Consent" data-expands-class="is-expanded" data-expands-height>
-            <span data-expands-text="Back home">Take the test</span>
-          </button>
-          <button class="button" type="button" data-expands="Welcome" data-expands-class="is-expanded" data-expands-height data-expanded>
-            <span data-expands-text="More info">View Results</span>
-          </button>
-        </div>
+      </div>
+      <div class="bg-white mt-4 p-4 text-center">
+        <button class="button" type="button" data-expands="Consent" data-expands-class="is-expanded" data-expands-height>
+          <span data-expands-text="Back home">Take the test</span>
+        </button>
+        <button id="ViewResults" class="button" type="button" data-expands="Welcome" data-expands-class="is-expanded" data-expands-height data-expanded>
+          <span data-expands-text="More info">View Results</span>
+        </button>
+      </div>
       <!-- <div id="no-websocket">
         <p>Your browser does not appear to support WebSockets. Please check your browser configuration or try a different browser.</p>
       </div> -->
@@ -65,6 +77,7 @@
               <span class="submit-text">Test your speed!</span>
             </button>
             <div>
+              <h2>Factors that might affect your test</h2>
               <p>Many factors may impact upload/download speed tests, at any given test period. This speed test measures how well your current connection works between your computer/device and the testing server itself – providing a general measure of how fast (or slow) your Internet connection is. This test doesn't necessarily mean that this is the bandwidth you should always expect between you and anywhere else. To ensure the most accurate test results:</p>
               <ol>
                 <li>If possible, connect your computer to your ISP modem or router directly with an Ethernet cord.</li>
@@ -72,7 +85,7 @@
                 <li>Test periodically at different times of the day can help show your connection's speed trends over time.</li>
               </ol>
               <p>If you are seeing results that differ from other speed tests, the M-Lab <a href="https://www.measurementlab.net/faq/#why-are-my-m-lab-results-different-from-other-speed-tests">FAQ</a> provides helpful information to help understand why.</p>
-              <p>The map shows aggregate test results from all accumlated M-Lab tests. Any test taken with an M-Lab testing application (i.e. the speed test within Google search results) will be presented on the map.</p>
+              <p>The map shows aggregate test results from all accumulated M-Lab tests. Any test taken with an M-Lab testing application (i.e. the speed test within Google search results) will be presented on the map.</p>
               <p>Test results from this website will not be immediately available on the map, but will be shown as a separate map layer once enough new survey data is collected.</p>
             </div>
           </div>
@@ -143,7 +156,7 @@
       </div>
     </div>
     <form class="survey bg-white m5 p5 visually-hidden" id="SurveyForm" method="post">
-      <div class="mb-5">
+      <div class="button-container">
         <button id="SkipSurvey" class="button" type="button">
           Skip survey
         </button>
@@ -391,6 +404,5 @@
         </button>
       </form>
   </div>
-  <div id="Map"></div>
   </body>
 </html>
