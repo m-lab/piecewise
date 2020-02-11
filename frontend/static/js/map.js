@@ -14,7 +14,6 @@ const mapContainer = document.getElementById('Map');
 const main = document.getElementsByClassName('main')[0];
 const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
-const loader = document.getElementById('Step2');
 
 // only create map if the survey and map container exist on the page
 // if so, build the Mapbox map
@@ -128,11 +127,28 @@ if (!!consentForm && !!mapContainer) {
 
     surveyForm.addEventListener('submit', logSubmit);
 
+    let userLatitude = document.getElementById('latitude').value;
+    let userLongitude = document.getElementById('longitude').value;
+    let actualDownload = document.getElementById('actual_download').value;
+    let actualUpload = document.getElementById('actual_upload').value;
+    let minRTT = document.getElementById('min_rtt').value;
+
+    const ispUser = document.getElementById('container-survey_service_type').value;
+    const cost = document.getElementById('container-survey_current_cost').value;
+    const advertisedDownload = document.getElementById('survey_subscribe_download').value;
+    const advertisedUpload = document.getElementById('survey_subscribe_upload').value;
+
+    userLatitude = document.getElementById('latitude-mlab').value;
+    userLongitude = document.getElementById('longitude-mlab').value;
+    actualDownload = document.getElementById('actual_download-mlab').value;
+    actualUpload = document.getElementById('actual_upload-mlab').value;
+    minRTT = document.getElementById('min_rtt-mlab').value;
+
     function submitExtraData() {
       let formData = $('#SurveyForm').serialize();
 
       if (localStorage.getItem('formData')) {
-        formData = formData.concat(localStorage.getItem('formData'))
+        formData = Object.assign(formData, localStorage.getItem('formData'))
       }
 
       $.ajax({
@@ -158,11 +174,7 @@ if (!!consentForm && !!mapContainer) {
 
       main.classList.add('visually-hidden');
       consentForm.classList.add('visually-hidden');
-      surveyForm.classList.remove('visually-hidden');
-      loader.classList.remove('visually-hidden');
-
-      const userLatitude = document.getElementById('latitude').value;
-      const userLongitude = document.getElementById('longitude').value;
+      surveyForm.classList.add('visually-hidden');
 
       if (!!userLatitude & !!userLongitude) {
 
@@ -175,9 +187,19 @@ if (!!consentForm && !!mapContainer) {
               "coordinates": [
                 [userLongitude, userLatitude],
               ]
+            },
+            properties: {
+              isp_user: ispUser,
+              cost_of_service: cost,
+              advertised_download: advertisedDownload,
+              advertised_upload: advertisedUpload,
+              actual_download: actualDownload,
+              actual_upload: actualUpload,
+              min_rtt: minRTT,
             }
           }]
         }
+        console.log(userData);
 
         userData.features.forEach(function(marker) {
 

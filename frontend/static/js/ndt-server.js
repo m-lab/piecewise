@@ -85,8 +85,8 @@ function runTests(event) {
 function success(position) {
   const NDT_client = new NDTjs(ndtServer, ndtPort, ndtProtocol, ndtPath, NDT_meter, ndtUpdateInterval);
 
-	document.getElementById('latitude').value = position.coords.latitude;
-	document.getElementById('longitude').value = position.coords.longitude;
+	document.getElementById('latitude-mlab').value = position.coords.latitude;
+	document.getElementById('longitude-mlab').value = position.coords.longitude;
 
 	var xhr = new XMLHttpRequest(),
 	currentLocationURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&zoom=18&addressdetails=1";
@@ -101,7 +101,7 @@ function success(position) {
 				console.log("Location received");
         NDT_client.startTest();
 				// currentLocText.text(currentLoc.address.road + currentLoc.address.neighbourhood + currentLoc.address.suburb + currentLoc.address.city + currentLoc.address.state);
-				document.getElementsByClassName('modal-content')[0].append("Searching from: " + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state);
+				document.getElementById('Loader').append("Searching from: " + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state);
 			} else {
 				console.log('Location lookup failed');
 			}
