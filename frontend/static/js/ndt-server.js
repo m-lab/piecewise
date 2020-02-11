@@ -4,7 +4,8 @@ import NDTjs from './ndt-browser-client.js';
 const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
 const background = document.getElementsByClassName('background')[0];
-const loader = document.getElementById('Step2');
+const step2 = document.getElementById('Step2');
+const results = document.getElementById('results');
 const welcome = document.getElementById('Welcome');
 
 if (!!consentForm) {
@@ -22,6 +23,12 @@ let obj = localStorage.getItem('formData');
 
 function submitExtraData(event) {
   event.preventDefault();
+
+  results.children[0].classList.add('pos-fixed');
+  results.children[0].classList.add('bg-white');
+  results.children[0].classList.add('p-3');
+  results.children[0].classList.add('results-bar');
+  step2.outerHTML = results.innerHTML;
   surveyForm.classList.add('visually-hidden');
   background.classList.add('visually-hidden');
 
@@ -67,7 +74,7 @@ function checkLocationConsent () {
   event.preventDefault();
 
   welcome.parentElement.classList.add('visually-hidden');
-  loader.classList.remove('visually-hidden');
+  step2.classList.remove('visually-hidden');
   surveyForm.classList.remove('visually-hidden');
 
   const useLocation = document.getElementById('yes').checked;

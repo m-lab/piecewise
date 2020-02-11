@@ -71,15 +71,7 @@ $screen-min-width: 768px;
 
 .modal {
   background-color: #fff;
-  border: 1px solid #000;
-  border-radius: 5px;
-  box-shadow: 4px 4px 10px #000;
-  display: block;
-  max-height: 430px;
-  max-width: 100%;
-  right: 0;
-  top: 0;
-  z-index: 20;
+  position: relative;
 
   &-content {
     background-color: #fff;
@@ -97,11 +89,10 @@ $screen-min-width: 768px;
     width: 120px;
   }
 
-  @media (min-width: $screen-min-width) {
-    position: sticky;
-    max-width: 50%;
-    width: 50%;
+  &:not(.visually-hidden) {
+    display: block !important;
   }
+
 }
 
 .main {
@@ -169,6 +160,13 @@ $screen-min-width: 768px;
     position: relative;
   }
 }
+
+.results {
+
+  &-bar {
+    width: 100%;
+  }
+}
 .submit {
   box-shadow: 1px 1px 1px #000;
   font-size: 2em;
@@ -186,29 +184,28 @@ $screen-min-width: 768px;
   }
 }
 
-.survey {
-  &:not(.visually-hidden){
-    position: relative;
-    z-index: 1;
-  }
+#Step2 {
 
   &.visually-hidden {
     max-height: 0 !important;
 
-    & .button-container, .ndt-related, .test-container, .submit {
-      max-height: 0 !important;
+    & .survey {
 
-      & .button, .container {
-        max-height: 0;
+      & .button-container, .ndt-related, .test-container, .submit {
+        max-height: 0 !important;
 
-        & .form-field {
-          max-height: 0 !important;
+        & .button, .container {
+          max-height: 0;
 
-          & .field-container, .form-inline {
+          & .form-field {
             max-height: 0 !important;
 
-            & label, input, select {
+            & .field-container, .form-inline {
               max-height: 0 !important;
+
+              & label, input, select {
+                max-height: 0 !important;
+              }
             }
           }
         }
@@ -303,6 +300,13 @@ $screen-min-width: 768px;
     margin-left: 1em;
   }
 
+}
+
+#Step2 {
+  &:not(.visually-hidden){
+    position: relative;
+    z-index: 1;
+  }
 }
 
 #SurveyNote {
