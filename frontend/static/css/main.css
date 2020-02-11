@@ -1,8 +1,8 @@
+@import "~bootstrap/scss/bootstrap";
 @import "buttons";
 @import "helpers";
 @import "mapbox";
 @import "map";
 @import "mlab";
 @import "expandable";
-@import "~bootstrap/scss/bootstrap";
 /* @import "ndt_d3"; */

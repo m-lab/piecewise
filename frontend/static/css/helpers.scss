@@ -69,15 +69,21 @@ $screen-min-width: 768px;
   top: 0;
 }
 
-.loader {
+.modal {
+  background-color: #fff;
   border: 1px solid #000;
+  border-radius: 5px;
+  box-shadow: 4px 4px 10px #000;
+  display: block;
+  max-height: 300px;
+  max-width: 100%;
   right: 0;
   top: 0;
   z-index: 20;
 
   &-content {
     background-color: #fff;
-    // min-width: 80%;
+    border: none;
   }
 
   &-spinner {
@@ -93,12 +99,18 @@ $screen-min-width: 768px;
 
   @media (min-width: $screen-min-width) {
     position: sticky;
+    max-width: 50%;
     width: 50%;
   }
 }
 
 .main {
   position: relative;
+}
+
+.minimize {
+  height: 30px !important;
+  width: 30px !important;
 }
 
 .overlay {
@@ -176,7 +188,6 @@ $screen-min-width: 768px;
 
 .survey {
   &:not(.visually-hidden){
-    margin-top: 30%;
     position: relative;
     z-index: 1;
   }
@@ -249,7 +260,7 @@ $screen-min-width: 768px;
 }
 
 #results {
-  background-color: rgba(255,255,255,0.85);
+  background-color: #fff;
   position: fixed;
   width: 100%;
   z-index: 5;

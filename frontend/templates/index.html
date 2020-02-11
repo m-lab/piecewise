@@ -10,7 +10,7 @@
     <div id="Map"></div>
     <div class="background"></div>
     <div class="main container-fluid">
-      <div id="Welcome" class="expandable bg-white">
+      <div id="Welcome" class="bg-white">
         <div id="branding" class="mb-3">
           <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
           <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="" aria-hidden="true" title="Measurement Lab" /></a>
@@ -60,8 +60,8 @@
             <button id="SubmitConsent"  class="button" type="submit" name="button">
               <span class="submit-text">Take the Test</span>
             </button>
-            <button id="ViewResults" class="button" type="button" data-expands="Welcome" data-expands-class="is-expanded" data-expands-height data-expanded>
-              <span data-expands-text="More info">View Results</span>
+            <button id="ViewResults" class="button" type="button">
+              <span>View Results</span>
             </button>
           </div>
         </form>
@@ -71,69 +71,74 @@
       </div> -->
     </div>
 
-    <div id="Loader" class="loader visually-hidden pos-fixed">
-      <div class="loader-content p2">
-        <p>Loading...</p>
-        <div class="loader-spinner"></div>
-        <div id="ndt-status"></div>
-      </div>
-    </div>
-    <div id="results" class="summary page visually-hidden p3 pos-fixed">
+    <div id='Step2' class="modal pos-fixed visually-hidden">
+      <div class="close m-1" aria-label="Close">X</div>
+      <div class="modal-content">
+        <div id="Loader" class="p2">
+          <p>Loading...</p>
+          <div class="modal-spinner"></div>
+          <div id="ndt-status"></div>
+        </div>
+        <div id="results" class="visually-hidden summary page  p3 pos-fixed">
 
-      <h2>Your test results</h2>
+          <h2>Your test results</h2>
 
-      <div id="ndt-results">
-        <div class="container">
-          <div id="your-results">
-            <p>Download speed: <span id="s2cRate"></span> Mb/s</p>
-            <p>Upload speed: <span id="c2sRate"></span> Mb/s</p>
-            <p>Round Trip time: <span id="MinRTT"></span> ms</p>
+          <div id="ndt-results">
+            <div class="container">
+              <div id="your-results">
+                <p>Download speed: <span id="s2cRate"></span> Mb/s</p>
+                <p>Upload speed: <span id="c2sRate"></span> Mb/s</p>
+                <p>Round Trip time: <span id="MinRTT"></span> ms</p>
+              </div>
+            </div>
+
+            <div class="result-page details" id="test-details"></div>
+
+            <div class="result-page advanced" id="test-advanced"></div>
+
+            <div id="thankyou">
+              <h3 class="league-gothic">Thank you!</h3>
+              <strong>What do you want to do next?</strong>
+              <ul>
+                <li>Share this test with your friends and neighbors</li>
+              <div id="socialshare">
+              <!-- Social Button HTML -->
+              <!-- Twitter -->
+                <a href="https://twitter.com/home?status=Help%20North%20Carolina%20improve%20its%20Internet%20access%20by%20building%20an%20accurate%20map%20of%20Internet%20access%20quality%20by%20taking%20this%20speed%20test%20%20https%3A//nc.localbroadband.org/" target="_blank" class="share-btn twitter">
+                  <i class="fab fa-twitter"></i>
+                  <span class="sr-only">Twitter</span>
+                </a>
+              <!-- Facebook -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//nc.localbroadband.org/" target="_blank" class="share-btn facebook">
+                  <i class="fab fa-facebook-f"></i>
+                  <span class="sr-only">Facebook</span>
+                </a>
+              <!-- Reddit (url, title) -->
+                <a href="http://reddit.com/submit?url=https%3A//nc.localbroadband.org/&title=I%20tested%20my%20Internet%20speeds%20with%20the%20North%20Carolina%20Local%20Broadband%20Speed%20Test" target="_blank" class="share-btn reddit">
+                  <i class="fab fa-reddit"></i>
+                  <span class="sr-only">Reddit</span>
+                </a>
+              <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nc.localbroadband.org/&title=North%20Carolina%20Local%20Broadband&summary=Check%20your%20broadband%20speed%20with%20the%20North%20Carolina%20Local%20Broadband%20Speed%20Test.%20Learn%20more%20about%20our%20efforts%20to%20improve%20Internet%20Access%20in%20rural%20North%20Carolina.&source=Local%20Network,%20inc." target="_blank" class="share-btn linkedin">
+                  <i class="fab fa-linkedin-in"></i>
+                  <span class="sr-only">LinkedIn</span>
+                </a>
+              <!-- Email -->
+                <a href="mailto:?subject=Help%20improve%20Internet%20access%20in%20rural%20North%20Carolina&body=Let&#39s%20upgrade%20Internet%20connections%20in%20North%20Carolina%3A%20Please%20consider%20completing%20this%20short%20survey%20and%20speed%20test&#58%20https%3A//nc.localbroadband.org%to%20add%20your%20connectivity%20availability%20to%20our%20growing%20database%20of%20real%20life%20results.%20Accurate%20connectivity%20data%20is%20the%20first%20step%20in%20assessing%20community%20needs%20and%20building%20support%20for%20more%20investment%20in%20better%20networks.%20Current%20FCC%20data%20aggregation%20processes%20misrepresent%20broadband%20availability.%20These%20can%20be%20overcome%20by%20collecting%20consumer-sourced%20data%20through%20surveys%20such%20as%20this%20one.%20Learn%20more%20about%20the%20North%20Carolina%20Local%20Broadband%20campaign%20here%20https%3A//nc.localbroadband.org." target="_blank" class="share-btn email">
+                  <i class="fas fa-envelope"></i>
+                  <span class="sr-only">Email</span>
+                </a>
+               </div>
+                <li><a href="https://localbroadband.org/" target="_parent">Learn more about this campaign</a></li>
+              </ul>
+            </div> <!-- thankyou div -->
+
           </div>
         </div>
-
-        <div class="result-page details" id="test-details"></div>
-
-        <div class="result-page advanced" id="test-advanced"></div>
-
-        <div id="thankyou">
-          <h3 class="league-gothic">Thank you!</h3>
-          <strong>What do you want to do next?</strong>
-          <ul>
-            <li>Share this test with your friends and neighbors</li>
-          <div id="socialshare">
-          <!-- Social Button HTML -->
-          <!-- Twitter -->
-            <a href="https://twitter.com/home?status=Help%20North%20Carolina%20improve%20its%20Internet%20access%20by%20building%20an%20accurate%20map%20of%20Internet%20access%20quality%20by%20taking%20this%20speed%20test%20%20https%3A//nc.localbroadband.org/" target="_blank" class="share-btn twitter">
-              <i class="fab fa-twitter"></i>
-              <span class="sr-only">Twitter</span>
-            </a>
-          <!-- Facebook -->
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//nc.localbroadband.org/" target="_blank" class="share-btn facebook">
-              <i class="fab fa-facebook-f"></i>
-              <span class="sr-only">Facebook</span>
-            </a>
-          <!-- Reddit (url, title) -->
-            <a href="http://reddit.com/submit?url=https%3A//nc.localbroadband.org/&title=I%20tested%20my%20Internet%20speeds%20with%20the%20North%20Carolina%20Local%20Broadband%20Speed%20Test" target="_blank" class="share-btn reddit">
-              <i class="fab fa-reddit"></i>
-              <span class="sr-only">Reddit</span>
-            </a>
-          <!-- LinkedIn -->
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nc.localbroadband.org/&title=North%20Carolina%20Local%20Broadband&summary=Check%20your%20broadband%20speed%20with%20the%20North%20Carolina%20Local%20Broadband%20Speed%20Test.%20Learn%20more%20about%20our%20efforts%20to%20improve%20Internet%20Access%20in%20rural%20North%20Carolina.&source=Local%20Network,%20inc." target="_blank" class="share-btn linkedin">
-              <i class="fab fa-linkedin-in"></i>
-              <span class="sr-only">LinkedIn</span>
-            </a>
-          <!-- Email -->
-            <a href="mailto:?subject=Help%20improve%20Internet%20access%20in%20rural%20North%20Carolina&body=Let&#39s%20upgrade%20Internet%20connections%20in%20North%20Carolina%3A%20Please%20consider%20completing%20this%20short%20survey%20and%20speed%20test&#58%20https%3A//nc.localbroadband.org%to%20add%20your%20connectivity%20availability%20to%20our%20growing%20database%20of%20real%20life%20results.%20Accurate%20connectivity%20data%20is%20the%20first%20step%20in%20assessing%20community%20needs%20and%20building%20support%20for%20more%20investment%20in%20better%20networks.%20Current%20FCC%20data%20aggregation%20processes%20misrepresent%20broadband%20availability.%20These%20can%20be%20overcome%20by%20collecting%20consumer-sourced%20data%20through%20surveys%20such%20as%20this%20one.%20Learn%20more%20about%20the%20North%20Carolina%20Local%20Broadband%20campaign%20here%20https%3A//nc.localbroadband.org." target="_blank" class="share-btn email">
-              <i class="fas fa-envelope"></i>
-              <span class="sr-only">Email</span>
-            </a>
-           </div>
-            <li><a href="https://localbroadband.org/" target="_parent">Learn more about this campaign</a></li>
-          </ul>
-        </div> <!-- thankyou div -->
-
       </div>
     </div>
+
+
     <form class="survey bg-white m5 p5 visually-hidden" id="SurveyForm" method="post">
       <div id="extra-data" class="ndt-related">
         <div class="container" id="all-form-fields">

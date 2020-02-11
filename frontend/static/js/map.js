@@ -14,7 +14,7 @@ const mapContainer = document.getElementById('Map');
 const main = document.getElementsByClassName('main')[0];
 const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
-const loader = document.getElementById('Loader');
+const loader = document.getElementById('Step2');
 
 // only create map if the survey and map container exist on the page
 // if so, build the Mapbox map
@@ -152,7 +152,7 @@ if (!!consentForm && !!mapContainer) {
     }
 
     function logSubmit(event) {
-      // event.preventDefault();
+      event.preventDefault();
 
       scroll.unfreeze();
 
