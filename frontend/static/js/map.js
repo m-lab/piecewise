@@ -127,47 +127,24 @@ if (!!consentForm && !!mapContainer) {
 
     surveyForm.addEventListener('submit', logSubmit);
 
-    const userLatitude = document.getElementById('latitude').value;
-    const userLongitude = document.getElementById('longitude').value;
-    const actualDownload = document.getElementById('actual_download').value;
-    const actualUpload = document.getElementById('actual_upload').value;
-    const minRTT = document.getElementById('min_rtt').value;
-    const ispUser = document.getElementById('container-survey_service_type').value;
-    const cost = document.getElementById('container-survey_current_cost').value;
-    const advertisedDownload = document.getElementById('survey_subscribe_download').value;
-    const advertisedUpload = document.getElementById('survey_subscribe_upload').value;
-
-    function submitExtraData() {
-      let formData = $('#SurveyForm').serialize();
-
-      if (localStorage.getItem('formData')) {
-        formData = Object.assign(formData, localStorage.getItem('formData'))
-      }
-
-      $.ajax({
-        method: 'POST',
-        url: $('#SurveyForm').attr('action'),
-        data: formData,
-        statusCode: {
-          200: function(data) {
-            localStorage.setItem('formData', JSON.stringify(data));
-            console.log('Data submitted successfully: ', data);
-          }
-        },
-        error: function(jqXHR, status, msg) {
-          console.log('Something went wrong: ' + status + ' ' + msg);
-        }
-      });
-    }
-
     function logSubmit(event) {
       event.preventDefault();
 
       scroll.unfreeze();
 
       main.classList.add('visually-hidden');
-      consentForm.classList.add('visually-hidden');
-      surveyForm.classList.add('visually-hidden');
+      // consentForm.classList.add('visually-hidden');
+      // surveyForm.classList.add('visually-hidden');
+
+      const userLatitude = document.getElementById('latitude').value;
+      const userLongitude = document.getElementById('longitude').value;
+      const actualDownload = document.getElementById('actual_download').value;
+      const actualUpload = document.getElementById('actual_upload').value;
+      const minRTT = document.getElementById('min_rtt').value;
+      const ispUser = document.getElementById('container-survey_service_type').value;
+      const cost = document.getElementById('container-survey_current_cost').value;
+      const advertisedDownload = document.getElementById('survey_subscribe_download').value;
+      const advertisedUpload = document.getElementById('survey_subscribe_upload').value;
 
       if (!!userLatitude & !!userLongitude) {
 
@@ -192,7 +169,6 @@ if (!!consentForm && !!mapContainer) {
             }
           }]
         }
-        console.log(userData);
 
         userData.features.forEach(function(marker) {
 
@@ -208,9 +184,6 @@ if (!!consentForm && !!mapContainer) {
             .addTo(map);
         });
       }
-
-      // Sends user and test data to server... defined in mlab.js
-      submitExtraData();
     }
   });
 }

@@ -24,11 +24,14 @@ function submitExtraData(event) {
   event.preventDefault();
   surveyForm.classList.add('visually-hidden');
   background.classList.add('visually-hidden');
+
   let formData = $('#SurveyForm').serialize();
 
-  if (localStorage.getItem('formData')) {
-    formData = formData.concat(localStorage.getItem('formData'))
-  }
+  // if (localStorage.getItem('formData')) {
+  //   formData = Object.assign(formData, localStorage.getItem('formData'))
+  // } else {
+  //   localStorage.setItem('formData', JSON.stringify(formData));
+  // }
 
   $.ajax({
     method: 'POST',
@@ -36,7 +39,7 @@ function submitExtraData(event) {
     data: formData,
     statusCode: {
       200: function(data) {
-        localStorage.setItem('formData', JSON.stringify(data));
+        // localStorage.setItem('formData', JSON.stringify(data));
         console.log('Data submitted successfully: ', data);
       }
     },

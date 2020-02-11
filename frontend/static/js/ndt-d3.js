@@ -171,14 +171,17 @@ NDTmeter.prototype.onfinish = function (passed_results) {
       if (metric_name == 'MinRTT') {
         resultString = Number(passed_results[metric_name]).toFixed(2);
         document.getElementById('min_rtt-mlab').value = resultString;
+        document.getElementById('min_rtt').value = resultString;
       } else {
         resultString = Number(passed_results[metric_name] /
           1000).toFixed(2);
         if (metric_name == 's2cRate') {
           document.getElementById('actual_download-mlab').value = resultString;
+          document.getElementById('actual_download').value = resultString;
         }
         if (metric_name == 'c2sRate') {
           document.getElementById('actual_upload-mlab').value = resultString;
+          document.getElementById('actual_upload').value = resultString;
         }
       }
       d3.select('#' + metric_name)
@@ -190,18 +193,8 @@ NDTmeter.prototype.onfinish = function (passed_results) {
 
   // Sends user and test data to server... defined in mlab.js
   // submitExtraData();
-
-  let userLatitude = document.getElementById('latitude').value;
-  let userLongitude = document.getElementById('longitude').value;
-  let actualDownload = document.getElementById('actual_download').value;
-  let actualUpload = document.getElementById('actual_upload').value;
-  let minRTT = document.getElementById('MinRTT').value;
-
-  userLatitude = document.getElementById('latitude-mlab').value;
-  userLongitude = document.getElementById('longitude-mlab').value;
-  actualDownload = document.getElementById('s2cRate').value;
-  actualUpload = document.getElementById('c2sRate').value;
-  minRTT = document.getElementById('min_rtt-mlab').value;
+  document.getElementById('SubmitSurvey').disabled = false;
+  document.getElementById('SurveyNote').classList.add('visually-hidden');
 
   d3.selectAll("#progress-meter .foreground").classed("complete", true);
   document.getElementById('ndt-div').style.display = "none";
