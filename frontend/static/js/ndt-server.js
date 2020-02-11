@@ -4,6 +4,8 @@ import NDTjs from './ndt-browser-client.js';
 const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
 const background = document.getElementsByClassName('background')[0];
+const loader = document.getElementById('Step2');
+const welcome = document.getElementById('Welcome');
 
 if (!!consentForm) {
   consentForm.addEventListener('submit', checkLocationConsent);
@@ -60,6 +62,10 @@ const NDT_meter = new NDTmeter('#SubmitConsent');
 
 function checkLocationConsent () {
   event.preventDefault();
+
+  welcome.parentElement.classList.add('visually-hidden');
+  loader.classList.remove('visually-hidden');
+  surveyForm.classList.remove('visually-hidden');
 
   const useLocation = document.getElementById('yes').checked;
 

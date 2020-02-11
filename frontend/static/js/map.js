@@ -126,10 +126,10 @@ if (!!consentForm && !!mapContainer) {
     }
 
 
-    consentForm.addEventListener('submit', logSubmit);
+    surveyForm.addEventListener('submit', logSubmit);
 
     function submitExtraData() {
-      let formData = $('#ConsentForm').serialize();
+      let formData = $('#SurveyForm').serialize();
 
       if (localStorage.getItem('formData')) {
         formData = formData.concat(localStorage.getItem('formData'))
@@ -137,7 +137,7 @@ if (!!consentForm && !!mapContainer) {
 
       $.ajax({
         method: 'POST',
-        url: $('#ConsentForm').attr('action'),
+        url: $('#SurveyForm').attr('action'),
         data: formData,
         statusCode: {
           200: function(data) {
