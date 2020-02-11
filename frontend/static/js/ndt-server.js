@@ -95,7 +95,7 @@ function success(position) {
 				console.log("Location received");
         NDT_client.startTest();
 				// currentLocText.text(currentLoc.address.road + currentLoc.address.neighbourhood + currentLoc.address.suburb + currentLoc.address.city + currentLoc.address.state);
-				document.getElementsByClassName('loader-content')[0].append("Searching from: " + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state);
+				document.getElementsByClassName('modal-content')[0].append("Searching from: " + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state);
 			} else {
 				console.log('Location lookup failed');
 			}
@@ -121,6 +121,7 @@ function getNdtServer() {
 				console.log('Using M-Lab Server ' + ndtServer);
 			} else {
 				console.log('M-Lab NS lookup failed.');
+        window.alert('M-Lab NS lookup failed. Please refresh the page.')
 			}
 		}
 	};
