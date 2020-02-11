@@ -12,7 +12,7 @@ const bounds = [
 
 const mapContainer = document.getElementById('Map');
 const main = document.getElementsByClassName('main')[0];
-const consentForm = document.getElementById('Consent');
+const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
 const loader = document.getElementById('Loader');
 
@@ -128,8 +128,31 @@ if (!!consentForm && !!mapContainer) {
 
     consentForm.addEventListener('submit', logSubmit);
 
+    function submitExtraData() {
+      let formData = $('#ConsentForm').serialize();
+
+      if (localStorage.getItem('formData')) {
+        formData = formData.concat(localStorage.getItem('formData'))
+      }
+
+      $.ajax({
+        method: 'POST',
+        url: $('#ConsentForm').attr('action'),
+        data: formData,
+        statusCode: {
+          200: function(data) {
+            localStorage.setItem('formData', JSON.stringify(data));
+            console.log('Data submitted successfully: ', data);
+          }
+        },
+        error: function(jqXHR, status, msg) {
+          console.log('Something went wrong: ' + status + ' ' + msg);
+        }
+      });
+    }
+
     function logSubmit(event) {
-      console.log(`Form Submitted! Time stamp: ${event.timeStamp}`);
+      // event.preventDefault();
 
       scroll.unfreeze();
 
@@ -170,6 +193,9 @@ if (!!consentForm && !!mapContainer) {
             .addTo(map);
         });
       }
+
+      // Sends user and test data to server... defined in mlab.js
+      submitExtraData();
     }
   });
 }

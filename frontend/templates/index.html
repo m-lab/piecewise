@@ -16,9 +16,10 @@
           <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="" aria-hidden="true" title="Measurement Lab" /></a>
         </div>
         <div id="ErrorMessage"></div>
-        <h1>North Carolina Local Broadband Speed Test</h1>
+        <h1 class="mt-4">North Carolina Local Broadband Speed Test</h1>
         <div class="welcome-content">
           <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband, you can help out by answering a few short questions designed to measure the extent of the problem. Due to a myriad of inaccuracies in current broadband availability data collected by the federal government, the truth is unknown about who has good broadband and who doesn’t. This inaccurate data hurts communities who deserve a shot at broadband funding. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
+          <h2>Sharing Your Location</h2>
           <p>To get the most accurate location data, we ask you to allow your browser to share your location. This is not essential but it is very helpful for creating more accurate maps. Depending on your browser, you'll see a window similar to the images below, requesting your consent to share your location. If you are using Private Browsing mode or Incognito mode, you may need to disable that preference for this website.</p>
         </div>
         <div id="screenshots">
@@ -31,24 +32,7 @@
             <p class="screenshot-caption">Screengrab of location ask in Chrome.</p>
           </div>
         </div>
-      </div>
-      <div class="bg-white mt-4 p-4 text-center">
-        <button class="button" type="button" data-expands="Consent" data-expands-class="is-expanded" data-expands-height>
-          <span data-expands-text="Back home">Take the test</span>
-        </button>
-        <button id="ViewResults" class="button" type="button" data-expands="Welcome" data-expands-class="is-expanded" data-expands-height data-expanded>
-          <span data-expands-text="More info">View Results</span>
-        </button>
-      </div>
-      <!-- <div id="no-websocket">
-        <p>Your browser does not appear to support WebSockets. Please check your browser configuration or try a different browser.</p>
-      </div> -->
-    </div>
-
-    <div id="Consent" class="container-fluid expandable p5 overlay pos-fixed">
-      <div class="overlay-content">
-        <p>To put your speed test results on the map, we'd like to use your location.</p>
-        <form id="ConsentForm" class="" method="post">
+        <form id="ConsentForm" class="mt-5" method="post">
           <div>
             <input type="radio" id="yes" name="useBrowserLocation" value="yes"
                    checked>
@@ -64,7 +48,7 @@
             <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" required>
             <label for="data_acknowledgement"> I agree to the <a href="https://www.measurementlab.net/privacy/">M-Lab privacy policy</a>, which includes retention and publication of IP addresses, in addition to speed test results.</label>
           </div>
-          <div class="visually-hidden">
+          <div class="visually-hidden" aria-hidden="true">
             <input name="latitude" id="latitude" type="hidden" />
             <input name="longitude" id="longitude" type="hidden" />
             <input name="actual_download" id="actual_download" type="hidden" />
@@ -72,26 +56,21 @@
             <input name="min_rtt" id="min_rtt" type="hidden" />
             <input name="bigquery_key" id="bigquery_key" type="hidden" />
           </div>
-          <div id="approx-loc">
-            <button id="SubmitConsent"  class="submit button mt-5 mb-5" type="submit" name="button">
-              <span class="submit-text">Test your speed!</span>
+          <div class="bg-white mt-4 p-4 text-center">
+            <button id="SubmitConsent"  class="button" type="submit" name="button">
+              <span class="submit-text">Take the Test</span>
             </button>
-            <div>
-              <h2>Factors that might affect your test</h2>
-              <p>Many factors may impact upload/download speed tests, at any given test period. This speed test measures how well your current connection works between your computer/device and the testing server itself – providing a general measure of how fast (or slow) your Internet connection is. This test doesn't necessarily mean that this is the bandwidth you should always expect between you and anywhere else. To ensure the most accurate test results:</p>
-              <ol>
-                <li>If possible, connect your computer to your ISP modem or router directly with an Ethernet cord.</li>
-                <li>Minimize the "noise" during an Internet speed test, which is what the several tips above help you do, certainly contributes to a more accurate speed test result.</li>
-                <li>Test periodically at different times of the day can help show your connection's speed trends over time.</li>
-              </ol>
-              <p>If you are seeing results that differ from other speed tests, the M-Lab <a href="https://www.measurementlab.net/faq/#why-are-my-m-lab-results-different-from-other-speed-tests">FAQ</a> provides helpful information to help understand why.</p>
-              <p>The map shows aggregate test results from all accumulated M-Lab tests. Any test taken with an M-Lab testing application (i.e. the speed test within Google search results) will be presented on the map.</p>
-              <p>Test results from this website will not be immediately available on the map, but will be shown as a separate map layer once enough new survey data is collected.</p>
-            </div>
+            <button id="ViewResults" class="button" type="button" data-expands="Welcome" data-expands-class="is-expanded" data-expands-height data-expanded>
+              <span data-expands-text="More info">View Results</span>
+            </button>
           </div>
         </form>
       </div>
+      <!-- <div id="no-websocket">
+        <p>Your browser does not appear to support WebSockets. Please check your browser configuration or try a different browser.</p>
+      </div> -->
     </div>
+
     <div id="Loader" class="loader visually-hidden pos-fixed">
       <div class="loader-content p2">
         <p>Loading...</p>
@@ -156,11 +135,6 @@
       </div>
     </div>
     <form class="survey bg-white m5 p5 visually-hidden" id="SurveyForm" method="post">
-      <div class="button-container">
-        <button id="SkipSurvey" class="button" type="button">
-          Skip survey
-        </button>
-      </div>
       <div id="extra-data" class="ndt-related">
         <div class="container" id="all-form-fields">
           <div class="form-field mb-4" id="container-survey_service_type">

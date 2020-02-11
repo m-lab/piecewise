@@ -1,7 +1,7 @@
 import NDTmeter from './ndt-d3.js';
 import NDTjs from './ndt-browser-client.js';
 
-const consentForm = document.getElementById('Consent');
+const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
 const background = document.getElementsByClassName('background')[0];
 
@@ -22,7 +22,7 @@ function submitExtraData(event) {
   event.preventDefault();
   surveyForm.classList.add('visually-hidden');
   background.classList.add('visually-hidden');
-  let formData = $('#ConsentForm').serialize();
+  let formData = $('#SurveyForm').serialize();
 
   if (localStorage.getItem('formData')) {
     formData = formData.concat(localStorage.getItem('formData'))
@@ -30,7 +30,7 @@ function submitExtraData(event) {
 
   $.ajax({
     method: 'POST',
-    url: $('#ConsentForm').attr('action'),
+    url: $('#SurveyForm').attr('action'),
     data: formData,
     statusCode: {
       200: function(data) {

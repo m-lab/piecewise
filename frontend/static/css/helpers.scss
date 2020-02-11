@@ -36,7 +36,7 @@ $screen-min-width: 768px;
   }
 
   .m#{$i} {
-    padding: #{$i}em;
+    margin: #{$i}em;
   }
 }
 
@@ -196,7 +196,7 @@ $screen-min-width: 768px;
           & .field-container, .form-inline {
             max-height: 0 !important;
 
-            & label, input {
+            & label, input, select {
               max-height: 0 !important;
             }
           }
