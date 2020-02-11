@@ -75,7 +75,7 @@ $screen-min-width: 768px;
   border-radius: 5px;
   box-shadow: 4px 4px 10px #000;
   display: block;
-  max-height: 300px;
+  max-height: 430px;
   max-width: 100%;
   right: 0;
   top: 0;
@@ -260,10 +260,10 @@ $screen-min-width: 768px;
 }
 
 #results {
-  background-color: #fff;
-  position: fixed;
-  width: 100%;
-  z-index: 5;
+  // background-color: #fff;
+  // position: fixed;
+  // width: 100%;
+  // z-index: 5;
 }
 
 #screenshots {
