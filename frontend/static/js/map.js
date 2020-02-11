@@ -127,22 +127,15 @@ if (!!consentForm && !!mapContainer) {
 
     surveyForm.addEventListener('submit', logSubmit);
 
-    let userLatitude = document.getElementById('latitude').value;
-    let userLongitude = document.getElementById('longitude').value;
-    let actualDownload = document.getElementById('actual_download').value;
-    let actualUpload = document.getElementById('actual_upload').value;
-    let minRTT = document.getElementById('min_rtt').value;
-
+    const userLatitude = document.getElementById('latitude').value;
+    const userLongitude = document.getElementById('longitude').value;
+    const actualDownload = document.getElementById('actual_download').value;
+    const actualUpload = document.getElementById('actual_upload').value;
+    const minRTT = document.getElementById('min_rtt').value;
     const ispUser = document.getElementById('container-survey_service_type').value;
     const cost = document.getElementById('container-survey_current_cost').value;
     const advertisedDownload = document.getElementById('survey_subscribe_download').value;
     const advertisedUpload = document.getElementById('survey_subscribe_upload').value;
-
-    userLatitude = document.getElementById('latitude-mlab').value;
-    userLongitude = document.getElementById('longitude-mlab').value;
-    actualDownload = document.getElementById('actual_download-mlab').value;
-    actualUpload = document.getElementById('actual_upload-mlab').value;
-    minRTT = document.getElementById('min_rtt-mlab').value;
 
     function submitExtraData() {
       let formData = $('#SurveyForm').serialize();

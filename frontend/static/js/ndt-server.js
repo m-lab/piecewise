@@ -87,6 +87,8 @@ function success(position) {
 
 	document.getElementById('latitude-mlab').value = position.coords.latitude;
 	document.getElementById('longitude-mlab').value = position.coords.longitude;
+  document.getElementById('latitude').value = position.coords.latitude;
+	document.getElementById('longitude').value = position.coords.longitude;
 
 	var xhr = new XMLHttpRequest(),
 	currentLocationURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&zoom=18&addressdetails=1";

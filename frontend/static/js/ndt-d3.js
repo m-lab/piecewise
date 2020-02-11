@@ -191,6 +191,18 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   // Sends user and test data to server... defined in mlab.js
   // submitExtraData();
 
+  let userLatitude = document.getElementById('latitude').value;
+  let userLongitude = document.getElementById('longitude').value;
+  let actualDownload = document.getElementById('actual_download').value;
+  let actualUpload = document.getElementById('actual_upload').value;
+  let minRTT = document.getElementById('MinRTT').value;
+
+  userLatitude = document.getElementById('latitude-mlab').value;
+  userLongitude = document.getElementById('longitude-mlab').value;
+  actualDownload = document.getElementById('s2cRate').value;
+  actualUpload = document.getElementById('c2sRate').value;
+  minRTT = document.getElementById('min_rtt-mlab').value;
+
   d3.selectAll("#progress-meter .foreground").classed("complete", true);
   document.getElementById('ndt-div').style.display = "none";
   document.getElementById('ndt-results').style.display = "block";
