@@ -72,7 +72,7 @@ const NDT_meter = new NDTmeter('#SubmitConsent');
 
 function checkLocationConsent () {
   event.preventDefault();
-
+  window.scrollTo(0, 0); 
   welcome.parentElement.classList.add('visually-hidden');
   step2.classList.remove('visually-hidden');
   surveyForm.classList.remove('visually-hidden');
