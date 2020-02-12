@@ -14,6 +14,8 @@ const mapContainer = document.getElementById('Map');
 const main = document.getElementsByClassName('main')[0];
 const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
+const step2 = document.getElementById('Step2');
+const background = document.getElementsByClassName('background')[0];
 
 // only create map if the survey and map container exist on the page
 // if so, build the Mapbox map
@@ -136,15 +138,15 @@ if (!!consentForm && !!mapContainer) {
       // consentForm.classList.add('visually-hidden');
       // surveyForm.classList.add('visually-hidden');
 
-      const userLatitude = document.getElementById('latitude').value;
-      const userLongitude = document.getElementById('longitude').value;
-      const actualDownload = document.getElementById('actual_download').value;
-      const actualUpload = document.getElementById('actual_upload').value;
-      const minRTT = document.getElementById('min_rtt').value;
-      const ispUser = document.getElementById('container-survey_service_type').value;
-      const cost = document.getElementById('container-survey_current_cost').value;
-      const advertisedDownload = document.getElementById('survey_subscribe_download').value;
-      const advertisedUpload = document.getElementById('survey_subscribe_upload').value;
+      const userLatitude = document.getElementById('latitude-mlab').value || '';
+      const userLongitude = document.getElementById('longitude-mlab').value || '';
+      const actualDownload = document.getElementById('actual_download-mlab').value || '';
+      const actualUpload = document.getElementById('actual_upload-mlab').value || '';
+      const minRTT = document.getElementById('min_rtt-mlab').value || '';
+      const ispUser = document.getElementById('survey_service_type').value || '';
+      const cost = document.getElementById('survey_current_cost').value || '';
+      const advertisedDownload = document.getElementById('survey_subscribe_download').value || '';
+      const advertisedUpload = document.getElementById('survey_subscribe_upload').value || '';
 
       if (!!userLatitude & !!userLongitude) {
 
@@ -184,6 +186,14 @@ if (!!consentForm && !!mapContainer) {
             .addTo(map);
         });
       }
+
+      results.children[0].classList.add('pos-fixed');
+      results.children[0].classList.add('bg-white');
+      results.children[0].classList.add('p-3');
+      results.children[0].classList.add('results-bar');
+      step2.outerHTML = results.innerHTML;
+      surveyForm.classList.add('visually-hidden');
+      background.classList.add('visually-hidden');
     }
   });
 }

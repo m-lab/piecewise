@@ -24,14 +24,6 @@ let obj = localStorage.getItem('formData');
 function submitExtraData(event) {
   event.preventDefault();
 
-  results.children[0].classList.add('pos-fixed');
-  results.children[0].classList.add('bg-white');
-  results.children[0].classList.add('p-3');
-  results.children[0].classList.add('results-bar');
-  step2.outerHTML = results.innerHTML;
-  surveyForm.classList.add('visually-hidden');
-  background.classList.add('visually-hidden');
-
   let formData = $('#SurveyForm').serialize();
 
   // if (localStorage.getItem('formData')) {
@@ -72,7 +64,7 @@ const NDT_meter = new NDTmeter('#SubmitConsent');
 
 function checkLocationConsent () {
   event.preventDefault();
-  window.scrollTo(0, 0); 
+  window.scrollTo(0, 0);
   welcome.parentElement.classList.add('visually-hidden');
   step2.classList.remove('visually-hidden');
   surveyForm.classList.remove('visually-hidden');
