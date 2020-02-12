@@ -184,10 +184,23 @@ $screen-min-width: 768px;
   }
 }
 
-#Step2 {
+#Step2, .main {
 
   &.visually-hidden {
     max-height: 0 !important;
+
+    & #Welcome {
+      max-height: 0 !important;
+
+      & .branding, .welcome-content {
+        max-height: 0 !important;
+
+        & a, p {
+          line-height: 0;
+          max-height: 0 !important;
+        }
+      }
+    }
 
     & .survey {
 
@@ -204,6 +217,7 @@ $screen-min-width: 768px;
               max-height: 0 !important;
 
               & label, input, select {
+                line-height: 0;
                 max-height: 0 !important;
               }
             }
