@@ -8,7 +8,7 @@
 
 'use strict';
 
-const loader = document.getElementById('Loader');
+const modal = document.getElementsByClassName('modal')[0];
 const results = document.getElementById('results');
 const NDTjs = function(server, serverPort, serverProtocol, serverPath, callbacks,
                updateInterval) {
@@ -572,7 +572,7 @@ NDTjs.prototype.startTest = function () {
       ndtSocket.close();
       that.callbacks.onstatechange('finished_all', that.results);
       that.callbacks.onfinish(that.results);
-      loader.classList.add('visually-hidden');
+      modal.classList.add('visually-hidden');
       results.classList.remove('visually-hidden');
       console.log('All tests successfully completed.');
     } else {

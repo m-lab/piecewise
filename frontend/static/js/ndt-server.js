@@ -105,7 +105,7 @@ function success(position) {
 				console.log("Location received");
         NDT_client.startTest();
 				// currentLocText.text(currentLoc.address.road + currentLoc.address.neighbourhood + currentLoc.address.suburb + currentLoc.address.city + currentLoc.address.state);
-				document.getElementById('Loader').append("Searching from: " + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state);
+				document.getElementsByClassName('loader-item')[1].append("Searching from: " + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state);
 			} else {
 				console.log('Location lookup failed');
 			}

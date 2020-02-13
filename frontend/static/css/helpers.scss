@@ -55,6 +55,27 @@ $screen-min-width: 768px;
   width: 100%;
 }
 
+
+.branding {
+  width: 100%;
+  text-align: center;
+
+  & img {
+    height: 60px;
+
+    @media (min-width: $screen-min-width) {
+      padding: 0 3em;
+    }
+
+    &:first-child {
+      @media (max-width: $screen-min-width) {
+        margin-bottom: 0.75em;
+      }
+    }
+
+  }
+}
+
 .button {
   .container {
     margin-bottom: 2em;
@@ -67,6 +88,20 @@ $screen-min-width: 768px;
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.loader {
+  display: flex;
+  margin-left: -0.25em;
+
+  &-item {
+    margin-left: 0.25em;
+    width: 50%;
+
+    &:first-child {
+      text-align: center;
+    }
+  }
 }
 
 .modal {
@@ -235,26 +270,6 @@ $screen-min-width: 768px;
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-#branding {
-  width: 100%;
-  text-align: center;
-}
-
-#branding img {
-  height: 60px;
-
-  @media (min-width: $screen-min-width) {
-    padding: 0 3em;
-  }
-
-  &:first-child {
-    @media (max-width: $screen-min-width) {
-      margin-bottom: 0.75em;
-    }
-  }
-
 }
 
 #Consent {

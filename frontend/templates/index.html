@@ -11,14 +11,14 @@
     <div class="background"></div>
     <div class="main container-fluid">
       <div id="Welcome" class="bg-white">
-        <div id="branding" class="mb-3">
+        <div class="branding mb-3">
           <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
           <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="" aria-hidden="true" title="Measurement Lab" /></a>
         </div>
         <div id="ErrorMessage"></div>
         <h1 class="mt-4">North Carolina Local Broadband Speed Test</h1>
         <div class="welcome-content">
-          <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband, you can help out by answering a few short questions designed to measure the extent of the problem. Due to a myriad of inaccuracies in current broadband availability data collected by the federal government, the truth is unknown about who has good broadband and who doesn’t. This inaccurate data hurts communities who deserve a shot at broadband funding. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
+          <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband Internet access, you can help out by answering a few short questions designed to measure the extent of the problem and provide evidence that more investment is essential. Due to many inaccuracies in current broadband availability data collected by the federal government, there is no accurate map showing where high-quality Internet access is available. When it comes to prices, neither the state nor federal government collect and share that information. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
           <h2>Sharing Your Location</h2>
           <p>To get the most accurate location data, we ask you to allow your browser to share your location. This is not essential but it is very helpful for creating more accurate maps. Depending on your browser, you'll see a window similar to the images below, requesting your consent to share your location. If you are using Private Browsing mode or Incognito mode, you may need to disable that preference for this website.</p>
         </div>
@@ -72,13 +72,25 @@
     </div>
 
     <div id='Step2' class="m-5 visually-hidden">
+      <div class="bg-white p-5">
+        <div class="branding mb-3">
+          <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
+          <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="" aria-hidden="true" title="Measurement Lab" /></a>
+        </div>
+        <p><em>Please answer these questions to the best of your ability - but feel free to skip a question if you do not know. It may help to find a recent bill for your Internet service provider before you start. We are most interested in what you are using to connect to the Internet in your home or office.</em></p>
+        <p><em>You must click "Submit" at the end of the survey for your answers and test results to be recorded. You may also <a href="#SubmitSurvey">skip the survey</a> and only submit the speed test results.</em></p>
+      </div>
       <div class="modal">
         <!-- <div class="close m-1" aria-label="Close">X</div> -->
         <div class="modal-content p-4">
-          <div id="Loader" class="p2">
-            <p>Loading...</p>
-            <div class="modal-spinner"></div>
-            <div id="ndt-status"></div>
+          <div id="Loader" class="loader p2">
+            <div class="loader-item">
+              <p>Running tests...</p>
+              <div class="modal-spinner"></div>
+            </div>
+            <div class="loader-item">
+              <div id="ndt-status"></div>              
+            </div>
           </div>
         </div>
       </div>
