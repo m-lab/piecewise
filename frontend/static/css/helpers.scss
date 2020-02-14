@@ -151,6 +151,20 @@ $screen-min-width: 768px;
   width: 30px !important;
 }
 
+.ndt-results {
+  @media (min-width: $screen-min-width) {
+    align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &-item {
+    @media (min-width: $screen-min-width) {
+      width: 50%;
+    }
+  }
+}
+
 .overlay {
   overflow: visible !important;
 

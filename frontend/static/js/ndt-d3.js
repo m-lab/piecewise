@@ -195,6 +195,8 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   // submitExtraData();
   document.getElementById('SubmitSurvey').disabled = false;
   document.getElementById('SurveyNote').classList.add('visually-hidden');
+  document.getElementById('results').classList.remove('visually-hidden');
+  document.getElementById('results-message').classList.remove('visually-hidden');
 
   d3.selectAll("#progress-meter .foreground").classed("complete", true);
   document.getElementById('ndt-div').style.display = "none";

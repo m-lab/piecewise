@@ -5,7 +5,6 @@ const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
 const background = document.getElementsByClassName('background')[0];
 const step2 = document.getElementById('Step2');
-const results = document.getElementById('results');
 const welcome = document.getElementById('Welcome');
 
 if (!!consentForm) {

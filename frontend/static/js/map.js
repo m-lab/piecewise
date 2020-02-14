@@ -14,6 +14,7 @@ const mapContainer = document.getElementById('Map');
 const main = document.getElementsByClassName('main')[0];
 const consentForm = document.getElementById('ConsentForm');
 const surveyForm = document.getElementById('SurveyForm');
+const results = document.getElementById('results');
 const step2 = document.getElementById('Step2');
 const background = document.getElementsByClassName('background')[0];
 
