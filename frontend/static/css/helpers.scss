@@ -392,9 +392,10 @@ $screen-min-width: 768px;
 }
 
 .footnote {
-  font-size: .5em;
+  font-size: .75em;
 }
-.mlab-branding {
+#mlab-branding {
   text-align: center;
   margin: 1em;
+  font-style: italic;
 }
