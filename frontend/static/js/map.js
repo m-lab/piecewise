@@ -75,10 +75,10 @@ if (!!consentForm && !!mapContainer) {
 
   const map = new mapboxgl.Map({
     container: 'Map',
-    center: [-79.2407191, 35.2712601],
+    center: [-113.7824482, 36.2012462],
     maxBounds: bounds,
     style: 'mapbox://styles/rgaines/ck3umm5lo10451cnyh5sixye6',
-    zoom: 6,
+    zoom: 4,
   });
 
   map.on('load', function() {
