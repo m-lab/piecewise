@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>North Carolina Local Broadband Speed Test</title>
+    <title>Digital Inclusion @ Home</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" src="/static/css/main.css">
@@ -15,11 +15,12 @@
           <a href="https://www.digitalinclusion.org/"><img src="/static/images/NDIA-logo.png" alt="" aria-hidden="true" title="National Digital Inclusion Alliance"/></a>
           <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
           <a href="https://thexlab.org/"><img src="/static/images/XLAB-logo.png" alt="" aria-hidden="true" title="X-Lab" /></a>
+          <a href="http://marconisociety.org/"><img src="/static/images/Marconi-Web-Logo.png" alt="" aria-hidden="true" title="The Marconi Society" /></a>
         </div>
         <div id="ErrorMessage"></div>
         <h1 class="h1 mt-4">Digital Inclusion @ Home</h1>
         <div class="welcome-content">
-          <p>Schools and workplaces are closing across the country and around the globe; students and professionals are conducting more and more of their day-to-day work online. Digital inclusion advocates are collaborating in this initiative to build understanding of the impact that increased teleworking has on the Internet regionally, and to document how our broadband connectivity speeds are being impacted by this increased load over time: 
+          <p>Schools and workplaces are closing across the country and around the globe; students and professionals are conducting more and more of their day-to-day work online. Digital inclusion advocates are collaborating in an initiative to build understanding of the impact that increased teleworking has on the Internet regionally, and to document how broadband connectivity speeds are impacted by this increased load over time:
             <ul>
               <li>Can home connectivity support all of the traditional offline activities that have now moved online (i.e., teleconferencing instead of face-to-face meetings, video streaming instead of lectures, etc.)?</li>
               <li>What fraction of people are able to meet the performance level required by telepresence requirements?</li>
@@ -27,8 +28,11 @@
               <li>Are some networks unable to cope with the sudden shift in demand?</li>
             </ul>
           </p>
+          <p><em>If you are accessing this page via a mobile device that is not connected to WiFi, please take our <a href="https://www.digitalinclusion.org/">Mobile Connectivity Survey</a>.</em></p> 
+          <p>Aggregated test results will be reported out publicly and only researchers affiliated and vetted by our data partner organizations will have access to individual test location data.
+          </p>
           <h2 class="h2 pt-2">Sharing Your Location</h2>
-          <p>To get accurate location data, we ask you to allow your browser to share your location. While this additional precision is not mandatory, opting in to sharing your location will help create far more accurate broadband speed maps. Depending on your browser, you may see a window similar to the images below, requesting your consent to share your location. If you are using Private Browsing mode or Incognito mode, you may need to disable that preference for your browser to report your location accurately.</p>
+          <p>This initiative is requesting your permission to share your location using your browser, which is more precise than the location data that M-Lab normally collects. Your shared location [1], survey responses, and test results will be stored securely and privately, and will be used with other results from your area to calculate the overall speeds in your US census block. While this additional precision is not mandatory, opting in to sharing your location will help create far more accurate broadband speed maps, which will be used by the Digital Inclusion research and advocacy community. If you select “Use my browser location” on the next page, you will see a window, similar to the images below, requesting your consent to share your location. If you are using Private Browsing mode or Incognito mode, you may need to disable that preference for your browser to report your location accurately.</p>
           <div id="screenshots">
             <div class="screenshot">
               <img class="screenshot-image" src="/static/images/screenshot-firefox.png" alt="" aria-hidden="true" />
@@ -39,7 +43,7 @@
               <p class="screenshot-caption mt-1">Screengrab of location ask in Chrome.</p>
             </div>
           </div>
-          <p>Aggregated test results will be reported out publicly and only researchers affiliated and vetted by our data partner organizations will have access to individual test location data.</p>
+          <p></p>
         </div>
         <form id="ConsentForm" class="mt-5" method="post">
           <div>
@@ -55,8 +59,10 @@
           <div id="consent-text">
             <span class="required">*</span>
             <input type="checkbox" name="data_acknowledgement" id="data_acknowledgement" value="yes" required>
-            <label for="data_acknowledgement"> I agree to the <a href="https://www.measurementlab.net/privacy/">M-Lab privacy policy</a>, which includes retention and publication of IP addresses, in addition to speed test results.</label>
+            <label for="data_acknowledgement"> I agree to the <a href="https://www.measurementlab.net/privacy/">M-Lab privacy policy</a>, which includes retention and publication of IP addresses, in addition to speed test results.</label><br><br>
+            [1] Location is derived using the <a href="https://w3c.github.io/geolocation-api/">W3C Geolocation API</a> 
           </div>
+          <div id="mlab">Speed test and survey portal provided by <a href="https://www.measurementlab.net">M-Lab</a></div>
           <div class="visually-hidden" aria-hidden="true">
             <input name="latitude-mlab" id="latitude-mlab" type="hidden" />
             <input name="longitude-mlab" id="longitude-mlab" type="hidden" />
@@ -86,9 +92,8 @@
           <a href="https://www.digitalinclusion.org/"><img src="/static/images/NDIA-logo.png" alt="" aria-hidden="true" title="National Digital Inclusion Alliance"/></a>
           <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
           <a href="https://thexlab.org/"><img src="/static/images/XLAB-logo.png" alt="" aria-hidden="true" title="X-Lab" /></a>
-        </div>
+          <a href="http://marconisociety.org/"><img src="/static/images/Marconi-Web-Logo.png" alt="" aria-hidden="true" title="The Marconi Society" /></a>        </div>
         <p><em>Please answer these questions to the best of your ability - but feel free to skip a question if you do not know. <strong>It may help to find a recent bill for your Internet service provider before you start</strong>. We are most interested in what you are using to connect to the Internet in your home or office.</em></p>
-        <p><em>If you are accessing this page via a mobile device that is not connected to WiFi, please take our <a href="">Mobile Connectivity Survey</a>a>.</em></p> 
         <p><em>You can can start the survey while the test is running or <a href="#SubmitSurvey">skip the survey</a> and only submit the speed test results once the test completes.</em></p>
       </div>
       <div class="modal">
@@ -258,8 +263,8 @@
                 <div id="ndt-results" class="ndt-results">
                   <div class="container ndt-results-item">
                     <div id="your-results">
-                      <p>Download speed: <span id="s2cRate"></span> Mb/s</p>
-                      <p>Upload speed: <span id="c2sRate"></span> Mb/s</p>
+                      <p>Download speed: <span id="s2cRate"></span> Mbit/s</p>
+                      <p>Upload speed: <span id="c2sRate"></span> Mbit/s</p>
                       <p>Round Trip time: <span id="MinRTT"></span> ms</p>
                     </div>
                   </div>
@@ -269,9 +274,9 @@
                   <div class="result-page advanced" id="test-advanced"></div>
 
                   <div id="thankyou">
-                    <h3 class="league-gothic">Thank you!</h3>
-                    <strong>What do you want to do next?</strong>
+                    <h3 class="league-gothic">Thank you! Please click "Submit Results"!</h3>
                     <ul>
+                      <li><a href="https://www.digitalinclusion.org/" target="_parent">Learn more about this campaign</a></li>
                       <li>Share this test with your friends and neighbors</li>
                     <div id="socialshare">
                     <!-- Social Button HTML -->
@@ -286,7 +291,6 @@
                         <span class="sr-only">Facebook</span>
                       </a>
                      </div>
-                      <li><a href="https://www.digitalinclusion.org/" target="_parent">Learn more about this campaign</a></li>
                     </ul>
                   </div> <!-- thankyou div -->
 
