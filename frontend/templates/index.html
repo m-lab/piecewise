@@ -12,25 +12,34 @@
     <div class="main container-fluid">
       <div id="Welcome" class="bg-white">
         <div class="branding mb-3">
-          <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
-          <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="" aria-hidden="true" title="Measurement Lab" /></a>
+          <a href="https://www.digitalinclusion.org/"><img src="/static/images/NDIA-logo.png" alt="" aria-hidden="true" title="National Digital Inclusion Alliance"/></a>
+          <a href="https://ilsr.org"><img src="/static/images/ILSR-logo.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
+          <a href="https://thexlab.org/"><img src="/static/images/XLAB-logo.png" alt="" aria-hidden="true" title="X-Lab" /></a>
         </div>
         <div id="ErrorMessage"></div>
-        <h1 class="h1 mt-4">North Carolina Local Broadband Speed Test</h1>
+        <h1 class="h1 mt-4">Digital Inclusion @ Home</h1>
         <div class="welcome-content">
-          <p>If you’re one of the hundreds of thousands of North Carolinians struggling without good broadband Internet access, you can help out by answering a few short questions designed to measure the extent of the problem and provide evidence that more investment is essential. Due to many inaccuracies in current broadband availability data collected by the federal government, there is no accurate map showing where high-quality Internet access is available. When it comes to prices, neither the state nor federal government collect and share that information. Please act now by taking this scientific survey to help paint a clearer picture of our state’s broadband needs.</p>
+          <p>Schools and workplaces are closing across the country and around the globe; students and professionals are conducting more and more of their day-to-day work online. Digital inclusion advocates are collaborating in this initiative to build understanding of the impact that increased teleworking has on the Internet regionally, and to document how our broadband connectivity speeds are being impacted by this increased load over time: 
+            <ul>
+              <li>Can home connectivity support all of the traditional offline activities that have now moved online (i.e., teleconferencing instead of face-to-face meetings, video streaming instead of lectures, etc.)?</li>
+              <li>What fraction of people are able to meet the performance level required by telepresence requirements?</li>
+              <li>Which constituencies are facing additional detrimental impacts of telework and teleschooling due to poor broadband speeds?</li>
+              <li>Are some networks unable to cope with the sudden shift in demand?</li>
+            </ul>
+          </p>
           <h2 class="h2 pt-2">Sharing Your Location</h2>
-          <p>To get the most accurate location data, we ask you to allow your browser to share your location. This is not essential but it is very helpful for creating more accurate maps. Depending on your browser, you'll see a window similar to the images below, requesting your consent to share your location. If you are using Private Browsing mode or Incognito mode, you may need to disable that preference for this website.</p>
-        </div>
-        <div id="screenshots">
-          <div class="screenshot">
-            <img class="screenshot-image" src="/static/images/screenshot-firefox.png" alt="" aria-hidden="true" />
-            <p class="screenshot-caption mt-1">Screengrab of location ask in Firefox.</p>
+          <p>To get accurate location data, we ask you to allow your browser to share your location. While this additional precision is not mandatory, opting in to sharing your location will help create far more accurate broadband speed maps. Depending on your browser, you may see a window similar to the images below, requesting your consent to share your location. If you are using Private Browsing mode or Incognito mode, you may need to disable that preference for your browser to report your location accurately.</p>
+          <div id="screenshots">
+            <div class="screenshot">
+              <img class="screenshot-image" src="/static/images/screenshot-firefox.png" alt="" aria-hidden="true" />
+              <p class="screenshot-caption mt-1">Screengrab of location ask in Firefox.</p>
+            </div>
+            <div class="screenshot">
+              <img class="screenshot-image" src="/static/images/screenshot-chrome.png" alt="" aria-hidden="true" />
+              <p class="screenshot-caption mt-1">Screengrab of location ask in Chrome.</p>
+            </div>
           </div>
-          <div class="screenshot">
-            <img class="screenshot-image" src="/static/images/screenshot-chrome.png" alt="" aria-hidden="true" />
-            <p class="screenshot-caption mt-1">Screengrab of location ask in Chrome.</p>
-          </div>
+          <p>Aggregated test results will be reported out publicly and only researchers affiliated and vetted by our data partner organizations will have access to individual test location data.</p>
         </div>
         <form id="ConsentForm" class="mt-5" method="post">
           <div>
@@ -74,10 +83,12 @@
     <div id='Step2' class="bg-white m-5 visually-hidden">
       <div class="bg-white p-5">
         <div class="branding mb-3">
-          <a href="https://ilsr.org"><img src="/static/images/ilsr_logo-1.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
-          <a href="https://measurementlab.net"><img src="/static/images/mlab-logo.png" alt="" aria-hidden="true" title="Measurement Lab" /></a>
+          <a href="https://www.digitalinclusion.org/"><img src="/static/images/NDIA-logo.png" alt="" aria-hidden="true" title="National Digital Inclusion Alliance"/></a>
+          <a href="https://ilsr.org"><img src="/static/images/ILSR-logo.png" alt="" aria-hidden="true" title="Institute for Local Self Reliance"/></a>
+          <a href="https://thexlab.org/"><img src="/static/images/XLAB-logo.png" alt="" aria-hidden="true" title="X-Lab" /></a>
         </div>
-        <p><em>Please answer these questions to the best of your ability - but feel free to skip a question if you do not know. It may help to find a recent bill for your Internet service provider before you start. We are most interested in what you are using to connect to the Internet in your home or office.</em></p>
+        <p><em>Please answer these questions to the best of your ability - but feel free to skip a question if you do not know. <strong>It may help to find a recent bill for your Internet service provider before you start</strong>. We are most interested in what you are using to connect to the Internet in your home or office.</em></p>
+        <p><em>If you are accessing this page via a mobile device that is not connected to WiFi, please take our <a href="">Mobile Connectivity Survey</a>a>.</em></p> 
         <p><em>You can can start the survey while the test is running or <a href="#SubmitSurvey">skip the survey</a> and only submit the speed test results once the test completes.</em></p>
       </div>
       <div class="modal">
@@ -100,229 +111,124 @@
       <form class="survey bg-white p-5 pt-1" id="SurveyForm" method="post">
         <div id="extra-data" class="ndt-related">
           <div class="container" id="all-form-fields">
-            <div class="form-field mb-4" id="container-survey_service_type">
-              <label for="survey_service_type" class="field-container">What Internet Service Provider are you using now in your home or business?</label>
+            <div class="form-field mb-4" id="container-survey_current_location">
+              <label for="survey_current_location" class="field-container">Where are you currently located?</label>
               <div class="field-container">
-                <select id="survey_service_type" name="survey_service_type" class="form-control " title="To the best of your knowledge, how do you currently get internet access at your property?">
+                <select id="survey_current_location" name="survey_current_location" class="form-control " title="Where are you currently located?">
                   <option value="default">------</option>
-                  <option value="other">Other - My ISP is not listed here</option>
-                  <option value="APX_Net_Inc">APX Net, Inc</option>
-                  <option value="AT&T_North_Carolina">AT&T North Carolina</option>
-                  <option value="AccessMedia3">AccessMedia3</option>
-                  <option value="AssetBlack">AssetBlack</option>
-                  <option value="Atlantic_Telecom_Multimedia_Consolidated_LLC">Atlantic Telecom Multimedia Consolidated, LLC</option>
-                  <option value="Atlantic_Telephone_Membership_Corporation">Atlantic Telephone Membership Corporation</option>
-                  <option value="BOB_LLC">BOB, LLC</option>
-                  <option value="BalsamWest_FiberNET_LLC">BalsamWest FiberNET, LLC</option>
-                  <option value="Birch_Communications_Inc">Birch Communications, Inc.</option>
-                  <option value="Blue_Ridge_Mountain_EMC">Blue Ridge Mountain EMC</option>
-                  <option value="Bluewave_Communciations">Bluewave Communications</option>
-                  <option value="Broadview_Networks_Holdings_Inc">Broadview Networks Holdings, Inc.</option>
-                  <option value="Buggs_Island_Telephone_Cooperative">Buggs Island Telephone Cooperative</option>
-                  <option value="Bullseye">Bullseye</option>
-                  <option value="CBTS_Technology_Solutions_LLC">CBTS Technology Solutions LLC</option>
-                  <option value="Country_Cablevision">COUNTRY CABLEVISION</option>
-                  <option value="California_Telecom_Inc">California Telecom, Inc.</option>
-                  <option value="Call_One_Inc">Call One Inc</option>
-                  <option value="Carolina_Mountain_Cablevision_Inc">Carolina Mountain Cablevision, Inc.</option>
-                  <option value="Celito">Celito</option>
-                  <option value="CenturyLink">CenturyLink</option>
-                  <option value="Spectrum_Charter_Communications_Inc">Charter Communications Inc</option>
-                  <option value="Cherokee_Broadband_Enterprise">Cherokee Broadband Enterprise</option>
-                  <option value="Citynet_LLC">Citynet LLC</option>
-                  <option value="CoMPAS">CoMPAS</option>
-                  <option value="Cogent_Communications">Cogent Communications</option>
-                  <option value="Comcast">Comcast</option>
-                  <option value="Comporium">Comporium</option>
-                  <option value="Conterra">Conterra</option>
-                  <option value="Cox_Communications">Cox Communications</option>
-                  <option value="Crystal_Broadband_Networks_LLC">Crystal Broadband Networks Inc</option>
-                  <option value="DPAccess">DPAccess</option>
-                  <option value="Dimension4">Dimension4</option>
-                  <option value="Etc_Communications_LLC">ETC Communications, LLC</option>
-                  <option value="ETCOM">ETCOM</option>
-                  <option value="Earthlink_Business_LLC">EarthLink Business, LLC</option>
-                  <option value="Electronics_Service_Company">Electronics Service Company</option>
-                  <option value="Ellerbe_Telephone_Company">Ellerbe Telephone Company</option>
-                  <option value="Fayetteville_Public_Works_Commission">Fayetteville Public Works Commission</option>
-                  <option value="Fybercom_LLC">Fybercom LLC</option>
-                  <option value="Fastlink_Communications_LLC">Fastlink Communications, LLC</option>
-                  <option value="Fibrant">Fibrant</option>
-                  <option value="FirstLight_Fiber">FirstLight Fiber</option>
-                  <option value="French_Broad_Electric_Membership_Corporation">French Broad Electric Membership Corporation</option>
-                  <option value="Frontier_Communications_Corporation">Frontier Communications Corporation</option>
-                  <option value="GCI_Communication_Corp">GCI Communication Corp.</option>
-                  <option value="Gamewood">Gamewood</option>
-                  <option value="Google_Fiber_North_Carolina_LLC">Google Fiber North Carolina, LLC</option>
-                  <option value="Greenlight">Greenlight</option>
-                  <option value="Gtek_Communications">Gtek Communications</option>
-                  <option value="Hotwire_Communications_Ltd">Hotwire Communications Ltd.</option>
-                  <option value="HughesNet">HughesNet</option>
-                  <option value="ICS_Advanced_Technologies">ICS Advanced Technologies</option>
-                  <option value="Ind_Co_Cable_TV_Inc">Ind-Co Cable TV Inc.</option>
-                  <option value="KQVA_net">KQVA.net</option>
-                  <option value="Leaco_Rural_Telephone_Cooperative">Leaco Rural Telephone Cooperative</option>
-                  <option value="Lightower">Lightower</option>
-                  <option value="MCI">MCI</option>
-                  <option value="MCNC">MCNC</option>
-                  <option value="MI_Connection_Communications_System">MI-Connection Communications System</option>
-                  <option value="Mediacom_Southeast_LLC">Mediacom Southeast LLC</option>
-                  <option value="Morris_Broadband_LLC">Morris Broadband, LLC</option>
-                  <option value="Murphy_Cable_TV">Murphy Cable TV</option>
-                  <option value="Net_Change_Com">Net-Change.Com</option>
-                  <option value="NetCarrier_Telecom_Inc">NetCarrier Telecom, Inc.</option>
-                  <option value="NetFortris">NetFortris</option>
-                  <option value="NewCloudNetworks">NewCloudNetworks</option>
-                  <option value="Nixons_Solutions">Nixon's Solutions</option>
-                  <option value="North_Carolina_Wireless_LLC">North Carolina Wireless LLC</option>
-                  <option value="North_State_Communications">North State Communications</option>
-                  <option value="Northland_Communications">Northland Communications</option>
-                  <option value="PAETEC_Business_Services">PAETEC Business Services</option>
-                  <option value="PAETEC_Communications_LLC">PAETEC Communications, LLC</option>
-                  <option value="PANGAEA_Internet">PANGAEA Internet</option>
-                  <option value="Panterra">Panterra</option>
-                  <option value="Piedmont_Communications">Piedmont Communications</option>
-                  <option value="Proximiti_Communications_Inc">Proximiti Communications, Inc.</option>
-                  <option value="RIVERSTREET_NETWORKS">RIVERSTREET NETWORKS</option>
-                  <option value="Randolph_Telephone_Membership_Corporation">Randolph Telephone Membership Corporation</option>
-                  <option value="RidgeComms">RidgeComms</option>
-                  <option value="RiverStreet_Communications_Of_NC_Inc">RiverStreet Communications Of NC, Inc.</option>
-                  <option value="Roanoke_Connect">Roanoke Connect</option>
-                  <option value="Rowe_Internet">Rowe Internet</option>
-                  <option value="SNET">SNET</option>
-                  <option value="SkyBest_Communications_Inc">SkyBest Communications, Inc.</option>
-                  <option value="Skycasters">Skycasters</option>
-                  <option value="Skyline_Telephone_Membership_Corporation">Skyline Telephone Membership Corporation</option>
-                  <option value="Skyrunner_Inc">Skyrunner, Inc</option>
-                  <option value="Spectrum_Charter_Communications_Inc">Spectrum</option>
-                  <option value="Spectrotel">Spectrotel</option>
-                  <option value="Star_Telephone_Membership_Corp">Star Telephone Membership Corp.</option>
-                  <option value="Star_Vision">Star Vision</option>
-                  <option value="Suddenlink_Communications">Suddenlink Communications</option>
-                  <option value="Surry_Telephone_Membership_Corporation">Surry Telephone Membership Corporation</option>
-                  <option value="TDS_TELECOM">TDS TELECOM</option>
-                  <option value="TPx_Communications">TPx Communications</option>
-                  <option value="Talk_America_LLC">Talk America, LLC</option>
-                  <option value="TeleComp_Computer_Services_Inc">TeleComp Computer Services Inc.</option>
-                  <option value="Telefonica_USA">Telefonica USA</option>
-                  <option value="TingFiber">TingFiber</option>
-                  <option value="Town_of_Pineville">Town of Pineville</option>
-                  <option value="TriCounty_Telecom">TriCounty Telecom</option>
-                  <option value="US_LEC_of_North_Carolina_LLC">US LEC of North Carolina, LLC</option>
-                  <option value="United_States_Cellular_Corporation">United States Cellular Corporation</option>
-                  <option value="Verizon_South_Inc">Verizon South Inc.</option>
-                  <option value="Viasat_Inc">Viasat Inc</option>
-                  <option value="Wake_Wireless">Wake Wireless</option>
-                  <option value="Wilkes_Communications_Inc">Wilkes Communications Inc.</option>
-                  <option value="Windstream_Communications_Inc">Windstream Communications Inc.</option>
-                  <option value="X1_Communications">X1 Communications</option>
-                  <option value="Yadtel">Yadtel</option>
-                  <option value="Zayo_Enterprise_Networks">Zayo Enterprise Networks</option>
-                  <option value="Zito_Media_LP">Zito Media LP</option>
+                  <option value="home">Home</option>
+                  <option value="office">Office</option>
+                  <option value="other">Somewhere else (coffee shop, airport, etc.)</option>
                 </select>
               </div>
             </div>
-            <div class="form-field mb-4" id="container-survey_service_type_other">
-              <label for="survey_service_type_other" class="field-container">If you selected ‘Other’ please enter the name of your Internet Service Provider</label>
+            <div class="form-field mb-4" id="container-survey_normal_location">
+              <label for="survey_normal_location" class="field-container">Where would you normally be accessing the Internet right now?</label>
               <div class="field-container">
-                <input id="survey_service_type_other" type="text" name="survey_service_type_other" class="form-control "title="If you selected ‘Other’ please enter the name of your Internet Service Provider" />
+                <select id="survey_normal_location" name="survey_normal_location" class="form-control " title="Where would you normally be accessing the Internet right now?">
+                  <option value="default">------</option>
+                  <option value="this_location">This location</option>
+                  <option value="other_location">Different location</option>
+                </select>
               </div>
             </div>
-            <div class="form-field mb-4" id="container-survey_outages">
-              <div class="field-container">How often does your service go out or do you have to restart your modem or router?</div>
+            <div class="form-field mb-4" id="container-survey_normal_location_other">
+              <label for="survey_normal_location_other" class="field-container">If you selected ‘Different location’ in the previous question, where do you normally access the Internet?</label>
               <div class="field-container">
-                <input type="radio" id="more_than_once_day" name="survey_outages" value="more_than_once_day"
-                       checked>
-                <label for="more_than_once_day">More than once a day</label>
-                <br>
-                <input type="radio" id="daily" name="survey_outages" value="daily">
-                <label for="daily">Once a day</label>
-                <br>
-                <input type="radio" id="weekly" name="survey_outages" value="weekly">
-                <label for="weekly">Once a week</label>
-                <br>
-                <input type="radio" id="monthly" name="survey_outages" value="monthly">
-                <label for="monthly">Once a month</label>
-                <br>
-                <input type="radio" id="rarely" name="survey_outages" value="rarely">
-                <label for="rarely">Rarely</label>
+                <input id="survey_normal_location_other" type="text" name="survey_service_type_other" class="form-control "title="If you selected ‘Different location’ in the previous question, where do you normally access the Internet?" />
               </div>
             </div>
-            <div class="form-field u-mb4" id="container-survey_disruptions">
-              <label for="survey_disruptions" class="field-container">How many days each year would you estimate your Internet service is disrupted or not available?</label>
+            <div class="form-field mb-4" id="container-survey_location_performance">
+              <div class="field-container">Is your Internet access behaving normally or different from usual?</div>
               <div class="field-container">
-                <input id="survey_disruptions" type="number" name="survey_disruptions" class="form-control" title="How many days each year would you estimate your internet service is disrupted or not available?" />
+                <input type="radio" id="normal" name="survey_location_performance" value="normal" checked>
+                <label for="normal">Normal</label>
+                <br>
+                <input type="radio" id="worse" name="survey_location_performance" value="worse">
+                <label for="worse">Worse</label>
+                <br>
+                <input type="radio" id="better" name="survey_location_performance" value="better">
+                <label for="better">Better</label>
+              </div>
+            </div>
+            <div class="form-field u-mb4" id="container-survey_applications">
+              <label for="survey_applications" class="field-container">What applications are you being asked to use to complete your work/school work? (select all that apply)</label>
+              <div class="field-container">
+               <input type="checkbox" id="hangouts-meet" name="survey_survey_applications" value="hangouts-meet">
+                <label for="hangouts-meet">Google Hangouts / Meet</label>
+                <br>
+                <input type="checkbox" id="zoom" name="survey_survey_applications" value="zoom">
+                <label for="zoom">Zoom</label>
+                <br>
+                <input type="checkbox" id="blue-jeans" name="survey_survey_applications" value="blue-jeans">
+                <label for="blue-jeans">Blue Jeans</label>
+                <br>
+                <input type="checkbox" id="skype" name="survey_survey_applications" value="skype">
+                <label for="skype">Skype / Skype for Business</label>
+                <br>
+                <input type="checkbox" id="jitsi-meet" name="survey_survey_applications" value="jitsi-meet">
+                <label for="jitsi-meet">Jitsi Meet</label>                
+                <br>
+                <input type="checkbox" id="other-video-conferencing" name="survey_survey_applications" value="other-video-conferencing">
+                <label for="other-video-conferencing">Other video conferencing software</label>                
+                <br>
+                <input type="checkbox" id="school-specific" name="survey_survey_applications" value="school-specific">
+                <label for="school-specific">School-specific software</label>
+                <input type="checkbox" id="other" name="survey_survey_applications" value="other">
+                <label for="other">Other software not listed here</label>
+              </div>
+            </div>
+            <div class="form-field mb-4" id="container-survey_isp">
+              <label for="survey_other_software" class="field-container">If you are using software not listed in the previous question, please share it here:</label>
+              <div class="field-container">
+                <input id="survey_other_software" type="text" name="survey_other_software" class="form-control "title="If you are using software not listed in the previous question, please share it here." />
+              </div>
+            </div>
+            <div class="form-field mb-4" id="container-survey_isp">
+              <label for="survey_isp" class="field-container">Who is your Internet access provider?</label>
+              <div class="field-container">
+                <input id="survey_isp" type="text" name="survey_isp" class="form-control "title="Who is your Internet access provider?" />
               </div>
             </div>
             <div class="form-field mt-4 mb-4" id="container-survey_subscribe_upload">
-              <div class="field-container mb-2">If you know the advertised speeds of your subscription, please enter them here:</div>
+              <div class="field-container mb-2">If you know what the advertised speeds for your Internet access connection are, please fill out these fields. You might find them on your monthly bill from your provider.</div>
               <div class="form-inline">
+                <div class="col-auto form-inline">
+                  <label class="mr-2" for="survey_subscribe_download">Download Speed</label>
+                  <input id="survey_subscribe_download" type="text" name="survey_subscribe_download" class="form-control" placeholder="100 Mbps" title="If you know the advertised speeds of your subscription, please enter them here (download speed)" />
+                </div>
                 <div class="col-auto form-inline">
                   <label class="mr-2" for="survey_subscribe_upload">Upload Speed</label>
                   <input id="survey_subscribe_upload" type="text" name="survey_subscribe_upload" class="form-control" placeholder="20 Mbps" title="If you know the advertised speeds of your subscription, please enter them here (upload speed)" />
                 </div>
-                <div class="col-auto form-inline">
-                  <label class="mr-2" for="survey_subscribe_download">Download Speed</label>
-                  <input id="survey_subscribe_download" type="text" name="survey_subscribe_download" class="form-control" placeholder="100 Mbps" title="If you know the advertised speeds of your subscription, please enter them here:" />
-                </div>
               </div>
             </div>
             <div class="form-field" id="container-survey_bundle">
-              <label for="survey_bundle" class="field-container">Is your Internet service at this location part of a bundle of services (for example, Internet, Phone, Cable)?</label>
+              <label for="survey_bundle" class="field-container">Is your Internet access part of a bundle?</label>
               <div class="field-container mb-4">
-                <select id="survey_bundle" name="survey_bundle" class="form-control " title="Is your Internet service at this location part of a bundle of services (for example, Internet, Phone, Cable)?">
-                  <option value="a_default">------</option>
-                  <option value="b_yes">Yes</option>
-                  <option value="c_no">No</option>
+                <select id="survey_bundle" name="survey_bundle" class="form-control " title="Is your Internet access service part of a bundle?">
+                  <option value="default">------</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                  <option value="dont-know">Don't know</option>
                 </select>
               </div>
             </div>
             <div class="form-field" id="container-survey_current_cost">
-              <label for="survey_current_cost" class="field-container">How much do you pay per month for Internet service? If possible select the total cost per month including fees (for example, equipment rental or taxes).</label>
+              <label for="survey_current_cost" class="field-container">How much do you pay per month for your Internet service?</label>
               <div class="field-container">
-                <select id="survey_current_cost" name="survey_current_cost" class="form-control " title="How much do you pay per month for Internet service? If possible select the total cost per month including fees (for example, equipment rental or taxes).">
-                  <option value="a_default">------</option>
-                  <option value="b_less_than_25">Less than $25/month</option>
-                  <option value="c_25_to_40">$25-40/month</option>
-                  <option value="d_41_to_60">$41-60/month</option>
-                  <option value="e_61_to_80">$61-80/month</option>
-                  <option value="f_over_80">$80+/month</option>
+                <select id="survey_current_cost" name="survey_current_cost" class="form-control " title="How much do you pay per month for your Internet service?">
+                  <option value="default">------</option>
+                  <option value="free">Free</option>
+                  <option value="_less_than_20">Less than $20</option>
+                  <option value="_21_to_40">$21-$40</option>
+                  <option value="_41_to_60">$41-60</option>
+                  <option value="_61_to_80">$61-$80</option>
+                  <option value="_81_to_100">$81-$100</option>
+                  <option value="_101_to_120">$101-$120</option>
+                  <option value="_more_than_120">More than $120</option>
+                  <option value="dont-know">Don't know</option>
                 </select>
-              </div>
-            </div>
-            <div class="form-field mb-4" id="container-survey_satisfaction">
-              <label for="survey_satisfaction" class="field-container">Are you satisfied with the performance of your connection for the price that you pay per month?</label>
-              <div class="field-container">
-                <select id="survey_satisfaction" name="survey_satisfaction" class="form-control " title="How much does your internet service cost per month?">
-                  <option value="a_default">------</option>
-                  <option value="b_yes">Yes</option>
-                  <option value="c_no">No</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-field mb-4">
-              <div class="field-container">
-                <label for="survey_carrier_choice">If you have choice of Internet service provider, why did you choose your current provider?</label>
-                <textarea name="survey_carrier_choice" id="survey_carrier_choice" rows="8" cols="80"></textarea>
-              </div>
-            </div>
-            <div class="form-field mb-4">
-              <div class="field-container">
-                <label for="survey_story">Do you have a story about the importance of your Internet connection to your daily life, or that of your family, that you would like to share?</label>
-                <textarea name="survey_story" id="survey_story" rows="8" cols="80"></textarea>
-              </div>
-            </div>
-            <div class="form-field mt-4 mb-4" id="container-survey_subscribe">
-              <div class="field-container mb-2">If you are open to being contacted about this story by our research team, please provide your email address or phone number.</div>
-              <div class="form-inline">
-                <div class="col-auto form-inline">
-                  <label class="mr-2" for="survey_email">Email</label>
-                  <input id="survey_email" type="email" name="survey_email" class="form-control" placeholder="jane@example.com" title="If you are open to being contacted about this story by our research team, please provide your email address." />
-                </div>
-                <div class="col-auto form-inline">
-                  <label class="mr-2" for="survey_phone">Phone</label>
-                  <input id="survey_phone" type="text" name="survey_phone" class="form-control" placeholder="###-###-####" title="If you are open to being contacted about this story by our research team, please provide your phone number." />
-                </div>
               </div>
             </div>
           </div>
@@ -370,32 +276,17 @@
                     <div id="socialshare">
                     <!-- Social Button HTML -->
                     <!-- Twitter -->
-                      <a href="https://twitter.com/home?status=Help%20North%20Carolina%20improve%20its%20Internet%20access%20by%20building%20an%20accurate%20map%20of%20Internet%20access%20quality%20by%20taking%20this%20speed%20test%20%20https%3A//nc.localbroadband.org/" target="_blank" class="share-btn twitter">
+                      <a href="https://twitter.com/home?status=I%20tested%20my%20home%20Internet%20performance%20using%20the%20@netinclusion%20%20Digital%20Inclusion%20at%20Home%20speed%20test!%20%20https%3A//www.digitalinclusion.org/" target="_blank" class="share-btn twitter">
                         <i class="fab fa-twitter"></i>
                         <span class="sr-only">Twitter</span>
                       </a>
                     <!-- Facebook -->
-                      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//nc.localbroadband.org/" target="_blank" class="share-btn facebook">
+                      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//www.digitalinclusion.org/" target="_blank" class="share-btn facebook">
                         <i class="fab fa-facebook-f"></i>
                         <span class="sr-only">Facebook</span>
                       </a>
-                    <!-- Reddit (url, title) -->
-                      <a href="http://reddit.com/submit?url=https%3A//nc.localbroadband.org/&title=I%20tested%20my%20Internet%20speeds%20with%20the%20North%20Carolina%20Local%20Broadband%20Speed%20Test" target="_blank" class="share-btn reddit">
-                        <i class="fab fa-reddit"></i>
-                        <span class="sr-only">Reddit</span>
-                      </a>
-                    <!-- LinkedIn -->
-                      <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nc.localbroadband.org/&title=North%20Carolina%20Local%20Broadband&summary=Check%20your%20broadband%20speed%20with%20the%20North%20Carolina%20Local%20Broadband%20Speed%20Test.%20Learn%20more%20about%20our%20efforts%20to%20improve%20Internet%20Access%20in%20rural%20North%20Carolina.&source=Local%20Network,%20inc." target="_blank" class="share-btn linkedin">
-                        <i class="fab fa-linkedin-in"></i>
-                        <span class="sr-only">LinkedIn</span>
-                      </a>
-                    <!-- Email -->
-                      <a href="mailto:?subject=Help%20improve%20Internet%20access%20in%20rural%20North%20Carolina&body=Let&#39s%20upgrade%20Internet%20connections%20in%20North%20Carolina%3A%20Please%20consider%20completing%20this%20short%20survey%20and%20speed%20test&#58%20https%3A//nc.localbroadband.org%to%20add%20your%20connectivity%20availability%20to%20our%20growing%20database%20of%20real%20life%20results.%20Accurate%20connectivity%20data%20is%20the%20first%20step%20in%20assessing%20community%20needs%20and%20building%20support%20for%20more%20investment%20in%20better%20networks.%20Current%20FCC%20data%20aggregation%20processes%20misrepresent%20broadband%20availability.%20These%20can%20be%20overcome%20by%20collecting%20consumer-sourced%20data%20through%20surveys%20such%20as%20this%20one.%20Learn%20more%20about%20the%20North%20Carolina%20Local%20Broadband%20campaign%20here%20https%3A//nc.localbroadband.org." target="_blank" class="share-btn email">
-                        <i class="fas fa-envelope"></i>
-                        <span class="sr-only">Email</span>
-                      </a>
                      </div>
-                      <li><a href="https://localbroadband.org/" target="_parent">Learn more about this campaign</a></li>
+                      <li><a href="https://www.digitalinclusion.org/" target="_parent">Learn more about this campaign</a></li>
                     </ul>
                   </div> <!-- thankyou div -->
 
