@@ -3,7 +3,7 @@ import scroll from "@threespot/freeze-scroll";
 
 const mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
 
-mapboxgl.accessToken = 'pk.eyJ1IjoicmdhaW5lcyIsImEiOiJjamZuenFmZXIwa2JuMndwZXd1eGQwcTNuIn0.TbNK-TNQxiGUlWFdzEEavw';
+mapboxgl.accessToken = 'pk.eyJ1IjoibS1sYWIiLCJhIjoiY2p3eWtxOXZ4MDFkMzQ5cG95ODFhbWJieiJ9.9G1YGnkme4goR0Ly3kqovA';
 
 const bounds = [
   [-167, 16], // Southwest coordinates
