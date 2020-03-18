@@ -5,6 +5,7 @@ const welcome = document.getElementById('Welcome');
 const surveyForm = document.getElementById('SurveyForm');
 const background = document.getElementsByClassName('background')[0];
 const viewResultsButton = document.getElementById('ViewResults');
+const instructions = document.getElementById('submit-results-action');
 
 if (!!viewResultsButton) {
   // skipButton.addEventListener('click', hide);
@@ -38,4 +39,11 @@ if (!!closeButtons) {
       }
     })
   }
+}
+if (!!surveyForm) {
+  surveyForm.addEventListener('submit', hideInstructions)
+}
+
+function hideInstructions() {
+  instructions.classList.add('visually-hidden');
 }
