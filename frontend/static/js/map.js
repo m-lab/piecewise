@@ -77,54 +77,54 @@ if (!!consentForm && !!mapContainer) {
     container: 'Map',
     center: [-113.7824482, 36.2012462],
     maxBounds: bounds,
-    style: 'mapbox://styles/rgaines/ck3umm5lo10451cnyh5sixye6',
+    style: 'mapbox://styles/m-lab/cjwyl24wu2hl51cld3be2sxdz',
     zoom: 4,
   });
 
   map.on('load', function() {
 
     if (!!geojson) {
-      map.addSource('points', {
-        'type': 'geojson',
-        'data': geojson
-      })
+    //  map.addSource('points', {
+    //    'type': 'geojson',
+    //    'data': geojson
+    //  })
 
-      map.addLayer({
-        'id': 'points',
-        'type': 'circle',
-        'source': 'points',
-        'paint': {
-          'circle-radius': 10,
-          'circle-color': '#ff442b',
-          'circle-opacity': 0.6
-        }
-      });
+    //  map.addLayer({
+    //    'id': 'points',
+    //    'type': 'circle',
+    //    'source': 'points',
+    //    'paint': {
+    //      'circle-radius': 10,
+    //      'circle-color': '#ff442b',
+    //      'circle-opacity': 0.6
+    //    }
+    //  });
 
-      geojson.features.forEach(function(marker) {
+    //  geojson.features.forEach(function(marker) {
 
         // create a HTML element for each feature
-        var el = document.createElement('div');
-        el.className = 'marker';
+    //    var el = document.createElement('div');
+    //    el.className = 'marker';
 
         // make a marker for each feature and add to the map
-        new mapboxgl.Marker(el)
-          .setLngLat(marker.geometry.coordinates.flat())
-          .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-            .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
-          .addTo(map);
-      });
+    //    new mapboxgl.Marker(el)
+    //      .setLngLat(marker.geometry.coordinates.flat())
+    //      .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+    //        .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
+    //      .addTo(map);
+    //  });
 
       // Change the cursor to a pointer when the mouse is over the places layer.
-      map.on('mouseenter', 'points', function() {
-        map.getCanvas().style.cursor = 'pointer';
-        console.log('on item');
-      });
+    //  map.on('mouseenter', 'points', function() {
+    //    map.getCanvas().style.cursor = 'pointer';
+    //    console.log('on item');
+    //  });
 
       // Change it back to a pointer when it leaves.
-      map.on('mouseleave', 'points', function() {
-        map.getCanvas().style.cursor = '';
-        console.log('off item');
-      });
+    //  map.on('mouseleave', 'points', function() {
+    //    map.getCanvas().style.cursor = '';
+    //    console.log('off item');
+    //  });
     }
 
 
@@ -139,53 +139,53 @@ if (!!consentForm && !!mapContainer) {
       // consentForm.classList.add('visually-hidden');
       // surveyForm.classList.add('visually-hidden');
 
-      const userLatitude = document.getElementById('latitude-mlab').value || '';
-      const userLongitude = document.getElementById('longitude-mlab').value || '';
-      const actualDownload = document.getElementById('actual_download-mlab').value || '';
-      const actualUpload = document.getElementById('actual_upload-mlab').value || '';
-      const minRTT = document.getElementById('min_rtt-mlab').value || '';
+      //const userLatitude = document.getElementById('latitude-mlab').value || '';
+      //const userLongitude = document.getElementById('longitude-mlab').value || '';
+      //const actualDownload = document.getElementById('actual_download-mlab').value || '';
+      //const actualUpload = document.getElementById('actual_upload-mlab').value || '';
+      //const minRTT = document.getElementById('min_rtt-mlab').value || '';
       //const ispUser = document.getElementById('survey_service_type').value || '';
-      const cost = document.getElementById('survey_current_cost').value || '';
-      const advertisedDownload = document.getElementById('survey_subscribe_download').value || '';
-      const advertisedUpload = document.getElementById('survey_subscribe_upload').value || '';
+      //const cost = document.getElementById('survey_current_cost').value || '';
+      //const advertisedDownload = document.getElementById('survey_subscribe_download').value || '';
+      //const advertisedUpload = document.getElementById('survey_subscribe_upload').value || '';
 
       if (!!userLatitude & !!userLongitude) {
 
-        const userData = {
-          "type": "FeatureCollection",
-          "features": [{
-            "type": "Feature",
-            "geometry": {
-              "type": "LineString",
-              "coordinates": [
-                [userLongitude, userLatitude],
-              ]
-            },
-            properties: {
+      //  const userData = {
+      //    "type": "FeatureCollection",
+      //    "features": [{
+      //      "type": "Feature",
+      //      "geometry": {
+      //        "type": "LineString",
+      //        "coordinates": [
+      //          [userLongitude, userLatitude],
+      //        ]
+      //      },
+      //      properties: {
               //isp_user: ispUser,
-              cost_of_service: cost,
-              advertised_download: advertisedDownload,
-              advertised_upload: advertisedUpload,
-              actual_download: actualDownload,
-              actual_upload: actualUpload,
-              min_rtt: minRTT,
-            }
-          }]
-        }
+      //        cost_of_service: cost,
+      //        advertised_download: advertisedDownload,
+      //        advertised_upload: advertisedUpload,
+      //        actual_download: actualDownload,
+      //        actual_upload: actualUpload,
+      //        min_rtt: minRTT,
+      //      }
+      //    }]
+      //  }
 
-        userData.features.forEach(function(marker) {
+      //  userData.features.forEach(function(marker) {
 
           // create a HTML element for each feature
-          var el = document.createElement('div');
-          el.className = 'marker';
+      //    var el = document.createElement('div');
+      //    el.className = 'marker';
 
           // make a marker for each feature and add to the map
-          new mapboxgl.Marker(el)
-            .setLngLat(marker.geometry.coordinates.flat())
-            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-              .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
-            .addTo(map);
-        });
+      //    new mapboxgl.Marker(el)
+      //      .setLngLat(marker.geometry.coordinates.flat())
+      //      .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+      //        .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
+      //      .addTo(map);
+      //  });
       }
 
       results.children[0].classList.add('pos-fixed');
