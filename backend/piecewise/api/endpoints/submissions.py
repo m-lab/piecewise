@@ -18,9 +18,7 @@ router = APIRouter()
 
 @router.get("/", response_model=List[SubmissionUpdate])
 def get(
-    db: Session = Depends(get_database),
-    skip: int = 0,
-    limit: int = 100,
+    db: Session = Depends(get_database), skip: int = 0, limit: int = 100,
 ):
     """
     Retrieve items.
@@ -30,27 +28,29 @@ def get(
 
 
 @router.post("/", response_model=SubmissionUpdate)
-def submit(*,
-           id: float = Form(None),
-           db: Session = Depends(get_database),
-           survey_current_location: str = Form(None),
-           survey_normal_location: str = Form(None),
-           survey_normal_location_other: str = Form(None),
-           survey_location_performance: str = Form(None),
-           survey_applications: str = Form(None),
-           survey_other_software: str = Form(None),
-           survey_isp: str = Form(None),
-           survey_subscribe_download: str = Form(None),
-           survey_subscribe_upload: str = Form(None),
-           survey_bundle: str = Form(None),
-           survey_current_cost: str = Form(None),
-           actual_download: float = Form(None),
-           actual_upload: float = Form(None),
-           min_rtt: float = Form(None),
-           latitude: float = Form(None),
-           longitude: float = Form(None),
-           bigquery_key: str = Form(None)):
-    if id: # if data stored in dom
+def submit(
+    *,
+    id: float = Form(None),
+    db: Session = Depends(get_database),
+    survey_current_location: str = Form(None),
+    survey_normal_location: str = Form(None),
+    survey_normal_location_other: str = Form(None),
+    survey_location_performance: str = Form(None),
+    survey_applications: List[str] = Form(None),
+    survey_other_software: str = Form(None),
+    survey_isp: str = Form(None),
+    survey_subscribe_download: str = Form(None),
+    survey_subscribe_upload: str = Form(None),
+    survey_bundle: str = Form(None),
+    survey_current_cost: str = Form(None),
+    actual_download: float = Form(None),
+    actual_upload: float = Form(None),
+    min_rtt: float = Form(None),
+    latitude: float = Form(None),
+    longitude: float = Form(None),
+    bigquery_key: str = Form(None)
+):
+    if id:  # if data stored in dom
         """
         Update an item.
         """
@@ -61,7 +61,7 @@ def submit(*,
             survey_normal_location=survey_normal_location,
             survey_normal_location_other=survey_normal_location_other,
             survey_location_performance=survey_location_performance,
-            survey_applications=survey_applications,
+            survey_applications=",".join(map(str, survey_applications)),
             survey_other_software=survey_other_software,
             survey_isp=survey_isp,
             survey_subscribe_download=survey_subscribe_download,
@@ -87,7 +87,7 @@ def submit(*,
             survey_normal_location=survey_normal_location,
             survey_normal_location_other=survey_normal_location_other,
             survey_location_performance=survey_location_performance,
-            survey_applications=survey_applications,
+            survey_applications=",".join(map(str, survey_applications)),
             survey_other_software=survey_other_software,
             survey_isp=survey_isp,
             survey_subscribe_download=survey_subscribe_download,
@@ -101,7 +101,6 @@ def submit(*,
             longitude=longitude,
             bigquery_key=bigquery_key,
         )
-
 
         sub = create_submission(db=db, submission=sub_in)
     return sub
