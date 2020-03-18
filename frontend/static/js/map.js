@@ -149,7 +149,7 @@ if (!!consentForm && !!mapContainer) {
       //const advertisedDownload = document.getElementById('survey_subscribe_download').value || '';
       //const advertisedUpload = document.getElementById('survey_subscribe_upload').value || '';
 
-      if (!!userLatitude & !!userLongitude) {
+      //if (!!userLatitude & !!userLongitude) {
 
       //  const userData = {
       //    "type": "FeatureCollection",
@@ -186,7 +186,7 @@ if (!!consentForm && !!mapContainer) {
       //        .setHTML('<h3>ISP User: ' + (marker.properties.isp_user ? marker.properties.isp_user : 'Unknown') + '</h3><p>Other ISP: ' + (marker.properties.other_isp ? marker.properties.other_isp : 'Unknown') + '</p><p>Connection Type: ' + (marker.properties.connection_type ? marker.properties.connection_type : 'Unknown') + '</p><p>Cost of service: ' + (marker.properties.cost_of_service ? marker.properties.cost_of_service : 'Unknown') + '</p><p>Advertised download speed: ' + (marker.properties.advertised_download ? marker.properties.advertised_download : 'Unknown') + '</p><p>Advertised Upload Speed: ' + (marker.properties.advertised_upload ? marker.properties.advertised_upload : 'Unknown') + '</p><p>Actual Download Speed: ' + (marker.properties.actual_download ? marker.properties.actual_download : 'Unknown') + '</p><p>Actual Upload Speed: ' + (marker.properties.actual_upload ? marker.properties.actual_upload : 'Unknown') + '</p><p>Minimum Round Trip Time: ' + (marker.properties.min_rtt ? marker.properties.min_rtt : 'Unknown') + '</p><p>Latitute: ' + (marker.properties.latitute ? marker.properties.latitute : 'Unknown') + '</p><p>Longitude: ' + (marker.properties.longitude ? marker.properties.longitude : 'Unknown') +'</p>'))
       //      .addTo(map);
       //  });
-      }
+      //}
 
       results.children[0].classList.add('pos-fixed');
       results.children[0].classList.add('bg-white');
