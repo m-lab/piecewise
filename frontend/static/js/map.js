@@ -144,7 +144,7 @@ if (!!consentForm && !!mapContainer) {
       const actualDownload = document.getElementById('actual_download-mlab').value || '';
       const actualUpload = document.getElementById('actual_upload-mlab').value || '';
       const minRTT = document.getElementById('min_rtt-mlab').value || '';
-      const ispUser = document.getElementById('survey_service_type').value || '';
+      //const ispUser = document.getElementById('survey_service_type').value || '';
       const cost = document.getElementById('survey_current_cost').value || '';
       const advertisedDownload = document.getElementById('survey_subscribe_download').value || '';
       const advertisedUpload = document.getElementById('survey_subscribe_upload').value || '';
@@ -162,7 +162,7 @@ if (!!consentForm && !!mapContainer) {
               ]
             },
             properties: {
-              isp_user: ispUser,
+              //isp_user: ispUser,
               cost_of_service: cost,
               advertised_download: advertisedDownload,
               advertised_upload: advertisedUpload,
