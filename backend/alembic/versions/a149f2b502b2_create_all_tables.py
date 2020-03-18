@@ -32,18 +32,17 @@ def upgrade():
     op.create_index(op.f('ix_user_id'), 'user', ['id'], unique=False)
     op.create_table('submission',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('survey_service_type', sa.String(), nullable=True),
-    sa.Column('survey_outages', sa.String(), nullable=True),
-    sa.Column('survey_disruptions', sa.String(), nullable=True),
-    sa.Column('survey_subscribe_upload', sa.String(), nullable=True),
+    sa.Column('survey_current_location', sa.String(), nullable=True),
+    sa.Column('survey_normal_location', sa.String(), nullable=True),
+    sa.Column('survey_normal_location_other', sa.String(), nullable=True),
+    sa.Column('survey_location_performance', sa.String(), nullable=True),
+    sa.Column('survey_applications', sa.String(), nullable=True),
+    sa.Column('survey_other_software', sa.String(), nullable=True),
+    sa.Column('survey_isp', sa.String(), nullable=True),
     sa.Column('survey_subscribe_download', sa.String(), nullable=True),
+    sa.Column('survey_subscribe_upload', sa.String(), nullable=True),
     sa.Column('survey_bundle', sa.String(), nullable=True),
     sa.Column('survey_current_cost', sa.String(), nullable=True),
-    sa.Column('survey_satisfaction', sa.String(), nullable=True),
-    sa.Column('survey_carrier_choice', sa.String(), nullable=True),
-    sa.Column('survey_story', sa.String(), nullable=True),
-    sa.Column('survey_email', sa.String(), nullable=True),
-    sa.Column('survey_phone', sa.String(), nullable=True),
     sa.Column('actual_download', sa.Numeric(), nullable=True),
     sa.Column('actual_upload', sa.Numeric(), nullable=True),
     sa.Column('min_rtt', sa.Numeric(), nullable=True),
@@ -55,8 +54,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_submission_id'), 'submission', ['id'], unique=False)
-    op.create_index(op.f('ix_submission_survey_email'), 'submission', ['survey_email'], unique=False)
-    op.create_index(op.f('ix_submission_survey_phone'), 'submission', ['survey_phone'], unique=False)
     # ### end Alembic commands ###
 
 

@@ -3,18 +3,17 @@ from pydantic import BaseModel
 
 
 class SubmissionBase(BaseModel):
-    survey_service_type: Optional[str]
-    survey_outages: Optional[str]
-    survey_disruptions: Optional[str]
-    survey_subscribe_upload: Optional[str]
+    survey_current_location: Optional[str]
+    survey_normal_location: Optional[str]
+    survey_normal_location_other: Optional[str]
+    survey_location_performance: Optional[str]
+    survey_applications: Optional[str]
+    survey_other_software: Optional[str]
+    survey_isp: Optional[str]
     survey_subscribe_download: Optional[str]
+    survey_subscribe_upload: Optional[str]
     survey_bundle: Optional[str]
     survey_current_cost: Optional[str]
-    survey_satisfaction: Optional[str]
-    survey_carrier_choice: Optional[str]
-    survey_story: Optional[str]
-    survey_email: Optional[str]
-    survey_phone: Optional[str]
     actual_download: float
     actual_upload: float
     min_rtt: float
