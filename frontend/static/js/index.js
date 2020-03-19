@@ -7,6 +7,6 @@ import './map.js';
 import './show-hide.js';
 
 // ndt scripts
-import './ndt.js'
+//import './ndt.js'
 import './ndt-server.js'
 import './ndt7-core.js'
