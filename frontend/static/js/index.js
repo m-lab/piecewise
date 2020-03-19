@@ -3,7 +3,7 @@ import 'bootstrap';
 
 import './critical.js';
 import './modals.js';
-// import './map.js';
+import './map.js';
 import './show-hide.js';
 
 // ndt scripts
