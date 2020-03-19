@@ -79,19 +79,10 @@ if (!!consentForm && !!mapContainer) {
     maxBounds: bounds,
     style: 'mapbox://styles/m-lab/cjwyl24wu2hl51cld3be2sxdz',
     zoom: 4,
+    interactive: false
   });
 
   map.on('load', function() {
-
-    // Disable drag and zoom handlers.
-    if (map.dragging) map.dragging.disable();
-    if (map.touchZoom) map.touchZoom.disable();
-    if (map.doubleClickZoom) map.doubleClickZoom.disable();
-    if (map.scrollWheelZoom) map.scrollWheelZoom.disable();
-    if (map.keyboard) map.keyboard.disable();
-
-    // Disable tap handler, if present.
-    if (map.tap) map.tap.disable();
 
     if (!!geojson) {
     //  map.addSource('points', {
