@@ -187,16 +187,6 @@ if (!!consentForm && !!mapContainer) {
       //  });
       //}
 
-      // Disable drag and zoom handlers.
-      map.dragging.disable();
-      map.touchZoom.disable();
-      map.doubleClickZoom.disable();
-      map.scrollWheelZoom.disable();
-      map.keyboard.disable();
-
-      // Disable tap handler, if present.
-      if (map.tap) map.tap.disable();
-
       results.children[0].classList.add('pos-fixed');
       results.children[0].classList.add('bg-white');
       results.children[0].classList.add('p-3');
@@ -207,3 +197,13 @@ if (!!consentForm && !!mapContainer) {
     }
   });
 }
+
+// Disable drag and zoom handlers.
+map.dragging.disable();
+map.touchZoom.disable();
+map.doubleClickZoom.disable();
+map.scrollWheelZoom.disable();
+map.keyboard.disable();
+
+// Disable tap handler, if present.
+if (map.tap) map.tap.disable();
