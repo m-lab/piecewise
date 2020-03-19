@@ -444,7 +444,8 @@ NDTjs.prototype.ndtMetaTest = function (ndtSocket) {
       that.callbacks.onstatechange('running_meta', that.results);
       // Send one piece of meta data and then an empty meta data packet
       ndtSocket.send(that.makeNdtMessage(that.TEST_MSG,
-                                         'client.os.name:NDTjs'));
+                                         'client.application:NDTjs-PW-NDIA'));
+      console.log('ndt client message: NDTjs-PW-NDIA');
       ndtSocket.send(that.makeNdtMessage(that.TEST_MSG, ''));
       state = 'WAIT_FOR_TEST_FINALIZE';
       return false;

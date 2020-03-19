@@ -250,6 +250,7 @@ $screen-min-width: 768px;
 
   &.visually-hidden {
     max-height: 0 !important;
+    display: none;
 
     & #Welcome {
       max-height: 0 !important;

@@ -6,6 +6,7 @@ const surveyForm = document.getElementById('SurveyForm');
 const background = document.getElementsByClassName('background')[0];
 const viewResultsButton = document.getElementById('ViewResults');
 const instructions = document.getElementById('submit-results-action');
+const finalBranding = document.getElementById('branding-final');
 
 if (!!viewResultsButton) {
   // skipButton.addEventListener('click', hide);
@@ -46,4 +47,5 @@ if (!!surveyForm) {
 
 function hideInstructions() {
   instructions.classList.add('visually-hidden');
+  finalBranding.classList.add('visually-hidden');
 }
