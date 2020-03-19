@@ -82,6 +82,16 @@ if (!!consentForm && !!mapContainer) {
   });
 
   map.on('load', function() {
+    
+    // Disable drag and zoom handlers.
+    map.dragging.disable();
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+    map.keyboard.disable();
+
+    // Disable tap handler, if present.
+    if (map.tap) map.tap.disable();
 
     if (!!geojson) {
     //  map.addSource('points', {
@@ -197,13 +207,3 @@ if (!!consentForm && !!mapContainer) {
     }
   });
 }
-
-// Disable drag and zoom handlers.
-map.dragging.disable();
-map.touchZoom.disable();
-map.doubleClickZoom.disable();
-map.scrollWheelZoom.disable();
-map.keyboard.disable();
-
-// Disable tap handler, if present.
-if (map.tap) map.tap.disable();
