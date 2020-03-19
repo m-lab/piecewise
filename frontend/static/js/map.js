@@ -82,13 +82,13 @@ if (!!consentForm && !!mapContainer) {
   });
 
   map.on('load', function() {
-    
+
     // Disable drag and zoom handlers.
-    map.dragging.disable();
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-    map.keyboard.disable();
+    if (map.dragging) map.dragging.disable();
+    if (map.touchZoom) map.touchZoom.disable();
+    if (map.doubleClickZoom) map.doubleClickZoom.disable();
+    if (map.scrollWheelZoom) map.scrollWheelZoom.disable();
+    if (map.keyboard) map.keyboard.disable();
 
     // Disable tap handler, if present.
     if (map.tap) map.tap.disable();
