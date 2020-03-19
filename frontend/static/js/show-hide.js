@@ -47,5 +47,5 @@ if (!!surveyForm) {
 
 function hideInstructions() {
   instructions.classList.add('visually-hidden');
-  finalBranding.classList.add('visually-hidden');
+  finalBranding.classList.remove('visually-hidden');
 }
