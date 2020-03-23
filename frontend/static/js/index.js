@@ -5,7 +5,6 @@ import './critical.js';
 import './modals.js';
 import './map.js';
 import './show-hide.js';
-import './getip.js';
 
 // ndt scripts
 //import './ndt.js'
