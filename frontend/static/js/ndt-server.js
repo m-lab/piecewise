@@ -122,6 +122,7 @@ function success(position) {
 	var asn = obj.org;
 	var zipcode = obj.postal;
 	var timezone = obj.timezone;
+	console.log(obj);
 	document.getElementById('client_ip').value = ip;
 	document.getElementById('client_city').value = city;
 	document.getElementById('client_region').value = region;
