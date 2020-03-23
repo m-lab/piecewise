@@ -111,6 +111,7 @@ function success(position) {
 		}
 	};
 	
+	var getip;
 	getip = httpGet('https://ipinfo.io/json');
 
 	var obj = JSON.parse(getip);
