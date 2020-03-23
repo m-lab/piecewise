@@ -14,13 +14,22 @@ class SubmissionBase(BaseModel):
     survey_subscribe_upload: Optional[str]
     survey_bundle: Optional[str]
     survey_current_cost: Optional[str]
+    survey_partner_org: Optional[str]
     actual_download: float
     actual_upload: float
     min_rtt: float
     latitude: Optional[float]
     longitude: Optional[float]
     bigquery_key: Optional[str]
-
+    #client_ip: Optional[str]
+    #client_city: Optional[str]
+    #client_region: Optional[str]
+    #client_country: Optional[str]
+    #client_ipinfo_loc: Optional[str]
+    #client_asn: Optional[str]
+    #client_zipcode: Optional[str]
+    #client_timezone: Optional[str]
+    
 
 class SubmissionCreate(SubmissionBase):
     pass
