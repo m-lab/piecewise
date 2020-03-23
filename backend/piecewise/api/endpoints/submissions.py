@@ -49,15 +49,15 @@ def submit(
     min_rtt: float = Form(None),
     latitude: float = Form(None),
     longitude: float = Form(None),
-    bigquery_key: str = Form(None) #,
-#    client_ip: str = Form(None),
-#    client_city: str = Form(None),
-#    client_region: str = Form(None),
-#    client_country: str = Form(None),
-#    client_ipinfo_loc: str = Form(None),
-#    client_asn: str = Form(None),
-#    client_zipcode: str = Form(None),
-#    client_timezone: str = Form(None)
+    bigquery_key: str = Form(None),
+    client_ip: str = Form(None),
+    client_city: str = Form(None),
+    client_region: str = Form(None),
+    client_country: str = Form(None),
+    client_ipinfo_loc: str = Form(None),
+    client_asn: str = Form(None),
+    client_zipcode: str = Form(None),
+    client_timezone: str = Form(None)
 ):
     if id:  # if data stored in dom
         """
@@ -84,14 +84,14 @@ def submit(
             latitude=latitude,
             longitude=longitude,
             bigquery_key=bigquery_key,
-#            client_ip=client_ip,
-#            client_city=client_city,
-#            client_region=client_region,
-#            client_country=client_country,
-#            client_ipinfo_loc=client_ipinfo_loc,
-#            client_asn=client_asn,
-#            client_zipcode=client_zipcode,
-#            client_timezone=client_timezone,
+            client_ip=client_ip,
+            client_city=client_city,
+            client_region=client_region,
+            client_country=client_country,
+            client_ipinfo_loc=client_ipinfo_loc,
+            client_asn=client_asn,
+            client_zipcode=client_zipcode,
+            client_timezone=client_timezone,
         )
 
         sub = update_submission(db=db, submission=sub_in)
