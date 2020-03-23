@@ -88,7 +88,7 @@ function success(position) {
 
 	document.getElementById('latitude-mlab').value = position.coords.latitude;
 	document.getElementById('longitude-mlab').value = position.coords.longitude;
-  document.getElementById('latitude').value = position.coords.latitude;
+  	document.getElementById('latitude').value = position.coords.latitude;
 	document.getElementById('longitude').value = position.coords.longitude;
 
 	var xhr = new XMLHttpRequest(),
@@ -110,6 +110,26 @@ function success(position) {
 			}
 		}
 	};
+	
+	getip = httpGet('https://ipinfo.io/json');
+
+	var obj = JSON.parse(getip);
+	var ip = obj.ip;
+	var city = obj.city;
+	var region = obj.region;
+	var country = obj.country;
+	var ip_location = obj.loc;
+	var asn = obj.org;
+	var zipcode = obj.postal;
+	var timezone = obj.timezone;
+	document.getElementById('client_ip').value = ip;
+	document.getElementById('client_city').value = city;
+	document.getElementById('client_region').value = region;
+	document.getElementById('client_country').value = country;
+	document.getElementById('client_ipinfo_loc').value = ip_location;
+	document.getElementById('client_asn').value = asn;
+	document.getElementById('client_zipcode').value = zipcode;
+	document.getElementById('client_timezone').value = timezone;
 }
 
 function error(error) {
@@ -118,8 +138,8 @@ function error(error) {
 
 function getNdtServer() {
 	var xhr = new XMLHttpRequest(),
-		mlabNsUrl = 'https://mlab-ns.appspot.com/ndt_ssl?format=json';
-
+		mlabNsUrl = 'https://locate.measurementlab.net/ndt_ssl?format=json';
+			//&policy=geo_options
 	xhr.open('GET', mlabNsUrl, true);
 	xhr.send();
 	xhr.onreadystatechange = function () {
@@ -129,8 +149,8 @@ function getNdtServer() {
 				ndtServerIp = JSON.parse(xhr.responseText).ip;
 				console.log('Using M-Lab Server ' + ndtServer);
 			} else {
-				console.log('M-Lab NS lookup failed.');
-        window.alert('M-Lab NS lookup failed. Please refresh the page.')
+				console.log('M-Lab Server Lookup Failed.');
+        window.alert('M-Lab Server Lookup Failed. Please refresh the page.')
 			}
 		}
 	};
