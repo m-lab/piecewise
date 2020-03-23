@@ -161,6 +161,15 @@ NDTmeter.prototype.onfinish = function (passed_results) {
     'c2sRate': 'Upload',
     'MinRTT': 'Latency'
   };
+  
+  document.getElementById('client_ip').value = ip;
+  document.getElementById('client_city').value = city;
+  document.getElementById('client_region').value = region;
+  document.getElementById('client_country').value = country;
+  document.getElementById('client_ipinfo_loc').value = ip_location;
+  document.getElementById('client_asn').value = asn;
+  document.getElementById('client_zipcode').value = zipcode;
+  document.getElementById('client_timezone').value = timezone;
 
   document.getElementById('bigquery_key').value =
       passed_results['StartTimeUsec'] + window.ndtServerIp
