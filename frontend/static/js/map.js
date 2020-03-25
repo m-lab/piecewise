@@ -196,7 +196,8 @@ if (!!consentForm && !!mapContainer) {
       step2.outerHTML = results.innerHTML;
       surveyForm.classList.add('visually-hidden');
       background.classList.add('visually-hidden');
-/*    }
+    }
+/*
   });
 }
 */
