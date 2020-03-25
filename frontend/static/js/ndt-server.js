@@ -7,6 +7,9 @@ const background = document.getElementsByClassName('background')[0];
 const step2 = document.getElementById('Step2');
 const welcome = document.getElementById('Welcome');
 
+// Timeout for getting geolocation from browser
+const GEO_TIMEOUT = 5000;
+
 if (!!consentForm) {
   consentForm.addEventListener('submit', checkLocationConsent);
 }
@@ -72,7 +75,7 @@ function checkLocationConsent () {
 
   if (!!useLocation) {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(success, error);
+      navigator.geolocation.getCurrentPosition(success, error, { timeout: GEO_TIMEOUT });
     }
   } else { runTests(); }
 }
