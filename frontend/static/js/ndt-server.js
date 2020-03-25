@@ -117,6 +117,7 @@ function success(position) {
 
 function error(error) {
 	document.getElementById('ErrorMessage').innerHTML = 'ERROR(' + error.code + '): ' + error.message;
+	runTests();
 }
 
 function getNdtServer() {
