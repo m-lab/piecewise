@@ -99,13 +99,16 @@ def submit(
         """
         Create new item.
         """
+
+        if survey_applications is None:
+
         sub_in = SubmissionCreate(
             db=db,
             survey_current_location=survey_current_location,
             survey_normal_location=survey_normal_location,
             survey_normal_location_other=survey_normal_location_other,
             survey_location_performance=survey_location_performance,
-            survey_applications=",".join(map(str, survey_applications)),
+            survey_applications=",".join(filter(None, map(str, survey_applications))),
             survey_other_software=survey_other_software,
             survey_isp=survey_isp,
             survey_subscribe_download=survey_subscribe_download,
