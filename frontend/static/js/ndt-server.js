@@ -10,34 +10,27 @@ const welcome = document.getElementById('Welcome');
 if (!!consentForm) {
   consentForm.addEventListener('submit', checkLocationConsent);
 }
+let formData;
+let url;
 
 if (!!surveyForm) {
   surveyForm.addEventListener('submit', submitExtraData)
+
+  formData = $('#SurveyForm').serialize();
+  url = $('#SurveyForm').attr('action');
 }
 
 let obj = localStorage.getItem('formData');
 
-// console.log('retrievedObject: ', JSON.parse(obj));
-
-
 function submitExtraData(event) {
   event.preventDefault();
 
-  let formData = $('#SurveyForm').serialize();
-
-  // if (localStorage.getItem('formData')) {
-  //   formData = Object.assign(formData, localStorage.getItem('formData'))
-  // } else {
-  //   localStorage.setItem('formData', JSON.stringify(formData));
-  // }
-
   $.ajax({
     method: 'POST',
-    url: $('#SurveyForm').attr('action'),
+    url: url,
     data: formData,
     statusCode: {
       200: function(data) {
-        // localStorage.setItem('formData', JSON.stringify(data));
         console.log('Data submitted successfully: ', data);
       }
     },
