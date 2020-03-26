@@ -99,9 +99,7 @@ def submit(
         """
         Create new item.
         """
-
-        if survey_applications is None:
-
+        
         sub_in = SubmissionCreate(
             db=db,
             survey_current_location=survey_current_location,
