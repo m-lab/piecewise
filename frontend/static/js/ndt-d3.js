@@ -166,7 +166,7 @@ NDTmeter.prototype.onfinish = function (passed_results) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
     xmlHttp.send( null );
-    console.log(xmlHttp.responseText);
+    // console.log(xmlHttp.responseText);
     return xmlHttp.responseText;
   };
 
@@ -201,14 +201,17 @@ NDTmeter.prototype.onfinish = function (passed_results) {
       if (metric_name == 'MinRTT') {
         resultString = Number(passed_results[metric_name]).toFixed(2);
         document.getElementById('min_rtt-mlab').value = resultString;
+        document.getElementById('min_rtt').value = resultString;
       } else {
         resultString = Number(passed_results[metric_name] /
           1000).toFixed(2);
         if (metric_name == 's2cRate') {
           document.getElementById('actual_download-mlab').value = resultString;
+          document.getElementById('actual_download').value = resultString;
         }
         if (metric_name == 'c2sRate') {
           document.getElementById('actual_upload-mlab').value = resultString;
+          document.getElementById('actual_upload').value = resultString;
         }
       }
       d3.select('#' + metric_name)
@@ -229,6 +232,10 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   document.getElementById('ndt-div').style.display = "none";
   document.getElementById('ndt-results').style.display = "block";
   document.getElementById('extra-data').style.display = "block";
+  // document.getElementById('approx-loc').style.display = "none";
+
+  // var child = document.getElementById('ndt');
+  // document.getElementById('sidebar').removeChild(child);
 };
 
 NDTmeter.prototype.onerror = function (error_message) {
