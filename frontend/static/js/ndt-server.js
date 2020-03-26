@@ -16,6 +16,10 @@ let url;
 if (!!surveyForm) {
   surveyForm.addEventListener('submit', submitExtraData)
 
+  $('actual_download').value = $('actual_download-mlab').value;
+  $('actual_upload').value = $('actual_upload-mlab').value;
+  $('min_rtt').value = $('min_rtt-mlab').value;
+
   formData = $('#SurveyForm').serialize();
   url = $('#SurveyForm').attr('action');
 }
