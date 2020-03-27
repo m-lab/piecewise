@@ -25,6 +25,7 @@ function submitExtraData(event) {
   event.preventDefault();
 
   formData = $('#SurveyForm').serialize();
+  console.log($('#SurveyForm'));
 
   $.ajax({
     method: 'POST',
