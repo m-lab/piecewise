@@ -164,6 +164,7 @@ NDTmeter.prototype.onfinish = function (passed_results) {
 
   function httpGet(theUrl)  {
     var xmlHttp = new XMLHttpRequest();
+    xmlHttp.setRequestHeader('Authorization', 'Bearer ' + process.env.PIECEWISE_IP_TOKEN);
     xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
     xmlHttp.send( null );
     // console.log(xmlHttp.responseText);
