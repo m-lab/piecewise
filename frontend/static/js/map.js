@@ -17,6 +17,7 @@ const surveyForm = document.getElementById('SurveyForm');
 const results = document.getElementById('results');
 const step2 = document.getElementById('Step2');
 const step3 = document.getElementById('Step3');
+const submitAction = document.getElementById('submit-results-action');
 const background = document.getElementsByClassName('background')[0];
 
 // only create map if the survey and map container exist on the page
@@ -194,6 +195,7 @@ if (!!consentForm && !!mapContainer) {
       results.children[0].classList.add('bg-white');
       results.children[0].classList.add('p-3');
       results.children[0].classList.add('results-bar');
+      submitAction.remove();
       step2.classList.add('visually-hidden');
       step3.outerHTML = results.innerHTML;
       surveyForm.classList.add('visually-hidden');
