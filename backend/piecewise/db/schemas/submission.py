@@ -21,14 +21,6 @@ class SubmissionBase(BaseModel):
     latitude: Optional[float]
     longitude: Optional[float]
     bigquery_key: Optional[str]
-    client_ip: Optional[str]
-    client_city: Optional[str]
-    client_region: Optional[str]
-    client_country: Optional[str]
-    client_ipinfo_loc: Optional[str]
-    client_asn: Optional[str]
-    client_zipcode: Optional[str]
-    client_timezone: Optional[str]
     
 
 class SubmissionCreate(SubmissionBase):

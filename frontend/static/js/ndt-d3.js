@@ -162,9 +162,9 @@ NDTmeter.prototype.onfinish = function (passed_results) {
     'MinRTT': 'Latency'
   };
 
-  // get current datetime, store in test_datetime field
+  // get current datetime, store in bigquery_key field
   var test_datetime = new(Date);
-  document.getElementById('test_datetime').value = test_datetime;
+  document.getElementById('bigquery_key').value = test_datetime;
   
   for (metric_name in results_to_display) {
     if (results_to_display.hasOwnProperty(metric_name)  &&
