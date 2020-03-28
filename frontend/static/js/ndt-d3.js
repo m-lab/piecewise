@@ -166,32 +166,16 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   var test_datetime = new(Date);
   document.getElementById('test_datetime').value = test_datetime;
 
-  function httpGet()  {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", 'https://ipinfo.io?token='+process.env.PIECEWISE_IP_TOKEN, false ); // false for synchronous request
-    xmlHttp.send( null );
-    // console.log(xmlHttp.responseText);
-    var ip = xmlHttp.responseText;
-    return ip;
-  };
-  getip = httpGet();
-  var obj = JSON.parse(getip);
-  var ip = obj.ip;
-  var city = obj.city;
-  var region = obj.region;
-  var country = obj.country;
-  var ip_location = obj.loc;
-  var asn = obj.org;
-  var zipcode = obj.postal;
-  var timezone = obj.timezone;
-  document.getElementById('client_ip').value = ip;
-  document.getElementById('client_city').value = city;
-  document.getElementById('client_region').value = region;
-  document.getElementById('client_country').value = country;
-  document.getElementById('client_ipinfo_loc').value = ip_location;
-  document.getElementById('client_asn').value = asn;
-  document.getElementById('client_zipcode').value = zipcode;
-  document.getElementById('client_timezone').value = timezone;
+  $.get("http://ipinfo.io", function (response) {
+    document.getElementById('client_ip').value = response.ip;
+    document.getElementById('client_city').value = response.city;
+    document.getElementById('client_region').value = response.region;
+    document.getElementById('client_country').value = response.country;
+    document.getElementById('client_ipinfo_loc').value = response.ip_location;
+    document.getElementById('client_asn').value = response.asn;
+    document.getElementById('client_zipcode').value = response.zipcode;
+    document.getElementById('client_timezone').value = response.timezone;
+  }, "jsonp");
 
   for (metric_name in results_to_display) {
     if (results_to_display.hasOwnProperty(metric_name)  &&
