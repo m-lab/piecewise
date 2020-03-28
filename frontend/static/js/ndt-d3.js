@@ -166,7 +166,7 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   var test_datetime = new(Date);
   document.getElementById('test_datetime').value = test_datetime;
 
-  $.get("http://ipinfo.io", function (response) {
+  $.get("https://ipinfo.io", function (response) {
     document.getElementById('client_ip').value = response.ip;
     document.getElementById('client_city').value = response.city;
     document.getElementById('client_region').value = response.region;
