@@ -165,18 +165,7 @@ NDTmeter.prototype.onfinish = function (passed_results) {
   // get current datetime, store in test_datetime field
   var test_datetime = new(Date);
   document.getElementById('test_datetime').value = test_datetime;
-
-  $.get("https://ipinfo.io", function (response) {
-    document.getElementById('client_ip').value = response.ip;
-    document.getElementById('client_city').value = response.city;
-    document.getElementById('client_region').value = response.region;
-    document.getElementById('client_country').value = response.country;
-    document.getElementById('client_ipinfo_loc').value = response.ip_location;
-    document.getElementById('client_asn').value = response.asn;
-    document.getElementById('client_zipcode').value = response.zipcode;
-    document.getElementById('client_timezone').value = response.timezone;
-  }, "jsonp");
-
+  
   for (metric_name in results_to_display) {
     if (results_to_display.hasOwnProperty(metric_name)  &&
         passed_results.hasOwnProperty(metric_name)) {
