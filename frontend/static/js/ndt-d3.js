@@ -162,8 +162,9 @@ NDTmeter.prototype.onfinish = function (passed_results) {
     'MinRTT': 'Latency'
   };
 
-  document.getElementById('bigquery_key').value =
-      passed_results['StartTimeUsec'] + window.ndtServerIp
+  var test_datetime = new(Date);
+
+  document.getElementById('bigquery_key').value = test_datetime;
 
   for (metric_name in results_to_display) {
     if (results_to_display.hasOwnProperty(metric_name)  &&
