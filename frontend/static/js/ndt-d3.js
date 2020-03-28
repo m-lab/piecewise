@@ -162,9 +162,37 @@ NDTmeter.prototype.onfinish = function (passed_results) {
     'MinRTT': 'Latency'
   };
 
+  // get current datetime, store in test_datetime field
   var test_datetime = new(Date);
+  document.getElementById('test_datetime').value = test_datetime;
 
-  document.getElementById('bigquery_key').value = test_datetime;
+  function httpGet(url)  {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.setRequestHeader('Authorization', 'Bearer ' + process.env.PIECEWISE_IP_TOKEN);
+    xmlHttp.open( "GET", url, false ); // false for synchronous request
+    xmlHttp.send( null );
+    // console.log(xmlHttp.responseText);
+    return xmlHttp.responseText;
+  };
+  var getip;
+  getip = httpGet('https://ipinfo.io/json');
+  var obj = JSON.parse(getip);
+  var ip = obj.ip;
+  var city = obj.city;
+  var region = obj.region;
+  var country = obj.country;
+  var ip_location = obj.loc;
+  var asn = obj.org;
+  var zipcode = obj.postal;
+  var timezone = obj.timezone;
+  document.getElementById('client_ip').value = ip;
+  document.getElementById('client_city').value = city;
+  document.getElementById('client_region').value = region;
+  document.getElementById('client_country').value = country;
+  document.getElementById('client_ipinfo_loc').value = ip_location;
+  document.getElementById('client_asn').value = asn;
+  document.getElementById('client_zipcode').value = zipcode;
+  document.getElementById('client_timezone').value = timezone;
 
   for (metric_name in results_to_display) {
     if (results_to_display.hasOwnProperty(metric_name)  &&
