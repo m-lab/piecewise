@@ -168,7 +168,6 @@ NDTmeter.prototype.onfinish = function (passed_results) {
 
   function httpGet()  {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.setRequestHeader('Authorization', 'Bearer ' + process.env.PIECEWISE_IP_TOKEN);
     xmlHttp.open( "GET", 'https://ipinfo.io?token='+process.env.PIECEWISE_IP_TOKEN, false ); // false for synchronous request
     xmlHttp.send( null );
     // console.log(xmlHttp.responseText);
