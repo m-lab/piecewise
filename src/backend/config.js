@@ -9,25 +9,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const defaults = {
-  loglevel: process.env.CUNEI_LOG_LEVEL || 'error',
-  secrets: process.env.CUNEI_SECRETS,
+  loglevel: process.env.PIECEWISE_LOG_LEVEL || 'error',
+  secrets: process.env.PIECEWISE_SECRETS,
   admin: {
-    user: process.env.CUNEI_ADMIN_USERNAME || 'admin',
-    password: process.env.CUNEI_ADMIN_PASSWORD,
+    user: process.env.PIECEWISE_ADMIN_USERNAME || 'admin',
+    password: process.env.PIECEWISE_ADMIN_PASSWORD,
   },
   cfaccess: {
-    audience: process.env.CUNEI_CFACCESS_AUDIENCE,
-    url: process.env.CUNEI_CFACCESS_URL,
-  },
-  redis: {
-    host: process.env.CUNEI_REDIS_HOST || 'localhost',
-    port: process.env.CUNEI_REDIS_PORT || '6379',
+    audience: process.env.PIECEWISE_CFACCESS_AUDIENCE,
+    url: process.env.PIECEWISE_CFACCESS_URL,
   },
   server: {
-    port: process.env.CUNEI_PORT || '3000',
-  },
-  worker: {
-    queue: process.env.CUNEI_WORKER_QUEUE || '0',
+    port: process.env.PIECEWISE_PORT || '3000',
   },
 };
 
@@ -80,6 +73,7 @@ function validateLoglevel(value, previous) {
   return level;
 }
 
+// eslint-disable-next-line no-unused-vars
 function validateHost(value, previous) {
   const host = value ? value : previous;
   Joi.assert(host, Joi.string().required());
@@ -107,12 +101,6 @@ function validateArray(value, previous) {
       .required(),
   );
   return strings;
-}
-
-function validateQueueId(value, previous) {
-  const id = value ? value : previous;
-  Joi.assert(Joi.string().required());
-  return id;
 }
 
 class Config extends Command {
@@ -157,7 +145,7 @@ export default program
   )
   .option(
     '-p, --port <number>',
-    'Port for Cunei to listen on',
+    'Port for the app to listen on',
     validatePort,
     defaults.server.port,
   )
@@ -173,24 +161,6 @@ export default program
     'Session secret(s)',
     validateArray,
     defaults.secrets,
-  )
-  .option(
-    '-q, --queue <name>',
-    'Default worker queue ID',
-    validateQueueId,
-    defaults.worker.queue,
-  )
-  .option(
-    '--redis_host <host>',
-    'Redis host',
-    validateHost,
-    defaults.redis.host,
-  )
-  .option(
-    '--redis_port <port>',
-    'Redis port',
-    validatePort,
-    defaults.redis.port,
   )
   .option(
     '--cfaccess_url <url>',

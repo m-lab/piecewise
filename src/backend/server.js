@@ -4,18 +4,17 @@ import compose from 'koa-compose';
 import cors from '@koa/cors';
 import log4js from 'koa-log4';
 import bodyParser from 'koa-body';
+import flash from 'koa-better-flash';
 import mount from 'koa-mount';
 import serveStatic from 'koa-static';
 import session from 'koa-session';
 import passport from 'koa-passport';
+import koa404handler from 'koa-404-handler';
 import errorHandler from 'koa-better-error-handler';
 import cloudflareAccess from './middleware/cloudflare.js';
 import ssr from './middleware/ssr.js';
 import AuthController from './controllers/auth.js';
-import HostController from './controllers/host.js';
-import SubController from './controllers/submission.js';
-import Hosts from './models/host.js';
-import Submission from './models/submission.js';
+//import SubController from './controllers/submission.js';
 import UserModel from './models/user.js';
 
 const __dirname = path.resolve();
@@ -40,20 +39,7 @@ export default function configServer(config) {
   // Setup our API handlers
   const users = new UserModel();
   const auth = AuthController(users);
-  const hosts = new Hosts(config.redis_host, config.redis_port);
-  const mapping = HostController(hosts);
-  const submission = SubController(
-    new Submission(config.redis_host, config.redis_port),
-    hosts,
-  );
-  const apiV1Router = compose([
-    auth.routes(),
-    auth.allowedMethods(),
-    mapping.routes(),
-    mapping.allowedMethods(),
-    submission.routes(),
-    submission.allowedMethods(),
-  ]);
+  const apiV1Router = compose([auth.routes(), auth.allowedMethods()]);
 
   // Set session secrets
   server.keys = Array.isArray(config.secrets)
@@ -66,7 +52,7 @@ export default function configServer(config) {
   // If we're running behind Cloudflare, set the access parameters.
   if (config.cfaccess_url) {
     server.use(async (ctx, next) => {
-      let cfa = await cloudflareAccess(hosts);
+      let cfa = await cloudflareAccess();
       await cfa(ctx, next);
     });
     server.use(async (ctx, next) => {
@@ -92,20 +78,22 @@ export default function configServer(config) {
   server
     .use(bodyParser({ multipart: true, json: true }))
     .use(session(server))
+    .use(koa404handler)
+    .use(flash())
     .use(passport.initialize())
     .use(passport.session())
     .use(cors())
-    //.use(
-    //  mount('/admin', async (ctx, next) => {
-    //    if (ctx.isAuthenticated()) {
-    //      log.debug('Admin is authenticated.');
-    //      await next();
-    //    } else {
-    //      log.debug('Admin is NOT authenticated.');
-    //      ctx.throw(401, 'Authentication failed.');
-    //    }
-    //  }),
-    //)
+    .use(
+      mount('/admin', async (ctx, next) => {
+        if (ctx.isAuthenticated()) {
+          log.debug('Admin is authenticated.');
+          await next();
+        } else {
+          log.debug('Admin is NOT authenticated.');
+          ctx.throw(401, 'Authentication failed.');
+        }
+      }),
+    )
     .use(mount('/api/v1', apiV1Router))
     .use(mount('/static', serveStatic(STATIC_DIR)))
     .use((ctx, next) => {

@@ -5,6 +5,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { rehydrateMarks } from 'react-imported-component';
 import { ThemeProvider } from '@material-ui/core/styles';
+import { StylesProvider } from '@material-ui/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from './theme.js';
 import App from './components/App.jsx';
 
@@ -13,14 +15,23 @@ export const hydrate = (app, element) => () => {
 };
 
 export const start = ({ isProduction, document, module, hydrate }) => {
-  const element = document.getElementById('root');
+  const element = document.getElementById('app');
+  const serverSideStyles = document.getElementById('server-side-styles');
+  // Remove server-side CSS if present, since we're going to re-render it
+  if (serverSideStyles) {
+    serverSideStyles.parentElement.removeChild(serverSideStyles);
+  }
+
   const app = (
     <HelmetProvider>
-      <BrowserRouter>
+      <CssBaseline />
+      <StylesProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <App />
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
         </ThemeProvider>
-      </BrowserRouter>
+      </StylesProvider>
     </HelmetProvider>
   );
 

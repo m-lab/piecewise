@@ -1,18 +1,26 @@
 import fs from 'fs';
+import { Readable } from 'stream';
 import React from 'react';
-import { renderToString } from 'react-dom/server';
+import { renderToNodeStream } from 'react-dom/server';
 import { HelmetProvider } from 'react-helmet-async';
 import { StaticRouter } from 'react-router-dom';
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/core/styles';
+import { StylesProvider } from '@material-ui/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { printDrainHydrateMarks } from 'react-imported-component';
-import CombinedStream from 'combined-stream';
+import MultiStream from 'multistream';
 import App from '../../frontend/components/App.jsx';
 import theme from '../../frontend/theme.js';
+import { getLogger } from '../log.js';
 
-const appString = '<div id="root">';
+const log = getLogger('backend:middleware:ssr');
+
+const appString = '<div id="app">';
+const stylesString = '<style id="server-side-styles">';
 const splitter = '###SPLIT###';
 
 const getHTMLFragments = ({ drainHydrateMarks, rawHTML }) => {
+  log.debug('Getting HTML fragments.');
   const [startingRawHTMLFragment, endingRawHTMLFragment] = rawHTML
     .replace(appString, `${appString}${splitter}`)
     .split(splitter);
@@ -21,19 +29,29 @@ const getHTMLFragments = ({ drainHydrateMarks, rawHTML }) => {
 };
 
 const getApplicationStream = (originalUrl, context) => {
+  log.debug('Getting application stream.');
   const helmetContext = {};
   const app = (
     <HelmetProvider context={helmetContext}>
-      <StaticRouter location={originalUrl} context={context}>
+      <CssBaseline />
+      <StylesProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <App />
+          <StaticRouter location={originalUrl} context={context}>
+            <App />
+          </StaticRouter>
         </ThemeProvider>
-      </StaticRouter>
+      </StylesProvider>
     </HelmetProvider>
   );
 
-  const sheet = new ServerStyleSheets();
-  return renderToString(sheet.collect(app));
+  const sheets = new ServerStyleSheets();
+  const collected = sheets.collect(app);
+  return [renderToNodeStream(collected), sheets.toString()];
+};
+
+const injectStyles = (htmlFragment, stylesFragment) => {
+  log.debug('Injecting styles.');
+  return htmlFragment.replace(stylesString, `${stylesString}${stylesFragment}`);
 };
 
 /**
@@ -44,7 +62,10 @@ const getApplicationStream = (originalUrl, context) => {
  */
 const ssr = async (ctx, next) => {
   const context = {};
-  const appStream = getApplicationStream(ctx.originalUrl, context);
+  const [appStream, stylesFragment] = getApplicationStream(
+    ctx.originalUrl,
+    context,
+  );
 
   if (context.url) {
     ctx.status = 301;
@@ -65,10 +86,17 @@ const ssr = async (ctx, next) => {
     rawHTML: rawHTML,
   });
 
-  const htmlStream = new CombinedStream();
-  [startingHTMLFragment, appStream, endingHTMLFragment].map(content =>
-    htmlStream.append(content),
+  const injectedStartingFragment = injectStyles(
+    startingHTMLFragment,
+    stylesFragment,
   );
+
+  log.debug('Crossing the streams.');
+  const htmlStream = new MultiStream([
+    Readable.from(injectedStartingFragment),
+    appStream,
+    Readable.from(endingHTMLFragment),
+  ]);
   ctx.body = htmlStream;
   ctx.type = 'html';
   await next();

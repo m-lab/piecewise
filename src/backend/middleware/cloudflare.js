@@ -1,9 +1,9 @@
 import jwt from 'koa-jwt';
 import jwks from 'jwks-rsa';
-import log4js from 'koa-log4';
 import config from '../config.js';
+import { getLogger } from '../log.js';
 
-const log = log4js.getLogger('backend:middleware:cloudflare');
+const log = getLogger('backend:middleware:cloudflare');
 
 function newJwt({ audience = config.cfaccess_audience }) {
   // initialize the jwt middleware using CF specific params
@@ -29,7 +29,10 @@ function newJwt({ audience = config.cfaccess_audience }) {
  * @param {string} audience - Cloudflare audience string
  */
 const cfAccessWrapper = async hosts => {
-  let audiences = await hosts.get({});
+  let audiences;
+  if (hosts) {
+    audiences = await hosts.get({});
+  }
   const middlewares = new Map();
   // At least make sure we have the default
   middlewares.set(config.cfaccess_url, newJwt({}));

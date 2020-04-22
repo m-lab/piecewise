@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
@@ -18,6 +19,7 @@ import ImageIcon from '@material-ui/icons/Image';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import MovieIcon from '@material-ui/icons/Movie';
 import MusicVideoIcon from '@material-ui/icons/MusicVideo';
+import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import Grid from '@material-ui/core/Grid';
 import ListItem from '@material-ui/core/ListItem';
@@ -26,6 +28,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import PropTypes from 'prop-types';
+//import MUICookieConsent from 'material-ui-cookie-consent';
 
 const useStyles = makeStyles(theme => ({
   input: {
@@ -106,18 +110,6 @@ export default function Basic(props) {
   const [openModal, setOpenModal] = React.useState(false);
   const [modalText, setModalText] = React.useState('');
   const [modalDebug, setModalDebug] = React.useState('');
-  let selectedDate, geography, followUp, reason, additionalInfo, medium;
-
-  if (props.location.state) {
-    ({
-      selectedDate,
-      geography,
-      followUp,
-      reason,
-      additionalInfo,
-      medium,
-    } = props.location.state);
-  }
 
   useEffect(() => {
     if (props.location.state) {
@@ -155,12 +147,23 @@ export default function Basic(props) {
     setLinks(newArr);
   };
 
+  const handleFileRemove = i => {
+    let newArr = [...files];
+    newArr.splice(i, 1);
+    setFiles(newArr);
+  };
+
   const renderLinks = () => {
     return links.map((text, i) => (
       <TextField
         placeholder="Paste link"
         fullWidth
         error={!validateLink(text)}
+        helperText={
+          !validateLink(text)
+            ? "All links need to start with http:// or https:// and can't have a space"
+            : ''
+        }
         data-id={i}
         key={i}
         value={text}
@@ -189,6 +192,16 @@ export default function Basic(props) {
         <ListItem key={i}>
           <ListItemIcon>{icon}</ListItemIcon>
           <ListItemText primary={file.name} secondary={file.type} />
+          <ListItemIcon>
+            <Box ml={2} mt={0.5}>
+              <IconButton
+                onClick={handleFileRemove.bind(this, i)}
+                color="primary"
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </ListItemIcon>
         </ListItem>
       );
     });
@@ -200,14 +213,8 @@ export default function Basic(props) {
   };
 
   const processError = errorMessage => {
-    let text = '';
-    let debug = '';
-    if (false) {
-      text = '';
-    } else {
-      text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
-      debug = JSON.stringify(errorMessage);
-    }
+    let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
+    let debug = JSON.stringify(errorMessage);
     return [text, debug];
   };
 
@@ -220,41 +227,31 @@ export default function Basic(props) {
     });
 
     formData.append(
-      'disinfo_links',
+      'links',
       JSON.stringify(links.filter(link => link.length > 0)),
     );
     formData.append('description', description);
 
     let d = new Date();
-
-    formData.append('sighted_on', d.toJSON());
-    formData.append('geography', '');
-    formData.append('follow_up', '');
-
-    formData.append('medium', JSON.stringify([]));
-    formData.append('medium_other', '');
-    formData.append('reason', '');
-    formData.append('additional_info', '');
-    formData.append('follow_up', 'none');
-
-    // TODO: turn the endpoint into an environment variable
-    fetch('/api/v1/reports', {
+    let status;
+    fetch('/api/v1/items', {
       method: 'POST',
       body: formData,
     })
       .then(response => {
-        if (response.status === 200 || response.status === 201) {
-          response.json().then(success => {
-            props.history.push('/thankyou');
-          });
+        status = response.status;
+        return response.json();
+      })
+      .then(data => {
+        if (status === 200 || status === 201) {
+          props.history.push('/thankyou');
+          return data;
         } else {
-          response.json().then(failure => {
-            let [text, debug] = processError(failure);
-            setModalText(text);
-            setModalDebug(debug);
-            setOpenModal(true);
-            throw new Error(`Error in response from server.`);
-          });
+          let [text, debug] = processError(data);
+          setModalText(text);
+          setModalDebug(debug);
+          setOpenModal(true);
+          throw new Error(`Error in response from server.`);
         }
       })
       .catch(error => {
@@ -272,11 +269,10 @@ export default function Basic(props) {
           variant="h4"
           component="h1"
         >
-          Submit potential disinformation.
+          Sample data submission
         </Typography>
         <Typography className={classes.sub1a} variant="subtitle1" component="p">
-          Report suspicious sites, stories, ads, social accounts, posts, and
-          other clues.
+          Sample subtitle
         </Typography>
         <Typography className={classes.sub1} variant="subtitle1" component="p">
           <LockIcon color="primary" fontSize="inherit" /> All submissions are
@@ -287,7 +283,7 @@ export default function Basic(props) {
         </Box>
         <Box mt={2} mb={6}>
           <Typography className={classes.h6} variant="h6">
-            What did you see or hear?
+            Sample description.
           </Typography>
           <Typography
             className={classes.sub1}
@@ -295,13 +291,12 @@ export default function Basic(props) {
             component="p"
             gutterBottom
           >
-            Include social platforms, account names, video descriptions, and/or
-            any other descriptive information.
+            A sample multiline textfield.
           </Typography>
           <FormControl fullWidth>
             <TextField
               id="standard-multiline-static"
-              label="Describe it"
+              label="Description"
               error={description.length === 0}
               helperText={description.length === 0 ? 'Required field.' : ''}
               multiline
@@ -314,7 +309,7 @@ export default function Basic(props) {
         </Box>
         <Box mt={2} mb={6}>
           <Typography className={classes.h6} variant="h6" gutterBottom>
-            Helpful information
+            Sample links or file attachments
           </Typography>
           <Typography
             className={classes.sub1}
@@ -322,9 +317,7 @@ export default function Basic(props) {
             component="p"
             gutterBottom
           >
-            We will be able to address concerns much quicker if you provide a
-            link or a screenshot. If you don&#39;t have any we may follow up
-            with you.
+            Provide one or more links or file attachments.
           </Typography>
           {renderLinks()}
           <FormControl>
@@ -358,30 +351,6 @@ export default function Basic(props) {
                 Submit
               </Button>
             </Grid>
-            <Grid className={classes.centerText} item xs={6}>
-              <Button
-                variant="contained"
-                color="primary"
-                component={RouterLink}
-                disabled={!isFormValid || description.length === 0}
-                to={{
-                  pathname: '/share',
-                  state: {
-                    links,
-                    files,
-                    description,
-                    selectedDate,
-                    geography,
-                    followUp,
-                    reason,
-                    additionalInfo,
-                    medium,
-                  },
-                }}
-              >
-                Add Detail
-              </Button>
-            </Grid>
           </Grid>
         </Box>
         <Dialog open={openModal} aria-describedby="alert-dialog-description">
@@ -397,6 +366,24 @@ export default function Basic(props) {
           </DialogContent>
         </Dialog>
       </Paper>
+      {/*
+      <MUICookieConsent
+        cookieName="piecewiseCookieConsent"
+        componentType="Snackbar" // default value is Snackbar
+        message="This site uses cookies.... bla bla..."
+      />
+      */}
     </Container>
   );
 }
+
+Basic.propTypes = {
+  history: PropTypes.object,
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      description: PropTypes.string,
+      files: PropTypes.array,
+      links: PropTypes.array,
+    }),
+  }),
+};

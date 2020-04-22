@@ -5,7 +5,7 @@ import config from './config.js';
 import configServer from './server.js';
 
 /**
- * Function to start up Cunei.
+ * Function to start up the app.
  */
 async function bootstrap() {
   /**
@@ -40,9 +40,6 @@ ${bigName}
   })
   .catch(err => {
     setImmediate(() => {
-      console.error(
-        `Encountered error while running ${process.env.npm_package_name}: `,
-        err,
-      );
+      console.error('Encountered error while running the app: ', err);
     });
   });

@@ -70,6 +70,11 @@ export default function controller(users) {
         ctx.body = { success: false };
         ctx.throw(401, 'Authentication failed.');
       } else {
+        if (ctx.request.body.remember === 'true') {
+          ctx.session.maxAge = 86400000; // 1 day
+        } else {
+          ctx.session.maxAge = 'session';
+        }
         ctx.body = { success: true };
         return ctx.login(user);
       }
