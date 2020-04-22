@@ -1,87 +1,71 @@
-# Piecewise
+# Koa React Form Template
+A form template using Koa and React.
 
-Piecewise is a tool for digesting and aggregating user-volunteered Internet performance test results data from [Measurement Lab](https://measurementlab.net), and visualizing aggregate data on the web.
+## Requirements
+* [Node.js](https://nodejs.org) of version `>=10`
+* `npm`
+* Uses [Redis](https://redis.org) to store its state.
 
-## Support and Community
+## Structure
+Composed of 3 different parts:
+* A [React](https://reactjs.org/)-based **frontend** that provides a standalone webform tool to submit tickets.
+* A [Koa](https://koajs.com)-based **backend** that renders & serves the frontend and exposes an API used by the frontend. Form submissions sent to this API get entered into a work-queue in an instance of Redis.
+* A standalone Javascript **worker** that consumes the work-queue and submits forms.
 
-Piecewise is considered beta software and is not officially supported by the Open Technology Institute (OTI), New America or M-Lab. "Supported" in this documentation refers only to known working implementations or configurations, and not a level of product or customer support for installations of piecewise.
-
-Questions, comments, contributions, etc. about Piecewise should be addressed via Github comments or issues, or by emailing M-Lab staff at the Open Technology Institute at [support@opentechinstitute.org](mailto:support@opentechinstitute.org).
-
-## Code
-
-Piecewise code can be found on Github: [https://github.com/opentechinstitute/piecewise](https://github.com/opentechinstitute/piecewise)
-
-## Get Started Documentation
-
-Copy the `.env.example` file to your own `.env` file and change settings as needed.
-
-Piecewise can be deployed locally or via a Docker container.
-
-### To deploy via Docker
-In a new shell, run:
+These parts are located here in this repository:
 ```
-docker-compose build
-docker-compose up
+src/backend  # The backend components
+src/common   # Common code and assets
+src/frontend # The React frontend
+src/worker   # The standalone worker
 ```
 
-### To deploy locally
+## Configuration
+Koa React Form Template is configured via variables either specified in the environment or defined in a `.env` file (see `env.example` for an example configuration that may be edited and copied to `.env`).
 
-Install poetry if it does not yet exist on your machine:
-`pip install poetry`
+The backend parses the following configuration variables:
+```
+FIXME_PORT        # The port that the backend is listening on (default: 3000)
+FIXME_REDIS_HOST  # The host for the Redis instance (default: localhost)
+FIXME_REDIS_PORT  # The port for Redis (default: 6379)
+```
+The worker parses the following configuration variables:
+```
+FIXME_REDIS_HOST   # The host for the Redis instance (default: localhost)
+FIXME_REDIS_PORT   # The port for Redis (default: 6379)
+FIXME_WORKER_QUEUE # The ID for the default queue the worker is processing (default: 0)
+FIXME_URL   # The URL for the instance's API
+FIXME_TOKEN # The authentication token for the instance
+```
+Additionally, we use the semi-standard `NODE_ENV` variable for defining test, staging, and production environments as well as [llog](https://github.com/mateodelnorte/llog) for setting logging verbosity.
 
-If you're running the application for the first time, run:
-`poetry install`
+## Deployment
+### Standalone
+First, clone this repository and from the root of the resulting directory install dependencies:
+```
+npm install
+```
+Then, build all three components:
+```
+npm run build
+```
+And start the running processes (with necessary environment variables if not defined in `.env`):
+```
+FIXME_URL="https://example.com/api/v1" FIXME_TOKEN="mytoken" npm run start
+```
+Additionally, components can be built or started individually using for example `npm run build:backend`, `npm run start:worker`, etc.
 
-Then navigate to the backend directory and run Piecewise:
-`cd backend && poetry run piecewise
-`
+### Docker
+TODO
 
-In a new tab, navigate to the frontend directory:
-`cd ../frontend`
+## API
+The backend exposes the following HTTP API:
 
-If you're running the application for the first time, run:
-`npm install`
+| Endpoint          | Method | Returns                                 | Implemented?       |
+| :------:          | :----: | :-----:                                 | :----------:       |
+| `/api/v1/fixme` | `POST` | `{ item_id: '<UUID of new item>' }` | :heavy_check_mark: |
 
-To run the front end concurrently with the backend, run:
-`npm run start:dev`
+## License
+[<img src="https://www.gnu.org/graphics/agplv3-155x51.png" alt="AGPLv3" >](http://www.gnu.org/licenses/agpl-3.0.html)
 
-Piecewise can be installed and run on any Linux server or virtual machine.
-The process of setting up a new Piecewise server involves:
-
-* [Server/VM System Requirements and Accounts Setup](docs/system-requirements.md)
-  * Setting up a virtual machine or server
-  * Creating required accounts
-  * Forking Piecewise code to your Github account and cloning a copy on your local computer
-* [Configuring/Customizing Piecewise Code](docs/config.md)
-  * Obtaining geographic information and data, and adding it to your local copy of Piecewise
-  * Customizing Piecewise config files
-* [Deploying Piecewise](docs/deploy.md)
-* [Post installation administration and management](post-install-and-administration.md)
-
-You can also learn more about [How Piecewise Works](docs/how-piecewise-works.md) and about the [statistics Piecewise generates](docs/piecewise-statistics.md)
-
-## Project Organization
-
-
-## Contributions
-
-Contributions from external developers are welcome.
-
-If you are a developer and are interested in contributing upstream to Piecewise, please review our [open issues](https://github.com/opentechinstitute/piecewise/issues) and [milestones](https://github.com/opentechinstitute/piecewise/milestones), and [contact us](mailto:support@opentechinstitute.org) for more information if needed. A more detailed roadmap for Piecewise is forthcoming.
-
-### Guidelines for External Contributors
-
-Because Piecewise instances will all be local in nature, the development team requests that external contributors fork the Piecewise master branch and customize your fork for your needs.
-
-New features you develop for Piecewise should be generalizable to any instance of Piecewise. An example of a generalizable feature would be a function that adds support for additional public data sources that a user could choose to configure and enable on their instance, either during initial setup or deployable onto an existing instance using an update script or other means. A feature that is not generalizable, such as location specific changes, would be rejected.
-
-If you have developed new front-end examples in your fork of Piecewise, we encourage you to add a generalized version to `/piecewise/piecewise_web/examples` and submit a pull requests to add the examples for others to refer to.
-
-### Feature Requests and Bug Reports
-
-If you would like to request a new Piecewise feature or report a bug, please file an issue in the Github repository.
-
-### Pull Requests
-
-Please create pull requests from your fork to our master branch for review. Pull requests for addressing existing issues will be prioritized over new features not already logged as issues.
+Koa React Form Template is a free software project licensed under the GNU Affero General Public License v3.0 (AGPLv3) by [Throneless Tech](https://throneless.tech).
