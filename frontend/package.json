@@ -29,7 +29,7 @@
     "d3": "^5.14.2",
     "d3-quadtree": "^1.0.7",
     "dotenv": "^8.2.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-ui": "^1.12.1",
     "jquery-ui-slider-pips": "0.0.1-security",
     "mapbox-gl": "^1.6.0",
