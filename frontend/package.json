@@ -10,7 +10,20 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:dev": "webpack --config webpack.config.js --mode=development",
     "build": "webpack --config ./webpack.config.js --env.NODE_ENV=local --env.production --progress",
-    "start:dev": "webpack-dev-server"
+    "start:dev": "webpack-dev-server",
+    "start:map": "react-scripts start"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "repository": {
     "type": "git",
@@ -23,9 +36,12 @@
   },
   "homepage": "https://github.com/throneless-tech/piecewise#readme",
   "dependencies": {
+    "@material-ui/core": "^4.9.12",
+    "@material-ui/icons": "^4.9.1",
     "@threespot/expand-toggle": "^1.6.2",
     "@threespot/freeze-scroll": "^1.0.3",
     "bootstrap": "^4.4.1",
+    "csv2geojson": "^5.1.1",
     "d3": "^5.14.2",
     "d3-quadtree": "^1.0.7",
     "dotenv": "^8.2.0",
@@ -41,6 +57,7 @@
     "babel-loader": "^8.0.6",
     "babel-polyfill": "^6.26.0",
     "css-loader": "^3.2.1",
+    "csv-loader": "^3.0.3",
     "dotenv-webpack": "^1.7.0",
     "file-loader": "^5.0.2",
     "html-loader": "^0.5.5",
@@ -55,6 +72,7 @@
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0",
-    "worker-loader": "^2.0.0"
+    "worker-loader": "^2.0.0",
+    "xml-loader": "^1.2.1"
   }
 }

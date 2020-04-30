@@ -59,6 +59,18 @@ module.exports = env => {
             publicPath: '/static/images/'
           }
         },
+        {
+          test: /\.(csv|tsv)$/,
+          use: [
+            'csv-loader',
+          ],
+        },
+        {
+          test: /\.xml$/,
+          use: [
+            'xml-loader',
+          ],
+        },
       ]
     },
     entry: [
@@ -83,6 +95,10 @@ module.exports = env => {
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, 'templates/form.html'),
         filename: 'form.html',
+      }),
+      new HtmlWebpackPlugin({
+        template: path.resolve(__dirname, 'templates/map.html'),
+        filename: 'map.html',
       }),
       new HtmlWebpackHarddiskPlugin(),
       // new webpack.EnvironmentPlugin(['PIECEWISE_BACKEND_URL']),

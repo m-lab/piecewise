@@ -2,6 +2,17 @@
 // Map customizations
 //**********************************************
 
+.maps {
+  display: flex;
+  margin-left: -0.5em;
+}
+
+.map {
+  margin-left: 0.5em;
+  height: 300px;
+  width: 50%;
+}
+
 #Map {
   bottom: 0;
   height: 100%;
