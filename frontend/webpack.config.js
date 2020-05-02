@@ -36,7 +36,7 @@ module.exports = env => {
           ],
         },
         {
-          test: /\.m?js$/,
+          test: /\.m?(js|jsx)$/,
           exclude: /(node_modules|bower_components)/,
           loader: 'babel-loader',
           options: {
@@ -75,7 +75,7 @@ module.exports = env => {
     },
     entry: [
       "babel-polyfill",
-      './static/js/index.js'
+      './src/index.js'
     ],
     output: {
       filename: 'main.js',

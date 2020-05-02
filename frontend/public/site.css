@@ -1,0 +1,14 @@
+.maps {
+  display: flex;
+  margin-left: -0.5em;
+}
+
+.map {
+  margin-left: 0.5em;
+  height: 300px;
+  width: 50%;
+}
+
+.map-mlab {
+  
+}
