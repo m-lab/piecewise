@@ -155,6 +155,27 @@ class Application extends React.Component {
         // update text in the UI
         document.getElementById('active-week').innerText = week;
       });
+
+      // Fly to selected state
+      document.getElementById('state-select').addEventListener('change', function(event) {
+        // Fly to a random location by offsetting the point -74.50, 40
+        // by up to 5 degrees.
+        mapMlab.flyTo({
+          center: [
+            -74.5 + (Math.random() - 0.5) * 10,
+            40 + (Math.random() - 0.5) * 10
+          ],
+          essential: true // this animation is considered essential with respect to prefers-reduced-motion
+        });
+
+        mapPublic.flyTo({
+          center: [
+            -74.5 + (Math.random() - 0.5) * 10,
+            40 + (Math.random() - 0.5) * 10
+          ],
+          essential: true // this animation is considered essential with respect to prefers-reduced-motion
+        });
+      });
     });
   }
 
@@ -209,13 +230,13 @@ class Application extends React.Component {
           <p>Comparison of test data.</p>
           <div className='session'>
             <div className='selects'>
-              <label className='vh' for='test-select'>Choose a type of test result:</label>
+              <label className='vh' htmlFor='test-select'>Choose a type of test result:</label>
               <select name="tests" id="test-select" className='h2 select'>
                 <option value="download">Download Speed</option>
                 <option value="upload">Upload Speed</option>
                 <option value="latency">Latency</option>
               </select>
-              <label className='vh' for='area-select'>Choose an area:</label>
+              <label className='vh' htmlFor='area-select'>Choose an area:</label>
               <select name="areas" id="area-select" className='h2 select'>
                 <option value="county">County</option>
                 <option value="zip">Zip Code</option>
@@ -224,7 +245,7 @@ class Application extends React.Component {
                 <option value="house">State House Districts</option>
               </select>
               <div className='select select-state'>
-                <label className='select-state-item' for='state-select'>Zoom to state?</label>
+                <label className='select-state-item' htmlFor='state-select'>Zoom to state?</label>
                 <select name="states" id="state-select" className='h2 select-state-item'>
                   <option value="AL">Alabama</option>
                   <option value="AK">Alaska</option>

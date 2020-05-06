@@ -10,6 +10,7 @@ test.db
 
 # Front end
 /dist
+/frontend/.cache
 /frontend/dist
 /node_modules
 /frontend/node_modules
