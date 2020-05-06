@@ -5,10 +5,93 @@
 
 .map {
   margin-left: 0.5em;
-  height: 300px;
+  height: 50vh;
   width: 50%;
 }
 
 .map-mlab {
-  
+
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, Sans-serif;
+}
+
+.h1 {
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.h2 {
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #2dc4b2;
+}
+
+#console {
+  background-color: white;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  padding: 10px 20px;
+  width: 450px;
+}
+
+.session {
+  margin-bottom: 20px;
+}
+
+.row {
+  height: 12px;
+  width: 100%;
+}
+
+.colors {
+  background: linear-gradient(to right, #2dc4b2, #3bb3c3, #669ec4, #8b88b6, #a2719b, #aa5e79);
+  margin-bottom: 5px;
+}
+
+.label {
+  width: 14%;
+  display: inline-block;
+  text-align: center;
+}
+
+.selects {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  margin-left: -0.25em;
+}
+
+.select {
+  margin-left: 0.25em;
+  width: 33%;
+}
+
+.select-state {
+  display: flex;
+  flex-direction: column;
+}
+
+.select-state-item {
+  width: 100%;
+}
+
+.vh {
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap; /* added line */
 }
