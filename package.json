@@ -1,0 +1,83 @@
+{
+  "name": "piecewise",
+  "version": "1.0.0",
+  "description": "A tool for digesting and aggregating user-volunteered Internet performance test results data from Measurement Lab, and visualizing aggregate data on the web.",
+  "private": true,
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:dev": "webpack --config webpack.config.js --mode=development",
+    "build": "webpack --config ./webpack.config.js --env.NODE_ENV=local --env.production --progress",
+    "start:dev": "webpack-dev-server",
+    "start:map": "react-scripts start",
+    "start:parcel": "parcel ./public/index.html"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/throneless-tech/piecewise.git"
+  },
+  "author": "MLab, Josh King, Rae Gaines",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/throneless-tech/piecewise/issues"
+  },
+  "homepage": "https://github.com/throneless-tech/piecewise#readme",
+  "dependencies": {
+    "@material-ui/core": "^4.9.12",
+    "@material-ui/icons": "^4.9.1",
+    "@threespot/expand-toggle": "^1.6.2",
+    "@threespot/freeze-scroll": "^1.0.3",
+    "babel-polyfill": "^6.26.0",
+    "bootstrap": "^4.4.1",
+    "d3": "^5.16.0",
+    "d3-quadtree": "^1.0.7",
+    "dotenv": "^8.2.0",
+    "geojson": "^0.5.0",
+    "jquery": "^3.4.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-slider-pips": "0.0.1-security",
+    "mapbox-gl": "^1.6.0",
+    "papaparse": "^5.2.0",
+    "popper.js": "^1.16.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-scripts": "^3.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "css-loader": "^3.2.1",
+    "csv-loader": "^3.0.3",
+    "dotenv-webpack": "^1.7.0",
+    "file-loader": "^5.0.2",
+    "html-loader": "^0.5.5",
+    "html-webpack-harddisk-plugin": "^1.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.13.0",
+    "parcel-bundler": "^1.12.4",
+    "postcss-loader": "^3.0.0",
+    "precss": "^4.0.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.1",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.3",
+    "worker-loader": "^2.0.0",
+    "xml-loader": "^1.2.1"
+  }
+}

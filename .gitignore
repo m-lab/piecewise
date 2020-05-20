@@ -9,11 +9,11 @@
 test.db
 
 # Front end
-/dist
 /frontend/.cache
 /frontend/dist
-/node_modules
 /frontend/node_modules
+/dist
+/node_modules
 
 # Other junk
 *.DS_Store
