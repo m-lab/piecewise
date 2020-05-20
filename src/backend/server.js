@@ -11,11 +11,17 @@ import session from 'koa-session';
 import passport from 'koa-passport';
 import koa404handler from 'koa-404-handler';
 import errorHandler from 'koa-better-error-handler';
+import db from './db.js';
 import cloudflareAccess from './middleware/cloudflare.js';
 import ssr from './middleware/ssr.js';
 import AuthController from './controllers/auth.js';
-//import SubController from './controllers/submission.js';
-import UserModel from './models/user.js';
+import FormController from './controllers/form.js';
+import SettingsController from './controllers/settings.js';
+import SubController from './controllers/submission.js';
+import Forms from './models/form.js';
+import Settings from './models/settings.js';
+import Submissions from './models/submission.js';
+import Users from './models/user.js';
 
 const __dirname = path.resolve();
 const STATIC_DIR = path.resolve(__dirname, 'dist', 'frontend');
@@ -37,9 +43,24 @@ export default function configServer(config) {
   const log = log4js.getLogger('backend:server');
 
   // Setup our API handlers
-  const users = new UserModel();
-  const auth = AuthController(users);
-  const apiV1Router = compose([auth.routes(), auth.allowedMethods()]);
+  const userModel = new Users();
+  const auth = AuthController(userModel);
+  const formModel = new Forms(db);
+  const forms = new FormController(formModel);
+  const settingsModel = new Settings(db);
+  const settings = new SettingsController(settingsModel);
+  const subModel = new Submissions(db);
+  const submissions = new SubController(subModel);
+  const apiV1Router = compose([
+    auth.routes(),
+    auth.allowedMethods(),
+    forms.routes(),
+    forms.allowedMethods(),
+    settings.routes(),
+    settings.allowedMethods(),
+    submissions.routes(),
+    submissions.allowedMethods(),
+  ]);
 
   // Set session secrets
   server.keys = Array.isArray(config.secrets)

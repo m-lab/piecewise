@@ -1,40 +1,40 @@
-import knex from 'knex';
-import { validate } from '../../common/schemas/submission.js';
+import { validate } from '../../common/schemas/form.js';
 import { UnprocessableError } from '../../common/errors.js';
 
-export default class SubManager {
+export default class FormManager {
   constructor(db) {
     this._db = db;
   }
 
-  async create(submission) {
+  async create(form) {
     try {
-      await validate(submission);
+      await validate(form);
     } catch (err) {
-      throw new UnprocessableError('Failed to create submission: ', err);
+      throw new UnprocessableError('Failed to create form: ', err);
     }
+    console.log('form: ', form);
     return this._db
-      .table('submissions')
-      .insert(submission)
+      .table('forms')
+      .insert({ data: form })
       .returning('*');
   }
 
-  async update(id, submission) {
+  async update(id, form) {
     try {
-      await validate(submission);
+      await validate(form);
     } catch (err) {
-      throw new UnprocessableError('Failed to update submission: ', err);
+      throw new UnprocessableError('Failed to update form: ', err);
     }
     return this._db
-      .table('submissions')
-      .update(submission)
+      .table('forms')
+      .update(form)
       .where({ id: parseInt(id) })
       .returning('*');
   }
 
   async delete(id) {
     return this._db
-      .table('submissions')
+      .table('forms')
       .del()
       .where({ id: parseInt(id) })
       .returning('*');
@@ -44,13 +44,11 @@ export default class SubManager {
     start: start = 0,
     end: end,
     asc: asc = true,
-    sort_by: sort_by = 'id',
     from: from,
     to: to,
-    form: form,
   }) {
     const rows = await this._db
-      .table('submissions')
+      .table('forms')
       .select('*')
       .modify(queryBuilder => {
         if (from) {
@@ -61,18 +59,10 @@ export default class SubManager {
           queryBuilder.where('created_at', '<', to);
         }
 
-        if (form) {
-          queryBuilder.join(
-            'form_submissions',
-            'form_submissions.fid',
-            knex.raw('?', [form]),
-          );
-        }
-
         if (asc) {
-          queryBuilder.orderBy(sort_by, 'asc');
+          queryBuilder.orderBy('id', 'asc');
         } else {
-          queryBuilder.orderBy(sort_by, 'desc');
+          queryBuilder.orderBy('id', 'desc');
         }
 
         if (start > 0) {
@@ -88,13 +78,22 @@ export default class SubManager {
   }
 
   async findById(id) {
-    return this._db
-      .table('submissions')
-      .select('*')
-      .where({ id: parseInt(id) });
+    if (id === 'latest') {
+      return this._db
+        .table('forms')
+        .select('*')
+        .orderBy('id', 'desc')
+        .first();
+    } else {
+      return this._db
+        .table('forms')
+        .select('*')
+        .where({ id: parseInt(id) })
+        .first();
+    }
   }
 
   async findAll() {
-    return this._db.table('submissions').select('*');
+    return this._db.table('forms').select('*');
   }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -28,7 +29,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import PropTypes from 'prop-types';
+import FormRenderer from './FormRenderer.jsx';
 //import MUICookieConsent from 'material-ui-cookie-consent';
 
 const useStyles = makeStyles(theme => ({
@@ -218,25 +219,11 @@ export default function Basic(props) {
     return [text, debug];
   };
 
-  const uploadForm = () => {
-    let formData = new FormData();
-
-    files.map((file, i) => {
-      formData.append(`file${i}`, file);
-      return file;
-    });
-
-    formData.append(
-      'links',
-      JSON.stringify(links.filter(link => link.length > 0)),
-    );
-    formData.append('description', description);
-
-    let d = new Date();
+  const uploadFormData = formData => {
     let status;
-    fetch('/api/v1/items', {
+    fetch('/api/v1/forms', {
       method: 'POST',
-      body: formData,
+      body: JSON.stringify(formData),
     })
       .then(response => {
         status = response.status;
@@ -274,85 +261,7 @@ export default function Basic(props) {
         <Typography className={classes.sub1a} variant="subtitle1" component="p">
           Sample subtitle
         </Typography>
-        <Typography className={classes.sub1} variant="subtitle1" component="p">
-          <LockIcon color="primary" fontSize="inherit" /> All submissions are
-          sent to a secure database.
-        </Typography>
-        <Box mt={2} mb={2}>
-          <Divider />
-        </Box>
-        <Box mt={2} mb={6}>
-          <Typography className={classes.h6} variant="h6">
-            Sample description.
-          </Typography>
-          <Typography
-            className={classes.sub1}
-            variant="subtitle1"
-            component="p"
-            gutterBottom
-          >
-            A sample multiline textfield.
-          </Typography>
-          <FormControl fullWidth>
-            <TextField
-              id="standard-multiline-static"
-              label="Description"
-              error={description.length === 0}
-              helperText={description.length === 0 ? 'Required field.' : ''}
-              multiline
-              value={description}
-              onChange={handleDescriptionChange}
-              rowsMax="4"
-              required
-            />
-          </FormControl>
-        </Box>
-        <Box mt={2} mb={6}>
-          <Typography className={classes.h6} variant="h6" gutterBottom>
-            Sample links or file attachments
-          </Typography>
-          <Typography
-            className={classes.sub1}
-            variant="subtitle1"
-            component="p"
-            gutterBottom
-          >
-            Provide one or more links or file attachments.
-          </Typography>
-          {renderLinks()}
-          <FormControl>
-            {renderFiles()}
-            <input
-              accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.txt"
-              className={classes.input}
-              id="upload-file"
-              type="file"
-              onChange={handleUploadChange}
-            />
-            <label htmlFor="upload-file">
-              <Button
-                aria-label="upload file"
-                component="span"
-                startIcon={<FolderIcon />}
-                variant="text"
-              >
-                {files.length === 0 ? 'Add files' : 'Add another file'}
-              </Button>
-            </label>
-          </FormControl>
-        </Box>
-        <Box mt={2} mb={6}>
-          <Grid container direction="row" alignItems="center" justify="center">
-            <Grid className={classes.centerText} item xs={6}>
-              <Button
-                onClick={uploadForm}
-                disabled={!isFormValid || description.length === 0}
-              >
-                Submit
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
+        <FormRenderer onSave={ev => uploadFormData(ev.formData)} />
         <Dialog open={openModal} aria-describedby="alert-dialog-description">
           <DialogContent>
             <Box p={2}>

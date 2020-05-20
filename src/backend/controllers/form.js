@@ -4,7 +4,7 @@ import Joi from '@hapi/joi';
 import { getLogger } from '../log.js';
 import { BadRequestError } from '../../common/errors.js';
 
-const log = getLogger('backend:controllers:submission');
+const log = getLogger('backend:controllers:form');
 
 const query_schema = Joi.object({
   start: Joi.number()
@@ -27,28 +27,29 @@ async function validate_query(query) {
   }
 }
 
-export default function controller(submissions) {
+export default function controller(forms) {
   const router = new Router();
 
-  router.post('/submissions', async ctx => {
-    log.debug('Adding new submission.');
-    let submission;
+  router.post('/forms', async ctx => {
+    log.debug('Adding new form.');
+    log.debug('ctx.request.body: ', ctx.request.body);
+    let form;
     try {
-      submission = await submissions.create(ctx.request.body);
+      form = await forms.create(ctx.request.body);
 
       // workaround for sqlite
-      if (Number.isInteger(submission)) {
-        submission = await submissions.findById(submission);
+      if (Number.isInteger(form)) {
+        form = await forms.findById(form);
       }
     } catch (err) {
-      ctx.throw(400, `Failed to parse submission schema: ${err}`);
+      ctx.throw(400, `Failed to parse form schema: ${err}`);
     }
-    ctx.response.body = { status: 'success', data: submission };
+    ctx.response.body = { status: 'success', data: form };
     ctx.response.status = 201;
   });
 
-  router.get('/submissions', async ctx => {
-    log.debug(`Retrieving submissions.`);
+  router.get('/forms', async ctx => {
+    log.debug(`Retrieving forms.`);
     let res;
     try {
       const query = await validate_query(ctx.query);
@@ -67,7 +68,7 @@ export default function controller(submissions) {
         }
         to = timestamp.toISOString();
       }
-      res = await submissions.find({
+      res = await forms.find({
         start: query.start,
         end: query.end,
         asc: query.asc,
@@ -85,18 +86,18 @@ export default function controller(submissions) {
     }
   });
 
-  router.get('/submissions/:id', async ctx => {
-    log.debug(`Retrieving submission ${ctx.params.id}.`);
-    let submission;
+  router.get('/forms/:id', async ctx => {
+    log.debug(`Retrieving form ${ctx.params.id}.`);
+    let form;
     try {
-      submission = submissions.findById(ctx.params.id);
-      if (submission.length) {
-        ctx.response.body = { status: 'success', data: submission };
+      form = forms.findById(ctx.params.id);
+      if (form.length) {
+        ctx.response.body = { status: 'success', data: form };
         ctx.response.status = 200;
       } else {
         ctx.response.body = {
           status: 'error',
-          message: `That submission with ID ${ctx.params.id} does not exist.`,
+          message: `That form with ID ${ctx.params.id} does not exist.`,
         };
         ctx.response.status = 404;
       }
@@ -105,18 +106,18 @@ export default function controller(submissions) {
     }
   });
 
-  router.put('/submissions/:id', async ctx => {
-    log.debug(`Updating submission ${ctx.params.id}.`);
-    let submission;
+  router.put('/forms/:id', async ctx => {
+    log.debug(`Updating form ${ctx.params.id}.`);
+    let form;
     try {
-      submission = await submissions.update(ctx.params.id, ctx.request.body);
-      if (submission.length) {
-        ctx.response.body = { status: 'success', data: submission };
+      form = await forms.update(ctx.params.id, ctx.request.body);
+      if (form.length) {
+        ctx.response.body = { status: 'success', data: form };
         ctx.response.status = 200;
       } else {
         ctx.response.body = {
           status: 'error',
-          message: `That submission with ID ${ctx.params.id} does not exist.`,
+          message: `That form with ID ${ctx.params.id} does not exist.`,
         };
         ctx.response.status = 404;
       }
@@ -125,18 +126,18 @@ export default function controller(submissions) {
     }
   });
 
-  router.delete('/submissions/:id', async ctx => {
-    log.debug(`Deleting submission ${ctx.params.id}.`);
-    let submission;
+  router.delete('/forms/:id', async ctx => {
+    log.debug(`Deleting form ${ctx.params.id}.`);
+    let form;
     try {
-      submission = submissions.delete(ctx.params.id);
-      if (submission.length) {
-        ctx.response.body = { status: 'success', data: submission };
+      form = forms.delete(ctx.params.id);
+      if (form.length) {
+        ctx.response.body = { status: 'success', data: form };
         ctx.response.status = 200;
       } else {
         ctx.response.body = {
           status: 'error',
-          message: `That submission with ID ${ctx.params.id} does not exist.`,
+          message: `That form with ID ${ctx.params.id} does not exist.`,
         };
         ctx.response.status = 404;
       }
