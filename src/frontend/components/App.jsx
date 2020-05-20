@@ -15,6 +15,7 @@ const Loading = lazy(() => import('./Loading.jsx'));
 const Login = lazy(() => import('./Login.jsx'));
 const Admin = lazy(() => import('./Admin.jsx'));
 const ThankYou = lazy(() => import('./ThankYou.jsx'));
+const Map = lazy(() => import('./Map.jsx'));
 
 export default function App() {
   const classes = useStyles();
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/login" render={props => <Login {...props} />} />
           <Route path="/admin" render={props => <Admin {...props} />} />
           <Route path="/thankyou" render={props => <ThankYou {...props} />} />
+          <Route path="/map" render={props => <Map {...props} />} />
         </LazyBoundary>
         <Redirect to="/" />
       </Switch>

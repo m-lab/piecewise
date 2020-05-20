@@ -108,3 +108,6 @@ dist
 
 # Local npm settings
 .npmrc
+
+# Other junk
+*.DS_Store
