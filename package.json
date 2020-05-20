@@ -221,6 +221,9 @@
     "verbose": true,
     "setupFiles": [
       "./.jest/env.js"
+    ],
+    "modulePathIgnorePatterns": [
+      "./src/frontend/data"
     ]
   },
   "prettier": {
