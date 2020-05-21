@@ -111,3 +111,9 @@ dist
 
 # Other junk
 *.DS_Store
+
+# development database
+dev.sqlite3
+
+# test database
+test.sqlite3
