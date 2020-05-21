@@ -62,7 +62,7 @@ export default function Dashboard(props) {
     return [text, debug];
   };
 
-  const uploadFormData = formData => {
+  const uploadForm = formData => {
     console.debug('formData: ', formData);
     let status;
     const json = JSON.stringify(formData);
@@ -76,7 +76,32 @@ export default function Dashboard(props) {
       })
       .then(data => {
         if (status === 200 || status === 201) {
-          props.history.push('/thankyou');
+          return data;
+        } else {
+          let [text, debug] = processError(data);
+          setModalText(text);
+          setModalDebug(debug);
+          setOpenModal(true);
+          throw new Error(`Error in response from server.`);
+        }
+      })
+      .catch(error => {
+        console.error('error:', error);
+        throw Error(error.statusText);
+      });
+  };
+
+  const downloadForm = () => {
+    let status;
+    fetch('/api/v1/forms', {
+      method: 'GET',
+    })
+      .then(response => {
+        status = response.status;
+        return response.json();
+      })
+      .then(data => {
+        if (status === 200 || status === 201) {
           return data;
         } else {
           let [text, debug] = processError(data);
@@ -116,7 +141,7 @@ export default function Dashboard(props) {
           {/* Chart */}
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <FormEditor onSave={ev => uploadFormData(ev.formData)} />
+              <FormEditor onSave={ev => uploadForm(ev.formData)} />
             </Grid>
           </Grid>
         </Container>

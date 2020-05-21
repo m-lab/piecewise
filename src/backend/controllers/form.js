@@ -90,9 +90,9 @@ export default function controller(forms) {
     log.debug(`Retrieving form ${ctx.params.id}.`);
     let form;
     try {
-      form = forms.findById(ctx.params.id);
-      if (form.length) {
-        ctx.response.body = { status: 'success', data: form };
+      form = await forms.findById(ctx.params.id);
+      if (form.data) {
+        ctx.response.body = { status: 'success', data: JSON.parse(form.data) };
         ctx.response.status = 200;
       } else {
         ctx.response.body = {
@@ -130,7 +130,7 @@ export default function controller(forms) {
     log.debug(`Deleting form ${ctx.params.id}.`);
     let form;
     try {
-      form = forms.delete(ctx.params.id);
+      form = await forms.delete(ctx.params.id);
       if (form.length) {
         ctx.response.body = { status: 'success', data: form };
         ctx.response.status = 200;

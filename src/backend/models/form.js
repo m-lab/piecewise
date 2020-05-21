@@ -12,7 +12,6 @@ export default class FormManager {
     } catch (err) {
       throw new UnprocessableError('Failed to create form: ', err);
     }
-    console.log('form: ', form);
     return this._db
       .table('forms')
       .insert({ data: form })

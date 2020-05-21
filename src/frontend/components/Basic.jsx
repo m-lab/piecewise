@@ -126,12 +126,6 @@ export default function Basic(props) {
     }
   }, []);
 
-  const handleUploadChange = event => {
-    let newArr = [...files];
-    newArr = newArr.concat(event.target.files[0]);
-    setFiles(newArr);
-  };
-
   const handleLinkChange = (i, event) => {
     let newArr = [...links];
     newArr[i] = event.target.value;
@@ -221,9 +215,10 @@ export default function Basic(props) {
 
   const uploadFormData = formData => {
     let status;
-    fetch('/api/v1/forms', {
+    const json = JSON.stringify(formData);
+    fetch('/api/v1/submissions', {
       method: 'POST',
-      body: JSON.stringify(formData),
+      body: json,
     })
       .then(response => {
         status = response.status;
@@ -232,6 +227,34 @@ export default function Basic(props) {
       .then(data => {
         if (status === 200 || status === 201) {
           props.history.push('/thankyou');
+          return data;
+        } else {
+          let [text, debug] = processError(data);
+          setModalText(text);
+          setModalDebug(debug);
+          setOpenModal(true);
+          throw new Error(`Error in response from server.`);
+        }
+      })
+      .catch(error => {
+        console.error('error:', error);
+        throw Error(error.statusText);
+      });
+  };
+
+  const downloadForm = () => {
+    let status;
+    return fetch('/api/v1/forms/latest', {
+      method: 'GET',
+    })
+      .then(response => {
+        status = response.status;
+        return response.json();
+      })
+      .then(data => {
+        if (status === 200 || status === 201) {
+          //props.history.push('/thankyou');
+          console.log('data: ', data);
           return data;
         } else {
           let [text, debug] = processError(data);
@@ -261,7 +284,10 @@ export default function Basic(props) {
         <Typography className={classes.sub1a} variant="subtitle1" component="p">
           Sample subtitle
         </Typography>
-        <FormRenderer onSave={ev => uploadFormData(ev.formData)} />
+        <FormRenderer
+          onSave={ev => uploadFormData(ev.formData)}
+          onLoad={downloadForm}
+        />
         <Dialog open={openModal} aria-describedby="alert-dialog-description">
           <DialogContent>
             <Box p={2}>
