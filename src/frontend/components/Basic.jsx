@@ -419,20 +419,22 @@ export default function Basic(props) {
               <FormControlLabel value="no" control={<Radio />} label="Do not use my location" className={classes.FormControlLabel} name="useBrowserLocation" />
             </RadioGroup>
           </FormControl>
-          <FormControl required error={consentError}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={consentState.checked}
-                  onChange={handleConsentChange}
-                  name="checked"
-                  color="primary"
-                />
-              }
-              label="*I agree to the M-Lab privacy policy, which includes retention and publication of IP addresses, in addition to speed test results."
-            />
-            <FormHelperText>This field is required</FormHelperText>
-          </FormControl>
+          <div>
+            <FormControl required error={consentError}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={consentState.checked}
+                    onChange={handleConsentChange}
+                    name="checked"
+                    color="primary"
+                  />
+                }
+                label="*I agree to the M-Lab privacy policy, which includes retention and publication of IP addresses, in addition to speed test results."
+              />
+              <FormHelperText>This field is required</FormHelperText>
+            </FormControl>
+          </div>
           <Box m={2} mx="auto" className={classes.centerText}>
             <Button
               variant="contained"

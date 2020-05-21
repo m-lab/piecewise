@@ -9,6 +9,9 @@ import Dialog from '@material-ui/core/Dialog';
 import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles({
+  root: {
+    padding: '20px',
+  }
 });
 
 export default function ThanksDialog(props) {
@@ -20,7 +23,7 @@ export default function ThanksDialog(props) {
   };
 
   return (
-   <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+   <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open} className={classes.root}>
      <DialogTitle id="simple-dialog-title">Thank you!</DialogTitle>
      <Typography className={classes.body1} variant="body1" component="p" gutterBottom >
        Your test is now running in the background. Please <a href='/survey'>click here</a> if you would like to take the survey.
