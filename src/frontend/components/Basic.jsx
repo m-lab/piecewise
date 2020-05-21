@@ -260,8 +260,8 @@ export default function Basic(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
     if (!consentError) {
+      setOpen(true);
       if (locationValue === 'yes') {
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(success, error);
