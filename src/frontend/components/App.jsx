@@ -16,6 +16,7 @@ const Login = lazy(() => import('./Login.jsx'));
 const Dashboard = lazy(() => import('./Dashboard.jsx'));
 const ThankYou = lazy(() => import('./ThankYou.jsx'));
 const Map = lazy(() => import('./Map.jsx'));
+const Survey = lazy(() => import('./Survey.jsx'));
 
 export default function App() {
   const classes = useStyles();
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/admin" render={props => <Dashboard {...props} />} />
           <Route path="/thankyou" render={props => <ThankYou {...props} />} />
           <Route path="/map" render={props => <Map {...props} />} />
+          <Route path="/survey" render={props => <Survey {...props} />} />
         </LazyBoundary>
         <Redirect to="/" />
       </Switch>
