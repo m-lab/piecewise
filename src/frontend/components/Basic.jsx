@@ -50,7 +50,8 @@ import MusicVideoIcon from '@material-ui/icons/MusicVideo';
 // module imports
 import ChromeScreengrab from '../assets/images/chrome-location.jpg';
 import FirefoxScreengrab from '../assets/images/firefox-location.jpg';
-import FormRenderer from './utils/FormRenderer.jsx';
+import NDTjs from '../assets/js/ndt-browser-client.js';
+import ThanksDialog from './utils/ThanksDialog.jsx';
 
 const useStyles = makeStyles(theme => ({
   input: {
@@ -253,18 +254,101 @@ export default function Basic(props) {
     setConsentState({ ...consentState, [event.target.name]: event.target.checked });
   };
 
-  const consentError = consentState !== true;
+  const consentError = consentState.checked !== true;
 
   // handle form dialog open
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
+    if (!consentError) {
+      if (locationValue === 'yes') {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(success, error);
+        }
+      } else { runTests(); }
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
   };
+
+  // handle NDT test
+  const [ndtServer, setNdtServer] = React.useState(null);
+  const [ndtServerIp, setNdtServerIp] = React.useState(null);
+
+  let ndtPort = "3010",
+    ndtProtocol = 'wss',
+    ndtPath = "/ndt_protocol",
+    ndtUpdateInterval = 1000,
+    c2sRate,
+    s2cRate,
+    MinRTT;
+
+  function success(position) {
+    const NDT_client = new NDTjs(ndtServer, ndtPort, ndtProtocol, ndtPath, undefined, ndtUpdateInterval);
+
+  	document.getElementById('latitude-mlab').value = position.coords.latitude;
+  	document.getElementById('longitude-mlab').value = position.coords.longitude;
+    document.getElementById('latitude').value = position.coords.latitude;
+  	document.getElementById('longitude').value = position.coords.longitude;
+
+  	var xhr = new XMLHttpRequest(),
+  	currentLocationURL = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&zoom=18&addressdetails=1";
+
+  	var currentLoc;
+  	xhr.open('GET', currentLocationURL, true);
+  	xhr.send();
+  	xhr.onreadystatechange = function () {
+  		if (xhr.readyState === 4) {
+  			if (xhr.status === 200) {
+  				currentLoc = JSON.parse(xhr.responseText);
+  				console.log("Location received");
+          NDT_client.startTest();
+  				// currentLocText.text(currentLoc.address.road + currentLoc.address.neighbourhood + currentLoc.address.suburb + currentLoc.address.city + currentLoc.address.state);
+  				document.getElementsByClassName('loader-item')[1].append("Searching from: " + currentLoc.address.road + ", " + currentLoc.address.city + ", " + currentLoc.address.state);
+  			} else {
+  				console.log('Location lookup failed');
+  			}
+  		}
+  	};
+  }
+
+  function error(error) {
+    window.alert(error.message);
+  }
+
+  function getNdtServer() {
+    var xhr = new XMLHttpRequest(),
+      mlabNsUrl = 'https://mlab-ns.appspot.com/ndt_ssl?format=json';
+
+    xhr.open('GET', mlabNsUrl, true);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          setNdtServer(JSON.parse(xhr.responseText).fqdn);
+          setNdtServerIp(JSON.parse(xhr.responseText).ip);
+          console.log('Using M-Lab Server ' + ndtServer);
+        } else {
+          console.log('M-Lab NS lookup failed.');
+          window.alert('M-Lab NS lookup failed. Please refresh the page.')
+        }
+      }
+    };
+  };
+
+  function runTests(event) {
+    const NDT_client = new NDTjs(ndtServer, ndtPort, ndtProtocol, ndtPath, undefined, ndtUpdateInterval);
+
+    NDT_client.startTest();
+  };
+
+  React.useEffect(() => {
+    getNdtServer()
+    console.log(ndtServer);
+  }, [ndtServer])
 
   return (
     <Container maxWidth="lg">
@@ -330,9 +414,9 @@ export default function Basic(props) {
             <Hidden>
               <FormLabel component="legend">Do you want to use your browser location?</FormLabel>
             </Hidden>
-            <RadioGroup aria-label="location-choice" name="location" value={locationValue} onChange={handleLocationChange}>
+            <RadioGroup aria-label="location-choice" name="location" value={locationValue} onChange={handleLocationChange} name="useBrowserLocation">
               <FormControlLabel value="yes" control={<Radio />} label="Use my browser location" className={classes.FormControlLabel} />
-              <FormControlLabel value="no" control={<Radio />} label="Do not use my location" className={classes.FormControlLabel}  />
+              <FormControlLabel value="no" control={<Radio />} label="Do not use my location" className={classes.FormControlLabel} name="useBrowserLocation" />
             </RadioGroup>
           </FormControl>
           <FormControl required error={consentError}>
@@ -354,11 +438,12 @@ export default function Basic(props) {
               variant="contained"
               color="primary"
               onClick={handleClickOpen}
-              href="/survey">
+              >
               Take the Test
             </Button>
           </Box>
         </Box>
+        <ThanksDialog open={open} onClose={handleClose} />
       </Paper>
       {/*
       <MUICookieConsent
