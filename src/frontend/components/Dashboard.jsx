@@ -134,7 +134,7 @@ export default function NavTabs() {
           <TabPanel value={value} index={0}>
             <FormTab />
           </TabPanel>
-          <TabPanel value={value} index={0}>
+          <TabPanel value={value} index={1}>
             <SettingsTab />
           </TabPanel>
         </Container>
