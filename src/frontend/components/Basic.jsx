@@ -29,7 +29,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import FormRenderer from './FormRenderer.jsx';
+import FormRenderer from './utils/FormRenderer.jsx';
 //import MUICookieConsent from 'material-ui-cookie-consent';
 
 const useStyles = makeStyles(theme => ({
@@ -254,7 +254,6 @@ export default function Basic(props) {
       .then(data => {
         if (status === 200 || status === 201) {
           //props.history.push('/thankyou');
-          console.log('data: ', data);
           return data;
         } else {
           let [text, debug] = processError(data);

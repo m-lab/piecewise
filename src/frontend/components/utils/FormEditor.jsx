@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 
 const FormEditor = props => {
   useEffect(() => {
+    let Editor;
+    let options;
     import('formeo')
       .then(({ FormeoEditor }) => {
         const container = document.querySelector('.formeo-editor');
-        let options = {
+        options = {
           editorContainer: container,
           style: 'https://draggable.github.io/formeo/assets/css/formeo.min.css',
           debug: true,
@@ -14,9 +16,15 @@ const FormEditor = props => {
         if (props.onSave) {
           options.events = { onSave: props.onSave };
         }
-        console.debug('options: ', options);
-        console.debug('props: ', props);
-        return new FormeoEditor(options);
+        Editor = FormeoEditor;
+        return props.onLoad();
+      })
+      .then(res => {
+        if (res && res.data) {
+          return new Editor(options, res.data);
+        } else {
+          return new Editor(options);
+        }
       })
       .catch(err => {
         console.error('Error: ', err);
@@ -32,6 +40,7 @@ const FormEditor = props => {
 
 FormEditor.propTypes = {
   onSave: PropTypes.func,
+  onLoad: PropTypes.func,
 };
 
 export default FormEditor;

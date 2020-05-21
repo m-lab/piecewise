@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
 const Basic = lazy(() => import('./Basic.jsx'));
 const Loading = lazy(() => import('./Loading.jsx'));
 const Login = lazy(() => import('./Login.jsx'));
-const Admin = lazy(() => import('./Admin.jsx'));
+const Dashboard = lazy(() => import('./Dashboard.jsx'));
 const ThankYou = lazy(() => import('./ThankYou.jsx'));
 const Map = lazy(() => import('./Map.jsx'));
 
@@ -25,7 +25,7 @@ export default function App() {
         <LazyBoundary fallback={Loading}>
           <Route exact path="/" render={props => <Basic {...props} />} />
           <Route path="/login" render={props => <Login {...props} />} />
-          <Route path="/admin" render={props => <Admin {...props} />} />
+          <Route path="/admin" render={props => <Dashboard {...props} />} />
           <Route path="/thankyou" render={props => <ThankYou {...props} />} />
           <Route path="/map" render={props => <Map {...props} />} />
         </LazyBoundary>

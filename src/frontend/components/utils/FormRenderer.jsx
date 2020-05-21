@@ -3,25 +3,33 @@ import PropTypes from 'prop-types';
 
 const FormRenderer = props => {
   useEffect(() => {
+    let Renderer;
+    let options;
     import('formeo')
       .then(({ FormeoRenderer }) => {
-        const container = document.querySelector('.formeo-renderer');
-        const options = {
-          editorContainer: container,
+        const container = document.querySelector('.formeo-render');
+        options = {
+          renderContainer: container,
           style: 'https://draggable.github.io/formeo/assets/css/formeo.min.css',
           debug: true,
         };
         if (props.onSave) {
           options.events = { onSave: props.onSave };
         }
-        const renderer = new FormeoRenderer(options);
-        console.log('props: ', props);
-        props.onLoad().then(res => {
-          console.log('res.data: ', res.data);
-          renderer.render(res.data);
-          console.log('rendered!');
-          return;
-        });
+        Renderer = FormeoRenderer;
+        return props.onLoad();
+      })
+      .then(res => {
+        let renderer;
+        if (res && res.data) {
+          renderer = new Renderer(options, res.data);
+        } else {
+          renderer = new Renderer(options);
+        }
+        return renderer.render();
+      })
+      .then(res => {
+        return res;
       })
       .catch(err => {
         console.error('Error: ', err);
@@ -30,7 +38,7 @@ const FormRenderer = props => {
 
   return (
     <div>
-      <form className="formeo-renderer" />
+      <form className="formeo-render" />
     </div>
   );
 };

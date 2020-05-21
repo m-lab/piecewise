@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -12,7 +11,7 @@ import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import FormEditor from './FormEditor.jsx';
+import FormEditor from '../utils/FormEditor.jsx';
 
 const drawerWidth = 240;
 
@@ -50,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Dashboard(props) {
+export default function FormTab() {
   const classes = useStyles();
   const [openModal, setOpenModal] = React.useState(false);
   const [modalText, setModalText] = React.useState('');
@@ -93,7 +92,7 @@ export default function Dashboard(props) {
 
   const downloadForm = () => {
     let status;
-    fetch('/api/v1/forms', {
+    return fetch('/api/v1/forms/latest', {
       method: 'GET',
     })
       .then(response => {
@@ -119,33 +118,17 @@ export default function Dashboard(props) {
 
   return (
     <Container className={classes.root}>
-      <AppBar position="static" className={classes.appBar}>
-        <Toolbar className={classes.toolbar}>
-          <Typography
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-            className={classes.title}
-          >
-            Dashboard
-          </Typography>
-          <IconButton color="inherit" href="/api/v1/logout">
-            <ExitToAppIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container className={classes.container}>
-          {/* Chart */}
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <FormEditor onSave={ev => uploadForm(ev.formData)} />
-            </Grid>
+      <Container className={classes.container}>
+        {/* Chart */}
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <FormEditor
+              onSave={ev => uploadForm(ev.formData)}
+              onLoad={downloadForm}
+            />
           </Grid>
-        </Container>
-      </main>
+        </Grid>
+      </Container>
       <Dialog open={openModal} aria-describedby="alert-dialog-description">
         <DialogContent>
           <Box p={2}>
@@ -161,7 +144,3 @@ export default function Dashboard(props) {
     </Container>
   );
 }
-
-Dashboard.propTypes = {
-  history: PropTypes.object,
-};
