@@ -1,19 +1,24 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import FormEditor from '../utils/FormEditor.jsx';
+import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const drawerWidth = 240;
+
+const defaultTitle = 'Piecewise';
+const defaultHeader = 'Welcome to Piecewise!';
+const defaultFooter = 'Thank you for taking a survey!';
+const defaultColorOne = '#333333';
+const defaultColorTwo = '#aaaaaa';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,11 +54,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FormTab() {
+export default function SettingsTab() {
   const classes = useStyles();
   const [openModal, setOpenModal] = React.useState(false);
   const [modalText, setModalText] = React.useState('');
   const [modalDebug, setModalDebug] = React.useState('');
+  const [title, setTitle] = React.useState(defaultTitle);
+  const [header, setHeader] = React.useState(defaultHeader);
+  const [footer, setFooter] = React.useState(defaultFooter);
+  const [colorOne, setColorOne] = React.useState(defaultColorOne);
+  const [colorTwo, setColorTwo] = React.useState(defaultColorTwo);
 
   const processError = errorMessage => {
     let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
@@ -61,11 +71,11 @@ export default function FormTab() {
     return [text, debug];
   };
 
-  const uploadForm = formData => {
+  const uploadSettings = formData => {
     console.debug('formData: ', formData);
     let status;
     const json = JSON.stringify(formData);
-    fetch('/api/v1/forms', {
+    fetch('/api/v1/settigns', {
       method: 'POST',
       body: json,
     })
@@ -90,7 +100,7 @@ export default function FormTab() {
       });
   };
 
-  const downloadForm = () => {
+  const downloadSettings = () => {
     let status;
     return fetch('/api/v1/forms/latest', {
       method: 'GET',
@@ -100,7 +110,7 @@ export default function FormTab() {
         return response.json();
       })
       .then(data => {
-        if (status === 200 || status === 201 || status === 404) {
+        if (status === 200 || status === 201) {
           return data;
         } else {
           let [text, debug] = processError(data);
@@ -120,14 +130,25 @@ export default function FormTab() {
     <Container className={classes.root}>
       <Container className={classes.container}>
         {/* Chart */}
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <FormEditor
-              onSave={ev => uploadForm(ev.formData)}
-              onLoad={downloadForm}
-            />
-          </Grid>
-        </Grid>
+        <Box mt={2} mb={6}>
+          <form className={classes.root} noValidate autoComplete="off">
+            <Typography className={classes.h6} variant="h6">
+              Title
+            </Typography>
+            <TextField id="standard-basic" label={title} />
+            <Typography className={classes.h6} variant="h6">
+              Welcome text
+            </Typography>
+            <TextField id="standard-basic" label={header} />
+            <Typography className={classes.h6} variant="h6">
+              Thank You text
+            </Typography>
+            <TextField id="standard-basic" label={footer} />
+            <Typography className={classes.h6} variant="h6">
+              Thank You text
+            </Typography>
+          </form>
+        </Box>
       </Container>
       <Dialog open={openModal} aria-describedby="alert-dialog-description">
         <DialogContent>

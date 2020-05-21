@@ -11,6 +11,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import IconButton from '@material-ui/core/IconButton';
 import FormTab from './dashboard/FormTab.jsx';
+import SettingsTab from './dashboard/SettingsTab.jsx';
 
 const drawerWidth = 240;
 
@@ -128,9 +129,13 @@ export default function NavTabs() {
             aria-label="dashboard navigation tabs"
           >
             <LinkTab label="Form" href="/" {...a11yProps(0)} />
+            <LinkTab label="Settings" href="/settings" {...a11yProps(0)} />
           </Tabs>
           <TabPanel value={value} index={0}>
             <FormTab />
+          </TabPanel>
+          <TabPanel value={value} index={0}>
+            <SettingsTab />
           </TabPanel>
         </Container>
       </main>

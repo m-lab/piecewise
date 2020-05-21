@@ -91,7 +91,7 @@ export default function controller(forms) {
     let form;
     try {
       form = await forms.findById(ctx.params.id);
-      if (form.data) {
+      if (form && form.data) {
         ctx.response.body = { status: 'success', data: JSON.parse(form.data) };
         ctx.response.status = 200;
       } else {
