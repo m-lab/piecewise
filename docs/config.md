@@ -130,7 +130,7 @@ Throughout the Piecewise global configuration file, a comment is provided for ea
 | Variable | Required/Default | Description |
 | -------- | ---------------- | ----------- |
 | env: | !REQUIRED! | Instructs Ansible whether this is a server/VM in development or in production. Supported values: production, development |
-| project_name: | #DEFAULT# | The name of your forked repository. This is likely 'piecewise', unless you have renamed the repository after forking it from https://github.com/opentechinsstute.org/piecewise |
+| project_name: | #DEFAULT# | The name of your forked repository. This is likely 'piecewise', unless you have renamed the repository after forking it from https://github.com/m-lab/piecewise/ |
 | remote: | !REQUIRED! | The URL where your repository is available. You can use any valid git remote.|
 | piecewise_commit: | !REQUIRED! | Specify any ref (eg. branch, tag, SHA) to be deployed. This ref must be pushed to the remote git_repo before it can be deployed. |
 | bigquery_project_num: | !REQUIRED! | The BigQuery Project Number or Project Name from your project details in the Google Cloud Console at https://console.cloud.google.com This can be the numeric project number or the project name text. |
