@@ -1,16 +1,16 @@
+// base imports
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
+
+// material ui imports
 import Box from '@material-ui/core/Box';
+import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 
 const drawerWidth = 240;
 
@@ -21,36 +21,13 @@ const defaultColorOne = '#333333';
 const defaultColorTwo = '#aaaaaa';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    //display: 'flex',
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '-15px',
   },
-  toolbar: {
-    //paddingRight: 24, // keep right padding when drawer closed
-    //maxWidth: '100%',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  title: {
-    flexGrow: 1,
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
+  formField: {
+    marginTop: '15px',
   },
 }));
 
@@ -127,26 +104,31 @@ export default function SettingsTab() {
   };
 
   return (
-    <Container className={classes.root}>
-      <Container className={classes.container}>
+    <Container>
+      <Container>
         {/* Chart */}
         <Box mt={2} mb={6}>
-          <form className={classes.root} noValidate autoComplete="off">
-            <Typography className={classes.h6} variant="h6">
-              Title
-            </Typography>
-            <TextField id="standard-basic" label={title} />
-            <Typography className={classes.h6} variant="h6">
-              Welcome text
-            </Typography>
-            <TextField id="standard-basic" label={header} />
-            <Typography className={classes.h6} variant="h6">
-              Thank You text
-            </Typography>
-            <TextField id="standard-basic" label={footer} />
-            <Typography className={classes.h6} variant="h6">
-              Thank You text
-            </Typography>
+          <form className={classes.form} noValidate autoComplete="off">
+            <TextField
+              id="title"
+              className={classes.formField}
+              label="Title"
+              defaultValue={title}
+            />
+            <TextField
+              id="welcome"
+              className={classes.formField}
+              label="Welcome Text"
+              defaultValue={header}
+              multiline={true}
+            />
+            <TextField
+              id="thanks"
+              className={classes.formField}
+              label="Thank You Text"
+              defaultValue={footer}
+              multiline={true}
+            />
           </form>
         </Box>
       </Container>

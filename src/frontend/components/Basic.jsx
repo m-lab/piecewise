@@ -192,23 +192,24 @@ export default function Basic(props) {
   }
 
   function getNdtServer() {
-    var xhr = new XMLHttpRequest(),
-      mlabNsUrl = 'https://mlab-ns.appspot.com/ndt_ssl?format=json';
+    if (!ndtServer) {
+      const xhr = new XMLHttpRequest(),
+        mlabNsUrl = 'https://mlab-ns.appspot.com/ndt_ssl?format=json';
 
-    xhr.open('GET', mlabNsUrl, true);
-    xhr.send();
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          setNdtServer(JSON.parse(xhr.responseText).fqdn);
-          setNdtServerIp(JSON.parse(xhr.responseText).ip);
-          console.log('Using M-Lab Server ' + ndtServer);
-        } else {
-          console.log('M-Lab NS lookup failed.');
-          window.alert('M-Lab NS lookup failed. Please refresh the page.');
+      xhr.open('GET', mlabNsUrl, true);
+      xhr.send();
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            setNdtServer(JSON.parse(xhr.responseText).fqdn);
+            setNdtServerIp(JSON.parse(xhr.responseText).ip);
+          } else {
+            console.log('M-Lab NS lookup failed.');
+            window.alert('M-Lab NS lookup failed. Please refresh the page.');
+          }
         }
-      }
-    };
+      };
+    }
   }
 
   function runTests(event) {
@@ -226,7 +227,7 @@ export default function Basic(props) {
 
   React.useEffect(() => {
     getNdtServer();
-    console.log(ndtServer);
+    console.log('Using M-Lab Server ' + ndtServer);
   }, [ndtServer]);
 
   return (
