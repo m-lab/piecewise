@@ -16,7 +16,7 @@
     "url": "git+https://github.com/mlab/piecewise.git"
   },
   "bugs": {
-    "url": "https://github.com/mlab/piecewise.git"
+    "url": "https://github.com/mlab/piecewise/issues"
   },
   "directories": {
     "doc": "docs"
@@ -35,11 +35,13 @@
     "doc": "jsdoc -d ./dist/doc/ -r ./src/backend ./src/frontend ./src/worker",
     "build:imported-components": "imported-components src/frontend src/frontend/imported.js",
     "build:backend": "cross-env BABEL_ENV=server parcel build src/backend/index.js -d dist/backend --public-url / --target=node",
-    "build:frontend": "cross-env BABEL_ENV=client parcel build src/frontend/index.html -d dist/frontend --public-url /static",
-    "build": "rimraf dist && npm run build:backend && npm run build:imported-components && npm run build:frontend && rimraf dist/imported.js",
-    "build:backend:dev": "cross-env BABEL_ENV=server parcel build src/backend/index.js -d dist/backend --public-url / --target=node --no-minify --no-cache",
-    "build:frontend:dev": "cross-env BABEL_ENV=client parcel build src/frontend/index.html dist/imported.js -d dist/frontend --public-url /static --no-minify --no-cache",
-    "build:dev": "concurrently -p \"[{name}]\" -n \"BACKEND,FRONTEND\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"npm run build:backend:dev\" \"npm run build:frontend:dev\"",
+    "build:frontend": "cross-env BABEL_ENV=client parcel build src/frontend/index.html src/frontend/imported.js -d dist/frontend --public-url /static",
+    "build": "rimraf dist && npm run build:backend && npm run build:imported-components && npm run build:frontend && rimraf src/frontend/imported.js",
+    "build:backend:dev": "cross-env NODE_ENV=development BABEL_ENV=server parcel build src/backend/index.js -d dist/backend --public-url / --target=node --no-minify --no-cache",
+    "build:frontend:dev": "cross-env NODE_ENV=development BABEL_ENV=client parcel build src/frontend/index.html src/frontend/imported.js -d dist/frontend --public-url /static --no-minify --no-cache",
+    "build:dev": "rimraf dist && npm run build:backend:dev && npm run build:imported-components && npm run build:frontend:dev && rimraf src/frontend/imported.js",
+    "db:migrations": "knex --esm migrate:latest",
+    "db:seeds": "knex --esm seed:run",
     "start:backend": "node dist/backend",
     "start": "npm run start:backend",
     "start:dev": "nodemon -e js,jsx,html --ignore dist --ignore src/frontend/imported.js --exec 'npm run build:dev && npm run start'"
@@ -123,6 +125,7 @@
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-react-jsx": "^7.10.1",
     "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
@@ -169,41 +172,16 @@
   },
   "babel": {
     "plugins": [
-      [
-        "react-imported-component/babel"
-      ]
+      "react-imported-component/babel"
+    ],
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
     ],
     "ignore": [
       "./node_modules/mapbox-gl"
     ],
     "env": {
-      "production": {
-        "presets": [
-          [
-            "env",
-            {
-              "targets": {
-                "browsers": "last 2 Firefox versions, last 2 Chrome versions, last 2 Edge versions, last 2 Safari versions"
-              }
-            }
-          ]
-        ]
-      },
-      "test": {
-        "presets": [
-          [
-            "@babel/preset-env"
-          ],
-          [
-            "@babel/preset-react"
-          ]
-        ],
-        "plugins": [
-          [
-            "@babel/plugin-syntax-dynamic-import"
-          ]
-        ]
-      },
       "server": {
         "plugins": [
           "react-imported-component/babel",
@@ -212,6 +190,7 @@
             "transform-inline-environment-variables",
             {
               "include": [
+                "NODE_ENV",
                 "npm_package_name",
                 "npm_package_version",
                 "npm_package_description"

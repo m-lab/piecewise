@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 import moment from 'moment';
 import Joi from '@hapi/joi';
+import fetch from 'node-fetch';
 import { getLogger } from '../log.js';
 import { BadRequestError } from '../../common/errors.js';
 
@@ -142,6 +143,32 @@ export default function controller(submissions) {
       }
     } catch (err) {
       ctx.throw(400, `Failed to parse query: ${err}`);
+    }
+  });
+
+  router.get('/mlabns', async ctx => {
+    log.debug(`Proxying mlabns request (for testing purposes).`);
+    const mlabNsUrl = 'https://mlab-ns.appspot.com/ndt_ssl?format=json';
+    try {
+      const res = await fetch(mlabNsUrl);
+      log.debug('mlabns response: ', res);
+      log.debug('mlabns response status: ', res.status);
+
+      if (res.status === 200) {
+        const json = await res.json();
+        ctx.response.body = json;
+        ctx.response.status = 200;
+      } else {
+        ctx.response.body = {
+          status: 'error',
+          message: `M-Lab NS lookup failed with status ${res.status}: ${
+            res.statusText
+          }`,
+        };
+        ctx.response.status = 502;
+      }
+    } catch (err) {
+      ctx.throw(500, `Failed to parse query: ${err}`);
     }
   });
 

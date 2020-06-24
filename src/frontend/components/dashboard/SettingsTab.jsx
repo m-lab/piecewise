@@ -75,7 +75,7 @@ export default function SettingsTab() {
     console.debug('formData: ', formData);
     let status;
     const json = JSON.stringify(formData);
-    fetch('/api/v1/settigns', {
+    fetch('/api/v1/settings', {
       method: 'POST',
       body: json,
     })
@@ -102,7 +102,7 @@ export default function SettingsTab() {
 
   const downloadSettings = () => {
     let status;
-    return fetch('/api/v1/forms/latest', {
+    return fetch('/api/v1/settings', {
       method: 'GET',
     })
       .then(response => {

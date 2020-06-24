@@ -1,6 +1,11 @@
 // base imports
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 // material ui imports
@@ -8,7 +13,8 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 
 // module imports
-import FormRenderer from './utils/FormRenderer.jsx'
+import FormRenderer from './utils/FormRenderer.jsx';
+import NdtWidget from './utils/NdtWidget.jsx';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -19,10 +25,19 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(3),
     },
   },
-}))
+}));
 
-export default function Survey() {
+export default function Survey(props) {
   const classes = useStyles();
+  const [openModal, setOpenModal] = React.useState(false);
+  const [modalText, setModalText] = React.useState('');
+  const [modalDebug, setModalDebug] = React.useState('');
+
+  const processError = errorMessage => {
+    let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
+    let debug = JSON.stringify(errorMessage);
+    return [text, debug];
+  };
 
   const uploadFormData = formData => {
     let status;
@@ -83,11 +98,24 @@ export default function Survey() {
   return (
     <Container maxWidth="lg">
       <Paper className={classes.paper} elevation={0}>
+        <NdtWidget />
         <FormRenderer
           onSave={ev => uploadFormData(ev.formData)}
           onLoad={downloadForm}
         />
       </Paper>
+      <Dialog open={openModal} aria-describedby="alert-dialog-description">
+        <DialogContent>
+          <Box p={2}>
+            <DialogContentText id="alert-dialog-description">
+              {modalText}
+            </DialogContentText>
+            <Typography className={classes.debug} component="div">
+              {modalDebug}
+            </Typography>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </Container>
-  )
+  );
 }

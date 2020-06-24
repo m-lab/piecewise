@@ -2,42 +2,48 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 const FormRenderer = props => {
-  const [ form, setForm ] = React.useState(null);
+  const { onSave, onLoad } = props;
+  const [form, setForm] = React.useState(null);
   const formContainer = React.useRef(null);
 
   useEffect(() => {
     const initializeForm = ({ setForm, formContainer }) => {
+      let renderer;
       import('formeo')
         .then(({ FormeoRenderer }) => {
           const options = {
             renderContainer: formContainer.current,
-            style: 'https://draggable.github.io/formeo/assets/css/formeo.min.css',
+            style:
+              'https://draggable.github.io/formeo/assets/css/formeo.min.css',
             debug: true,
           };
-          if (props.onSave) {
-            options.events = { onSave: props.onSave };
+          if (onSave) {
+            options.events = { onSave: onSave };
           }
-          const renderer = new FormeoRenderer(options);
+          renderer = new FormeoRenderer(options);
           console.log('render: ', renderer);
           setForm(renderer);
-          props.onLoad().then(res => {
-            console.log('res.data: ', res.data);
-            renderer.render(res.data);
-            console.log('rendered!');
-            return;
-          });
+          return onLoad();
         })
+        .then(res => renderer.render(res.data))
         .catch(err => {
           console.error('Error: ', err);
         });
-    }
+    };
 
-      if (!form) { initializeForm({ setForm, formContainer }) };
+    if (!form) {
+      initializeForm({ setForm, formContainer });
+    }
   }, []);
 
   return (
     <div>
-      <form className="formeo-renderer" ref={el => (formContainer.current = el)} />
+      <form
+        className="formeo-renderer"
+        ref={el => (formContainer.current = el)}
+      >
+        <input type="submit" value="Submit" />
+      </form>
     </div>
   );
 };
