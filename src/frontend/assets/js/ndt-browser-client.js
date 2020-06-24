@@ -4,14 +4,9 @@
  */
 
 /*jslint bitwise: true, browser: true, nomen: true, vars: true, indent: 2 */
-/*global Uint8Array, WebSocket */
 
 'use strict';
 
-import $ from 'jquery';
-
-const modal = document.getElementsByClassName('modal')[0];
-const results = document.getElementById('results');
 const NDTjs = function(
   server,
   serverPort,
