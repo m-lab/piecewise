@@ -7,13 +7,14 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { ReactFormGenerator } from 'react-form-builder2';
 
 // material ui imports
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 
 // module imports
-import FormRenderer from './utils/FormRenderer.jsx';
+//import FormRenderer from './utils/FormRenderer.jsx';
 import NdtWidget from './utils/NdtWidget.jsx';
 
 const useStyles = makeStyles(theme => ({
@@ -32,6 +33,7 @@ export default function Survey(props) {
   const [openModal, setOpenModal] = React.useState(false);
   const [modalText, setModalText] = React.useState('');
   const [modalDebug, setModalDebug] = React.useState('');
+  const [form, setForm] = React.useState(null);
 
   const processError = errorMessage => {
     let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
@@ -40,7 +42,9 @@ export default function Survey(props) {
   };
 
   const uploadFormData = formData => {
+    //formData.preventDefault();
     let status;
+    console.log('***UPLOAD FORM DATA***: ', formData);
     const json = JSON.stringify(formData);
     fetch('/api/v1/submissions', {
       method: 'POST',
@@ -95,27 +99,42 @@ export default function Survey(props) {
       });
   };
 
-  return (
-    <Container maxWidth="lg">
-      <Paper className={classes.paper} elevation={0}>
-        <NdtWidget />
-        <FormRenderer
-          onSave={ev => uploadFormData(ev.formData)}
-          onLoad={downloadForm}
-        />
-      </Paper>
-      <Dialog open={openModal} aria-describedby="alert-dialog-description">
-        <DialogContent>
-          <Box p={2}>
-            <DialogContentText id="alert-dialog-description">
-              {modalText}
-            </DialogContentText>
-            <Typography className={classes.debug} component="div">
-              {modalDebug}
-            </Typography>
-          </Box>
-        </DialogContent>
-      </Dialog>
-    </Container>
-  );
+  useEffect(() => {
+    downloadForm().then(data => {
+      console.log('DOWNLOADFORM DATA:', data);
+      setForm(data.data);
+    });
+  }, []);
+
+  if (!form) {
+    return <div>Loading...</div>;
+  } else {
+    return (
+      <Container maxWidth="lg">
+        <Paper className={classes.paper} elevation={0}>
+          {/*<NdtWidget /> */}
+          {/* <FormRenderer onSave={uploadFormData} onLoad={downloadForm} /> */}
+          <ReactFormGenerator
+            answer_data={{}}
+            form_method="POST"
+            form_action="/api/v1/submissions"
+            onSubmit={uploadFormData}
+            data={form.task_data}
+          />
+        </Paper>
+        <Dialog open={openModal} aria-describedby="alert-dialog-description">
+          <DialogContent>
+            <Box p={2}>
+              <DialogContentText id="alert-dialog-description">
+                {modalText}
+              </DialogContentText>
+              <Typography className={classes.debug} component="div">
+                {modalDebug}
+              </Typography>
+            </Box>
+          </DialogContent>
+        </Dialog>
+      </Container>
+    );
+  }
 }

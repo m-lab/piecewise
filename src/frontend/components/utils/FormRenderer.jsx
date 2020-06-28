@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import FormControl from '@material-ui/core/FormControl';
 import PropTypes from 'prop-types';
 
 const FormRenderer = props => {
@@ -17,9 +18,6 @@ const FormRenderer = props => {
               'https://draggable.github.io/formeo/assets/css/formeo.min.css',
             debug: true,
           };
-          if (onSave) {
-            options.events = { onSave: onSave };
-          }
           renderer = new FormeoRenderer(options);
           console.log('render: ', renderer);
           setForm(renderer);
@@ -39,11 +37,13 @@ const FormRenderer = props => {
   return (
     <div>
       <form
+        onSubmit={ev => {
+          ev.preventDefault();
+          onSave(ev.target);
+        }}
         className="formeo-renderer"
         ref={el => (formContainer.current = el)}
-      >
-        <input type="submit" value="Submit" />
-      </form>
+      />
     </div>
   );
 };

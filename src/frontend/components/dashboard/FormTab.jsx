@@ -11,7 +11,8 @@ import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import FormEditor from '../utils/FormEditor.jsx';
+//import FormEditor from '../utils/FormEditor.jsx';
+import { ReactFormBuilder } from 'react-form-builder2';
 
 const drawerWidth = 240;
 
@@ -100,8 +101,12 @@ export default function FormTab() {
         return response.json();
       })
       .then(data => {
-        if (status === 200 || status === 201 || status === 404) {
-          return data;
+        if (status === 200 || status === 201) {
+          console.log('***DOWNLOADFORM***:', data.data);
+          return data.data.task_data;
+        } else if (status === 404) {
+          console.info('No existing forms found.');
+          return [];
         } else {
           let [text, debug] = processError(data);
           setModalText(text);
@@ -122,10 +127,11 @@ export default function FormTab() {
         {/* Chart */}
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <FormEditor
+            {/*<FormEditor
               onSave={ev => uploadForm(ev.formData)}
               onLoad={downloadForm}
-            />
+            />*/}
+            <ReactFormBuilder onPost={uploadForm} onLoad={downloadForm} />
           </Grid>
         </Grid>
       </Container>

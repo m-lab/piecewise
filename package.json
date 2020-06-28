@@ -113,6 +113,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-form-builder2": "^0.5.8",
     "react-helmet-async": "^1.0.5",
     "react-imported-component": "^6.2.1",
     "react-prerendered-component": "^1.2.4",
