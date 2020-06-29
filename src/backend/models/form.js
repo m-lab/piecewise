@@ -7,11 +7,6 @@ export default class FormManager {
   }
 
   async create(form) {
-    try {
-      await validate(form);
-    } catch (err) {
-      throw new UnprocessableError('Failed to create form: ', err);
-    }
     return this._db
       .table('forms')
       .insert({ data: form })
@@ -20,15 +15,29 @@ export default class FormManager {
 
   async update(id, form) {
     try {
-      await validate(form);
+      let existing = false;
+      await this._db.transaction(async trx => {
+        existing = await trx('forms')
+          .select('*')
+          .where({ id: parseInt(id) });
+
+        if (Array.isArray(existing) && existing.length > 0) {
+          await trx('forms')
+            .update(form)
+            .where({ id: parseInt(id) });
+          existing = true;
+        } else {
+          await trx('forms').insert({ ...form, id: id });
+          existing = false;
+        }
+      });
+      return existing;
     } catch (err) {
-      throw new UnprocessableError('Failed to update form: ', err);
+      throw new UnprocessableError(
+        `Failed to update form with ID ${id}: `,
+        err,
+      );
     }
-    return this._db
-      .table('forms')
-      .update(form)
-      .where({ id: parseInt(id) })
-      .returning('*');
   }
 
   async delete(id) {

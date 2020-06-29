@@ -1,18 +1,20 @@
 // base imports
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useEffect } from 'react';
+//import { makeStyles } from '@material-ui/core/styles';
 
 // material ui imports
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+//import Box from '@material-ui/core/Box';
+//import Container from '@material-ui/core/Container';
+//import Dialog from '@material-ui/core/Dialog';
+//import DialogContent from '@material-ui/core/DialogContent';
+//import DialogContentText from '@material-ui/core/DialogContentText';
+//import FormControl from '@material-ui/core/FormControl';
+//import TextField from '@material-ui/core/TextField';
+//import Typography from '@material-ui/core/Typography';
 
-const drawerWidth = 240;
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
 
 const defaultTitle = 'Piecewise';
 const defaultHeader = 'Welcome to Piecewise!';
@@ -20,22 +22,7 @@ const defaultFooter = 'Thank you for taking a survey!';
 const defaultColorOne = '#333333';
 const defaultColorTwo = '#aaaaaa';
 
-const useStyles = makeStyles(theme => ({
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginTop: '-15px',
-  },
-  formField: {
-    marginTop: '15px',
-  },
-}));
-
 export default function SettingsTab() {
-  const classes = useStyles();
-  const [openModal, setOpenModal] = React.useState(false);
-  const [modalText, setModalText] = React.useState('');
-  const [modalDebug, setModalDebug] = React.useState('');
   const [title, setTitle] = React.useState(defaultTitle);
   const [header, setHeader] = React.useState(defaultHeader);
   const [footer, setFooter] = React.useState(defaultFooter);
@@ -54,6 +41,9 @@ export default function SettingsTab() {
     const json = JSON.stringify(formData);
     fetch('/api/v1/settings', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: json,
     })
       .then(response => {
@@ -64,10 +54,10 @@ export default function SettingsTab() {
         if (status === 200 || status === 201) {
           return data;
         } else {
-          let [text, debug] = processError(data);
-          setModalText(text);
-          setModalDebug(debug);
-          setOpenModal(true);
+          //let [text, debug] = processError(data);
+          //setModalText(text);
+          //setModalDebug(debug);
+          //setOpenModal(true);
           throw new Error(`Error in response from server.`);
         }
       })
@@ -90,10 +80,10 @@ export default function SettingsTab() {
         if (status === 200 || status === 201) {
           return data;
         } else {
-          let [text, debug] = processError(data);
-          setModalText(text);
-          setModalDebug(debug);
-          setOpenModal(true);
+          //let [text, debug] = processError(data);
+          //setModalText(text);
+          //setModalDebug(debug);
+          //setOpenModal(true);
           throw new Error(`Error in response from server.`);
         }
       })
@@ -103,47 +93,51 @@ export default function SettingsTab() {
       });
   };
 
+  useEffect(() => {
+    downloadSettings()
+      .then(data => {
+        setTitle(data.data.title);
+        setHeader(data.data.header);
+        setFooter(data.data.footer);
+        return;
+      })
+      .catch(error => {
+        console.error('error:', error);
+      });
+  }, []);
+
   return (
     <Container>
-      <Container>
-        {/* Chart */}
-        <Box mt={2} mb={6}>
-          <form className={classes.form} noValidate autoComplete="off">
-            <TextField
-              id="title"
-              className={classes.formField}
-              label="Title"
-              defaultValue={title}
-            />
-            <TextField
-              id="welcome"
-              className={classes.formField}
-              label="Welcome Text"
-              defaultValue={header}
-              multiline={true}
-            />
-            <TextField
-              id="thanks"
-              className={classes.formField}
-              label="Thank You Text"
-              defaultValue={footer}
-              multiline={true}
-            />
-          </form>
-        </Box>
-      </Container>
-      <Dialog open={openModal} aria-describedby="alert-dialog-description">
-        <DialogContent>
-          <Box p={2}>
-            <DialogContentText id="alert-dialog-description">
-              {modalText}
-            </DialogContentText>
-            <Typography className={classes.debug} component="div">
-              {modalDebug}
-            </Typography>
-          </Box>
-        </DialogContent>
-      </Dialog>
+      <Form onSubmit={uploadSettings}>
+        <Form.Group>
+          <Form.Label>Site Title</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="Enter a title for the site"
+            defaultValue={title}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Welcome Message</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="Welcome text shown when first visiting te site"
+            defaultValue={header}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Thank You Message</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="Text shown after taking the survey"
+            defaultValue={footer}
+          />
+        </Form.Group>
+        <Button type="submit">Save</Button>
+      </Form>
     </Container>
   );
 }

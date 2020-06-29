@@ -3,7 +3,9 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { lazy, LazyBoundary } from 'react-imported-component';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
+import { ErrorBoundary } from 'react-error-boundary';
 import 'react-form-builder2/dist/app.css';
+import Error from './Error.jsx';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -23,17 +25,19 @@ export default function App() {
   const classes = useStyles();
   return (
     <Container className={classes.container}>
-      <Switch>
-        <LazyBoundary fallback={Loading}>
-          <Route exact path="/" render={props => <Basic {...props} />} />
-          <Route path="/login" render={props => <Login {...props} />} />
-          <Route path="/admin" render={props => <Dashboard {...props} />} />
-          <Route path="/thankyou" render={props => <ThankYou {...props} />} />
-          <Route path="/map" render={props => <Map {...props} />} />
-          <Route path="/survey" render={props => <Survey {...props} />} />
-        </LazyBoundary>
-        <Redirect to="/" />
-      </Switch>
+      <ErrorBoundary FallbackComponent={Error}>
+        <Switch>
+          <LazyBoundary fallback={Loading}>
+            <Route exact path="/" render={props => <Basic {...props} />} />
+            <Route path="/login" render={props => <Login {...props} />} />
+            <Route path="/admin" render={props => <Dashboard {...props} />} />
+            <Route path="/thankyou" render={props => <ThankYou {...props} />} />
+            <Route path="/map" render={props => <Map {...props} />} />
+            <Route path="/survey" render={props => <Survey {...props} />} />
+          </LazyBoundary>
+          <Redirect to="/" />
+        </Switch>
+      </ErrorBoundary>
     </Container>
   );
 }

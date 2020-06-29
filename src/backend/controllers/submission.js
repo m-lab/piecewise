@@ -2,8 +2,12 @@ import Router from '@koa/router';
 import moment from 'moment';
 import Joi from '@hapi/joi';
 import fetch from 'node-fetch';
-import { getLogger } from '../log.js';
 import { BadRequestError } from '../../common/errors.js';
+import {
+  validateCreation,
+  validateUpdate,
+} from '../../common/schemas/submission.js';
+import { getLogger } from '../log.js';
 
 const log = getLogger('backend:controllers:submission');
 
@@ -28,123 +32,161 @@ async function validate_query(query) {
   }
 }
 
-export default function controller(submissions) {
+export default function controller(submissions, thisUser) {
   const router = new Router();
 
-  router.post('/submissions', async ctx => {
-    log.debug('Adding new submission.');
-    let submission;
-    try {
-      submission = await submissions.create(ctx.request.body);
+  router.post(
+    '/submissions',
+    thisUser.can('access private pages'),
+    async ctx => {
+      log.debug('Adding new submission.');
+      let submission;
+      try {
+        const data = await validateCreation(ctx.request.body.data);
+        submission = await submissions.create(data);
 
-      // workaround for sqlite
-      if (Number.isInteger(submission)) {
-        submission = await submissions.findById(submission);
-      }
-    } catch (err) {
-      ctx.throw(400, `Failed to parse submission schema: ${err}`);
-    }
-    ctx.response.body = { status: 'success', data: submission };
-    ctx.response.status = 201;
-  });
-
-  router.get('/submissions', async ctx => {
-    log.debug(`Retrieving submissions.`);
-    let res;
-    try {
-      const query = await validate_query(ctx.query);
-      let from, to;
-      if (query.from) {
-        const timestamp = moment(query.from);
-        if (timestamp.isValid()) {
-          ctx.throw(400, 'Invalid timestamp value.');
+        // workaround for sqlite
+        if (Number.isInteger(submission[0])) {
+          submission = await submissions.findById(submission[0]);
         }
-        from = timestamp.toISOString();
+      } catch (err) {
+        log.error('HTTP 400 Error: ', err);
+        ctx.throw(400, `Failed to parse submission schema: ${err}`);
       }
-      if (query.to) {
-        const timestamp = moment(query.to);
-        if (timestamp.isValid()) {
-          ctx.throw(400, 'Invalid timestamp value.');
-        }
-        to = timestamp.toISOString();
-      }
-      res = await submissions.find({
-        start: query.start,
-        end: query.end,
-        asc: query.asc,
-        from: from,
-        to: to,
-      });
       ctx.response.body = {
-        status: 'success',
-        data: res,
-        total: res.length,
+        statusCode: 201,
+        status: 'created',
+        data: submission,
       };
-      ctx.response.status = 200;
-    } catch (err) {
-      ctx.throw(400, `Failed to parse query: ${err}`);
-    }
-  });
+      ctx.response.status = 201;
+    },
+  );
 
-  router.get('/submissions/:id', async ctx => {
-    log.debug(`Retrieving submission ${ctx.params.id}.`);
-    let submission;
-    try {
-      submission = submissions.findById(ctx.params.id);
+  router.get(
+    '/submissions',
+    thisUser.can('access private pages'),
+    async ctx => {
+      log.debug(`Retrieving submissions.`);
+      let res;
+      try {
+        const query = await validate_query(ctx.query);
+        let from, to;
+        if (query.from) {
+          const timestamp = moment(query.from);
+          if (timestamp.isValid()) {
+            ctx.throw(400, 'Invalid timestamp value.');
+          }
+          from = timestamp.toISOString();
+        }
+        if (query.to) {
+          const timestamp = moment(query.to);
+          if (timestamp.isValid()) {
+            ctx.throw(400, 'Invalid timestamp value.');
+          }
+          to = timestamp.toISOString();
+        }
+        res = await submissions.find({
+          start: query.start,
+          end: query.end,
+          asc: query.asc,
+          from: from,
+          to: to,
+        });
+        ctx.response.body = {
+          statusCode: 200,
+          status: 'ok',
+          data: res,
+        };
+        ctx.response.status = 200;
+      } catch (err) {
+        ctx.throw(400, `Failed to parse query: ${err}`);
+      }
+    },
+  );
+
+  router.get(
+    '/submissions/:id',
+    thisUser.can('access private pages'),
+    async ctx => {
+      log.debug(`Retrieving submission ${ctx.params.id}.`);
+      let submission;
+      try {
+        submission = await submissions.findById(ctx.params.id);
+      } catch (err) {
+        log.error('HTTP 400 Error: ', err);
+        ctx.throw(400, `Failed to parse query: ${err}`);
+      }
+
       if (submission.length) {
-        ctx.response.body = { status: 'success', data: submission };
+        ctx.response.body = { statusCode: 200, status: 'ok', data: submission };
         ctx.response.status = 200;
       } else {
-        ctx.response.body = {
-          status: 'error',
-          message: `That submission with ID ${ctx.params.id} does not exist.`,
-        };
-        ctx.response.status = 404;
+        log.error(
+          `HTTP 404 Error: That device with ID ${
+            ctx.params.id
+          } does not exist.`,
+        );
+        ctx.throw(404, `That device with ID ${ctx.params.id} does not exist.`);
       }
-    } catch (err) {
-      ctx.throw(400, `Failed to parse query: ${err}`);
-    }
-  });
+    },
+  );
 
-  router.put('/submissions/:id', async ctx => {
-    log.debug(`Updating submission ${ctx.params.id}.`);
-    let submission;
-    try {
-      submission = await submissions.update(ctx.params.id, ctx.request.body);
-      if (submission.length) {
-        ctx.response.body = { status: 'success', data: submission };
-        ctx.response.status = 200;
+  router.put(
+    '/submissions/:id',
+    thisUser.can('access private pages'),
+    async ctx => {
+      log.debug(`Updating submission ${ctx.params.id}.`);
+      let updated;
+      try {
+        const data = await validateUpdate(ctx.request.body.data);
+        updated = await submissions.update(ctx.params.id, data);
+      } catch (err) {
+        log.error('HTTP 400 Error: ', err);
+        ctx.throw(400, `Failed to parse query: ${err}`);
+      }
+
+      if (updated) {
+        ctx.response.status = 204;
       } else {
         ctx.response.body = {
-          status: 'error',
-          message: `That submission with ID ${ctx.params.id} does not exist.`,
+          statusCode: 201,
+          status: 'created',
+          data: { id: ctx.params.id },
         };
-        ctx.response.status = 404;
+        ctx.response.status = 201;
       }
-    } catch (err) {
-      ctx.throw(400, `Failed to parse query: ${err}`);
-    }
-  });
+    },
+  );
 
-  router.delete('/submissions/:id', async ctx => {
-    log.debug(`Deleting submission ${ctx.params.id}.`);
-    let submission;
-    try {
-      submission = submissions.delete(ctx.params.id);
-      if (submission.length) {
-        ctx.response.body = { status: 'success', data: submission };
-        ctx.response.status = 200;
-      } else {
-        ctx.response.body = {
-          status: 'error',
-          message: `That submission with ID ${ctx.params.id} does not exist.`,
-        };
-        ctx.response.status = 404;
+  router.delete(
+    '/submissions/:id',
+    thisUser.can('access private pages'),
+    async ctx => {
+      log.debug(`Deleting submission ${ctx.params.id}.`);
+      let submission;
+
+      try {
+        submission = await submissions.delete(ctx.params.id);
+      } catch (err) {
+        log.error('HTTP 400 Error: ', err);
+        ctx.throw(400, `Failed to parse query: ${err}`);
       }
-    } catch (err) {
-      ctx.throw(400, `Failed to parse query: ${err}`);
-    }
-  });
+
+      if (submission > 0) {
+        ctx.response.status = 204;
+      } else {
+        log.error(
+          `HTTP 404 Error: That submission with ID ${
+            ctx.params.id
+          } does not exist.`,
+        );
+        ctx.throw(
+          404,
+          `That submission with ID ${ctx.params.id} does not exist.`,
+        );
+      }
+    },
+  );
 
   router.get('/mlabns', async ctx => {
     log.debug(`Proxying mlabns request (for testing purposes).`);

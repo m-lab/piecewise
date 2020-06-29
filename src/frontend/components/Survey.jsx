@@ -1,35 +1,39 @@
 // base imports
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Box from '@material-ui/core/Box';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+//import Box from '@material-ui/core/Box';
+//import Dialog from '@material-ui/core/Dialog';
+//import DialogContent from '@material-ui/core/DialogContent';
+//import DialogContentText from '@material-ui/core/DialogContentText';
+//import Typography from '@material-ui/core/Typography';
+//import { makeStyles } from '@material-ui/core/styles';
 import { ReactFormGenerator } from 'react-form-builder2';
 
 // material ui imports
-import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
+//import Container from '@material-ui/core/Container';
+//import Paper from '@material-ui/core/Paper';
+
+// Bootstrap import
+import Alert from 'react-bootstrap/Alert';
+import Container from 'react-bootstrap/Container';
 
 // module imports
 //import FormRenderer from './utils/FormRenderer.jsx';
 import NdtWidget from './utils/NdtWidget.jsx';
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    padding: theme.spacing(4),
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      padding: theme.spacing(3),
-    },
-  },
-}));
+//const useStyles = makeStyles(theme => ({
+//  paper: {
+//    padding: theme.spacing(4),
+//    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+//      marginTop: theme.spacing(6),
+//      marginBottom: theme.spacing(6),
+//      padding: theme.spacing(3),
+//    },
+//  },
+//}));
 
 export default function Survey(props) {
-  const classes = useStyles();
+  //const classes = useStyles();
   const [openModal, setOpenModal] = React.useState(false);
   const [modalText, setModalText] = React.useState('');
   const [modalDebug, setModalDebug] = React.useState('');
@@ -45,10 +49,12 @@ export default function Survey(props) {
     //formData.preventDefault();
     let status;
     console.log('***UPLOAD FORM DATA***: ', formData);
-    const json = JSON.stringify(formData);
     fetch('/api/v1/submissions', {
       method: 'POST',
-      body: json,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: { data: formData } }),
     })
       .then(response => {
         status = response.status;
@@ -100,40 +106,30 @@ export default function Survey(props) {
   };
 
   useEffect(() => {
-    downloadForm().then(data => {
-      console.log('DOWNLOADFORM DATA:', data);
-      setForm(data.data);
-    });
+    downloadForm()
+      .then(data => {
+        setForm(data.data);
+        return;
+      })
+      .catch(error => {
+        console.error('error:', error);
+      });
   }, []);
 
   if (!form) {
     return <div>Loading...</div>;
   } else {
     return (
-      <Container maxWidth="lg">
-        <Paper className={classes.paper} elevation={0}>
-          {/*<NdtWidget /> */}
-          {/* <FormRenderer onSave={uploadFormData} onLoad={downloadForm} /> */}
-          <ReactFormGenerator
-            answer_data={{}}
-            form_method="POST"
-            form_action="/api/v1/submissions"
-            onSubmit={uploadFormData}
-            data={form.task_data}
-          />
-        </Paper>
-        <Dialog open={openModal} aria-describedby="alert-dialog-description">
-          <DialogContent>
-            <Box p={2}>
-              <DialogContentText id="alert-dialog-description">
-                {modalText}
-              </DialogContentText>
-              <Typography className={classes.debug} component="div">
-                {modalDebug}
-              </Typography>
-            </Box>
-          </DialogContent>
-        </Dialog>
+      <Container>
+        {/*<NdtWidget /> */}
+        {/* <FormRenderer onSave={uploadFormData} onLoad={downloadForm} /> */}
+        <ReactFormGenerator
+          answer_data={{}}
+          form_method="POST"
+          form_action="/api/v1/submissions"
+          onSubmit={uploadFormData}
+          data={form.task_data}
+        />
       </Container>
     );
   }

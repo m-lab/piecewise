@@ -12,6 +12,7 @@ import passport from 'koa-passport';
 import koa404handler from 'koa-404-handler';
 import errorHandler from 'koa-better-error-handler';
 import db from './db.js';
+import authHandler from './middleware/auth.js';
 import cloudflareAccess from './middleware/cloudflare.js';
 //import ssr from './middleware/ssr.js';
 import AuthController from './controllers/auth.js';
@@ -42,15 +43,19 @@ export default function configServer(config) {
 
   const log = log4js.getLogger('backend:server');
 
+  // Setup our authorization middleware
+  const authz = authHandler();
+  server.use(authz.middleware());
+
   // Setup our API handlers
   const userModel = new Users();
   const auth = AuthController(userModel);
   const formModel = new Forms(db);
-  const forms = new FormController(formModel);
+  const forms = new FormController(formModel, authz);
   const settingsModel = new Settings(db);
-  const settings = new SettingsController(settingsModel);
+  const settings = new SettingsController(settingsModel, authz);
   const subModel = new Submissions(db);
-  const submissions = new SubController(subModel);
+  const submissions = new SubController(subModel, authz);
   const apiV1Router = compose([
     auth.routes(),
     auth.allowedMethods(),

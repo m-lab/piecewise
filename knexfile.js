@@ -42,9 +42,7 @@ if (config.isDev) {
   console.log('Loading testing database settings...');
   env = {
     client: 'sqlite3',
-    connection: {
-      filename: './test.sqlite3',
-    },
+    connection: ':memory:',
     debug: true,
     migrations: _migrations_sqlite3,
     seeds: _seeds,

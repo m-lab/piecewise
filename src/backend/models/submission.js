@@ -1,6 +1,5 @@
 import knex from 'knex';
-import { validate } from '../../common/schemas/submission.js';
-import { UnprocessableError } from '../../common/errors.js';
+import { BadRequestError } from '../../common/errors.js';
 
 export default class SubManager {
   constructor(db) {
@@ -8,11 +7,6 @@ export default class SubManager {
   }
 
   async create(submission) {
-    try {
-      await validate(submission);
-    } catch (err) {
-      throw new UnprocessableError('Failed to create submission: ', err);
-    }
     return this._db
       .table('submissions')
       .insert(submission)
@@ -21,15 +15,29 @@ export default class SubManager {
 
   async update(id, submission) {
     try {
-      await validate(submission);
+      let existing = false;
+      await this._db.transaction(async trx => {
+        existing = await trx('submissions')
+          .select('*')
+          .where({ id: parseInt(id) });
+
+        if (Array.isArray(existing) && existing.length > 0) {
+          await trx('submissions')
+            .update(submission)
+            .where({ id: parseInt(id) });
+          existing = true;
+        } else {
+          await trx('submissions').insert({ ...submission, id: id });
+          existing = false;
+        }
+      });
+      return existing;
     } catch (err) {
-      throw new UnprocessableError('Failed to update submission: ', err);
+      throw new BadRequestError(
+        `Failed to update submission with ID ${id}: `,
+        err,
+      );
     }
-    return this._db
-      .table('submissions')
-      .update(submission)
-      .where({ id: parseInt(id) })
-      .returning('*');
   }
 
   async delete(id) {

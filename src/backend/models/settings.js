@@ -1,4 +1,3 @@
-import { validate } from '../../common/schemas/settings.js';
 import { UnprocessableError } from '../../common/errors.js';
 
 export default class FormManager {
@@ -7,11 +6,6 @@ export default class FormManager {
   }
 
   async create(setting) {
-    try {
-      await validate(setting);
-    } catch (err) {
-      throw new UnprocessableError('Failed to create setting: ', err);
-    }
     return this._db
       .table('settings')
       .insert(setting)
@@ -19,11 +13,6 @@ export default class FormManager {
   }
 
   async update(id, setting) {
-    try {
-      await validate(setting);
-    } catch (err) {
-      throw new UnprocessableError('Failed to update setting: ', err);
-    }
     return this._db
       .table('settings')
       .update(setting)

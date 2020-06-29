@@ -4,10 +4,7 @@ import ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { rehydrateMarks } from 'react-imported-component';
-import {
-  createGenerateClassName,
-  ThemeProvider,
-} from '@material-ui/core/styles';
+import { createGenerateClassName } from '@material-ui/core/styles';
 import { StylesProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from './theme.js';
@@ -29,14 +26,9 @@ export const start = ({ isProduction, document, module, hydrate }) => {
 
   const app = (
     <HelmetProvider>
-      <CssBaseline />
-      <StylesProvider generateClassName={generateClassName} injectFirst>
-        <ThemeProvider theme={theme}>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </ThemeProvider>
-      </StylesProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </HelmetProvider>
   );
 
