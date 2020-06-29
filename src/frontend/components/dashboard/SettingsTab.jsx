@@ -1,17 +1,7 @@
 // base imports
 import React, { useEffect } from 'react';
-//import { makeStyles } from '@material-ui/core/styles';
 
-// material ui imports
-//import Box from '@material-ui/core/Box';
-//import Container from '@material-ui/core/Container';
-//import Dialog from '@material-ui/core/Dialog';
-//import DialogContent from '@material-ui/core/DialogContent';
-//import DialogContentText from '@material-ui/core/DialogContentText';
-//import FormControl from '@material-ui/core/FormControl';
-//import TextField from '@material-ui/core/TextField';
-//import Typography from '@material-ui/core/Typography';
-
+// bootstrap imports
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -107,7 +97,7 @@ export default function SettingsTab() {
   }, []);
 
   return (
-    <Container>
+    <Container className={'mt-2'}>
       <Form onSubmit={uploadSettings}>
         <Form.Group>
           <Form.Label>Site Title</Form.Label>
@@ -122,7 +112,8 @@ export default function SettingsTab() {
           <Form.Label>Welcome Message</Form.Label>
           <Form.Control
             required
-            type="text"
+            as="textarea"
+            rows="3"
             placeholder="Welcome text shown when first visiting te site"
             defaultValue={header}
           />
@@ -131,7 +122,8 @@ export default function SettingsTab() {
           <Form.Label>Thank You Message</Form.Label>
           <Form.Control
             required
-            type="text"
+            as="textarea"
+            rows="3"
             placeholder="Text shown after taking the survey"
             defaultValue={footer}
           />

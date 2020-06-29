@@ -26,7 +26,7 @@ export default function NavTabs() {
           </Navbar>
         </Col>
       </Row>
-      <Row>
+      <Row className={'mt-4'}>
         <Col>
           <Tabs defaultActiveKey="form">
             <Tab eventKey="form" title="Form">
