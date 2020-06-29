@@ -1,5 +1,6 @@
 // base imports
 import React, { useEffect } from 'react';
+import { SketchPicker } from 'react-color';
 
 // bootstrap imports
 import Button from 'react-bootstrap/Button';
@@ -127,6 +128,14 @@ export default function SettingsTab() {
             placeholder="Text shown after taking the survey"
             defaultValue={footer}
           />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Choose a primary default color for the site:</Form.Label>
+          <SketchPicker />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Choose a secondary default color for the site:</Form.Label>
+          <SketchPicker />
         </Form.Group>
         <Button type="submit">Save</Button>
       </Form>

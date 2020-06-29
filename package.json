@@ -114,6 +114,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
+    "react-color": "^2.18.1",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^2.2.3",
     "react-form-builder2": "^0.5.8",
