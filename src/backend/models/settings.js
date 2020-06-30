@@ -12,11 +12,11 @@ export default class FormManager {
       .returning('*');
   }
 
-  async update(id, setting) {
+  async update(setting) {
     return this._db
       .table('settings')
       .update(setting)
-      .where({ id: parseInt(id) })
+      .where({ id: 1 })
       .returning('*');
   }
 

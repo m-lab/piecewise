@@ -1,6 +1,7 @@
 import Router from '@koa/router';
 import { validate } from '../../common/schemas/settings.js';
 import { getLogger } from '../log.js';
+import _ from 'lodash/core';
 
 const log = getLogger('backend:controllers:setting');
 
@@ -11,14 +12,14 @@ export default function controller(settings) {
     log.debug(`Retrieving settings.`);
     let setting;
     try {
-      setting = settings.find();
-      if (setting.length) {
+      setting = await settings.find();
+      if (!_.isEmpty(setting)) {
         ctx.response.body = { status: 'success', data: setting };
         ctx.response.status = 200;
       } else {
         ctx.response.body = {
           status: 'error',
-          message: `That setting with ID ${ctx.params.id} does not exist.`,
+          message: 'No settings found.',
         };
         ctx.response.status = 404;
       }
@@ -32,13 +33,13 @@ export default function controller(settings) {
     let setting;
     try {
       setting = await settings.update(ctx.request.body);
-      if (setting.length) {
+      if (!isNaN(setting)) {
         ctx.response.body = { status: 'success', data: setting };
         ctx.response.status = 200;
       } else {
         ctx.response.body = {
           status: 'error',
-          message: `That setting with ID ${ctx.params.id} does not exist.`,
+          message: `Unable to update setting.`,
         };
         ctx.response.status = 404;
       }

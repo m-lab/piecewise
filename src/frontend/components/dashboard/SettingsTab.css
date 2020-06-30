@@ -1,0 +1,15 @@
+.flex-item {
+  margin-top: 30px;
+}
+
+@media (min-width: 768px) {
+  .flex {
+    display: flex;
+    margin-left: -80px;
+  }
+
+  .flex-item {
+    margin-left: 80px;
+    margin-top: 0;
+  }
+}

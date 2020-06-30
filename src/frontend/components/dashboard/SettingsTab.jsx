@@ -1,24 +1,41 @@
 // base imports
 import React, { useEffect } from 'react';
 import { SketchPicker } from 'react-color';
+import _ from 'lodash/core';
 
 // bootstrap imports
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 
-const defaultTitle = 'Piecewise';
-const defaultHeader = 'Welcome to Piecewise!';
-const defaultFooter = 'Thank you for taking a survey!';
-const defaultColorOne = '#333333';
-const defaultColorTwo = '#aaaaaa';
+// custom styles
+import './SettingsTab.css';
+
+const defaultColorPrimary = '#333333';
+const defaultColorSecondary = '#007bff';
 
 export default function SettingsTab() {
-  const [title, setTitle] = React.useState(defaultTitle);
-  const [header, setHeader] = React.useState(defaultHeader);
-  const [footer, setFooter] = React.useState(defaultFooter);
-  const [colorOne, setColorOne] = React.useState(defaultColorOne);
-  const [colorTwo, setColorTwo] = React.useState(defaultColorTwo);
+  const [inputs, setInputs] = React.useState({});
+  const [colorPrimary, setColorPrimary] = React.useState(defaultColorPrimary);
+  const [colorSecondary, setColorSecondary] = React.useState(defaultColorSecondary);
+
+  // color picker
+  const handleChangeColorPrimary = color => {
+    setColorPrimary(color.hex);
+  };
+
+  const handleChangeColorSecondary = color => {
+    setColorSecondary(color.hex);
+  };
+
+  // other inputs
+  const handleInputChange = event => {
+    event.persist();
+    setInputs(inputs => ({
+      ...inputs,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
   const processError = errorMessage => {
     let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
@@ -26,12 +43,18 @@ export default function SettingsTab() {
     return [text, debug];
   };
 
-  const uploadSettings = formData => {
-    console.debug('formData: ', formData);
+  const uploadSettings = event => {
+    event.preventDefault();
     let status;
-    const json = JSON.stringify(formData);
+    const json = JSON.stringify({
+      title: inputs.title,
+      header: inputs.header,
+      footer: inputs.footer,
+      color_one: colorPrimary,
+      color_two: colorSecondary,
+    });
     fetch('/api/v1/settings', {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -43,13 +66,11 @@ export default function SettingsTab() {
       })
       .then(data => {
         if (status === 200 || status === 201) {
+          alert('Settings saved successfully.')
           return data;
         } else {
-          //let [text, debug] = processError(data);
-          //setModalText(text);
-          //setModalDebug(debug);
-          //setOpenModal(true);
-          throw new Error(`Error in response from server.`);
+          const error = processError(data);
+          throw new Error(`Error in response from server: ${error}`);
         }
       })
       .catch(error => {
@@ -67,15 +88,17 @@ export default function SettingsTab() {
         status = response.status;
         return response.json();
       })
-      .then(data => {
+      .then(result => {
         if (status === 200 || status === 201) {
-          return data;
+          if (!_.isEmpty(result.data)) {
+            setInputs(result.data);
+            setColorPrimary(result.data.color_one);
+            setColorSecondary(result.data.color_two);
+          }
+          return result.data;
         } else {
-          //let [text, debug] = processError(data);
-          //setModalText(text);
-          //setModalDebug(debug);
-          //setOpenModal(true);
-          throw new Error(`Error in response from server.`);
+          const error = processError(result);
+          throw new Error(`Error in response from server: ${error}`);
         }
       })
       .catch(error => {
@@ -87,9 +110,11 @@ export default function SettingsTab() {
   useEffect(() => {
     downloadSettings()
       .then(data => {
-        setTitle(data.data.title);
-        setHeader(data.data.header);
-        setFooter(data.data.footer);
+        if (!_.isEmpty(data)) {
+          setInputs(data);
+          setColorPrimary(data.color_one);
+          setColorSecondary(data.color_two);
+        }
         return;
       })
       .catch(error => {
@@ -105,8 +130,10 @@ export default function SettingsTab() {
           <Form.Control
             required
             type="text"
+            name="title"
             placeholder="Enter a title for the site"
-            defaultValue={title}
+            defaultValue={inputs.title || ''}
+            onChange={handleInputChange}
           />
         </Form.Group>
         <Form.Group>
@@ -115,8 +142,10 @@ export default function SettingsTab() {
             required
             as="textarea"
             rows="3"
+            name="header"
             placeholder="Welcome text shown when first visiting te site"
-            defaultValue={header}
+            defaultValue={inputs.header || ''}
+            onChange={handleInputChange}
           />
         </Form.Group>
         <Form.Group>
@@ -125,17 +154,31 @@ export default function SettingsTab() {
             required
             as="textarea"
             rows="3"
+            name="footer"
             placeholder="Text shown after taking the survey"
-            defaultValue={footer}
+            defaultValue={inputs.footer || ''}
+            onChange={handleInputChange}
           />
         </Form.Group>
-        <Form.Group>
-          <Form.Label>Choose a primary default color for the site:</Form.Label>
-          <SketchPicker />
-        </Form.Group>
-        <Form.Group>
-          <Form.Label>Choose a secondary default color for the site:</Form.Label>
-          <SketchPicker />
+        <Form.Group className={'flex'}>
+          <div className={'flex-item'}>
+            <Form.Label>
+              Choose a primary default color for the site:
+            </Form.Label>
+            <SketchPicker
+              color={colorPrimary}
+              onChangeComplete={handleChangeColorPrimary}
+            />
+          </div>
+          <div className={'flex-item'}>
+            <Form.Label>
+              Choose a secondary default color for the site:
+            </Form.Label>
+            <SketchPicker
+              color={colorSecondary}
+              onChangeComplete={handleChangeColorSecondary}
+            />
+          </div>
         </Form.Group>
         <Button type="submit">Save</Button>
       </Form>
