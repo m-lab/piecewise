@@ -267,6 +267,12 @@
       }
     },
     "rules": {
+      "node/no-extraneous-require": [
+        "error",
+        {
+          "allowModules": ["lodash"]
+        }
+      ],
       "node/shebang": [
         "error",
         {
