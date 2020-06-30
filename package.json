@@ -267,7 +267,7 @@
       }
     },
     "rules": {
-      "node/no-extraneous-require": [
+      "node/no-extraneous-import": [
         "error",
         {
           "allowModules": ["lodash"]
