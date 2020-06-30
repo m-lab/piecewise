@@ -1,4 +1,3 @@
-import { validate } from '../../common/schemas/form.js';
 import { UnprocessableError } from '../../common/errors.js';
 
 export default class FormManager {

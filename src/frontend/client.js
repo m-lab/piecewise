@@ -4,10 +4,6 @@ import ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { rehydrateMarks } from 'react-imported-component';
-import { createGenerateClassName } from '@material-ui/core/styles';
-import { StylesProvider } from '@material-ui/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import theme from './theme.js';
 import App from './components/App.jsx';
 
 export const hydrate = (app, element) => () => {
@@ -21,8 +17,6 @@ export const start = ({ isProduction, document, module, hydrate }) => {
   if (serverSideStyles) {
     serverSideStyles.parentElement.removeChild(serverSideStyles);
   }
-
-  const generateClassName = createGenerateClassName();
 
   const app = (
     <HelmetProvider>

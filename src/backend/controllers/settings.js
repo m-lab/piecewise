@@ -1,7 +1,5 @@
 import Router from '@koa/router';
-import { validate } from '../../common/schemas/settings.js';
 import { getLogger } from '../log.js';
-import _ from 'lodash/core';
 
 const log = getLogger('backend:controllers:setting');
 
