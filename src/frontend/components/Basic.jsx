@@ -85,6 +85,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Basic(props) {
   const classes = useStyles();
+  const [settings, setSettings] = React.useState({});
 
   // handle geolocation consent
   const [locationValue, setLocationValue] = React.useState('yes');
@@ -225,7 +226,45 @@ export default function Basic(props) {
     NDT_client.startTest();
   }
 
+  // fetch settings from API
+  const downloadSettings = () => {
+    let status;
+    return fetch('/api/v1/settings', {
+      method: 'GET',
+    })
+      .then(response => {
+        status = response.status;
+        return response.json();
+      })
+      .then(result => {
+        if (status === 200 || status === 201) {
+          if (!_.isEmpty(result.data)) {
+            setSettings(result.data);
+          }
+          return result.data;
+        } else {
+          const error = processError(result);
+          throw new Error(`Error in response from server: ${error}`);
+        }
+      })
+      .catch(error => {
+        console.error('error:', error);
+        throw Error(error.statusText);
+      });
+  };
+
   React.useEffect(() => {
+    downloadSettings()
+      .then(data => {
+        if (!_.isEmpty(data)) {
+          setInputs(data);
+        }
+        return;
+      })
+      .catch(error => {
+        console.error('error:', error);
+      });
+
     getNdtServer();
     console.log('Using M-Lab Server ' + ndtServer);
   }, [ndtServer]);
@@ -240,7 +279,7 @@ export default function Basic(props) {
             variant="h4"
             component="h1"
           >
-            Piecewise Broadband Speed Test
+            {settings.title || 'Broadband Testing'}
           </Typography>
           <Typography
             className={classes.sub1a}

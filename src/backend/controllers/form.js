@@ -103,7 +103,6 @@ export default function controller(forms, thisUser) {
     let form;
     try {
       form = await forms.findById(ctx.params.id);
-      console.log('***form***:', form);
       if (form && form.fields) {
         ctx.response.body = {
           statusCode: 200,

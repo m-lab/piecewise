@@ -1,3 +1,4 @@
+// base imports
 import React, { useEffect } from 'react';
 import _ from 'lodash/core';
 
@@ -76,7 +77,7 @@ export default function NavTabs() {
       .catch(error => {
         console.error('error:', error);
       });
-  }, [inputs]);
+  }, []);
 
   return (
     <Container>
