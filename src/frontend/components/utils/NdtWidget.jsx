@@ -1,9 +1,14 @@
+// base imports
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
+// Bootstrap imports
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-//import CircularProgressWithLabel from './CircularProgressWithLabel.jsx';
 import Spinner from 'react-bootstrap/Spinner';
+
+// module imports
 import NDTjs from '../../assets/js/ndt-browser-client.js';
 
 const NDT_STATUS_LABELS = {
@@ -35,13 +40,13 @@ class NdtHandler {
     this.event('Connecting...');
   }
 
-  onstatechange(msg, data) {
+  onstatechange(msg) {
     this.state = msg;
     this.time_switched = new Date().getTime();
     this.event(`${NDT_STATUS_LABELS[msg]}...`);
   }
 
-  onprogress(msg, data) {
+  onprogress() {
     let progress_percentage;
     const time_in_progress = new Date().getTime() - this.time_switched;
 
@@ -53,7 +58,7 @@ class NdtHandler {
     }
   }
 
-  onfinish(data) {
+  onfinish() {
     this.event(`${NDT_STATUS_LABELS[this.state]}`);
   }
 
@@ -87,10 +92,13 @@ export default function NdtWidget(props) {
   // handle NDT test
   const { onFinish } = props;
   const [text, setText] = useState(null);
-  //const [progress, setProgress] = useState(null);
+  const [progress, setProgress] = useState(null);
   const onProgress = (msg, percent) => {
+    if (msg === "Test complete") {
+      return onFinish(true);
+    }
     if (msg) setText(msg);
-    //if (percent) setProgress(percent);
+    if (percent) setProgress(percent);
   };
 
   useEffect(() => {
@@ -116,7 +124,7 @@ export default function NdtWidget(props) {
       })
       .then(data => {
         console.debug('Received response from MLab NS: ', data);
-        const meter = new NdtHandler(onProgress, onFinish);
+        const meter = new NdtHandler(onProgress);
         runNdt({ server: data.fqdn, meter: meter });
         return data;
       })
@@ -129,11 +137,18 @@ export default function NdtWidget(props) {
   return (
     <Container>
       <Row>
-        <Col>
+        <Col xs="auto">
           <Spinner animation="border" />
         </Col>
+        <Col>{progress || 0}%</Col>
+      </Row>
+      <Row>
         <Col>{text}</Col>
       </Row>
     </Container>
   );
 }
+
+NdtWidget.propTypes = {
+  onFinish: PropTypes.func.isRequired,
+};
