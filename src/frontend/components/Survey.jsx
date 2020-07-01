@@ -19,15 +19,7 @@ export default function Survey(props) {
   const [submitButton, setSubmitButton] = React.useState(null);
 
   const onFinish = finished => {
-    if (finished) {
-      // submitButton.classList.remove('disabled');
-      // submitButton.disabled = false;
-      setTestsComplete(true);
-    } else {
-      // submitButton.classList.add('disabled');
-      // submitButton.disabled = true;
-      setTestsComplete(false);
-    }
+    finished ? setTestsComplete(true) : setTestsComplete(false);
   };
 
   const processError = errorMessage => {
@@ -75,7 +67,6 @@ export default function Survey(props) {
       })
       .then(data => {
         if (status === 200 || status === 201) {
-          //props.history.push('/thankyou');
           return data;
         } else {
           let error = processError(data);
@@ -89,18 +80,28 @@ export default function Survey(props) {
   };
 
   useEffect(() => {
-    downloadForm()
-      .then(res => {
-        setForm(res.data[0].fields);
-        setSubmitButton(document.querySelector('.btn-toolbar input'));
-        // onFinish(false);
-        // submitButton.classList.add('disabled');
-        return;
-      })
-      .catch(error => {
-        console.error('error:', error);
-      });
-  }, [testsComplete, submitButton]);
+    if (!form) {
+      downloadForm()
+        .then(res => {
+          setForm(res.data[0].fields);
+          setSubmitButton(document.querySelector('.btn-toolbar input'));
+          return;
+        })
+        .catch(error => {
+          console.error('error:', error);
+        });
+    }
+
+    if (submitButton) {
+      submitButton.classList.add('disabled');
+      submitButton.disabled = true;
+    }
+
+    if (testsComplete) {
+      submitButton.classList.remove('disabled');
+      submitButton.disabled = false;
+    }
+  }, [testsComplete, form, submitButton]);
 
   if (!form) {
     return <div>Loading...</div>;
