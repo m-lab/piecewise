@@ -69,7 +69,7 @@ export default function FormTab() {
   const uploadForm = formData => {
     console.debug('formData: ', formData);
     let status;
-    const json = JSON.stringify(formData.task_data);
+    const json = JSON.stringify({ data: formData.task_data });
     fetch('/api/v1/forms', {
       method: 'POST',
       headers: {
@@ -107,15 +107,15 @@ export default function FormTab() {
         status = response.status;
         return response.json();
       })
-      .then(data => {
+      .then(result => {
         if (status === 200 || status === 201) {
-          console.log('***DOWNLOADFORM***:', data.data);
-          return data.data.task_data;
+          console.log('***DOWNLOADFORM***:', result.data.data);
+          return result.data.data;
         } else if (status === 404) {
           console.info('No existing forms found.');
           return [];
         } else {
-          let [text, debug] = processError(data);
+          let [text, debug] = processError(result);
           setModalText(text);
           setModalDebug(debug);
           setOpenModal(true);

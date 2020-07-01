@@ -1,5 +1,4 @@
 import Router from '@koa/router';
-import { validate } from '../../common/schemas/settings.js';
 import { getLogger } from '../log.js';
 
 const log = getLogger('backend:controllers:setting');

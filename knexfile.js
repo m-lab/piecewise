@@ -43,7 +43,7 @@ if (config.isDev) {
   env = {
     client: 'sqlite3',
     connection: ':memory:',
-    debug: true,
+    debug: false,
     migrations: _migrations_sqlite3,
     seeds: _seeds,
     useNullAsDefault: true,

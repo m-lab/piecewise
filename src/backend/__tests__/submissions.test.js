@@ -5,11 +5,11 @@ import config from '../config.js';
 import server from '../server.js';
 
 const validSubmission = {
-  data: [{ test: 'Test!' }],
+  fields: [{ test: 'Test!' }],
 };
 
 const invalidSubmission = {
-  data: 0,
+  fields: 0,
 };
 
 afterAll(async () => {
@@ -89,13 +89,15 @@ describe('Manage submissions as an admin', () => {
   test('Create submission successfully', async () => {
     const res = await session
       .post('/api/v1/submissions')
-      .send({ data: [validSubmission] })
+      .send({ data: validSubmission })
       .expect(201);
+    console.log('***TEST BODY***: ', res.body);
     expect(res.body).toMatchObject(validSubmissionResponse);
     expect(res.body.data[0].id).toBeGreaterThanOrEqual(0);
     const submission = await session
       .get(`/api/v1/submissions/${res.body.data[0].id}`)
       .expect(200);
+    console.log('***BODY.DATA[0]***: ', submission.body);
     expect(submission.body.data[0]).toMatchObject(validSubmission);
   });
 

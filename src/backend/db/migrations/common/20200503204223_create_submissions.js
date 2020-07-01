@@ -7,7 +7,7 @@ export function up(knex) {
         .increments('id')
         .primary()
         .unsigned();
-      table.json('data');
+      table.json('fields');
       table.timestamps(true, true);
     })
     .then(() =>

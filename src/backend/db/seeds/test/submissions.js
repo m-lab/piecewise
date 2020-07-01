@@ -5,7 +5,7 @@ export function seed(knex) {
       // Inserts seed entries
       return knex('submissions').insert([
         {
-          data: [
+          fields: [
             {
               id: '29A1A156-CDBB-47B2-9D53-023496E35B7B',
               element: 'Header',

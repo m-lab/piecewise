@@ -1,5 +1,3 @@
-import { UnprocessableError } from '../../common/errors.js';
-
 export default class FormManager {
   constructor(db) {
     this._db = db;

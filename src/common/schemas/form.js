@@ -4,7 +4,7 @@ import Joi from '@hapi/joi';
 const creationSchema = Joi.array()
   .items(
     Joi.object({
-      data: Joi.array()
+      fields: Joi.array()
         .required()
         .min(1),
     }),
@@ -14,7 +14,7 @@ const creationSchema = Joi.array()
 const updateSchema = Joi.array()
   .items(
     Joi.object({
-      data: Joi.array()
+      fields: Joi.array()
         .required()
         .min(1),
     }),

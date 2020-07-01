@@ -5,7 +5,7 @@ export function seed(knex) {
       // Inserts seed entries
       return knex('forms').insert([
         {
-          data: [
+          fields: JSON.stringify([
             {
               id: '29A1A156-CDBB-47B2-9D53-023496E35B7B',
               element: 'Header',
@@ -71,7 +71,7 @@ export function seed(knex) {
               label: 'What is your advertised upload speed? ',
               dirty: false,
             },
-          ],
+          ]),
         },
       ]);
     });

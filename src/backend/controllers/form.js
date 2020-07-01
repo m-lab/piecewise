@@ -35,18 +35,25 @@ export default function controller(forms, thisUser) {
     log.debug('Adding new form.');
     let form;
     try {
-      const data = await validateCreation(ctx.request.body);
+      console.log('***ctx.request.body***:', ctx.request.body);
+      const data = await validateCreation(ctx.request.body.data);
+      console.log('***data***:', data);
       form = await forms.create(data);
+      console.log('***FORM***:', form);
 
       // workaround for sqlite
-      if (Number.isInteger(form)) {
+      if (Number.isInteger(form[0])) {
         form = await forms.findById(form);
       }
     } catch (err) {
       log.error('HTTP 400 Error: ', err);
       ctx.throw(400, `Failed to parse form schema: ${err}`);
     }
-    ctx.response.body = { statusCode: 201, status: 'created', data: form };
+    ctx.response.body = {
+      statusCode: 201,
+      status: 'created',
+      data: Array.isArray(form) ? form : [form],
+    };
     ctx.response.status = 201;
   });
 
@@ -96,11 +103,12 @@ export default function controller(forms, thisUser) {
     let form;
     try {
       form = await forms.findById(ctx.params.id);
-      if (form && form.data) {
+      console.log('***form***:', form);
+      if (form && form.fields) {
         ctx.response.body = {
           statusCode: 200,
           status: 'ok',
-          data: JSON.parse(form.data),
+          data: Array.isArray(form) ? form : [form],
         };
         ctx.response.status = 200;
       } else {
@@ -122,7 +130,7 @@ export default function controller(forms, thisUser) {
 
     try {
       const data = await validateUpdate(ctx.request.body.data);
-      updated = await forms.update(ctx.params.id, data);
+      updated = await forms.update(ctx.params.id, data[0]);
     } catch (err) {
       log.error('HTTP 400 Error: ', err);
       ctx.throw(400, `Failed to parse query: ${err}`);

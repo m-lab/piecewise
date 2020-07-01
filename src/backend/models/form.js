@@ -1,4 +1,3 @@
-import { validate } from '../../common/schemas/form.js';
 import { UnprocessableError } from '../../common/errors.js';
 
 export default class FormManager {
@@ -7,9 +6,10 @@ export default class FormManager {
   }
 
   async create(form) {
+    form = form.map(f => ({ ...f, fields: JSON.stringify(f.fields) }));
     return this._db
       .table('forms')
-      .insert({ data: form })
+      .insert(form)
       .returning('*');
   }
 
@@ -21,6 +21,9 @@ export default class FormManager {
           .select('*')
           .where({ id: parseInt(id) });
 
+        console.log('***NEW FORM***:', form);
+        form = { fields: JSON.stringify(form.fields) };
+        console.log('***NEW FORM JSON***:', form);
         if (Array.isArray(existing) && existing.length > 0) {
           await trx('forms')
             .update(form)
@@ -55,7 +58,8 @@ export default class FormManager {
     from: from,
     to: to,
   }) {
-    const rows = await this._db
+    let rows = [];
+    rows = await this._db
       .table('forms')
       .select('*')
       .modify(queryBuilder => {
@@ -82,23 +86,26 @@ export default class FormManager {
         }
       });
 
-    return rows || [];
+    return rows.map(r => ({ ...r, fields: JSON.parse(r.fields) }));
   }
 
   async findById(id) {
+    let form;
     if (id === 'latest') {
-      return this._db
+      form = await this._db
         .table('forms')
         .select('*')
         .orderBy('id', 'desc')
         .first();
     } else {
-      return this._db
+      form = await this._db
         .table('forms')
         .select('*')
         .where({ id: parseInt(id) })
         .first();
     }
+    console.log('***FORM***:', JSON.parse(form.fields));
+    return { ...form, fields: JSON.parse(form.fields) };
   }
 
   async findAll() {

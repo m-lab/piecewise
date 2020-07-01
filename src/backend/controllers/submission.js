@@ -42,13 +42,11 @@ export default function controller(submissions, thisUser) {
       log.debug('Adding new submission.');
       let submission;
       try {
+        console.log('***CTX.REQUEST.BODY.DATA***:', ctx.request.body.data);
         const data = await validateCreation(ctx.request.body.data);
+        console.log('***DATA***:', data);
         submission = await submissions.create(data);
-
-        // workaround for sqlite
-        if (Number.isInteger(submission[0])) {
-          submission = await submissions.findById(submission[0]);
-        }
+        console.log('***SUBMISSION***:', submission);
       } catch (err) {
         log.error('HTTP 400 Error: ', err);
         ctx.throw(400, `Failed to parse submission schema: ${err}`);
@@ -117,16 +115,23 @@ export default function controller(submissions, thisUser) {
         ctx.throw(400, `Failed to parse query: ${err}`);
       }
 
-      if (submission.length) {
-        ctx.response.body = { statusCode: 200, status: 'ok', data: submission };
+      if (submission && submission.fields) {
+        ctx.response.body = {
+          statusCode: 200,
+          status: 'ok',
+          data: Array.isArray(submission) ? submission : [submission],
+        };
         ctx.response.status = 200;
       } else {
         log.error(
-          `HTTP 404 Error: That device with ID ${
+          `HTTP 404 Error: That submission with ID ${
             ctx.params.id
           } does not exist.`,
         );
-        ctx.throw(404, `That device with ID ${ctx.params.id} does not exist.`);
+        ctx.throw(
+          404,
+          `That submission with ID ${ctx.params.id} does not exist.`,
+        );
       }
     },
   );
@@ -139,7 +144,7 @@ export default function controller(submissions, thisUser) {
       let updated;
       try {
         const data = await validateUpdate(ctx.request.body.data);
-        updated = await submissions.update(ctx.params.id, data);
+        updated = await submissions.update(ctx.params.id, data[0]);
       } catch (err) {
         log.error('HTTP 400 Error: ', err);
         ctx.throw(400, `Failed to parse query: ${err}`);

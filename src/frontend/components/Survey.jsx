@@ -107,8 +107,9 @@ export default function Survey(props) {
 
   useEffect(() => {
     downloadForm()
-      .then(data => {
-        setForm(data.data);
+      .then(res => {
+        console.log('***DATA***:', res.data);
+        setForm(res.data.data);
         return;
       })
       .catch(error => {
@@ -128,7 +129,7 @@ export default function Survey(props) {
           form_method="POST"
           form_action="/api/v1/submissions"
           onSubmit={uploadFormData}
-          data={form.task_data}
+          data={form}
         />
       </Container>
     );
