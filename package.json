@@ -270,7 +270,9 @@
       "node/no-extraneous-import": [
         "error",
         {
-          "allowModules": ["lodash"]
+          "allowModules": [
+            "lodash"
+          ]
         }
       ],
       "node/shebang": [

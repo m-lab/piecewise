@@ -85,7 +85,9 @@ export default function NavTabs() {
           <Navbar expand="lg" variant="dark" style={primary}>
             <Navbar.Brand>{inputs.title} | Dashboard</Navbar.Brand>
             <Navbar.Collapse className="justify-content-end">
-              <Button href="/api/v1/logout" style={secondary}>Logout</Button>
+              <Button href="/api/v1/logout" style={secondary}>
+                Logout
+              </Button>
             </Navbar.Collapse>
           </Navbar>
         </Col>

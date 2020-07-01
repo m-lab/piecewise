@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import CircularProgressWithLabel from './CircularProgressWithLabel.jsx';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+//import CircularProgressWithLabel from './CircularProgressWithLabel.jsx';
+import Spinner from 'react-bootstrap/Spinner';
 import NDTjs from '../../assets/js/ndt-browser-client.js';
 
 const NDT_STATUS_LABELS = {
@@ -85,10 +87,10 @@ export default function NdtWidget(props) {
   // handle NDT test
   const { onFinish } = props;
   const [text, setText] = useState(null);
-  const [progress, setProgress] = useState(null);
+  //const [progress, setProgress] = useState(null);
   const onProgress = (msg, percent) => {
     if (msg) setText(msg);
-    if (percent) setProgress(percent);
+    //if (percent) setProgress(percent);
   };
 
   useEffect(() => {
@@ -114,7 +116,6 @@ export default function NdtWidget(props) {
       })
       .then(data => {
         console.debug('Received response from MLab NS: ', data);
-        //const meter = new NDTmeter(selector);
         const meter = new NdtHandler(onProgress, onFinish);
         runNdt({ server: data.fqdn, meter: meter });
         return data;
@@ -127,8 +128,12 @@ export default function NdtWidget(props) {
 
   return (
     <Container>
-      <CircularProgressWithLabel value={progress} />
-      <Typography>{text}</Typography>
+      <Row>
+        <Col>
+          <Spinner animation="border" />
+        </Col>
+        <Col>{text}</Col>
+      </Row>
     </Container>
   );
 }

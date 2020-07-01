@@ -54,7 +54,7 @@ export default function Survey(props) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data: { data: formData } }),
+      body: JSON.stringify({ data: { fields: formData } }),
     })
       .then(response => {
         status = response.status;
@@ -109,7 +109,7 @@ export default function Survey(props) {
     downloadForm()
       .then(res => {
         console.log('***DATA***:', res.data);
-        setForm(res.data.data);
+        setForm(res.data[0].fields);
         return;
       })
       .catch(error => {
@@ -122,7 +122,7 @@ export default function Survey(props) {
   } else {
     return (
       <Container>
-        {/*<NdtWidget /> */}
+        <NdtWidget />
         {/* <FormRenderer onSave={uploadFormData} onLoad={downloadForm} /> */}
         <ReactFormGenerator
           answer_data={{}}
