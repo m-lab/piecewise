@@ -104,7 +104,6 @@ export default class FormManager {
         .where({ id: parseInt(id) })
         .first();
     }
-    console.log('***FORM***:', JSON.parse(form.fields));
     return { ...form, fields: JSON.parse(form.fields) };
   }
 

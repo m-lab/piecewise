@@ -1,43 +1,34 @@
 // base imports
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-//import Box from '@material-ui/core/Box';
-//import Dialog from '@material-ui/core/Dialog';
-//import DialogContent from '@material-ui/core/DialogContent';
-//import DialogContentText from '@material-ui/core/DialogContentText';
-//import Typography from '@material-ui/core/Typography';
-//import { makeStyles } from '@material-ui/core/styles';
 import { ReactFormGenerator } from 'react-form-builder2';
 
-// material ui imports
-//import Container from '@material-ui/core/Container';
-//import Paper from '@material-ui/core/Paper';
-
-// Bootstrap import
-import Alert from 'react-bootstrap/Alert';
+// Bootstrap imports
+import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 
 // module imports
-//import FormRenderer from './utils/FormRenderer.jsx';
 import NdtWidget from './utils/NdtWidget.jsx';
 
-//const useStyles = makeStyles(theme => ({
-//  paper: {
-//    padding: theme.spacing(4),
-//    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-//      marginTop: theme.spacing(6),
-//      marginBottom: theme.spacing(6),
-//      padding: theme.spacing(3),
-//    },
-//  },
-//}));
+// custom styles
+import './Survey.css';
 
 export default function Survey(props) {
-  //const classes = useStyles();
-  const [openModal, setOpenModal] = React.useState(false);
-  const [modalText, setModalText] = React.useState('');
-  const [modalDebug, setModalDebug] = React.useState('');
   const [form, setForm] = React.useState(null);
+  const [testsComplete, setTestsComplete] = React.useState(false);
+  const [submitButton, setSubmitButton] = React.useState(null);
+
+  const onFinish = finished => {
+    if (finished) {
+      // submitButton.classList.remove('disabled');
+      // submitButton.disabled = false;
+      setTestsComplete(true);
+    } else {
+      // submitButton.classList.add('disabled');
+      // submitButton.disabled = true;
+      setTestsComplete(false);
+    }
+  };
 
   const processError = errorMessage => {
     let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
@@ -46,9 +37,7 @@ export default function Survey(props) {
   };
 
   const uploadFormData = formData => {
-    //formData.preventDefault();
     let status;
-    console.log('***UPLOAD FORM DATA***: ', formData);
     fetch('/api/v1/submissions', {
       method: 'POST',
       headers: {
@@ -65,11 +54,8 @@ export default function Survey(props) {
           props.history.push('/thankyou');
           return data;
         } else {
-          let [text, debug] = processError(data);
-          setModalText(text);
-          setModalDebug(debug);
-          setOpenModal(true);
-          throw new Error(`Error in response from server.`);
+          let error = processError(data);
+          throw new Error(`Error in response from server: ${error}`);
         }
       })
       .catch(error => {
@@ -92,11 +78,8 @@ export default function Survey(props) {
           //props.history.push('/thankyou');
           return data;
         } else {
-          let [text, debug] = processError(data);
-          setModalText(text);
-          setModalDebug(debug);
-          setOpenModal(true);
-          throw new Error(`Error in response from server.`);
+          let error = processError(data);
+          throw new Error(`Error in response from server: ${error}`);
         }
       })
       .catch(error => {
@@ -108,29 +91,38 @@ export default function Survey(props) {
   useEffect(() => {
     downloadForm()
       .then(res => {
-        console.log('***DATA***:', res.data);
         setForm(res.data[0].fields);
+        setSubmitButton(document.querySelector('.btn-toolbar input'));
+        // onFinish(false);
+        // submitButton.classList.add('disabled');
         return;
       })
       .catch(error => {
         console.error('error:', error);
       });
-  }, []);
+  }, [testsComplete, submitButton]);
 
   if (!form) {
     return <div>Loading...</div>;
   } else {
     return (
-      <Container>
-        <NdtWidget />
-        {/* <FormRenderer onSave={uploadFormData} onLoad={downloadForm} /> */}
-        <ReactFormGenerator
-          answer_data={{}}
-          form_method="POST"
-          form_action="/api/v1/submissions"
-          onSubmit={uploadFormData}
-          data={form}
-        />
+      <Container className={'mt-4'}>
+        {testsComplete ? (
+          <div>You may now submit your survey to see your results.</div>
+        ) : (
+          <NdtWidget onFinish={onFinish} />
+        )}
+        <Row>
+          <Col>
+            <ReactFormGenerator
+              answer_data={{}}
+              form_method="POST"
+              form_action="/api/v1/submissions"
+              onSubmit={uploadFormData}
+              data={form}
+            />
+          </Col>
+        </Row>
       </Container>
     );
   }
