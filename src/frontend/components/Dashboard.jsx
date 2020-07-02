@@ -12,7 +12,9 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 // Local imports
+import DataTab from './dashboard/DataTab.jsx';
 import FormTab from './dashboard/FormTab.jsx';
+import MapTab from './dashboard/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
 export default function NavTabs() {
@@ -101,6 +103,12 @@ export default function NavTabs() {
             </Tab>
             <Tab eventKey="settings" title="Settings">
               <SettingsTab defaults={inputs} setDefaults={handleSettings} />
+            </Tab>
+            <Tab eventKey="data" title="Data">
+              <DataTab />
+            </Tab>
+            <Tab eventKey="map" title="Map">
+              <MapTab />
             </Tab>
           </Tabs>
         </Col>

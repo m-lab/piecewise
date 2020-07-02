@@ -82,7 +82,7 @@ export default function SettingsTab(props) {
   };
 
   return (
-    <Container className={'mt-2'}>
+    <Container className={'mt-4 mb-4'}>
       <Form onSubmit={uploadSettings}>
         <Form.Group>
           <Form.Label>Site Title</Form.Label>
