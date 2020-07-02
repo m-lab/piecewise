@@ -674,7 +674,6 @@ NDTjs.prototype.startTest = function() {
       state === 'WAIT_FOR_MSG_RESULTS' &&
       messageType === that.MSG_RESULTS
     ) {
-      console.log(messageContent);
       var lines = messageContent.msg.split('\n');
       for (i = 0; i < lines.length; i++) {
         var line = lines[i];

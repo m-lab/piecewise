@@ -1,6 +1,7 @@
 // base imports
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash/core';
 
 // Bootstrap imports
 import Col from 'react-bootstrap/Col';
@@ -58,8 +59,8 @@ class NdtHandler {
     }
   }
 
-  onfinish() {
-    this.event(`${NDT_STATUS_LABELS[this.state]}`);
+  onfinish(results) {
+    this.event(`${NDT_STATUS_LABELS[this.state]}`, results);
   }
 
   onerror(msg) {
@@ -93,9 +94,16 @@ export default function NdtWidget(props) {
   const { onFinish, locationConsent } = props;
   const [text, setText] = useState(null);
   const [progress, setProgress] = useState(null);
+  const [location, setLocation] = useState({});
+  const [results, setResults] = useState({});
+
   const onProgress = (msg, percent) => {
-    if (msg === "Test complete") {
-      return onFinish(true);
+    if (msg === 'Test complete') {
+      setResults({
+        MinRTT: percent.MinRTT,
+        c2sRate: percent.c2sRate,
+        s2cRate: percent.s2cRate,
+      });
     }
     if (msg) setText(msg);
     if (percent) setProgress(percent);
@@ -109,10 +117,13 @@ export default function NdtWidget(props) {
   };
 
   const success = position => {
-    document.getElementById('latitude-mlab').value = position.coords.latitude;
-    document.getElementById('longitude-mlab').value = position.coords.longitude;
     document.getElementById('latitude').value = position.coords.latitude;
     document.getElementById('longitude').value = position.coords.longitude;
+
+    setLocation({
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    });
 
     var xhr = new XMLHttpRequest(),
       currentLocationURL =
@@ -145,7 +156,7 @@ export default function NdtWidget(props) {
         }
       }
     };
-  }
+  };
 
   useEffect(() => {
     let mlabNsUrl;
@@ -160,10 +171,9 @@ export default function NdtWidget(props) {
     }
 
     if (locationConsent) {
-      console.log('consent: ', locationConsent);
-     if ('geolocation' in navigator) {
-       navigator.geolocation.getCurrentPosition(success, error);
-     }
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      }
     }
 
     fetch(mlabNsUrl)
@@ -185,7 +195,11 @@ export default function NdtWidget(props) {
         console.error('M-Lab NS lookup failed: ', err.message);
         window.alert('M-Lab NS lookup failed. Please refresh the page.');
       });
-  }, []);
+
+    if (!_.isEmpty(results)) {
+      onFinish(true, results, location);
+    }
+  }, [results]);
 
   return (
     <Container className={'loader'}>

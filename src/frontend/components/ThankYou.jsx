@@ -51,8 +51,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Basic() {
+export default function ThankYou(props) {
   const classes = useStyles();
+  const location = props.location.state.location;
+  const results = props.location.state.results;
 
   return (
     <Container maxWidth="sm">

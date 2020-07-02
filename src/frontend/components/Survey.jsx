@@ -18,6 +18,8 @@ export default function Survey(props) {
   const settings = props.location.state.settings;
   const locationConsent = props.location.state.locationConsent;
   const [form, setForm] = React.useState(null);
+  const [location, setLocation] = React.useState({});
+  const [results, setResults] = React.useState({});
   const [testsComplete, setTestsComplete] = React.useState(false);
   const [submitButton, setSubmitButton] = React.useState(null);
 
@@ -31,8 +33,14 @@ export default function Survey(props) {
     borderColor: `${settings ? settings.color_two : '#ccc'} !important`,
   });
 
-  const onFinish = finished => {
-    finished ? setTestsComplete(true) : setTestsComplete(false);
+  const onFinish = (finished, results, location) => {
+    if (finished) {
+      setTestsComplete(true);
+      setResults(results);
+      setLocation(location);
+    } else {
+      setTestsComplete(false);
+    }
   };
 
   const processError = errorMessage => {
@@ -56,7 +64,13 @@ export default function Survey(props) {
       })
       .then(data => {
         if (status === 200 || status === 201) {
-          props.history.push('/thankyou');
+          props.history.push({
+            pathname: '/thankyou',
+            state: {
+              location: location,
+              results: results,
+            },
+          });
           return data;
         } else {
           let error = processError(data);
