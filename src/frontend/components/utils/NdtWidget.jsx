@@ -109,15 +109,6 @@ export default function NdtWidget(props) {
   };
 
   const success = position => {
-    const NDT_client = new NDTjs(
-      ndtServer,
-      ndtPort,
-      ndtProtocol,
-      ndtPath,
-      undefined,
-      ndtUpdateInterval,
-    );
-
     document.getElementById('latitude-mlab').value = position.coords.latitude;
     document.getElementById('longitude-mlab').value = position.coords.longitude;
     document.getElementById('latitude').value = position.coords.latitude;
@@ -169,6 +160,7 @@ export default function NdtWidget(props) {
     }
 
     if (locationConsent) {
+      console.log('consent: ', locationConsent);
      if ('geolocation' in navigator) {
        navigator.geolocation.getCurrentPosition(success, error);
      }

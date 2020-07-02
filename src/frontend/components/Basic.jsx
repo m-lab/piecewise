@@ -18,6 +18,10 @@ import FirefoxScreengrab from '../assets/images/firefox-location.jpg';
 
 export default function Basic() {
   const history = useHistory();
+  const [primary, setPrimary] = React.useState(css({ color: '#333' }));
+  const [secondary, setSecondary] = React.useState(
+    css({ backgroundColor: '#ccc !important', borderColor: '#ccc !important' }),
+  );
 
   // style rules
 
@@ -36,14 +40,17 @@ export default function Basic() {
     },
   });
 
-  let primary = css({
-    color: settings ? settings.color_one : '#333',
-  });
-
-  let secondary = css({
-    backgroundColor: `${settings ? settings.color_two : '#ccc'} !important`,
-    borderColor: `${settings ? settings.color_two : '#ccc'} !important`,
-  });
+  const handleColors = settings => {
+    setPrimary(css({
+      color: settings.color_one,
+      }),
+    );
+    setSecondary(css({
+      backgroundColor: `${settings.color_two} !important`,
+      borderColor: `${settings.color_two} !important`,
+      }),
+    );
+  };
 
   // handle geolocation consent
   const [locationConsent, setLocationConsent] = useState(false);
@@ -70,6 +77,7 @@ export default function Basic() {
         if (status === 200 || status === 201) {
           if (result.data) {
             setSettings(result.data);
+            handleColors(result.data);
             return;
           } else {
             const error = processError(result);
@@ -91,6 +99,7 @@ export default function Basic() {
       .then(data => {
         if (data) {
           setSettings(data);
+          handleColors(data);
         }
         return;
       })
