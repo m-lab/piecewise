@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 
 // bootstrap imports
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -16,6 +18,33 @@ import FirefoxScreengrab from '../assets/images/firefox-location.jpg';
 
 export default function Basic() {
   const history = useHistory();
+
+  // style rules
+
+  let card = css({
+    height: '100%',
+  });
+
+  let cardText = css({
+    fontStyle: 'italic',
+    padding: '10px',
+  });
+
+  let mb2 = css({
+    '@media(max-width: 768px)': {
+      marginBottom: '20px',
+    },
+  });
+
+  let primary = css({
+    color: settings ? settings.color_one : '#333',
+  });
+
+  let secondary = css({
+    backgroundColor: `${settings ? settings.color_two : '#ccc'} !important`,
+    borderColor: `${settings ? settings.color_two : '#ccc'} !important`,
+  });
+
   // handle geolocation consent
   const [locationConsent, setLocationConsent] = useState(false);
   // site settings
@@ -40,7 +69,8 @@ export default function Basic() {
       .then(result => {
         if (status === 200 || status === 201) {
           if (result.data) {
-            return result.data;
+            setSettings(result.data);
+            return;
           } else {
             const error = processError(result);
             throw new Error(`Error in response from server: ${error}`);
@@ -78,54 +108,14 @@ export default function Basic() {
     });
   };
 
-  //function success(position) {
-  //  document.getElementById('latitude-mlab').value = position.coords.latitude;
-  //  document.getElementById('longitude-mlab').value = position.coords.longitude;
-  //  document.getElementById('latitude').value = position.coords.latitude;
-  //  document.getElementById('longitude').value = position.coords.longitude;
-
-  //  var xhr = new XMLHttpRequest(),
-  //    currentLocationURL =
-  //      'https://nominatim.openstreetmap.org/reverse?format=json&lat=' +
-  //      position.coords.latitude +
-  //      '&lon=' +
-  //      position.coords.longitude +
-  //      '&zoom=18&addressdetails=1';
-
-  //  var currentLoc;
-  //  xhr.open('GET', currentLocationURL, true);
-  //  xhr.send();
-  //  xhr.onreadystatechange = function() {
-  //    if (xhr.readyState === 4) {
-  //      if (xhr.status === 200) {
-  //        currentLoc = JSON.parse(xhr.responseText);
-  //        console.log('Location received');
-  //        // currentLocText.text(currentLoc.address.road + currentLoc.address.neighbourhood + currentLoc.address.suburb + currentLoc.address.city + currentLoc.address.state);
-  //        document
-  //          .getElementsByClassName('loader-item')[1]
-  //          .append(
-  //            'Searching from: ' +
-  //              currentLoc.address.road +
-  //              ', ' +
-  //              currentLoc.address.city +
-  //              ', ' +
-  //              currentLoc.address.state,
-  //          );
-  //      } else {
-  //        console.log('Location lookup failed');
-  //      }
-  //    }
-  //  };
-  //}
-
   if (!settings) {
     return <div>Loading...</div>;
   } else {
     return (
-      <Container fluid="lg">
-        <h1>{settings.title}</h1>
+      <Container fluid="lg" className={'mt-4 mb-4'}>
+        <h1 {...primary}>{settings.title}</h1>
         <p>{settings.header}</p>
-        <h2>Sharing your location</h2>
+        <h2 {...primary}>Sharing your location</h2>
         <p>
           To get the most accurate location data, we ask you to allow your
           browser to share your location. This is not essential but it is very
@@ -135,66 +125,60 @@ export default function Basic() {
           or Incognito mode, you may need to disable that preference for this
           website.
         </p>
-        <Container>
-          <Row>
-            <Card>
+        <Row className={'mb-4'}>
+          <Col xs={12} md={6} {...mb2}>
+            <Card {...card}>
               <Card.Img
                 src={FirefoxScreengrab}
                 alt="Screenshot of geography location request in Firefox."
               />
-              <Card.Text>
+              <Card.Text {...cardText}>
                 Screenshot of geography location request in Firefox.
               </Card.Text>
             </Card>
-          </Row>
-          <Row>
-            <Card>
+          </Col>
+          <Col xs={12} md={6} {...mb2}>
+            <Card {...card}>
               <Card.Img
                 src={ChromeScreengrab}
                 alt="Screenshot of geography location request in Chrome."
               />
-              <Card.Text>
+              <Card.Text {...cardText}>
                 Screenshot of geography location request in Chrome.
               </Card.Text>
             </Card>
-          </Row>
-        </Container>
+          </Col>
+        </Row>
         <Form onSubmit={handleSubmit}>
-          <Container>
-            <fieldset>
-              <Form.Group>
-                <Form.Label>
-                  Do you want to use your browser location?
-                </Form.Label>
-                <Form.Check
-                  type="radio"
-                  id="location-yes"
-                  label="Use my browser location"
-                  onChange={() => setLocationConsent(true)}
-                />
-                <Form.Check
-                  type="radio"
-                  id="location-no"
-                  label="Do not use my location"
-                  onChange={() => setLocationConsent(false)}
-                />
-              </Form.Group>
-            </fieldset>
+          <fieldset>
             <Form.Group>
+              <Form.Label>Do you want to use your browser location?</Form.Label>
               <Form.Check
-                required
-                type="checkbox"
-                id="consent"
-                label="*I agree to the M-Lab privacy policy, which includes retention and publication of IP addresses, in addition to speed test results."
+                type="radio"
+                id="location-yes"
+                label="Use my browser location"
+                onChange={() => setLocationConsent(true)}
               />
-              <Form.Text>This field is required</Form.Text>
+              <Form.Check
+                type="radio"
+                id="location-no"
+                label="Do not use my location"
+                onChange={() => setLocationConsent(false)}
+              />
             </Form.Group>
-          </Container>
-          <Container>
-            <Button variant="primary" type="submit">
-              Take the Test
-            </Button>
-          </Container>
+          </fieldset>
+          <Form.Group>
+            <Form.Check
+              required
+              type="checkbox"
+              id="consent"
+              label="*I agree to the M-Lab privacy policy, which includes retention and publication of IP addresses, in addition to speed test results."
+            />
+            <Form.Text>This field is required</Form.Text>
+          </Form.Group>
+          <Button variant="primary" type="submit" {...secondary}>
+            Take the Test
+          </Button>
         </Form>
       </Container>
     );

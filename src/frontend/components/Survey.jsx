@@ -1,6 +1,7 @@
 // base imports
 import React, { useEffect } from 'react';
 import { ReactFormGenerator } from 'react-form-builder2';
+import { css } from 'glamor';
 
 // Bootstrap imports
 import Col from 'react-bootstrap/Col';
@@ -14,9 +15,21 @@ import NdtWidget from './utils/NdtWidget.jsx';
 import './Survey.css';
 
 export default function Survey(props) {
+  const settings = props.location.state.settings;
+  const locationConsent = props.location.state.locationConsent;
   const [form, setForm] = React.useState(null);
   const [testsComplete, setTestsComplete] = React.useState(false);
   const [submitButton, setSubmitButton] = React.useState(null);
+
+  // set colors
+  let primary = css({
+    color: settings ? settings.color_one : '#333',
+  });
+
+  let secondary = css({
+    backgroundColor: `${settings ? settings.color_two : '#ccc'} !important`,
+    borderColor: `${settings ? settings.color_two : '#ccc'} !important`,
+  });
 
   const onFinish = finished => {
     finished ? setTestsComplete(true) : setTestsComplete(false);
@@ -111,7 +124,10 @@ export default function Survey(props) {
         {testsComplete ? (
           <div>You may now submit your survey to see your results.</div>
         ) : (
-          <NdtWidget onFinish={onFinish} />
+          <NdtWidget
+            onFinish={onFinish}
+            locationConsent={locationConsent}
+          />
         )}
         <Row>
           <Col>
