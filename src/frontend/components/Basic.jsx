@@ -42,12 +42,15 @@ export default function Basic() {
 
   const handleColors = settings => {
     setPrimary(css({
-      color: settings.color_one,
+        color: settings.color_one,
       }),
     );
     setSecondary(css({
-      backgroundColor: `${settings.color_two} !important`,
-      borderColor: `${settings.color_two} !important`,
+        backgroundColor: `${settings.color_two} !important`,
+        borderColor: `${settings.color_two} !important`,
+        ':hover': {
+          filter: 'brightness(85%)',
+        },
       }),
     );
   };
