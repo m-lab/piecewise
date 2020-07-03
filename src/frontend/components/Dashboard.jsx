@@ -1,5 +1,5 @@
 // base imports
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash/core';
 
 // Bootstrap imports
@@ -18,7 +18,7 @@ import MapTab from './dashboard/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
 export default function NavTabs() {
-  const [inputs, setInputs] = React.useState({});
+  const [inputs, setInputs] = useState({});
 
   // update styles according to settings
   const primary = {

@@ -1,6 +1,7 @@
 // base imports
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CSVLink } from 'react-csv';
+import _ from 'lodash/core';
 
 // Bootstrap imports
 import Col from 'react-bootstrap/Col';
@@ -10,16 +11,64 @@ import Table from 'react-bootstrap/Table';
 
 const headers = [
   { label: 'id', key: 'id' },
-  { label: 'Download Speed', key: 'DownloadSpeed' },
-  { label: 'Upload Speed', key: 'UploadValue' },
-  { label: 'Latency', key: 'Latency' },
-  { label: 'Latitude', key: 'Latitude' },
-  { label: 'Longitude', key: 'Longitude' },
+  { label: 'Date', key: 'date' },
+  { label: 'Download Speed', key: 'c2sRate' },
+  { label: 'Upload Speed', key: 's2cRate' },
+  { label: 'Latency', key: 'MinRTT' },
+  { label: 'Latitude', key: 'latitude' },
+  { label: 'Longitude', key: 'longitude' },
 ];
 
-const runs = [{}];
-
 export default function DataTab() {
+  const [submissions, setSubmissions] = useState([{}]);
+
+  // process api errors
+  const processError = errorMessage => {
+    let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
+    let debug = JSON.stringify(errorMessage);
+    return [text, debug];
+  };
+
+  // fetch submissions from API
+  const downloadSubmissions = () => {
+    let status;
+    return fetch('/api/v1/submissions', {
+      method: 'GET',
+    })
+      .then(response => {
+        status = response.status;
+        return response.json();
+      })
+      .then(result => {
+        if (status === 200 || status === 201) {
+          if (!_.isEmpty(result.data)) {
+            setSubmissions(result.data);
+          }
+          return result.data;
+        } else {
+          const error = processError(result);
+          throw new Error(`Error in response from server: ${error}`);
+        }
+      })
+      .catch(error => {
+        console.error('error:', error);
+        throw Error(error.statusText);
+      });
+  };
+
+  useEffect(() => {
+    downloadSubmissions()
+      .then(data => {
+        if (!_.isEmpty(data)) {
+          setSubmissions(data);
+        }
+        return;
+      })
+      .catch(error => {
+        console.error('error:', error);
+      });
+  }, []);
+
   return (
     <Container className={'mt-4 mb-4'}>
       <Row>
@@ -33,14 +82,15 @@ export default function DataTab() {
               </tr>
             </thead>
             <tbody>
-              {runs.map(run => (
-                <tr key={run.id}>
-                  <td>{run.id}</td>
-                  <td>{run.c2sRate}</td>
-                  <td>{run.s2cRate}</td>
-                  <td>{run.MinRTT}</td>
-                  <td>{run.latitude}</td>
-                  <td>{run.longitude}</td>
+              {submissions.map(submission => (
+                <tr key={submission.id}>
+                  <td>{submission.id}</td>
+                  <td>{submission.date}</td>
+                  <td>{submission.c2sRate}</td>
+                  <td>{submission.s2cRate}</td>
+                  <td>{submission.MinRTT}</td>
+                  <td>{submission.latitude}</td>
+                  <td>{submission.longitude}</td>
                 </tr>
               ))}
             </tbody>
@@ -49,7 +99,7 @@ export default function DataTab() {
       </Row>
       <Row>
         <Col>
-          <CSVLink data={runs ? runs : ''} headers={headers}>
+          <CSVLink data={submissions ? submissions : ''} headers={headers}>
             Export
           </CSVLink>
         </Col>
