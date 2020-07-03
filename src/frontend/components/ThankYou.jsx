@@ -1,5 +1,7 @@
+// base imports
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 
 // Bootstrap imports
 import Col from 'react-bootstrap/Col';
@@ -10,53 +12,47 @@ export default function ThankYou(props) {
   const results = props.location.state.results;
   const settings = props.location.state.settings;
 
+  // style rules
+  let h1 = css({
+    color: settings.color_one,
+  });
+
   return (
-    <>
-      <style type="text/css">
-        {`
-      .thankyou-header {
-        color: {{ settings.color_one }};
-      }
-      `}
-      </style>
-      <Container fluid="sm">
-        <Row>
-          <Col md={{ span: 8, offset: 2 }}>
-            <Row className="align-items-center">
-              <Col>
-                <h1 className="thankyou-header">Thank you!</h1>
-              </Col>
-              <Col>
-                <Row>
-                  <strong>Download Speed:</strong>{' '}
-                  {(results.s2cRate / 1000).toFixed(2)} Mb/s
-                </Row>
-                <Row>
-                  <strong>Upload Speed:</strong>{' '}
-                  {(results.c2sRate / 1000).toFixed(2)} Mb/s
-                </Row>
-                <Row>
-                  <strong>Latency:</strong> {results.MinRTT} ms
-                </Row>
-              </Col>
-            </Row>
-            <Row>
-              <p>{settings.footer}</p>
-            </Row>
-          </Col>
-        </Row>
-      </Container>
-    </>
+    <Container fluid="sm" className={'mt-4 mb-4'}>
+      <Row className={'mb-4'}>
+        <Col md={{ span: 6 }}>
+          <h1 {...h1} className="thankyou-header">Thank you!</h1>
+        </Col>
+      </Row>
+      <Row className={'mb-4'}>
+        <Col md={{ span: 6 }}>
+          <div>
+            <strong>Download Speed:</strong>{' '}
+            {(results.s2cRate / 1000).toFixed(2)} Mb/s
+          </div>
+          <div>
+            <strong>Upload Speed:</strong>{' '}
+            {(results.c2sRate / 1000).toFixed(2)} Mb/s
+          </div>
+          <div>
+            <strong>Latency:</strong> {results.MinRTT} ms
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <p>{settings.footer}</p>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
 ThankYou.propTypes = {
-  results: PropTypes.object.required,
-  settings: PropTypes.object.required,
   location: PropTypes.shape({
     state: PropTypes.shape({
-      results: PropTypes.object,
-      settings: PropTypes.object,
-    }).required,
-  }).required,
+      results: PropTypes.object.isRequired,
+      settings: PropTypes.object.isRequired,
+    }),
+  }),
 };

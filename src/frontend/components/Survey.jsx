@@ -55,8 +55,8 @@ export default function Survey(props) {
           props.history.push({
             pathname: '/thankyou',
             state: {
-              location: location,
               results: results,
+              settings: settings,
             },
           });
           return data;
