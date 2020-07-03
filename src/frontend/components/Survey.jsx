@@ -69,6 +69,7 @@ export default function Survey(props) {
             state: {
               location: location,
               results: results,
+              settings: settings,
             },
           });
           return data;
@@ -138,10 +139,7 @@ export default function Survey(props) {
         {testsComplete ? (
           <div>You may now submit your survey to see your results.</div>
         ) : (
-          <NdtWidget
-            onFinish={onFinish}
-            locationConsent={locationConsent}
-          />
+          <NdtWidget onFinish={onFinish} locationConsent={locationConsent} />
         )}
         <Row>
           <Col>
