@@ -1,6 +1,7 @@
 // base imports
 import React, { useEffect } from 'react';
 import { ReactFormGenerator } from 'react-form-builder2';
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 // Bootstrap imports
@@ -11,9 +12,6 @@ import Row from 'react-bootstrap/Row';
 // module imports
 import NdtWidget from './utils/NdtWidget.jsx';
 
-// custom styles
-import './Survey.css';
-
 export default function Survey(props) {
   const settings = props.location.state.settings;
   const locationConsent = props.location.state.locationConsent;
@@ -22,16 +20,6 @@ export default function Survey(props) {
   const [results, setResults] = React.useState({});
   const [testsComplete, setTestsComplete] = React.useState(false);
   const [submitButton, setSubmitButton] = React.useState(null);
-
-  // set colors
-  let primary = css({
-    color: settings ? settings.color_one : '#333',
-  });
-
-  let secondary = css({
-    backgroundColor: `${settings ? settings.color_two : '#ccc'} !important`,
-    borderColor: `${settings ? settings.color_two : '#ccc'} !important`,
-  });
 
   const onFinish = (finished, results, location) => {
     if (finished) {
@@ -69,7 +57,6 @@ export default function Survey(props) {
             state: {
               location: location,
               results: results,
-              settings: settings,
             },
           });
           return data;
@@ -136,6 +123,31 @@ export default function Survey(props) {
   } else {
     return (
       <Container className={'mt-4'}>
+        <style type="text/css">
+          {`
+            h1, h2, h3 {
+              color: ${settings.color_one};
+            }
+            .form-group a {
+              color: ${settings.color_two};
+            }
+            .form-group a:active, .form-group a:focus, .form-group a:hover {
+              color: filter: brightness(75%) !important;
+            }
+            .btn-toolbar input {
+              background-color: ${settings.color_two};
+              border: 2px solid ${settings.color_two};
+              color: #fff;
+              cursor: pointer;
+            }
+            .btn-toolbar input.disabled {
+              background-color: filter(50%);
+              border: 2px solid #ccc;
+              color: #ccc;
+              cursor: not-allowed;
+            }
+          `}
+        </style>
         {testsComplete ? (
           <div>You may now submit your survey to see your results.</div>
         ) : (
@@ -156,3 +168,12 @@ export default function Survey(props) {
     );
   }
 }
+
+Survey.propTypes = {
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      settings: PropTypes.object.isRequired,
+      locationConsent: PropTypes.bool.isRequired,
+    }),
+  }),
+};
