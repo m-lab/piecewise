@@ -1,11 +1,16 @@
 import Session from 'supertest-session';
 import config from '../config.js';
+import db from '../db.js';
 import server from '../server.js';
 
 describe('Authenticate to API', () => {
   let session;
   beforeEach(() => {
     session = Session(server(config));
+  });
+
+  beforeAll(() => {
+    return db.migrate.latest().then(() => db.seed.run());
   });
 
   afterAll(async () => {
