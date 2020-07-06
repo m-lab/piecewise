@@ -1,9 +1,0 @@
-.btn-toolbar input {
- border: 2px solid #000;
- cursor: pointer;
-}
-
-.btn-toolbar input.disabled {
- border: 2px solid #ccc;
- cursor: not-allowed;
-}

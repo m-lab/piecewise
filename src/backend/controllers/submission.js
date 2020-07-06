@@ -35,30 +35,26 @@ async function validate_query(query) {
 export default function controller(submissions, thisUser) {
   const router = new Router();
 
-  router.post(
-    '/submissions',
-    thisUser.can('access private pages'),
-    async ctx => {
-      log.debug('Adding new submission.');
-      let submission;
-      try {
-        console.log('***CTX.REQUEST.BODY.DATA***:', ctx.request.body.data);
-        const data = await validateCreation(ctx.request.body.data);
-        console.log('***DATA***:', data);
-        submission = await submissions.create(data);
-        console.log('***SUBMISSION***:', submission);
-      } catch (err) {
-        log.error('HTTP 400 Error: ', err);
-        ctx.throw(400, `Failed to parse submission schema: ${err}`);
-      }
-      ctx.response.body = {
-        statusCode: 201,
-        status: 'created',
-        data: submission,
-      };
-      ctx.response.status = 201;
-    },
-  );
+  router.post('/submissions', async ctx => {
+    log.debug('Adding new submission.');
+    let submission;
+    try {
+      console.log('***CTX.REQUEST.BODY.DATA***:', ctx.request.body.data);
+      const data = await validateCreation(ctx.request.body.data);
+      console.log('***DATA***:', data);
+      submission = await submissions.create(data);
+      console.log('***SUBMISSION***:', submission);
+    } catch (err) {
+      log.error('HTTP 400 Error: ', err);
+      ctx.throw(400, `Failed to parse submission schema: ${err}`);
+    }
+    ctx.response.body = {
+      statusCode: 201,
+      status: 'created',
+      data: submission,
+    };
+    ctx.response.status = 201;
+  });
 
   router.get(
     '/submissions',

@@ -1,6 +1,7 @@
 // base imports
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash/core';
 
 // Bootstrap imports
 import Col from 'react-bootstrap/Col';
@@ -58,8 +59,8 @@ class NdtHandler {
     }
   }
 
-  onfinish() {
-    this.event(`${NDT_STATUS_LABELS[this.state]}`);
+  onfinish(results) {
+    this.event(`${NDT_STATUS_LABELS[this.state]}`, results);
   }
 
   onerror(msg) {
@@ -90,15 +91,71 @@ function runNdt({
 
 export default function NdtWidget(props) {
   // handle NDT test
-  const { onFinish } = props;
+  const { onFinish, locationConsent } = props;
   const [text, setText] = useState(null);
   const [progress, setProgress] = useState(null);
+  const [location, setLocation] = useState({});
+  const [results, setResults] = useState({});
+
   const onProgress = (msg, percent) => {
-    if (msg === "Test complete") {
-      return onFinish(true);
+    if (msg === 'Test complete') {
+      setResults({
+        MinRTT: percent.MinRTT,
+        c2sRate: percent.c2sRate,
+        s2cRate: percent.s2cRate,
+      });
     }
     if (msg) setText(msg);
     if (percent) setProgress(percent);
+  };
+
+  // check location consent
+  const error = error => {
+    document
+      .getElementsByClassName('loader')[0]
+      .append(`Error: ${error.code}: ${error.message}`);
+  };
+
+  const success = position => {
+    document.getElementById('latitude').value = position.coords.latitude;
+    document.getElementById('longitude').value = position.coords.longitude;
+
+    setLocation({
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    });
+
+    var xhr = new XMLHttpRequest(),
+      currentLocationURL =
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=' +
+        position.coords.latitude +
+        '&lon=' +
+        position.coords.longitude +
+        '&zoom=18&addressdetails=1';
+
+    var currentLoc;
+    xhr.open('GET', currentLocationURL, true);
+    xhr.send();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          currentLoc = JSON.parse(xhr.responseText);
+          console.log('Location received');
+          document
+            .getElementsByClassName('loader')[0]
+            .append(
+              'Searching from: ' +
+                currentLoc.address.road +
+                ', ' +
+                currentLoc.address.city +
+                ', ' +
+                currentLoc.address.state,
+            );
+        } else {
+          console.log('Location lookup failed');
+        }
+      }
+    };
   };
 
   useEffect(() => {
@@ -111,6 +168,12 @@ export default function NdtWidget(props) {
         'In development mode, proxying MLab NS request for CORS reasons.',
       );
       mlabNsUrl = '/api/v1/mlabns';
+    }
+
+    if (locationConsent) {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      }
     }
 
     fetch(mlabNsUrl)
@@ -132,10 +195,14 @@ export default function NdtWidget(props) {
         console.error('M-Lab NS lookup failed: ', err.message);
         window.alert('M-Lab NS lookup failed. Please refresh the page.');
       });
-  }, []);
+
+    if (!_.isEmpty(results)) {
+      onFinish(true, results, location);
+    }
+  }, [results]);
 
   return (
-    <Container>
+    <Container className={'loader'}>
       <Row>
         <Col xs="auto">
           <Spinner animation="border" />

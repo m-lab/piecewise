@@ -178,18 +178,18 @@ describe('Access submissions as a user', () => {
     return db.migrate.rollback();
   });
 
-  test('Attempt to create a submission unsuccessfully', async () => {
+  test('Create submission successfully', async () => {
     await session
       .post('/api/v1/submissions')
       .send({ data: [validSubmission] })
-      .expect(403);
+      .expect(201);
   });
 
   test('Attempt to create an empty submission', async () => {
     await session
       .post('/api/v1/submissions')
       .send({ data: [] })
-      .expect(403);
+      .expect(400);
   });
 
   each(

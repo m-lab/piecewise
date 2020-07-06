@@ -1,6 +1,8 @@
 // base imports
 import React, { useEffect } from 'react';
 import { ReactFormGenerator } from 'react-form-builder2';
+import PropTypes from 'prop-types';
+import { css } from 'glamor';
 
 // Bootstrap imports
 import Col from 'react-bootstrap/Col';
@@ -10,22 +12,21 @@ import Row from 'react-bootstrap/Row';
 // module imports
 import NdtWidget from './utils/NdtWidget.jsx';
 
-// custom styles
-import './Survey.css';
-
 export default function Survey(props) {
+  const settings = props.location.state.settings;
+  const locationConsent = props.location.state.locationConsent;
   const [form, setForm] = React.useState(null);
+  const [location, setLocation] = React.useState({});
+  const [results, setResults] = React.useState({});
   const [testsComplete, setTestsComplete] = React.useState(false);
   const [submitButton, setSubmitButton] = React.useState(null);
 
-  const onFinish = finished => {
+  const onFinish = (finished, results, location) => {
     if (finished) {
-      // submitButton.classList.remove('disabled');
-      // submitButton.disabled = false;
       setTestsComplete(true);
+      setResults(results);
+      setLocation(location);
     } else {
-      // submitButton.classList.add('disabled');
-      // submitButton.disabled = true;
       setTestsComplete(false);
     }
   };
@@ -51,7 +52,13 @@ export default function Survey(props) {
       })
       .then(data => {
         if (status === 200 || status === 201) {
-          props.history.push('/thankyou');
+          props.history.push({
+            pathname: '/thankyou',
+            state: {
+              results: results,
+              settings: settings,
+            },
+          });
           return data;
         } else {
           let error = processError(data);
@@ -75,7 +82,6 @@ export default function Survey(props) {
       })
       .then(data => {
         if (status === 200 || status === 201) {
-          //props.history.push('/thankyou');
           return data;
         } else {
           let error = processError(data);
@@ -89,28 +95,63 @@ export default function Survey(props) {
   };
 
   useEffect(() => {
-    downloadForm()
-      .then(res => {
-        setForm(res.data[0].fields);
-        setSubmitButton(document.querySelector('.btn-toolbar input'));
-        // onFinish(false);
-        // submitButton.classList.add('disabled');
-        return;
-      })
-      .catch(error => {
-        console.error('error:', error);
-      });
-  }, [testsComplete, submitButton]);
+    if (!form) {
+      downloadForm()
+        .then(res => {
+          setForm(res.data[0].fields);
+          setSubmitButton(document.querySelector('.btn-toolbar input'));
+          return;
+        })
+        .catch(error => {
+          console.error('error:', error);
+        });
+    }
+
+    if (submitButton) {
+      submitButton.classList.add('disabled');
+      submitButton.disabled = true;
+    }
+
+    if (testsComplete) {
+      submitButton.classList.remove('disabled');
+      submitButton.disabled = false;
+    }
+  }, [testsComplete, form, submitButton]);
 
   if (!form) {
     return <div>Loading...</div>;
   } else {
     return (
       <Container className={'mt-4'}>
+        <style type="text/css">
+          {`
+            h1, h2, h3 {
+              color: ${settings.color_one};
+            }
+            .form-group a {
+              color: ${settings.color_two};
+            }
+            .form-group a:active, .form-group a:focus, .form-group a:hover {
+              color: filter: brightness(75%) !important;
+            }
+            .btn-toolbar input {
+              background-color: ${settings.color_two};
+              border: 2px solid ${settings.color_two};
+              color: #fff;
+              cursor: pointer;
+            }
+            .btn-toolbar input.disabled {
+              background-color: filter(50%);
+              border: 2px solid #ccc;
+              color: #ccc;
+              cursor: not-allowed;
+            }
+          `}
+        </style>
         {testsComplete ? (
           <div>You may now submit your survey to see your results.</div>
         ) : (
-          <NdtWidget onFinish={onFinish} />
+          <NdtWidget onFinish={onFinish} locationConsent={locationConsent} />
         )}
         <Row>
           <Col>
@@ -127,3 +168,12 @@ export default function Survey(props) {
     );
   }
 }
+
+Survey.propTypes = {
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      settings: PropTypes.object.isRequired,
+      locationConsent: PropTypes.bool.isRequired,
+    }),
+  }),
+};
