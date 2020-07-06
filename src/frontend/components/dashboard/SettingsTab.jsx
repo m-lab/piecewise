@@ -70,7 +70,8 @@ export default function SettingsTab(props) {
       .then(data => {
         if (status === 200 || status === 201) {
           alert('Settings saved successfully.');
-          return setDefaults(inputs);
+          const newDefaults = Object.assign(defaults, inputs);
+          return setDefaults(newDefaults);
         } else {
           const error = processError(data);
           throw new Error(`Error in response from server: ${error}`);
