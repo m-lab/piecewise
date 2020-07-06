@@ -1,10 +1,11 @@
 import Router from '@koa/router';
-import { getLogger } from '../log.js';
 import _ from 'lodash/core';
+import { validateUpdate } from '../../common/schemas/settings.js';
+import { getLogger } from '../log.js';
 
 const log = getLogger('backend:controllers:setting');
 
-export default function controller(settings) {
+export default function controller(settings, thisUser) {
   const router = new Router();
 
   router.get('/settings', async ctx => {
@@ -27,20 +28,17 @@ export default function controller(settings) {
     }
   });
 
-  router.put('/settings', async ctx => {
+  router.put('/settings', thisUser.can('access private pages'), async ctx => {
     log.debug(`Updating settings.`);
     let setting;
     try {
-      setting = await settings.update(ctx.request.body);
-      if (!isNaN(setting)) {
-        ctx.response.body = { status: 'success', data: setting };
-        ctx.response.status = 200;
+      const data = await validateUpdate(ctx.request.body.data);
+      setting = await settings.update(data[0]);
+      if (setting) {
+        ctx.response.status = 204;
       } else {
-        ctx.response.body = {
-          status: 'error',
-          message: `Unable to update setting.`,
-        };
-        ctx.response.status = 404;
+        log.error('HTTP 400 Error.');
+        ctx.throw(400, 'Failed to update settings.');
       }
     } catch (err) {
       ctx.throw(400, `Failed to parse query: ${err}`);
