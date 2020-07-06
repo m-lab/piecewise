@@ -3,6 +3,7 @@ import React from 'react';
 import { ReactFormBuilder } from 'react-form-builder2';
 
 // Bootstrap imports
+import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -75,6 +76,14 @@ export default function FormTab() {
 
   return (
     <Container className={'mt-4 mb-4'}>
+      <Alert variant="secondary">
+        <p className="mb-0">
+          <em>
+            Use the form builder below to create a survey for the end user to
+            out. You may use and reorder the blocks as you wish.
+          </em>
+        </p>
+      </Alert>
       <Row>
         <Col>
           <ReactFormBuilder onPost={uploadForm} onLoad={downloadForm} />

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { SketchPicker } from 'react-color';
 
 // bootstrap imports
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -83,6 +84,11 @@ export default function SettingsTab(props) {
 
   return (
     <Container className={'mt-4 mb-4'}>
+      <Alert variant="secondary">
+        <p className="mb-0">
+          <em>Fill out the sitewide settings with the form below.</em>
+        </p>
+      </Alert>
       <Form onSubmit={uploadSettings}>
         <Form.Group>
           <Form.Label for="title">Site Title</Form.Label>
