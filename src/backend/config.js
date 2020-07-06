@@ -123,6 +123,7 @@ function validatePort(value, previous) {
   return port;
 }
 
+// eslint-disable-next-line no-unused-vars
 function validateArray(value, previous) {
   const strings = value ? value : previous;
   const array = strings.split(',');
