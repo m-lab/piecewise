@@ -32,13 +32,24 @@ may be edited and copied to `.env`).
 The backend parses the following configuration variables:
 
 ```
-PIECEWISE_PORT        # The port that the backend is listening on (default: 3000)
-PIECEWISE_ADMIN_USERNAME        # The administrative user (default: 'admin')
-PIECEWISE_ADMIN_PASSWORD        # The administrative password
+PIECEWISE_LOG_LEVEL       # Logging level (default: error)
+PIECEWISE_HOST            # The host Piecewise runs on (default: localhost)
+PIECEWISE_PORT            # The port to bind to (default: 3000)
+PIECEWISE_ADMIN_USERNAME  # The administrative user (default: 'admin')
+PIECEWISE_ADMIN_PASSWORD  # The administrative password
+PIECEWISE_DB_HOST         # Postgres database host (default: localhost)
+PIECEWISE_DB_PORT         # Postgres port (default: 5432)
+PIECEWISE_DB_DATABASE     # Postgres database name (default: piecewise)
+PIECEWISE_DB_USERNAME     # Postgres user (default: piecewise)
+PIECEWISE_DB_PASSWORD     # Postgres password
+PIECEWISE_DB_POOL_MIN     # Postgres minimum connections (default: 0)
+PIECEWISE_DB_POOL_MAX     # Postgres max connections (default: 10)
+PIECEWISE_DB_TIMEOUT      # Postgres connection timeout (default: 0)
 ```
 
 Additionally, we use the semi-standard `NODE_ENV` variable for defining test,
-staging, and production.
+staging, and production. In development mode Piecewise uses sqlite3, but uses in
+production.
 
 ## Deployment
 
