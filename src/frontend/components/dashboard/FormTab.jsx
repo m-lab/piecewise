@@ -7,6 +7,9 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 
+// custom styles
+import './FormTab.css';
+
 export default function FormTab() {
   const processError = errorMessage => {
     let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
@@ -71,7 +74,7 @@ export default function FormTab() {
   };
 
   return (
-    <Container>
+    <Container className={'mt-4 mb-4'}>
       <Row>
         <Col>
           <ReactFormBuilder onPost={uploadForm} onLoad={downloadForm} />
