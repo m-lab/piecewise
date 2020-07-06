@@ -1,0 +1,13 @@
+{
+  "name": "Piecewise",
+  "short_name": "Piecewise",
+  "icons": [
+    {
+      "src": "favicon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#333333",
+  "background_color": "#ffffff"
+}

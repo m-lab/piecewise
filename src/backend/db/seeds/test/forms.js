@@ -5,6 +5,7 @@ export function seed(knex) {
       // Inserts seed entries
       return knex('forms').insert([
         {
+          id: 1,
           fields: JSON.stringify([
             {
               id: '29A1A156-CDBB-47B2-9D53-023496E35B7B',

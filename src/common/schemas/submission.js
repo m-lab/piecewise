@@ -4,6 +4,11 @@ import Joi from '@hapi/joi';
 const creationSchema = Joi.array()
   .items(
     Joi.object({
+      c2sRate: Joi.number().required(),
+      s2cRate: Joi.number().required(),
+      MinRTT: Joi.number().required(),
+      latitude: Joi.number(),
+      longitude: Joi.number(),
       fields: Joi.array()
         .required()
         .min(1),
@@ -14,6 +19,11 @@ const creationSchema = Joi.array()
 const updateSchema = Joi.array()
   .items(
     Joi.object({
+      c2sRate: Joi.number().required(),
+      s2cRate: Joi.number().required(),
+      MinRTT: Joi.number().required(),
+      latitude: Joi.number(),
+      longitude: Joi.number(),
       fields: Joi.array()
         .required()
         .min(1),

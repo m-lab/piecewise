@@ -5,10 +5,20 @@ import config from '../config.js';
 import server from '../server.js';
 
 const validSubmission = {
+  c2sRate: 10.0,
+  s2cRate: 20.0,
+  MinRTT: 10,
+  latitude: 38.889248,
+  longitude: -77.050636,
   fields: [{ test: 'Test!' }],
 };
 
 const invalidSubmission = {
+  c2sRate: 'baz',
+  s2cRate: null,
+  MinRTT: {},
+  latitude: 'foo',
+  longitude: 'bar',
   fields: 0,
 };
 
@@ -129,7 +139,7 @@ describe('Manage submissions as an admin', () => {
   ).test('Edit a submission with attribute %p', async attribute => {
     await session
       .put('/api/v1/submissions/1')
-      .send({ data: attribute })
+      .send({ data: [{ ...validSubmission, ...attribute }] })
       .expect(204);
   });
 

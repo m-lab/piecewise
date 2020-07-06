@@ -37,13 +37,15 @@ export default function controller(submissions, thisUser) {
 
   router.post('/submissions', async ctx => {
     log.debug('Adding new submission.');
-    let submission;
+    let submission, fid;
+
+    if (ctx.params.fid) {
+      fid = ctx.params.fid;
+    }
+
     try {
-      console.log('***CTX.REQUEST.BODY.DATA***:', ctx.request.body.data);
       const data = await validateCreation(ctx.request.body.data);
-      console.log('***DATA***:', data);
-      submission = await submissions.create(data);
-      console.log('***SUBMISSION***:', submission);
+      submission = await submissions.create(data, fid);
     } catch (err) {
       log.error('HTTP 400 Error: ', err);
       ctx.throw(400, `Failed to parse submission schema: ${err}`);

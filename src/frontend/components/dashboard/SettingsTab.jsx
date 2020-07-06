@@ -47,13 +47,14 @@ export default function SettingsTab(props) {
 
   const uploadSettings = event => {
     event.preventDefault();
-    let status;
     const json = JSON.stringify({
-      title: inputs.title,
-      header: inputs.header,
-      footer: inputs.footer,
-      color_one: inputs.color_one,
-      color_two: inputs.color_two,
+      data: {
+        title: inputs.title,
+        header: inputs.header,
+        footer: inputs.footer,
+        color_one: inputs.color_one,
+        color_two: inputs.color_two,
+      },
     });
     fetch('/api/v1/settings', {
       method: 'PUT',
@@ -63,15 +64,11 @@ export default function SettingsTab(props) {
       body: json,
     })
       .then(response => {
-        status = response.status;
-        return response.json();
-      })
-      .then(data => {
-        if (status === 200 || status === 201) {
+        if (response.status === 204) {
           alert('Settings saved successfully.');
           return setDefaults(inputs);
         } else {
-          const error = processError(data);
+          const error = processError(response.json());
           throw new Error(`Error in response from server: ${error}`);
         }
       })

@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import { ReactFormGenerator } from 'react-form-builder2';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 
 // Bootstrap imports
 import Col from 'react-bootstrap/Col';
@@ -16,6 +15,7 @@ export default function Survey(props) {
   const settings = props.location.state.settings;
   const locationConsent = props.location.state.locationConsent;
   const [form, setForm] = React.useState(null);
+  const [formId, setFormId] = React.useState();
   const [location, setLocation] = React.useState({});
   const [results, setResults] = React.useState({});
   const [testsComplete, setTestsComplete] = React.useState(false);
@@ -39,12 +39,21 @@ export default function Survey(props) {
 
   const uploadFormData = formData => {
     let status;
-    fetch('/api/v1/submissions', {
+    fetch(`/api/v1/forms/${formId}/submissions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data: { fields: formData } }),
+      body: JSON.stringify({
+        data: {
+          c2sRate: results.c2sRate,
+          s2cRate: results.s2cRate,
+          MinRTT: results.MinRTT,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          fields: formData,
+        },
+      }),
     })
       .then(response => {
         status = response.status;
@@ -98,6 +107,7 @@ export default function Survey(props) {
     if (!form) {
       downloadForm()
         .then(res => {
+          setFormId(res.data[0].id);
           setForm(res.data[0].fields);
           setSubmitButton(document.querySelector('.btn-toolbar input'));
           return;

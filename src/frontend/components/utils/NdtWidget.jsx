@@ -99,11 +99,13 @@ export default function NdtWidget(props) {
 
   const onProgress = (msg, percent) => {
     if (msg === 'Test complete') {
+      setText(msg);
       setResults({
         MinRTT: percent.MinRTT,
         c2sRate: percent.c2sRate,
         s2cRate: percent.s2cRate,
       });
+      return;
     }
     if (msg) setText(msg);
     if (percent) setProgress(percent);
@@ -195,7 +197,9 @@ export default function NdtWidget(props) {
         console.error('M-Lab NS lookup failed: ', err.message);
         window.alert('M-Lab NS lookup failed. Please refresh the page.');
       });
+  }, []);
 
+  useEffect(() => {
     if (!_.isEmpty(results)) {
       onFinish(true, results, location);
     }
