@@ -14,6 +14,7 @@ import errorHandler from 'koa-better-error-handler';
 import db from './db.js';
 import authHandler from './middleware/auth.js';
 import cloudflareAccess from './middleware/cloudflare.js';
+import sessionWrapper from './middleware/session.js';
 //import ssr from './middleware/ssr.js';
 import AuthController from './controllers/auth.js';
 import FormController from './controllers/form.js';
@@ -68,10 +69,11 @@ export default function configServer(config) {
     submissions.allowedMethods(),
   ]);
 
-  // Set session secrets
-  server.keys = Array.isArray(config.secrets)
-    ? config.secrets
-    : [config.secrets];
+  // Setup session middleware
+  server.use(async (ctx, next) => {
+    let session = await sessionWrapper(server, db);
+    await session(ctx, next);
+  });
 
   // Set custom error handler
   server.context.onerror = errorHandler;
