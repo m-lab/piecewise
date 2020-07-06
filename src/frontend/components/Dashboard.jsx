@@ -79,7 +79,7 @@ export default function NavTabs() {
       .catch(error => {
         console.error('error:', error);
       });
-  }, []);
+  }, [inputs]);
 
   return (
     <Container>

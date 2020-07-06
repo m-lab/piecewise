@@ -4,6 +4,7 @@ import { CSVLink } from 'react-csv';
 import _ from 'lodash/core';
 
 // Bootstrap imports
+import Alert from 'react-bootstrap/Alert';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -71,6 +72,13 @@ export default function DataTab() {
 
   return (
     <Container className={'mt-4 mb-4'}>
+      <Alert variant="secondary">
+        <p className="mb-0">
+          <em>
+            View data from tests that have been run, and export data to a CSV.
+          </em>
+        </p>
+      </Alert>
       <Row>
         <Col>
           <Table striped bordered hover responsive size="sm">
