@@ -5,6 +5,12 @@ export function seed(knex) {
       // Inserts seed entries
       return knex('submissions').insert([
         {
+          formId: 1,
+          c2sRate: 10.12345,
+          s2cRate: 20.54321,
+          MinRTT: 9,
+          latitude: 38.889248,
+          longitude: -77.050636,
           fields: [
             {
               id: '29A1A156-CDBB-47B2-9D53-023496E35B7B',

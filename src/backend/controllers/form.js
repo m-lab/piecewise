@@ -35,11 +35,8 @@ export default function controller(forms, thisUser) {
     log.debug('Adding new form.');
     let form;
     try {
-      console.log('***ctx.request.body***:', ctx.request.body);
       const data = await validateCreation(ctx.request.body.data);
-      console.log('***data***:', data);
       form = await forms.create(data);
-      console.log('***FORM***:', form);
 
       // workaround for sqlite
       if (Number.isInteger(form[0])) {

@@ -50,12 +50,13 @@ export default function configServer(config) {
   // Setup our API handlers
   const userModel = new Users();
   const auth = AuthController(userModel);
-  const formModel = new Forms(db);
-  const forms = new FormController(formModel, authz);
   const settingsModel = new Settings(db);
   const settings = new SettingsController(settingsModel, authz);
   const subModel = new Submissions(db);
   const submissions = new SubController(subModel, authz);
+  const formModel = new Forms(db);
+  const forms = new FormController(formModel, authz);
+  forms.use('/forms/:fid', submissions.routes(), submissions.allowedMethods());
   const apiV1Router = compose([
     auth.routes(),
     auth.allowedMethods(),
