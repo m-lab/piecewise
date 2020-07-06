@@ -85,7 +85,7 @@ export default function SettingsTab(props) {
     <Container className={'mt-4 mb-4'}>
       <Form onSubmit={uploadSettings}>
         <Form.Group>
-          <Form.Label>Site Title</Form.Label>
+          <Form.Label for="title">Site Title</Form.Label>
           <Form.Control
             required
             type="text"
@@ -96,7 +96,7 @@ export default function SettingsTab(props) {
           />
         </Form.Group>
         <Form.Group>
-          <Form.Label>Welcome Message</Form.Label>
+          <Form.Label for="header">Welcome Message</Form.Label>
           <Form.Control
             required
             as="textarea"
@@ -108,7 +108,7 @@ export default function SettingsTab(props) {
           />
         </Form.Group>
         <Form.Group>
-          <Form.Label>Thank You Message</Form.Label>
+          <Form.Label for="footer">Thank You Message</Form.Label>
           <Form.Control
             required
             as="textarea"
@@ -121,19 +121,21 @@ export default function SettingsTab(props) {
         </Form.Group>
         <Form.Group className={'flex'}>
           <div className={'flex-item'}>
-            <Form.Label>
+            <Form.Label for="color_one">
               Choose a primary default color for the site:
             </Form.Label>
             <SketchPicker
+              name="color_one"
               color={inputs.color_one || defaults.color_one}
               onChangeComplete={handleChangeColorPrimary}
             />
           </div>
           <div className={'flex-item'}>
-            <Form.Label>
+            <Form.Label for="color_two">
               Choose a secondary default color for the site:
             </Form.Label>
             <SketchPicker
+              name="color_two"
               color={inputs.color_two || defaults.color_two}
               onChangeComplete={handleChangeColorSecondary}
             />
