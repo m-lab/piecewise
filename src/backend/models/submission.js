@@ -1,4 +1,3 @@
-import knex from 'knex';
 import { BadRequestError } from '../../common/errors.js';
 
 export default class SubManager {
@@ -17,7 +16,7 @@ export default class SubManager {
         let fids = [];
         if (fid) {
           fids = await trx('forms')
-            .select()
+            .select('*')
             .where({ id: parseInt(fid) });
           if (fids.length === 0) {
             throw new BadRequestError('Invalid form ID.');
@@ -91,12 +90,24 @@ export default class SubManager {
     sort_by: sort_by = 'id',
     from: from,
     to: to,
-    form: form,
   }) {
     let rows = [];
     rows = await this._db
       .table('submissions')
-      .select('*')
+      .select([
+        'submissions.id as id',
+        'submissions.created_at as date',
+        'submissions.c2sRate as c2sRate',
+        'submissions.s2cRate as s2cRate',
+        'submissions.MinRTT as MinRTT',
+        'submissions.latitude as latitude',
+        'submissions.longitude as longitude',
+        'submissions.fields as fields',
+        'forms.id as form_id',
+        'forms.fields as form_fields',
+      ])
+      .join('form_submissions', 'form_submissions.sid', 'submissions.id')
+      .join('forms', 'form_submissions.fid', 'forms.id')
       .modify(queryBuilder => {
         if (from) {
           queryBuilder.where('created_at', '>', from);
@@ -104,14 +115,6 @@ export default class SubManager {
 
         if (to) {
           queryBuilder.where('created_at', '<', to);
-        }
-
-        if (form) {
-          queryBuilder.join(
-            'form_submissions',
-            'form_submissions.fid',
-            knex.raw('?', [form]),
-          );
         }
 
         if (asc) {
@@ -129,7 +132,20 @@ export default class SubManager {
         }
       });
 
-    return rows.map(r => ({ ...r, fields: JSON.parse(r.fields) }));
+    return rows.map(r => {
+      let fields = JSON.parse(r.fields);
+      let form_fields = JSON.parse(r.form_fields);
+      let merged_fields = fields.map(s => {
+        for (let f of form_fields) {
+          if (f.field_name && s.name === f.field_name) {
+            s.label = f.label;
+          }
+        }
+        return s;
+      });
+      delete r.form_fields;
+      return { ...r, fields: merged_fields };
+    });
   }
 
   async findById(id) {

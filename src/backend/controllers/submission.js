@@ -88,6 +88,7 @@ export default function controller(submissions, thisUser) {
           from: from,
           to: to,
         });
+
         ctx.response.body = {
           statusCode: 200,
           status: 'ok',
