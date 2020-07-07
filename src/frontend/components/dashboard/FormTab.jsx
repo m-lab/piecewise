@@ -73,19 +73,134 @@ export default function FormTab() {
       });
   };
 
+  const toolbarItems = [
+    {
+      key: 'Header',
+      name: 'Header Text',
+      icon: 'fa fa-heading',
+      static: true,
+      content: 'Placeholder Text...',
+    },
+    {
+      key: 'Label',
+      name: 'Label',
+      static: true,
+      icon: 'fa fa-font',
+      content: 'Placeholder Text...',
+    },
+    {
+      key: 'Paragraph',
+      name: 'Paragraph',
+      static: true,
+      icon: 'fa fa-paragraph',
+      content: 'Placeholder Text...',
+    },
+    {
+      key: 'LineBreak',
+      name: 'Line Break',
+      static: true,
+      icon: 'fa fa-arrows-alt-h',
+    },
+    {
+      key: 'Dropdown',
+      canHaveAnswer: true,
+      name: 'Dropdown',
+      icon: 'fa fa-caret-square-down',
+      label: 'Placeholder Label',
+      field_name: 'dropdown_',
+      options: [],
+    },
+    {
+      key: 'Checkboxes',
+      canHaveAnswer: true,
+      name: 'Checkboxes',
+      icon: 'fa fa-check-square',
+      label: 'Placeholder Label',
+      field_name: 'checkboxes_',
+      options: [],
+    },
+    {
+      key: 'RadioButtons',
+      canHaveAnswer: true,
+      name: 'Multiple Choice',
+      icon: 'fa fa-dot-circle',
+      label: 'Placeholder Label',
+      field_name: 'radio_buttons_',
+      options: [],
+    },
+    {
+      key: 'TextInput',
+      canHaveAnswer: true,
+      name: 'Text Input',
+      label: 'Placeholder Label',
+      icon: 'fa fa-font',
+      field_name: 'text_input_',
+    },
+    {
+      key: 'NumberInput',
+      canHaveAnswer: true,
+      name: 'Number Input',
+      label: 'Placeholder Label',
+      icon: 'fa fa-plus',
+      field_name: 'number_input_',
+    },
+    {
+      key: 'TextArea',
+      canHaveAnswer: true,
+      name: 'Multi-line Input',
+      label: 'Placeholder Label',
+      icon: 'fa fa-text-height',
+      field_name: 'text_area_',
+    },
+    {
+      key: 'Rating',
+      canHaveAnswer: true,
+      name: 'Rating',
+      label: 'Placeholder Label',
+      icon: 'fa fa-star',
+      field_name: 'rating_',
+    },
+    {
+      key: 'DatePicker',
+      canDefaultToday: true,
+      canReadOnly: true,
+      name: 'Date',
+      icon: 'fa fa-calendar',
+      label: 'Placeholder Label',
+      field_name: 'date_picker_',
+    },
+    {
+      key: 'Range',
+      name: 'Range',
+      icon: 'fa fa-sliders-h',
+      label: 'Placeholder Label',
+      field_name: 'range_',
+      step: 1,
+      default_value: 3,
+      min_value: 1,
+      max_value: 5,
+      min_label: 'Easy',
+      max_label: 'Difficult',
+    },
+  ];
+
   return (
     <Container className={'mt-4 mb-4'}>
       <Alert variant="secondary">
         <p className="mb-0">
           <em>
             Use the form builder below to create a survey for the end user to
-            out. You may use and reorder the blocks as you wish.
+            fill out. You may use and reorder the blocks as you wish.
           </em>
         </p>
       </Alert>
       <Row>
         <Col>
-          <ReactFormBuilder onPost={uploadForm} onLoad={downloadForm} />
+          <ReactFormBuilder
+            onPost={uploadForm}
+            onLoad={downloadForm}
+            toolbarItems={toolbarItems}
+          />
         </Col>
       </Row>
     </Container>

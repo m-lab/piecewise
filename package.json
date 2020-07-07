@@ -120,7 +120,7 @@
     "react-csv": "^2.0.3",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^2.2.3",
-    "react-form-builder2": "^0.5.8",
+    "react-form-builder2": "^0.5.10",
     "react-helmet-async": "^1.0.5",
     "react-imported-component": "^6.2.1",
     "react-prerendered-component": "^1.2.4",
