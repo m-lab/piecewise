@@ -6,7 +6,7 @@ import { BadRequestError } from '../../common/errors.js';
 import {
   validateCreation,
   validateUpdate,
-} from '../../common/schemas/submission.js';
+} from '../../common/schemas/submissions.js';
 import { getLogger } from '../log.js';
 
 const log = getLogger('backend:controllers:submission');

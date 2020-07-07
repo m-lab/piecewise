@@ -222,4 +222,5 @@ export default function NdtWidget(props) {
 
 NdtWidget.propTypes = {
   onFinish: PropTypes.func.isRequired,
+  locationConsent: PropTypes.bool,
 };

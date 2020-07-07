@@ -13,6 +13,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
 // module imports
+import Loading from './Loading.jsx';
 import ChromeScreengrab from '../assets/images/chrome-location.jpg';
 import FirefoxScreengrab from '../assets/images/firefox-location.jpg';
 
@@ -41,11 +42,13 @@ export default function Basic() {
   });
 
   const handleColors = settings => {
-    setPrimary(css({
+    setPrimary(
+      css({
         color: settings.color_one,
       }),
     );
-    setSecondary(css({
+    setSecondary(
+      css({
         backgroundColor: `${settings.color_two} !important`,
         borderColor: `${settings.color_two} !important`,
         ':hover': {
@@ -121,7 +124,7 @@ export default function Basic() {
   };
 
   if (!settings) {
-    return <div>Loading...</div>;
+    return <Loading />;
   } else {
     return (
       <Container fluid="lg" className={'mt-4 mb-4'}>

@@ -9,6 +9,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 
 // module imports
+import Loading from './Loading.jsx';
 import NdtWidget from './utils/NdtWidget.jsx';
 
 export default function Survey(props) {
@@ -129,7 +130,7 @@ export default function Survey(props) {
   }, [testsComplete, form, submitButton]);
 
   if (!form) {
-    return <div>Loading...</div>;
+    return <Loading />;
   } else {
     return (
       <Container className={'mt-4'}>

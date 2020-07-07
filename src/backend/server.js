@@ -17,13 +17,13 @@ import cloudflareAccess from './middleware/cloudflare.js';
 import sessionWrapper from './middleware/session.js';
 //import ssr from './middleware/ssr.js';
 import AuthController from './controllers/auth.js';
-import FormController from './controllers/form.js';
+import FormController from './controllers/forms.js';
 import SettingsController from './controllers/settings.js';
-import SubController from './controllers/submission.js';
-import Forms from './models/form.js';
+import SubController from './controllers/submissions.js';
+import Forms from './models/forms.js';
 import Settings from './models/settings.js';
-import Submissions from './models/submission.js';
-import Users from './models/user.js';
+import Submissions from './models/submissions.js';
+import Users from './models/users.js';
 
 const __dirname = path.resolve();
 const STATIC_DIR = path.resolve(__dirname, 'dist', 'frontend');

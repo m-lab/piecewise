@@ -30,7 +30,7 @@
     "/dist"
   ],
   "scripts": {
-    "lint": "eslint --ignore-path .gitignore --fix ./src",
+    "lint": "eslint --ignore-path .gitignore --ext js,jsx --fix ./src",
     "test": "jest --coverage --forceExit",
     "doc": "jsdoc -d ./dist/doc/ -r ./src/backend ./src/frontend ./src/worker",
     "build:imported-components": "imported-components src/frontend src/frontend/imported.js",

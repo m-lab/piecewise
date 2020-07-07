@@ -1,7 +1,10 @@
 import Router from '@koa/router';
 import moment from 'moment';
 import Joi from '@hapi/joi';
-import { validateCreation, validateUpdate } from '../../common/schemas/form.js';
+import {
+  validateCreation,
+  validateUpdate,
+} from '../../common/schemas/forms.js';
 import { BadRequestError } from '../../common/errors.js';
 import { getLogger } from '../log.js';
 

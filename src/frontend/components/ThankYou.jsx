@@ -21,7 +21,9 @@ export default function ThankYou(props) {
     <Container fluid="sm" className={'mt-4 mb-4'}>
       <Row className={'mb-4'}>
         <Col md={{ span: 6 }}>
-          <h1 {...h1} className="thankyou-header">Thank you!</h1>
+          <h1 {...h1} className="thankyou-header">
+            Thank you!
+          </h1>
         </Col>
       </Row>
       <Row className={'mb-4'}>
@@ -31,8 +33,8 @@ export default function ThankYou(props) {
             {(results.s2cRate / 1000).toFixed(2)} Mb/s
           </div>
           <div>
-            <strong>Upload Speed:</strong>{' '}
-            {(results.c2sRate / 1000).toFixed(2)} Mb/s
+            <strong>Upload Speed:</strong> {(results.c2sRate / 1000).toFixed(2)}{' '}
+            Mb/s
           </div>
           <div>
             <strong>Latency:</strong> {results.MinRTT} ms
