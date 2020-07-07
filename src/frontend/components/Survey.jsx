@@ -33,7 +33,7 @@ export default function Survey(props) {
   };
 
   const processError = errorMessage => {
-    let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
+    let text = `We're sorry, your request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
     let debug = JSON.stringify(errorMessage);
     return [text, debug];
   };
@@ -114,6 +114,9 @@ export default function Survey(props) {
           return;
         })
         .catch(error => {
+          setForm(
+            'No survey found. Please contact an administrator or login and create one.',
+          );
           console.error('error:', error);
         });
     }
@@ -131,6 +134,8 @@ export default function Survey(props) {
 
   if (!form) {
     return <Loading />;
+  } else if (typeof form === "string") {
+    return <div>{form}</div>;
   } else {
     return (
       <Container className={'mt-4'}>

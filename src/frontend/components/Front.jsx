@@ -64,7 +64,7 @@ export default function Basic() {
   const [settings, setSettings] = useState({});
 
   const processError = errorMessage => {
-    let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
+    let text = `We're sorry, your request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
     let debug = JSON.stringify(errorMessage);
     return [text, debug];
   };
