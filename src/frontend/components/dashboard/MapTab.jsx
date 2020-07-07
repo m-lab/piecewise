@@ -8,8 +8,13 @@ import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 
 const styles = {
+  bottom: '0',
+  left: '0',
+  height: '70vh',
+  position: 'absolute',
+  right: '0',
+  top: '90%',
   width: '100%',
-  height: '80vh',
 };
 
 export default function MapTab() {

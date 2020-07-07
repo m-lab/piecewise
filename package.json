@@ -194,7 +194,6 @@
             "last 1 Firefox version"
             ]
         },
-        "exclude": ["mapbox-gl"],
         "loose": true
         }]
     ],
@@ -212,8 +211,7 @@
                 "npm_package_name",
                 "npm_package_version",
                 "npm_package_description"
-              ],
-              "exclude": ["mapbox-gl"]
+              ]
             }
           ]
         ]
@@ -221,10 +219,7 @@
       "client": {
         "plugins": [
           [
-            "react-imported-component/babel",
-            {
-              "exclude": ["mapbox-gl"]
-            }
+            "react-imported-component/babel"
           ]
         ]
       }
