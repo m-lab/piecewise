@@ -134,7 +134,7 @@ export default function Survey(props) {
 
   if (!form) {
     return <Loading />;
-  } else if (typeof form === "string") {
+  } else if (typeof form === 'string') {
     return <div>{form}</div>;
   } else {
     return (

@@ -51,9 +51,9 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "last 3 chrome versions",
+      "last 3 firefox versions",
+      "last 3 safari versions"
     ],
     "development": [
       "last 1 chrome version",
@@ -101,7 +101,7 @@
     "koa-session": "^5.13.1",
     "koa-static": "^5.0.0",
     "log4js": "^6.2.0",
-    "mapbox-gl": "^1.6.0",
+    "mapbox-gl": "^1.11.0",
     "material-ui-cookie-consent": "^0.1.0",
     "minimist": "^1.2.5",
     "moment": "^2.25.3",
@@ -184,12 +184,21 @@
       "react-imported-component/babel"
     ],
     "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
+      "@babel/preset-react",
+      ["@babel/preset-env", {
+        "targets": {
+            "browsers": [
+            ">2%",
+            "last 1 Edge version",
+            "last 2 Safari version",
+            "last 1 Firefox version"
+            ]
+        },
+        "exclude": ["mapbox-gl"],
+        "loose": true
+        }]
     ],
-    "ignore": [
-      "./node_modules/mapbox-gl"
-    ],
+    "ignore": ["mapbox-gl"],
     "env": {
       "server": {
         "plugins": [
@@ -203,7 +212,8 @@
                 "npm_package_name",
                 "npm_package_version",
                 "npm_package_description"
-              ]
+              ],
+              "exclude": ["mapbox-gl"]
             }
           ]
         ]
@@ -211,7 +221,10 @@
       "client": {
         "plugins": [
           [
-            "react-imported-component/babel"
+            "react-imported-component/babel",
+            {
+              "exclude": ["mapbox-gl"]
+            }
           ]
         ]
       }
