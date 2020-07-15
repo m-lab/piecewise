@@ -69,11 +69,11 @@ export default function NavTabs() {
   };
 
   useEffect(() => {
-    document.title = `${inputs.title} | Dashboard`;
     downloadSettings()
       .then(data => {
         if (!_.isEmpty(data)) {
           setInputs(data);
+          document.title = `${data.title} | Dashboard`;
         }
         return;
       })
