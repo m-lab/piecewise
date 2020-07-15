@@ -88,6 +88,7 @@ export default function Basic() {
           if (result.data) {
             setSettings(result.data);
             handleColors(result.data);
+            document.title = result.data.title;
             return;
           } else {
             const error = processError(result);
@@ -107,9 +108,11 @@ export default function Basic() {
   useEffect(() => {
     downloadSettings()
       .then(data => {
+        console.log('data: ', data);
         if (data) {
           setSettings(data);
           handleColors(data);
+          document.title = data.title;
         }
         return;
       })

@@ -154,6 +154,9 @@ export default function NdtWidget(props) {
                 currentLoc.address.state,
             );
         } else {
+          document
+            .getElementsByClassName('loader')[0]
+            .append(`Error: ${xhr.responseText}`);
           console.log('Location lookup failed');
         }
       }
@@ -173,8 +176,10 @@ export default function NdtWidget(props) {
     }
 
     if (locationConsent) {
-      if ('geolocation' in navigator) {
+      if (window.isSecureContext && 'geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        alert('Location lookup failed: The browser is not secure or the geolocator was not found.')
       }
     }
 
