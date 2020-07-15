@@ -1,5 +1,5 @@
 // base imports
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
@@ -16,6 +16,10 @@ export default function ThankYou(props) {
   let h1 = css({
     color: settings.color_one,
   });
+
+  useEffect(() => {
+    document.title = `${settings.title} | Thank You`;
+  }, []);
 
   return (
     <Container fluid="sm" className={'mt-4 mb-4'}>

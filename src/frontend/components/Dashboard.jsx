@@ -73,6 +73,7 @@ export default function NavTabs() {
       .then(data => {
         if (!_.isEmpty(data)) {
           setInputs(data);
+          document.title = `${data.title} | Dashboard`;
         }
         return;
       })

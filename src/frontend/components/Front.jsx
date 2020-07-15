@@ -35,6 +35,10 @@ export default function Basic() {
     padding: '10px',
   });
 
+  let location = css({
+    marginLeft: '20px',
+  });
+
   let mb2 = css({
     '@media(max-width: 768px)': {
       marginBottom: '20px',
@@ -59,7 +63,7 @@ export default function Basic() {
   };
 
   // handle geolocation consent
-  const [locationConsent, setLocationConsent] = useState(false);
+  const [locationConsent, setLocationConsent] = useState(true);
   // site settings
   const [settings, setSettings] = useState({});
 
@@ -84,6 +88,7 @@ export default function Basic() {
           if (result.data) {
             setSettings(result.data);
             handleColors(result.data);
+            document.title = result.data.title;
             return;
           } else {
             const error = processError(result);
@@ -103,9 +108,11 @@ export default function Basic() {
   useEffect(() => {
     downloadSettings()
       .then(data => {
+        console.log('data: ', data);
         if (data) {
           setSettings(data);
           handleColors(data);
+          document.title = data.title;
         }
         return;
       })
@@ -170,25 +177,31 @@ export default function Basic() {
               <Form.Label>Do you want to use your browser location?</Form.Label>
               <Form.Check
                 type="radio"
+                name="location"
                 id="location-yes"
                 label="Use my browser location"
                 onChange={() => setLocationConsent(true)}
+                defaultChecked
               />
               <Form.Check
                 type="radio"
+                name="location"
                 id="location-no"
                 label="Do not use my location"
                 onChange={() => setLocationConsent(false)}
               />
             </Form.Group>
           </fieldset>
-          <Form.Group>
-            <Form.Check
-              required
-              type="checkbox"
-              id="consent"
-              label="*I agree to the M-Lab privacy policy, which includes retention and publication of IP addresses, in addition to speed test results."
-            />
+          <Form.Group {...location}>
+            <Form.Check.Input required type="checkbox" id="consent" />
+            <Form.Check.Label>
+              *I agree to the{' '}
+              <a href="https://www.measurementlab.net/privacy/">
+                M-Lab privacy policy
+              </a>
+              , which includes retention and publication of IP addresses, in
+              addition to speed test results.
+            </Form.Check.Label>
             <Form.Text>This field is required</Form.Text>
           </Form.Group>
           <Button variant="primary" type="submit" {...secondary}>

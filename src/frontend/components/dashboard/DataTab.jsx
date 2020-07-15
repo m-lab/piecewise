@@ -87,6 +87,11 @@ export default function DataTab() {
                 {headers.map(header => (
                   <th key={header.key}>{header.label}</th>
                 ))}
+                {submissions[0].fields
+                  ? submissions[0].fields.map(field => (
+                      <th key={field.name}>{field.label}</th>
+                    ))
+                  : null}
               </tr>
             </thead>
             <tbody>
@@ -94,11 +99,16 @@ export default function DataTab() {
                 <tr key={submission.id}>
                   <td>{submission.id}</td>
                   <td>{submission.date}</td>
-                  <td>{submission.c2sRate}</td>
                   <td>{submission.s2cRate}</td>
+                  <td>{submission.c2sRate}</td>
                   <td>{submission.MinRTT}</td>
                   <td>{submission.latitude}</td>
                   <td>{submission.longitude}</td>
+                  {submission.fields
+                    ? submission.fields.map(field => (
+                        <td key={field.name}>{field.value}</td>
+                      ))
+                    : null}
                 </tr>
               ))}
             </tbody>

@@ -105,6 +105,7 @@ export default function Survey(props) {
   };
 
   useEffect(() => {
+    document.title = `${settings.title} | Survey`;
     if (!form) {
       downloadForm()
         .then(res => {
