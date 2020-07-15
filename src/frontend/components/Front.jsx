@@ -147,8 +147,8 @@ export default function Basic() {
           or Incognito mode, you may need to disable that preference for this
           website.
         </p>
-        <Row className={'mb-4'}>
-          <Col xs={12} md={6} {...mb2}>
+        <Row className={'justify-content-md-center mb-4'}>
+          <Col xs={12} md={{ span: 4 }} {...mb2}>
             <Card {...card}>
               <Card.Img
                 src={FirefoxScreengrab}
@@ -159,7 +159,7 @@ export default function Basic() {
               </Card.Text>
             </Card>
           </Col>
-          <Col xs={12} md={6} {...mb2}>
+          <Col xs={12} md={{ span: 4 }} {...mb2}>
             <Card {...card}>
               <Card.Img
                 src={ChromeScreengrab}
