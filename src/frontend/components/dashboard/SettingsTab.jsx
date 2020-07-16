@@ -1,7 +1,13 @@
 // base imports
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { EditorState, ContentState, convertToRaw } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { SketchPicker } from 'react-color';
+import _ from 'lodash/core';
 
 // bootstrap imports
 import Alert from 'react-bootstrap/Alert';
@@ -14,7 +20,15 @@ import './SettingsTab.css';
 
 export default function SettingsTab(props) {
   const { defaults, setDefaults } = props;
-  const [inputs, setInputs] = React.useState({});
+  const [inputs, setInputs] = useState({});
+  const [header, setHeader] = useState('');
+  const [footer, setFooter] = useState('');
+  const [editorStateHeader, setEditorStateHeader] = useState(
+    EditorState.createEmpty(),
+  );
+  const [editorStateFooter, setEditorStateFooter] = useState(
+    EditorState.createEmpty(),
+  );
 
   // color picker
   const handleChangeColorPrimary = color => {
@@ -34,10 +48,31 @@ export default function SettingsTab(props) {
   // other inputs
   const handleInputChange = event => {
     event.persist();
+    console.log(event.target.value);
     setInputs(inputs => ({
       ...inputs,
       [event.target.name]: event.target.value,
     }));
+  };
+
+  const onEditorStateHeaderChange = es => {
+    setEditorStateHeader(es);
+    const html = toHtml(es);
+    if (header !== html) {
+      setHeader(html);
+    }
+  };
+
+  const onEditorStateFooterChange = es => {
+    setEditorStateFooter(es);
+    const html = toHtml(es);
+    if (header !== html) {
+      setFooter(html);
+    }
+  };
+
+  const toHtml = es => {
+    return draftToHtml(convertToRaw(es.getCurrentContent()));
   };
 
   const processError = errorMessage => {
@@ -51,8 +86,8 @@ export default function SettingsTab(props) {
     const json = JSON.stringify({
       data: {
         title: inputs.title,
-        header: inputs.header,
-        footer: inputs.footer,
+        header: header,
+        footer: footer,
         color_one: inputs.color_one,
         color_two: inputs.color_two,
       },
@@ -80,6 +115,27 @@ export default function SettingsTab(props) {
       });
   };
 
+  React.useEffect(() => {
+    if (!_.isEmpty(defaults)) {
+      setEditorStateHeader(
+        EditorState.push(
+          editorStateHeader,
+          ContentState.createFromBlockArray(
+            htmlToDraft(header || defaults.header || ''),
+          ),
+        ),
+      );
+      setEditorStateFooter(
+        EditorState.push(
+          editorStateFooter,
+          ContentState.createFromBlockArray(
+            htmlToDraft(footer || defaults.footer || '')
+          ),
+        ),
+      );
+    }
+  }, [defaults]);
+
   return (
     <Container className={'mt-4 mb-4'}>
       <Alert variant="secondary">
@@ -88,8 +144,8 @@ export default function SettingsTab(props) {
         </p>
       </Alert>
       <Form onSubmit={uploadSettings}>
-        <Form.Group>
-          <Form.Label for="title">Site Title</Form.Label>
+        <Form.Group className={'mb-4'}>
+          <Form.Label htmlFor="title">Site Title</Form.Label>
           <Form.Control
             required
             type="text"
@@ -99,33 +155,31 @@ export default function SettingsTab(props) {
             onChange={handleInputChange}
           />
         </Form.Group>
-        <Form.Group>
-          <Form.Label for="header">Welcome Message</Form.Label>
-          <Form.Control
+        <Form.Group className={'mb-4'}>
+          <Form.Label htmlFor="header">Welcome Message</Form.Label>
+          <Editor
             required
-            as="textarea"
-            rows="3"
             name="header"
-            placeholder="Welcome text shown when first visiting te site"
-            defaultValue={inputs.header || defaults.header || ''}
-            onChange={handleInputChange}
+            theme="snow"
+            placeholder="Welcome text shown when first visiting the site"
+            editorState={editorStateHeader}
+            onEditorStateChange={onEditorStateHeaderChange}
           />
         </Form.Group>
-        <Form.Group>
-          <Form.Label for="footer">Thank You Message</Form.Label>
-          <Form.Control
+        <Form.Group className={'mb-4'}>
+          <Form.Label htmlFor="footer">Thank You Message</Form.Label>
+          <Editor
             required
-            as="textarea"
-            rows="3"
             name="footer"
+            theme="snow"
             placeholder="Text shown after taking the survey"
-            defaultValue={inputs.footer || defaults.footer || ''}
-            onChange={handleInputChange}
+            editorState={editorStateFooter}
+            onEditorStateChange={onEditorStateFooterChange}
           />
         </Form.Group>
         <Form.Group className={'flex'}>
           <div className={'flex-item'}>
-            <Form.Label for="color_one">
+            <Form.Label htmlFor="color_one">
               Choose a primary default color for the site:
             </Form.Label>
             <SketchPicker
@@ -135,7 +189,7 @@ export default function SettingsTab(props) {
             />
           </div>
           <div className={'flex-item'}>
-            <Form.Label for="color_two">
+            <Form.Label htmlFor="color_two">
               Choose a secondary default color for the site:
             </Form.Label>
             <SketchPicker

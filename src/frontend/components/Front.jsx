@@ -1,8 +1,9 @@
 // base imports
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import parse from 'html-react-parser';
+import PropTypes from 'prop-types';
 
 // bootstrap imports
 import Button from 'react-bootstrap/Button';
@@ -136,7 +137,7 @@ export default function Basic() {
     return (
       <Container fluid="lg" className={'mt-4 mb-4'}>
         <h1 {...primary}>{settings.title}</h1>
-        <p>{settings.header}</p>
+        <p>{parse(`<div>${settings.header}</div>`)}</p>
         <h2 {...primary}>Sharing your location</h2>
         <p>
           To get the most accurate location data, we ask you to allow your
