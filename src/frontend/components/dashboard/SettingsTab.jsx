@@ -117,6 +117,8 @@ export default function SettingsTab(props) {
 
   React.useEffect(() => {
     if (!_.isEmpty(defaults)) {
+      setHeader(defaults.header);
+      setFooter(defaults.footer);
       setEditorStateHeader(
         EditorState.push(
           editorStateHeader,
@@ -129,7 +131,7 @@ export default function SettingsTab(props) {
         EditorState.push(
           editorStateFooter,
           ContentState.createFromBlockArray(
-            htmlToDraft(footer || defaults.footer || '')
+            htmlToDraft(footer || defaults.footer || ''),
           ),
         ),
       );

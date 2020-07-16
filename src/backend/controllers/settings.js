@@ -32,6 +32,9 @@ export default function controller(settings, thisUser) {
     log.debug(`Updating settings.`);
     let setting;
     try {
+      console.log('************************');
+      console.log(ctx.request.body.data);
+      console.log('************************');
       const data = await validateUpdate(ctx.request.body.data);
       setting = await settings.update(data[0]);
       if (setting) {
