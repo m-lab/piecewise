@@ -31,10 +31,10 @@ const mapStyles = {
   width: '93%',
 };
 
-const bounds = [
-  [-167, 16], // Southwest coordinates
-  [-46, 72], // Northeast coordinates
-];
+// const bounds = [
+//   [-167, 16], // Southwest coordinates
+//   [-46, 72], // Northeast coordinates
+// ];
 
 export default function MapTab() {
   const [map, setMap] = useState(null);
