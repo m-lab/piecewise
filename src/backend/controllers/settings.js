@@ -30,9 +30,15 @@ export default function controller(settings, thisUser) {
 
   router.put('/settings', thisUser.can('access private pages'), async ctx => {
     log.debug(`Updating settings.`);
+    console.log('************************');
+    console.log('updating.....');
+    console.log('************************');
     let setting;
     try {
       const data = await validateUpdate(ctx.request.body.data);
+      console.log('************************');
+      console.log(ctx.request.body.data);
+      console.log('************************');
       setting = await settings.update(data[0]);
       if (setting) {
         ctx.response.status = 204;

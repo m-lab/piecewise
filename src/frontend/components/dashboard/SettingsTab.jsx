@@ -47,10 +47,16 @@ export default function SettingsTab(props) {
   };
 
   const handleLogoChange = event => {
-    console.log(event.target.files[0]);
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    const image = reader.readAsDataURL(file);
+
+    // console.log(event.target.files[0]);
+    // const image = Buffer.from(event.target.files[0], 'base64');
+    // console.log(image);
     setInputs(inputs => ({
       ...inputs,
-      logo: event.target.files[0].name,
+      logo: image,
     }));
   };
 

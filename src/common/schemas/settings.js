@@ -16,6 +16,7 @@ const updateSchema = Joi.array()
   .min(1);
 
 export async function validateUpdate(data) {
+  console.log('validating....', data);
   try {
     data = Array.isArray(data) ? data : [data];
     const value = await updateSchema.validateAsync(data);
