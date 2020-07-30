@@ -119,7 +119,7 @@ export default function Basic() {
   };
 
   useEffect(() => {
-    console.log(document.querySelector('[rel="shortcut icon"]'));
+    console.log(favicon);
     downloadSettings()
       .then(data => {
         if (data) {

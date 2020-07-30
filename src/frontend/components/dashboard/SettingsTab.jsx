@@ -117,7 +117,7 @@ export default function SettingsTab(props) {
           return setDefaults(newDefaults);
         } else {
           const error = processError(response.json());
-          alert (`Settings not saved. Error in response from server: ${error}`);
+          alert(`Settings not saved. Error in response from server: ${error}`);
           throw new Error(`Error in response from server: ${error}`);
         }
       })
