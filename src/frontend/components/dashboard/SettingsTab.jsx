@@ -29,7 +29,6 @@ export default function SettingsTab(props) {
   const [editorStateFooter, setEditorStateFooter] = useState(
     EditorState.createEmpty(),
   );
-  const [favicon, setFavicon] = useState(null);
 
   // color picker
   const handleChangeColorPrimary = color => {
@@ -46,18 +45,37 @@ export default function SettingsTab(props) {
     }));
   };
 
-  const handleLogoChange = event => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    const image = reader.readAsDataURL(file);
+  const readFileDataAsBase64 = e => {
+    const file = e.target.files[0];
 
-    // console.log(event.target.files[0]);
-    // const image = Buffer.from(event.target.files[0], 'base64');
-    // console.log(image);
-    setInputs(inputs => ({
-      ...inputs,
-      logo: image,
-    }));
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = event => {
+        resolve(event.target.result);
+      };
+
+      reader.onerror = err => {
+        reject(err);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleLogoChange = event => {
+    readFileDataAsBase64(event)
+      .then(response => {
+        setInputs(inputs => ({
+          ...inputs,
+          logo: response,
+        }));
+        return response;
+      })
+      .catch(error => {
+        console.error('error:', error);
+        throw Error(error.statusText);
+      });
   };
 
   // other inputs
@@ -98,7 +116,6 @@ export default function SettingsTab(props) {
 
   const uploadSettings = event => {
     event.preventDefault();
-    console.log('inputs: ', inputs);
     const json = JSON.stringify({
       data: {
         title: inputs.title,
@@ -118,9 +135,13 @@ export default function SettingsTab(props) {
     })
       .then(response => {
         if (response.status === 204) {
+          document.querySelector('[rel="shortcut icon"]').href = inputs.logo;
           alert('Settings saved successfully.');
           const newDefaults = { ...defaults, ...inputs };
           return setDefaults(newDefaults);
+        } else if (response.status === 413) {
+          alert('Image file too large. Please upload a file 1MB or less.');
+          return;
         } else {
           const error = processError(response.json());
           alert(`Settings not saved. Error in response from server: ${error}`);
@@ -134,9 +155,6 @@ export default function SettingsTab(props) {
   };
 
   React.useEffect(() => {
-    if (document.querySelector('[rel="shortcut icon"]')) {
-      setFavicon(document.querySelector('[rel="shortcut icon"]'));
-    }
     if (!_.isEmpty(defaults)) {
       setHeader(defaults.header);
       setFooter(defaults.footer);
@@ -157,7 +175,7 @@ export default function SettingsTab(props) {
         ),
       );
     }
-  }, [defaults, favicon]);
+  }, [defaults]);
 
   return (
     <Container className={'mt-4 mb-4'}>
@@ -180,10 +198,15 @@ export default function SettingsTab(props) {
         </Form.Group>
         <Form.Group>
           <Form.Label htmlFor="logo">Sitewide logo</Form.Label>
+          <img
+            src={inputs.logo || defaults.logo || ''}
+            aria-hidden="true"
+            className={'logo'}
+          />
           <Form.File
             id="logo"
             name="logo"
-            defaultValue={inputs.logo || favicon}
+            defaultValue={inputs.logo || defaults.logo || ''}
             onChange={handleLogoChange}
           />
         </Form.Group>

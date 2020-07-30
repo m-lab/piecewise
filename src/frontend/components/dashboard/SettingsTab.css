@@ -7,6 +7,12 @@
   margin-top: 30px;
 }
 
+.logo {
+  display: block;
+  max-height: 150px;
+  object-fit: contain;
+}
+
 @media (min-width: 768px) {
   .flex {
     display: flex;

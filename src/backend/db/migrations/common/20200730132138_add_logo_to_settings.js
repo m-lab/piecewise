@@ -1,6 +1,6 @@
 export function up(knex) {
   return knex.schema.table('settings', function(t) {
-    t.binary('logo');
+    t.string('logo');
   });
 }
 

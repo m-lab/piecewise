@@ -39,6 +39,10 @@ export default function Basic() {
     padding: '10px',
   });
 
+  let image = css({
+    maxHeight: '150px',
+  });
+
   let location = css({
     marginLeft: '20px',
   });
@@ -67,10 +71,9 @@ export default function Basic() {
   };
 
   const handleLogo = settings => {
-    console.log(settings);
     if (settings.logo) {
-      console.log(settings.logo);
       setFavicon(settings.logo);
+      document.querySelector('[rel="shortcut icon"]').href = settings.logo;
     }
   };
 
@@ -149,6 +152,9 @@ export default function Basic() {
   } else {
     return (
       <Container fluid="lg" className={'mt-4 mb-4'}>
+        <div>
+          <img src={favicon} aria-hidden="true" {...image} />
+        </div>
         <h1 {...primary}>{settings.title}</h1>
         <div>{parse(`<div>${settings.header}</div>`)}</div>
         <h2 {...primary}>Sharing your location</h2>
