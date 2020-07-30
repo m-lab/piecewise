@@ -47,7 +47,7 @@ export default function ThankYou(props) {
       </Row>
       <Row>
         <Col>
-          <p>{settings.footer}</p>
+          <div>{parse(`<div>${settings.footer}</div>`)}</div>
         </Col>
       </Row>
     </Container>

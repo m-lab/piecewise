@@ -29,6 +29,7 @@ export default function SettingsTab(props) {
   const [editorStateFooter, setEditorStateFooter] = useState(
     EditorState.createEmpty(),
   );
+  const [favicon, setFavicon] = useState(null);
 
   // color picker
   const handleChangeColorPrimary = color => {
@@ -42,6 +43,14 @@ export default function SettingsTab(props) {
     setInputs(inputs => ({
       ...inputs,
       color_two: color.hex,
+    }));
+  };
+
+  const handleLogoChange = event => {
+    console.log(event.target.files[0]);
+    setInputs(inputs => ({
+      ...inputs,
+      logo: event.target.files[0].name,
     }));
   };
 
@@ -83,6 +92,7 @@ export default function SettingsTab(props) {
 
   const uploadSettings = event => {
     event.preventDefault();
+    console.log('inputs: ', inputs);
     const json = JSON.stringify({
       data: {
         title: inputs.title,
@@ -90,6 +100,7 @@ export default function SettingsTab(props) {
         footer: footer,
         color_one: inputs.color_one,
         color_two: inputs.color_two,
+        logo: inputs.logo,
       },
     });
     fetch('/api/v1/settings', {
@@ -106,6 +117,7 @@ export default function SettingsTab(props) {
           return setDefaults(newDefaults);
         } else {
           const error = processError(response.json());
+          alert (`Settings not saved. Error in response from server: ${error}`);
           throw new Error(`Error in response from server: ${error}`);
         }
       })
@@ -116,6 +128,9 @@ export default function SettingsTab(props) {
   };
 
   React.useEffect(() => {
+    if (document.querySelector('[rel="shortcut icon"]')) {
+      setFavicon(document.querySelector('[rel="shortcut icon"]'));
+    }
     if (!_.isEmpty(defaults)) {
       setHeader(defaults.header);
       setFooter(defaults.footer);
@@ -136,7 +151,7 @@ export default function SettingsTab(props) {
         ),
       );
     }
-  }, [defaults]);
+  }, [defaults, favicon]);
 
   return (
     <Container className={'mt-4 mb-4'}>
@@ -155,6 +170,15 @@ export default function SettingsTab(props) {
             placeholder="Enter a title for the site"
             defaultValue={inputs.title || defaults.title || ''}
             onChange={handleInputChange}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="logo">Sitewide logo</Form.Label>
+          <Form.File
+            id="logo"
+            name="logo"
+            defaultValue={inputs.logo || favicon}
+            onChange={handleLogoChange}
           />
         </Form.Group>
         <Form.Group className={'mb-4'}>

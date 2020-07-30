@@ -20,9 +20,12 @@ import FirefoxScreengrab from '../assets/images/firefox-location.jpg';
 
 export default function Basic() {
   const history = useHistory();
-  const [primary, setPrimary] = React.useState(css({ color: '#333' }));
-  const [secondary, setSecondary] = React.useState(
+  const [primary, setPrimary] = useState(css({ color: '#333' }));
+  const [secondary, setSecondary] = useState(
     css({ backgroundColor: '#ccc !important', borderColor: '#ccc !important' }),
+  );
+  const [favicon, setFavicon] = useState(
+    document.querySelector('[rel="shortcut icon"]'),
   );
 
   // style rules
@@ -63,6 +66,14 @@ export default function Basic() {
     );
   };
 
+  const handleLogo = settings => {
+    console.log(settings);
+    if (settings.logo) {
+      console.log(settings.logo);
+      setFavicon(settings.logo);
+    }
+  };
+
   // handle geolocation consent
   const [locationConsent, setLocationConsent] = useState(true);
   // site settings
@@ -89,6 +100,7 @@ export default function Basic() {
           if (result.data) {
             setSettings(result.data);
             handleColors(result.data);
+            handleLogo(result.data);
             document.title = result.data.title;
             return;
           } else {
@@ -107,12 +119,13 @@ export default function Basic() {
   };
 
   useEffect(() => {
+    console.log(document.querySelector('[rel="shortcut icon"]'));
     downloadSettings()
       .then(data => {
-        console.log('data: ', data);
         if (data) {
           setSettings(data);
           handleColors(data);
+          handleLogo(data);
           document.title = data.title;
         }
         return;
@@ -137,7 +150,7 @@ export default function Basic() {
     return (
       <Container fluid="lg" className={'mt-4 mb-4'}>
         <h1 {...primary}>{settings.title}</h1>
-        <p>{parse(`<div>${settings.header}</div>`)}</p>
+        <div>{parse(`<div>${settings.header}</div>`)}</div>
         <h2 {...primary}>Sharing your location</h2>
         <p>
           To get the most accurate location data, we ask you to allow your
