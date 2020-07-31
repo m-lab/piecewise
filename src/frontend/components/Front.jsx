@@ -17,6 +17,7 @@ import Row from 'react-bootstrap/Row';
 import Loading from './Loading.jsx';
 import ChromeScreengrab from '../assets/images/chrome-location.jpg';
 import FirefoxScreengrab from '../assets/images/firefox-location.jpg';
+import defaultLogo from '../../common/assets/favicon.ico';
 
 export default function Basic() {
   const history = useHistory();
@@ -27,6 +28,7 @@ export default function Basic() {
   const [favicon, setFavicon] = useState(
     document.querySelector('[rel="shortcut icon"]'),
   );
+  const [logo, setLogo] = useState(defaultLogo);
 
   // style rules
 
@@ -73,6 +75,7 @@ export default function Basic() {
   const handleLogo = settings => {
     if (settings.logo) {
       setFavicon(settings.logo);
+      setLogo(settings.logo);
       document.querySelector('[rel="shortcut icon"]').href = settings.logo;
     }
   };
@@ -153,7 +156,7 @@ export default function Basic() {
     return (
       <Container fluid="lg" className={'mt-4 mb-4'}>
         <div>
-          <img src={favicon} aria-hidden="true" {...image} />
+          <img src={logo} aria-hidden="true" {...image} />
         </div>
         <h1 {...primary}>{settings.title}</h1>
         <div>{parse(`<div>${settings.header}</div>`)}</div>
