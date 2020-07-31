@@ -74,7 +74,7 @@ export default function NavTabs() {
         if (!_.isEmpty(data)) {
           setInputs(data);
           document.title = `${data.title} | Dashboard`;
-          document.querySelector('[rel="shortcut icon"]').href=data.logo;
+          document.querySelector('[rel="shortcut icon"]').href = data.logo;
         }
         return;
       })
