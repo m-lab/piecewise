@@ -59,13 +59,40 @@ export default function controller(users) {
     }),
   );
 
+  passport.use(
+    new OAuth2Strategy(
+      {
+        authorizationURL: 'https://www.fixme.com/oauth2/authorize',
+        tokenURL: 'https://www.fixme.com/oauth2/token',
+        clientID: FIXME_CLIENT_ID,
+        clientSecret: FIXME_CLIENT_SECRET,
+        callbackURL: 'http://localhost:3000/auth/fixme/callback',
+      },
+    async function(accessToken, refreshToken, profile, done) {
+        try {
+          const user = await users.findByUsername(profile.username);
+          if (
+            profile.username === user.username &&
+            profile.password === user.password
+          ) {
+            done(null, user);
+          } else {
+            done(null, false);
+          }
+        } catch (err) {
+          done(err);
+        }
+      },
+    ),
+  );
+
   /**
    * Login user.
    *
    * @param {Object} ctx - Koa context object
    */
   router.post('/login', async ctx => {
-    return passport.authenticate('local', (err, user) => {
+    return passport.authenticate('oauth2', (err, user) => {
       if (!user) {
         ctx.body = { success: false };
         ctx.throw(401, 'Authentication failed.');
