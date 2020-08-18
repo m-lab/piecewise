@@ -8,7 +8,8 @@ RUN apk add --no-cache \
     cairo-dev \
     jpeg-dev \
     pango-dev \
-    giflib-dev
+    giflib-dev \
+    netcat-openbsd
 WORKDIR /src
 COPY ./package* ./
 
@@ -38,6 +39,7 @@ EXPOSE 3000
 WORKDIR /app
 
 COPY --from=build /src .
+COPY ./docker-entrypoint.sh .
 
 HEALTHCHECK --interval=5s \
             --timeout=5s \
@@ -48,4 +50,4 @@ ENV NODE_ENV=production
 
 USER node
 
-CMD ["node", "./dist/backend/index.js"]
+CMD ["./docker-entrypoint.sh"]
