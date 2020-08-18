@@ -1,6 +1,6 @@
 import React from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function CircularUnderLoad() {
-  return <CircularProgress disableShrink />;
+  return <Spinner animation="border" />;
 }

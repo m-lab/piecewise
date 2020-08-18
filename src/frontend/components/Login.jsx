@@ -1,13 +1,16 @@
+// base imports
 import React, { useEffect, useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
 import { useHistory } from 'react-router-dom';
+
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+
+// icon imports
+import { Lock } from 'react-bootstrap-icons';
 
 export default function Login() {
   const history = useHistory();
@@ -16,6 +19,7 @@ export default function Login() {
   const [remember, setRemember] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [helperText, setHelperText] = useState('');
+  const [validated, setValidated] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -32,7 +36,8 @@ export default function Login() {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async event => {
+    event.preventDefault();
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
@@ -43,7 +48,7 @@ export default function Login() {
         body: formData,
       });
       if (response.status === 200 || response.status === 201) {
-        setError(false);
+        setValidated(true);
         setHelperText('Login successful.');
         history.push('/admin');
       } else {
@@ -58,65 +63,64 @@ export default function Login() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <div>
-        <Avatar>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <form noValidate>
-          <TextField
-            error={error}
-            variant="outlined"
-            margin="normal"
+    <Container className={'m-4'}>
+      <Row>
+        <Col>
+          <Lock size={30} />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <h1>Sign in</h1>
+        </Col>
+      </Row>
+      <Form validated={validated} onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label htmlFor="username">Username</Form.Label>
+          <Form.Control
             required
-            fullWidth
+            type="text"
+            name="username"
             id="username"
             value={username}
-            label="Username"
             autoComplete="username"
             onChange={e => setUsername(e.target.value)}
             onKeyPress={e => handleKeyPress(e)}
-            autoFocus
+            autoFocus={true}
+            isInvalid={!!error}
           />
-          <TextField
-            error={error}
-            helperText={helperText}
-            variant="outlined"
-            margin="normal"
+        </Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="password">Password</Form.Label>
+          <Form.Control
             required
-            fullWidth
-            label="Password"
             type="password"
+            name="password"
             id="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             onKeyPress={e => handleKeyPress(e)}
             autoComplete="current-password"
+            isInvalid={!!error}
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={remember}
-                color="primary"
-                onChange={e => setRemember(e.target.checked)}
-              />
-            }
+          <Form.Control.Feedback type="invalid">
+            {helperText}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group>
+          <Form.Check
+            id="remember"
+            name="remember"
             label="Remember me"
-          />
-          <Button
-            onClick={() => handleLogin()}
-            disabled={isButtonDisabled}
-            fullWidth
-            variant="contained"
+            checked={remember}
             color="primary"
-          >
-            Sign In
-          </Button>
-        </form>
-      </div>
+            onChange={e => setRemember(e.target.checked)}
+          />
+        </Form.Group>
+        <Button disabled={isButtonDisabled} type="submit">
+          Sign in
+        </Button>
+      </Form>
     </Container>
   );
 }

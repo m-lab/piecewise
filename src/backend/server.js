@@ -12,16 +12,18 @@ import passport from 'koa-passport';
 import koa404handler from 'koa-404-handler';
 import errorHandler from 'koa-better-error-handler';
 import db from './db.js';
+import authHandler from './middleware/auth.js';
 import cloudflareAccess from './middleware/cloudflare.js';
+import sessionWrapper from './middleware/session.js';
 //import ssr from './middleware/ssr.js';
 import AuthController from './controllers/auth.js';
-import FormController from './controllers/form.js';
+import FormController from './controllers/forms.js';
 import SettingsController from './controllers/settings.js';
-import SubController from './controllers/submission.js';
-import Forms from './models/form.js';
+import SubController from './controllers/submissions.js';
+import Forms from './models/forms.js';
 import Settings from './models/settings.js';
-import Submissions from './models/submission.js';
-import Users from './models/user.js';
+import Submissions from './models/submissions.js';
+import Users from './models/users.js';
 
 const __dirname = path.resolve();
 const STATIC_DIR = path.resolve(__dirname, 'dist', 'frontend');
@@ -42,15 +44,20 @@ export default function configServer(config) {
 
   const log = log4js.getLogger('backend:server');
 
+  // Setup our authorization middleware
+  const authz = authHandler();
+  server.use(authz.middleware());
+
   // Setup our API handlers
   const userModel = new Users();
   const auth = AuthController(userModel);
-  const formModel = new Forms(db);
-  const forms = new FormController(formModel);
   const settingsModel = new Settings(db);
-  const settings = new SettingsController(settingsModel);
+  const settings = new SettingsController(settingsModel, authz);
   const subModel = new Submissions(db);
-  const submissions = new SubController(subModel);
+  const submissions = new SubController(subModel, authz);
+  const formModel = new Forms(db);
+  const forms = new FormController(formModel, authz);
+  forms.use('/forms/:fid', submissions.routes(), submissions.allowedMethods());
   const apiV1Router = compose([
     auth.routes(),
     auth.allowedMethods(),
@@ -62,10 +69,11 @@ export default function configServer(config) {
     submissions.allowedMethods(),
   ]);
 
-  // Set session secrets
-  server.keys = Array.isArray(config.secrets)
-    ? config.secrets
-    : [config.secrets];
+  // Setup session middleware
+  server.use(async (ctx, next) => {
+    let session = await sessionWrapper(server, db);
+    await session(ctx, next);
+  });
 
   // Set custom error handler
   server.context.onerror = errorHandler;

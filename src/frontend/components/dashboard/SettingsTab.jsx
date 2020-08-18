@@ -1,69 +1,112 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+// base imports
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { EditorState, ContentState, convertToRaw } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { SketchPicker } from 'react-color';
+import _ from 'lodash/core';
 
-const drawerWidth = 240;
+// bootstrap imports
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
 
-const defaultTitle = 'Piecewise';
-const defaultHeader = 'Welcome to Piecewise!';
-const defaultFooter = 'Thank you for taking a survey!';
-const defaultColorOne = '#333333';
-const defaultColorTwo = '#aaaaaa';
+// custom styles
+import './SettingsTab.css';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    //display: 'flex',
-  },
-  toolbar: {
-    //paddingRight: 24, // keep right padding when drawer closed
-    //maxWidth: '100%',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  title: {
-    flexGrow: 1,
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-  },
-}));
+export default function SettingsTab(props) {
+  const { defaults, setDefaults } = props;
+  const [inputs, setInputs] = useState({});
+  const [header, setHeader] = useState('');
+  const [footer, setFooter] = useState('');
+  const [editorStateHeader, setEditorStateHeader] = useState(
+    EditorState.createEmpty(),
+  );
+  const [editorStateFooter, setEditorStateFooter] = useState(
+    EditorState.createEmpty(),
+  );
 
-export default function SettingsTab() {
-  const classes = useStyles();
-  const [openModal, setOpenModal] = React.useState(false);
-  const [modalText, setModalText] = React.useState('');
-  const [modalDebug, setModalDebug] = React.useState('');
-  const [title, setTitle] = React.useState(defaultTitle);
-  const [header, setHeader] = React.useState(defaultHeader);
-  const [footer, setFooter] = React.useState(defaultFooter);
-  const [colorOne, setColorOne] = React.useState(defaultColorOne);
-  const [colorTwo, setColorTwo] = React.useState(defaultColorTwo);
+  // color picker
+  const handleChangeColorPrimary = color => {
+    setInputs(inputs => ({
+      ...inputs,
+      color_one: color.hex,
+    }));
+  };
+
+  const handleChangeColorSecondary = color => {
+    setInputs(inputs => ({
+      ...inputs,
+      color_two: color.hex,
+    }));
+  };
+
+  const readFileDataAsBase64 = e => {
+    const file = e.target.files[0];
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = event => {
+        resolve(event.target.result);
+      };
+
+      reader.onerror = err => {
+        reject(err);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleLogoChange = event => {
+    readFileDataAsBase64(event)
+      .then(response => {
+        setInputs(inputs => ({
+          ...inputs,
+          logo: response,
+        }));
+        return response;
+      })
+      .catch(error => {
+        console.error('error:', error);
+        throw Error(error.statusText);
+      });
+  };
+
+  // other inputs
+  const handleInputChange = event => {
+    event.persist();
+    console.log(event.target.value);
+    setInputs(inputs => ({
+      ...inputs,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const onEditorStateHeaderChange = es => {
+    setEditorStateHeader(es);
+    const html = toHtml(es);
+    if (header !== html) {
+      setHeader(html);
+    }
+  };
+
+  const onEditorStateFooterChange = es => {
+    setEditorStateFooter(es);
+    const html = toHtml(es);
+    if (header !== html) {
+      setFooter(html);
+    }
+  };
+
+  const toHtml = es => {
+    return draftToHtml(convertToRaw(es.getCurrentContent()));
+  };
 
   const processError = errorMessage => {
     let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
@@ -71,27 +114,38 @@ export default function SettingsTab() {
     return [text, debug];
   };
 
-  const uploadSettings = formData => {
-    console.debug('formData: ', formData);
-    let status;
-    const json = JSON.stringify(formData);
+  const uploadSettings = event => {
+    event.preventDefault();
+    const json = JSON.stringify({
+      data: {
+        title: inputs.title,
+        header: header,
+        footer: footer,
+        color_one: inputs.color_one,
+        color_two: inputs.color_two,
+        logo: inputs.logo,
+      },
+    });
     fetch('/api/v1/settings', {
-      method: 'POST',
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: json,
     })
       .then(response => {
-        status = response.status;
-        return response.json();
-      })
-      .then(data => {
-        if (status === 200 || status === 201) {
-          return data;
+        if (response.status === 204) {
+          document.querySelector('[rel="shortcut icon"]').href = inputs.logo;
+          alert('Settings saved successfully.');
+          const newDefaults = { ...defaults, ...inputs };
+          return setDefaults(newDefaults);
+        } else if (response.status === 413) {
+          alert('Image file too large. Please upload a file 1MB or less.');
+          return;
         } else {
-          let [text, debug] = processError(data);
-          setModalText(text);
-          setModalDebug(debug);
-          setOpenModal(true);
-          throw new Error(`Error in response from server.`);
+          const error = processError(response.json());
+          alert(`Settings not saved. Error in response from server: ${error}`);
+          throw new Error(`Error in response from server: ${error}`);
         }
       })
       .catch(error => {
@@ -100,68 +154,113 @@ export default function SettingsTab() {
       });
   };
 
-  const downloadSettings = () => {
-    let status;
-    return fetch('/api/v1/settings', {
-      method: 'GET',
-    })
-      .then(response => {
-        status = response.status;
-        return response.json();
-      })
-      .then(data => {
-        if (status === 200 || status === 201) {
-          return data;
-        } else {
-          let [text, debug] = processError(data);
-          setModalText(text);
-          setModalDebug(debug);
-          setOpenModal(true);
-          throw new Error(`Error in response from server.`);
-        }
-      })
-      .catch(error => {
-        console.error('error:', error);
-        throw Error(error.statusText);
-      });
-  };
+  React.useEffect(() => {
+    if (!_.isEmpty(defaults)) {
+      setHeader(defaults.header);
+      setFooter(defaults.footer);
+      setEditorStateHeader(
+        EditorState.push(
+          editorStateHeader,
+          ContentState.createFromBlockArray(
+            htmlToDraft(header || defaults.header || ''),
+          ),
+        ),
+      );
+      setEditorStateFooter(
+        EditorState.push(
+          editorStateFooter,
+          ContentState.createFromBlockArray(
+            htmlToDraft(footer || defaults.footer || ''),
+          ),
+        ),
+      );
+    }
+  }, [defaults]);
 
   return (
-    <Container className={classes.root}>
-      <Container className={classes.container}>
-        {/* Chart */}
-        <Box mt={2} mb={6}>
-          <form className={classes.root} noValidate autoComplete="off">
-            <Typography className={classes.h6} variant="h6">
-              Title
-            </Typography>
-            <TextField id="standard-basic" label={title} />
-            <Typography className={classes.h6} variant="h6">
-              Welcome text
-            </Typography>
-            <TextField id="standard-basic" label={header} />
-            <Typography className={classes.h6} variant="h6">
-              Thank You text
-            </Typography>
-            <TextField id="standard-basic" label={footer} />
-            <Typography className={classes.h6} variant="h6">
-              Thank You text
-            </Typography>
-          </form>
-        </Box>
-      </Container>
-      <Dialog open={openModal} aria-describedby="alert-dialog-description">
-        <DialogContent>
-          <Box p={2}>
-            <DialogContentText id="alert-dialog-description">
-              {modalText}
-            </DialogContentText>
-            <Typography className={classes.debug} component="div">
-              {modalDebug}
-            </Typography>
-          </Box>
-        </DialogContent>
-      </Dialog>
+    <Container className={'mt-4 mb-4'}>
+      <Alert variant="secondary">
+        <p className="mb-0">
+          <em>Fill out the sitewide settings with the form below.</em>
+        </p>
+      </Alert>
+      <Form onSubmit={uploadSettings}>
+        <Form.Group className={'mb-4'}>
+          <Form.Label htmlFor="title">Site Title</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            name="title"
+            placeholder="Enter a title for the site"
+            defaultValue={inputs.title || defaults.title || ''}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="logo">Sitewide logo</Form.Label>
+          <img
+            src={inputs.logo || defaults.logo || ''}
+            aria-hidden="true"
+            className={'logo'}
+          />
+          <Form.File
+            id="logo"
+            name="logo"
+            defaultValue={inputs.logo || defaults.logo || ''}
+            onChange={handleLogoChange}
+          />
+        </Form.Group>
+        <Form.Group className={'mb-4'}>
+          <Form.Label htmlFor="header">Welcome Message</Form.Label>
+          <Editor
+            required
+            name="header"
+            theme="snow"
+            placeholder="Welcome text shown when first visiting the site"
+            editorState={editorStateHeader}
+            onEditorStateChange={onEditorStateHeaderChange}
+          />
+        </Form.Group>
+        <Form.Group className={'mb-4'}>
+          <Form.Label htmlFor="footer">Thank You Message</Form.Label>
+          <Editor
+            required
+            name="footer"
+            theme="snow"
+            placeholder="Text shown after taking the survey"
+            editorState={editorStateFooter}
+            onEditorStateChange={onEditorStateFooterChange}
+          />
+        </Form.Group>
+        <Form.Group className={'flex'}>
+          <div className={'flex-item'}>
+            <Form.Label htmlFor="color_one">
+              Choose a primary default color for the site:
+            </Form.Label>
+            <SketchPicker
+              name="color_one"
+              color={inputs.color_one || defaults.color_one}
+              onChangeComplete={handleChangeColorPrimary}
+            />
+          </div>
+          <div className={'flex-item'}>
+            <Form.Label htmlFor="color_two">
+              Choose a secondary default color for the site:
+            </Form.Label>
+            <SketchPicker
+              name="color_two"
+              color={inputs.color_two || defaults.color_two}
+              onChangeComplete={handleChangeColorSecondary}
+            />
+          </div>
+        </Form.Group>
+        <Button type="submit">Save</Button>
+      </Form>
     </Container>
   );
 }
+
+SettingsTab.propTypes = {
+  defaults: PropTypes.object.isRequired,
+  setDefaults: PropTypes.func.isRequired,
+};

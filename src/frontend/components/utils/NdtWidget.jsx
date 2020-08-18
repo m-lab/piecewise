@@ -1,7 +1,15 @@
+// base imports
 import React, { useState, useEffect } from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import CircularProgressWithLabel from './CircularProgressWithLabel.jsx';
+import PropTypes from 'prop-types';
+import _ from 'lodash/core';
+
+// Bootstrap imports
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
+
+// module imports
 import NDTjs from '../../assets/js/ndt-browser-client.js';
 
 const NDT_STATUS_LABELS = {
@@ -33,13 +41,13 @@ class NdtHandler {
     this.event('Connecting...');
   }
 
-  onstatechange(msg, data) {
+  onstatechange(msg) {
     this.state = msg;
     this.time_switched = new Date().getTime();
     this.event(`${NDT_STATUS_LABELS[msg]}...`);
   }
 
-  onprogress(msg, data) {
+  onprogress() {
     let progress_percentage;
     const time_in_progress = new Date().getTime() - this.time_switched;
 
@@ -51,8 +59,8 @@ class NdtHandler {
     }
   }
 
-  onfinish(data) {
-    this.event(`${NDT_STATUS_LABELS[this.state]}`);
+  onfinish(results) {
+    this.event(`${NDT_STATUS_LABELS[this.state]}`, results);
   }
 
   onerror(msg) {
@@ -83,12 +91,76 @@ function runNdt({
 
 export default function NdtWidget(props) {
   // handle NDT test
-  const { onFinish } = props;
+  const { onFinish, locationConsent } = props;
   const [text, setText] = useState(null);
   const [progress, setProgress] = useState(null);
+  const [location, setLocation] = useState({});
+  const [results, setResults] = useState({});
+
   const onProgress = (msg, percent) => {
+    if (msg === 'Test complete') {
+      setText(msg);
+      setResults({
+        MinRTT: percent.MinRTT,
+        c2sRate: percent.c2sRate,
+        s2cRate: percent.s2cRate,
+      });
+      return;
+    }
     if (msg) setText(msg);
     if (percent) setProgress(percent);
+  };
+
+  // check location consent
+  const error = error => {
+    document
+      .getElementsByClassName('loader')[0]
+      .append(`Error: ${error.code}: ${error.message}`);
+  };
+
+  const success = position => {
+    document.getElementById('latitude').value = position.coords.latitude;
+    document.getElementById('longitude').value = position.coords.longitude;
+
+    setLocation({
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    });
+
+    var xhr = new XMLHttpRequest(),
+      currentLocationURL =
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=' +
+        position.coords.latitude +
+        '&lon=' +
+        position.coords.longitude +
+        '&zoom=18&addressdetails=1';
+
+    var currentLoc;
+    xhr.open('GET', currentLocationURL, true);
+    xhr.send();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          currentLoc = JSON.parse(xhr.responseText);
+          console.log('Location received');
+          document
+            .getElementsByClassName('loader')[0]
+            .append(
+              'Searching from: ' +
+                currentLoc.address.road +
+                ', ' +
+                currentLoc.address.city +
+                ', ' +
+                currentLoc.address.state,
+            );
+        } else {
+          document
+            .getElementsByClassName('loader')[0]
+            .append(`Error: ${xhr.responseText}`);
+          console.log('Location lookup failed');
+        }
+      }
+    };
   };
 
   useEffect(() => {
@@ -103,6 +175,16 @@ export default function NdtWidget(props) {
       mlabNsUrl = '/api/v1/mlabns';
     }
 
+    if (locationConsent) {
+      if (window.isSecureContext && 'geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        alert(
+          'Location lookup failed: The browser is not secure or the geolocator was not found.',
+        );
+      }
+    }
+
     fetch(mlabNsUrl)
       .then(res => {
         console.debug('Raw response: ', res);
@@ -114,8 +196,7 @@ export default function NdtWidget(props) {
       })
       .then(data => {
         console.debug('Received response from MLab NS: ', data);
-        //const meter = new NDTmeter(selector);
-        const meter = new NdtHandler(onProgress, onFinish);
+        const meter = new NdtHandler(onProgress);
         runNdt({ server: data.fqdn, meter: meter });
         return data;
       })
@@ -125,10 +206,28 @@ export default function NdtWidget(props) {
       });
   }, []);
 
+  useEffect(() => {
+    if (!_.isEmpty(results)) {
+      onFinish(true, results, location);
+    }
+  }, [results]);
+
   return (
-    <Container>
-      <CircularProgressWithLabel value={progress} />
-      <Typography>{text}</Typography>
+    <Container className={'loader'}>
+      <Row>
+        <Col xs="auto">
+          <Spinner animation="border" />
+        </Col>
+        <Col>{progress || 0}%</Col>
+      </Row>
+      <Row>
+        <Col>{text}</Col>
+      </Row>
     </Container>
   );
 }
+
+NdtWidget.propTypes = {
+  onFinish: PropTypes.func.isRequired,
+  locationConsent: PropTypes.bool,
+};

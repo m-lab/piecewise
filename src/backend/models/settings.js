@@ -1,33 +1,20 @@
-import { validate } from '../../common/schemas/settings.js';
-import { UnprocessableError } from '../../common/errors.js';
-
 export default class FormManager {
   constructor(db) {
     this._db = db;
   }
 
   async create(setting) {
-    try {
-      await validate(setting);
-    } catch (err) {
-      throw new UnprocessableError('Failed to create setting: ', err);
-    }
     return this._db
       .table('settings')
       .insert(setting)
       .returning('*');
   }
 
-  async update(id, setting) {
-    try {
-      await validate(setting);
-    } catch (err) {
-      throw new UnprocessableError('Failed to update setting: ', err);
-    }
+  async update(setting) {
     return this._db
       .table('settings')
       .update(setting)
-      .where({ id: parseInt(id) })
+      .where({ id: 1 })
       .returning('*');
   }
 

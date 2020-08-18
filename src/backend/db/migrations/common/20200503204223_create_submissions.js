@@ -7,7 +7,12 @@ export function up(knex) {
         .increments('id')
         .primary()
         .unsigned();
-      table.json('data');
+      table.decimal('c2sRate');
+      table.decimal('s2cRate');
+      table.decimal('MinRTT');
+      table.decimal('latitude');
+      table.decimal('longitude');
+      table.json('fields');
       table.timestamps(true, true);
     })
     .then(() =>

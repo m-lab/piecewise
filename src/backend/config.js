@@ -10,7 +10,6 @@ dotenv.config();
 
 const defaults = {
   loglevel: process.env.PIECEWISE_LOG_LEVEL || 'error',
-  secrets: process.env.PIECEWISE_SECRETS,
   admin: {
     user: process.env.PIECEWISE_ADMIN_USERNAME || 'admin',
     password: process.env.PIECEWISE_ADMIN_PASSWORD,
@@ -124,6 +123,7 @@ function validatePort(value, previous) {
   return port;
 }
 
+// eslint-disable-next-line no-unused-vars
 function validateArray(value, previous) {
   const strings = value ? value : previous;
   const array = strings.split(',');
@@ -240,12 +240,6 @@ export default program
     'Database password',
     validatePassword,
     defaults.db.password,
-  )
-  .option(
-    '-s, --secrets <string>',
-    'Session secret(s)',
-    validateArray,
-    defaults.secrets,
   )
   .option(
     '--cfaccess_url <url>',

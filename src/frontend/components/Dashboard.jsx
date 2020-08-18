@@ -1,144 +1,120 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Toolbar from '@material-ui/core/Toolbar';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import IconButton from '@material-ui/core/IconButton';
+// base imports
+import React, { useEffect, useState } from 'react';
+import _ from 'lodash/core';
+
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import Row from 'react-bootstrap/Row';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+
+// Local imports
+import DataTab from './dashboard/DataTab.jsx';
 import FormTab from './dashboard/FormTab.jsx';
+import MapTab from './dashboard/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    //display: 'flex',
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-  toolbar: {
-    //paddingRight: 24, // keep right padding when drawer closed
-    //maxWidth: '100%',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  title: {
-    flexGrow: 1,
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-  },
-}));
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`nav-tabpanel-${index}`}
-      aria-labelledby={`nav-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </Typography>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `nav-tab-${index}`,
-    'aria-controls': `nav-tabpanel-${index}`,
-  };
-}
-
-function LinkTab(props) {
-  return (
-    <Tab
-      component="a"
-      onClick={event => {
-        event.preventDefault();
-      }}
-      {...props}
-    />
-  );
-}
-
 export default function NavTabs() {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [inputs, setInputs] = useState({});
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  // update styles according to settings
+  const primary = {
+    backgroundColor: inputs.color_one,
   };
 
+  const secondary = {
+    backgroundColor: inputs.color_two,
+    borderColor: inputs.color_two,
+  };
+
+  // handle settings change from settings form
+  const handleSettings = settings => {
+    setInputs(settings);
+  };
+
+  const processError = errorMessage => {
+    let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
+    let debug = JSON.stringify(errorMessage);
+    return [text, debug];
+  };
+
+  // fetch settings from API
+  const downloadSettings = () => {
+    let status;
+    return fetch('/api/v1/settings', {
+      method: 'GET',
+    })
+      .then(response => {
+        status = response.status;
+        return response.json();
+      })
+      .then(result => {
+        if (status === 200 || status === 201) {
+          if (!_.isEmpty(result.data)) {
+            setInputs(result.data);
+          }
+          return result.data;
+        } else {
+          const error = processError(result);
+          throw new Error(`Error in response from server: ${error}`);
+        }
+      })
+      .catch(error => {
+        console.error('error:', error);
+        throw Error(error.statusText);
+      });
+  };
+
+  useEffect(() => {
+    downloadSettings()
+      .then(data => {
+        if (!_.isEmpty(data)) {
+          setInputs(data);
+          document.title = `${data.title} | Dashboard`;
+          document.querySelector('[rel="shortcut icon"]').href = data.logo;
+        }
+        return;
+      })
+      .catch(error => {
+        console.error('error:', error);
+      });
+  }, []);
+
   return (
-    <Container className={classes.root}>
-      <AppBar position="static" className={classes.appBar}>
-        <Toolbar className={classes.toolbar}>
-          <Typography
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-            className={classes.title}
-          >
-            Dashboard
-          </Typography>
-          <IconButton color="inherit" href="/api/v1/logout">
-            <ExitToAppIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container className={classes.container}>
-          <Tabs
-            variant="fullWidth"
-            value={value}
-            onChange={handleChange}
-            aria-label="dashboard navigation tabs"
-          >
-            <LinkTab label="Form" href="/" {...a11yProps(0)} />
-            <LinkTab label="Settings" href="/settings" {...a11yProps(0)} />
+    <Container>
+      <Row>
+        <Col>
+          <Navbar expand="lg" variant="dark" style={primary}>
+            <Navbar.Brand>{inputs.title} | Dashboard</Navbar.Brand>
+            <Navbar.Collapse className="justify-content-end">
+              <Button href="/api/v1/logout" style={secondary}>
+                Logout
+              </Button>
+            </Navbar.Collapse>
+          </Navbar>
+        </Col>
+      </Row>
+      <Row className={'mt-4'}>
+        <Col>
+          <Tabs defaultActiveKey="form">
+            <Tab eventKey="form" title="Form">
+              <FormTab />
+            </Tab>
+            <Tab eventKey="settings" title="Settings">
+              <SettingsTab defaults={inputs} setDefaults={handleSettings} />
+            </Tab>
+            <Tab eventKey="data" title="Data">
+              <DataTab />
+            </Tab>
+            <Tab eventKey="map" title="Map">
+              <MapTab />
+            </Tab>
           </Tabs>
-          <TabPanel value={value} index={0}>
-            <FormTab />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <SettingsTab />
-          </TabPanel>
-        </Container>
-      </main>
+        </Col>
+      </Row>
     </Container>
   );
 }

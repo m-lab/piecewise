@@ -1,60 +1,17 @@
+// base imports
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import Box from '@material-ui/core/Box';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import FormEditor from '../utils/FormEditor.jsx';
+import { ReactFormBuilder } from 'react-form-builder2';
 
-const drawerWidth = 240;
+// Bootstrap imports
+import Alert from 'react-bootstrap/Alert';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    //display: 'flex',
-  },
-  toolbar: {
-    //paddingRight: 24, // keep right padding when drawer closed
-    //maxWidth: '100%',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  title: {
-    flexGrow: 1,
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-  },
-}));
+// custom styles
+import './FormTab.css';
 
 export default function FormTab() {
-  const classes = useStyles();
-  const [openModal, setOpenModal] = React.useState(false);
-  const [modalText, setModalText] = React.useState('');
-  const [modalDebug, setModalDebug] = React.useState('');
-
   const processError = errorMessage => {
     let text = `We're sorry your, request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
     let debug = JSON.stringify(errorMessage);
@@ -64,9 +21,12 @@ export default function FormTab() {
   const uploadForm = formData => {
     console.debug('formData: ', formData);
     let status;
-    const json = JSON.stringify(formData);
+    const json = JSON.stringify({ data: { fields: formData.task_data } });
     fetch('/api/v1/forms', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: json,
     })
       .then(response => {
@@ -77,11 +37,8 @@ export default function FormTab() {
         if (status === 200 || status === 201) {
           return data;
         } else {
-          let [text, debug] = processError(data);
-          setModalText(text);
-          setModalDebug(debug);
-          setOpenModal(true);
-          throw new Error(`Error in response from server.`);
+          let error = processError(data);
+          throw new Error(`Error in response from server: ${error}`);
         }
       })
       .catch(error => {
@@ -99,15 +56,15 @@ export default function FormTab() {
         status = response.status;
         return response.json();
       })
-      .then(data => {
-        if (status === 200 || status === 201 || status === 404) {
-          return data;
+      .then(result => {
+        if (status === 200 || status === 201) {
+          return result.data[0].fields;
+        } else if (status === 404) {
+          console.info('No existing forms found.');
+          return [];
         } else {
-          let [text, debug] = processError(data);
-          setModalText(text);
-          setModalDebug(debug);
-          setOpenModal(true);
-          throw new Error(`Error in response from server.`);
+          let error = processError(result);
+          throw new Error(`Error in response from server: ${error}`);
         }
       })
       .catch(error => {
@@ -116,31 +73,136 @@ export default function FormTab() {
       });
   };
 
+  const toolbarItems = [
+    {
+      key: 'Header',
+      name: 'Header Text',
+      icon: 'fa fa-heading',
+      static: true,
+      content: 'Placeholder Text...',
+    },
+    {
+      key: 'Label',
+      name: 'Label',
+      static: true,
+      icon: 'fa fa-font',
+      content: 'Placeholder Text...',
+    },
+    {
+      key: 'Paragraph',
+      name: 'Paragraph',
+      static: true,
+      icon: 'fa fa-paragraph',
+      content: 'Placeholder Text...',
+    },
+    {
+      key: 'LineBreak',
+      name: 'Line Break',
+      static: true,
+      icon: 'fa fa-arrows-alt-h',
+    },
+    {
+      key: 'Dropdown',
+      canHaveAnswer: true,
+      name: 'Dropdown',
+      icon: 'fa fa-caret-square-down',
+      label: 'Placeholder Label',
+      field_name: 'dropdown_',
+      options: [],
+    },
+    {
+      key: 'Checkboxes',
+      canHaveAnswer: true,
+      name: 'Checkboxes',
+      icon: 'fa fa-check-square',
+      label: 'Placeholder Label',
+      field_name: 'checkboxes_',
+      options: [],
+    },
+    {
+      key: 'RadioButtons',
+      canHaveAnswer: true,
+      name: 'Multiple Choice',
+      icon: 'fa fa-dot-circle',
+      label: 'Placeholder Label',
+      field_name: 'radio_buttons_',
+      options: [],
+    },
+    {
+      key: 'TextInput',
+      canHaveAnswer: true,
+      name: 'Text Input',
+      label: 'Placeholder Label',
+      icon: 'fa fa-font',
+      field_name: 'text_input_',
+    },
+    {
+      key: 'NumberInput',
+      canHaveAnswer: true,
+      name: 'Number Input',
+      label: 'Placeholder Label',
+      icon: 'fa fa-plus',
+      field_name: 'number_input_',
+    },
+    {
+      key: 'TextArea',
+      canHaveAnswer: true,
+      name: 'Multi-line Input',
+      label: 'Placeholder Label',
+      icon: 'fa fa-text-height',
+      field_name: 'text_area_',
+    },
+    {
+      key: 'Rating',
+      canHaveAnswer: true,
+      name: 'Rating',
+      label: 'Placeholder Label',
+      icon: 'fa fa-star',
+      field_name: 'rating_',
+    },
+    {
+      key: 'DatePicker',
+      canDefaultToday: true,
+      canReadOnly: true,
+      name: 'Date',
+      icon: 'fa fa-calendar',
+      label: 'Placeholder Label',
+      field_name: 'date_picker_',
+    },
+    {
+      key: 'Range',
+      name: 'Range',
+      icon: 'fa fa-sliders-h',
+      label: 'Placeholder Label',
+      field_name: 'range_',
+      step: 1,
+      default_value: 3,
+      min_value: 1,
+      max_value: 5,
+      min_label: 'Easy',
+      max_label: 'Difficult',
+    },
+  ];
+
   return (
-    <Container className={classes.root}>
-      <Container className={classes.container}>
-        {/* Chart */}
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <FormEditor
-              onSave={ev => uploadForm(ev.formData)}
-              onLoad={downloadForm}
-            />
-          </Grid>
-        </Grid>
-      </Container>
-      <Dialog open={openModal} aria-describedby="alert-dialog-description">
-        <DialogContent>
-          <Box p={2}>
-            <DialogContentText id="alert-dialog-description">
-              {modalText}
-            </DialogContentText>
-            <Typography className={classes.debug} component="div">
-              {modalDebug}
-            </Typography>
-          </Box>
-        </DialogContent>
-      </Dialog>
+    <Container className={'mt-4 mb-4'}>
+      <Alert variant="secondary">
+        <p className="mb-0">
+          <em>
+            Use the form builder below to create a survey for the end user to
+            fill out. You may use and reorder the blocks as you wish.
+          </em>
+        </p>
+      </Alert>
+      <Row>
+        <Col>
+          <ReactFormBuilder
+            onPost={uploadForm}
+            onLoad={downloadForm}
+            toolbarItems={toolbarItems}
+          />
+        </Col>
+      </Row>
     </Container>
   );
 }

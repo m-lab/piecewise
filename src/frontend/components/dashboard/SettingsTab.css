@@ -1,0 +1,26 @@
+.editor {
+  font-size: 16px;
+  min-height: 100px;
+}
+
+.flex-item {
+  margin-top: 30px;
+}
+
+.logo {
+  display: block;
+  max-height: 150px;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .flex {
+    display: flex;
+    margin-left: -80px;
+  }
+
+  .flex-item {
+    margin-left: 80px;
+    margin-top: 0;
+  }
+}

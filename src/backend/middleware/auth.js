@@ -1,15 +1,18 @@
+import Roles from 'koa-roles';
+
 /**
  * Installs authorization middleware into the koa app.
  *
  * @param {Object} ctx - the koa context object
  * @param {funtion} next - continue to next middleware
  */
-const auth = async (ctx, next) => {
-  if (ctx.isAuthenticated()) {
-    await next();
-  } else {
-    ctx.throw(401, 'Authentication failed.');
-  }
+
+const authWrapper = () => {
+  const roles = new Roles();
+
+  roles.use('access private pages', ctx => ctx.isAuthenticated());
+
+  return roles;
 };
 
-export default auth;
+export default authWrapper;

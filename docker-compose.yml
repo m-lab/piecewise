@@ -1,0 +1,40 @@
+version: "3"
+services:
+  piecewise:
+    build: .
+    depends_on:
+      - piecewise-db
+    networks:
+      - piecewise-private
+      - piecewise-public
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PIECEWISE_VIZ_LOG_LEVEL: ${PIECEWISE_VIZ_LOG_LEVEL:-debug}
+      PIECEWISE_VIZ_HOST: ${PIECEWISE_VIZ_HOST:-0.0.0.0}
+      PIECEWISE_VIZ_PORT: ${PIECEWISE_VIZ_PORT:-3000}
+      PIECEWISE_VIZ_DB_HOST: ${PIECEWISE_VIZ_DB_USER:-piecewise-db}
+      PIECEWISE_VIZ_DB_USER: ${PIECEWISE_VIZ_DB_USER:-piecewise}
+      PIECEWISE_VIZ_DB_PASSWORD: ${PIECEWISE_VIZ_DB_PASSWORD:-piecewise}
+      PIECEWISE_VIZ_DB_DATABASE: ${PIECEWISE_VIZ_DB_DATABASE:-piecewise}
+
+  piecewise-db:
+    image: postgres:12-alpine
+    volumes:
+      - piecewise-db_data:/var/lib/postgresql/data
+    networks:
+      - piecewise-private
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: ${PIECEWISE_VIZ_DB_USER:-piecewise}
+      POSTGRES_PASSWORD: ${PIECEWISE_VIZ_DB_PASSWORD:-piecewise}
+      POSTGRES_DB: ${PIECEWISE_VIZ_DB_DATABASE:-piecewise}
+
+volumes:
+  piecewise-db_data: {}
+
+networks:
+  piecewise-private:
+    internal: true
+  piecewise-public:
