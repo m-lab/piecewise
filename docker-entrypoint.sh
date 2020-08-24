@@ -25,6 +25,7 @@ wait_for
 if [ ! -f "$MIGRATED" ]; then
   npm run db:migrations
   touch "$MIGRATED"
+  sleep 1
 fi
 
 npm run start
