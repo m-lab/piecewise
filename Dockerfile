@@ -8,7 +8,8 @@ RUN apk add --no-cache \
     cairo-dev \
     jpeg-dev \
     pango-dev \
-    giflib-dev
+    giflib-dev \
+    netcat-openbsd
 WORKDIR /src
 COPY ./package* ./
 
@@ -48,4 +49,4 @@ ENV NODE_ENV=production
 
 USER node
 
-CMD ["node", "./dist/backend/index.js"]
+CMD ["./docker-entrypoint.sh"]
