@@ -14,7 +14,7 @@ import Tabs from 'react-bootstrap/Tabs';
 // Local imports
 import DataTab from './dashboard/DataTab.jsx';
 import FormTab from './dashboard/FormTab.jsx';
-import MapTab from './dashboard/MapTab.jsx';
+import MapTab from './dashboard/MapTab/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
 export default function NavTabs() {
@@ -84,22 +84,24 @@ export default function NavTabs() {
   }, []);
 
   return (
-    <Container>
+    <div>
       <Row>
         <Col>
           <Navbar expand="lg" variant="dark" style={primary}>
-            <Navbar.Brand>{inputs.title} | Dashboard</Navbar.Brand>
-            <Navbar.Collapse className="justify-content-end">
-              <Button href="/api/v1/logout" style={secondary}>
-                Logout
-              </Button>
-            </Navbar.Collapse>
+            <Container>
+              <Navbar.Brand>{inputs.title} | Dashboard</Navbar.Brand>
+              <Navbar.Collapse className="justify-content-end">
+                <Button href="/api/v1/logout" style={secondary}>
+                  Logout
+                </Button>
+              </Navbar.Collapse>
+            </Container>
           </Navbar>
         </Col>
       </Row>
       <Row className={'mt-4'}>
         <Col>
-          <Tabs defaultActiveKey="form">
+          <Tabs defaultActiveKey="map">
             <Tab eventKey="form" title="Form">
               <FormTab />
             </Tab>
@@ -115,6 +117,6 @@ export default function NavTabs() {
           </Tabs>
         </Col>
       </Row>
-    </Container>
+    </div>
   );
 }

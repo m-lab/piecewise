@@ -37,14 +37,14 @@
     "build:backend": "cross-env BABEL_ENV=server parcel build src/backend/index.js -d dist/backend --public-url / --target=node",
     "build:frontend": "cross-env BABEL_ENV=client parcel build src/frontend/index.html src/frontend/imported.js -d dist/frontend --public-url /static",
     "build": "rimraf dist && npm run build:backend && npm run build:imported-components && npm run build:frontend && rimraf src/frontend/imported.js",
-    "build:backend:dev": "cross-env NODE_ENV=development BABEL_ENV=server parcel build src/backend/index.js -d dist/backend --public-url / --target=node --no-minify --no-cache",
-    "build:frontend:dev": "cross-env NODE_ENV=development BABEL_ENV=client parcel build src/frontend/index.html src/frontend/imported.js -d dist/frontend --public-url /static --no-minify --no-cache",
+    "build:backend:dev": "cross-env NODE_ENV=development BABEL_ENV=server parcel build src/backend/index.js -d dist/backend --public-url / --target=node --no-minify",
+    "build:frontend:dev": "cross-env NODE_ENV=development BABEL_ENV=client parcel build src/frontend/index.html src/frontend/imported.js -d dist/frontend --public-url /static --no-minify",
     "build:dev": "rimraf dist && npm run build:backend:dev && npm run build:imported-components && npm run build:frontend:dev && rimraf src/frontend/imported.js",
     "db:migrations": "knex --esm migrate:latest",
     "db:seeds": "knex --esm seed:run",
     "start:backend": "node dist/backend",
     "start": "npm run start:backend",
-    "start:dev": "nodemon -e js,jsx,html --ignore dist --ignore src/frontend/imported.js --exec 'npm run build:dev && npm run start'"
+    "start:dev": "nodemon -e css,js,jsx,html --ignore dist --ignore src/frontend/imported.js --exec 'npm run build:dev && npm run start'"
   },
   "engines": {
     "node": ">=12.0"
@@ -70,7 +70,9 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/pickers": "^3.2.10",
     "@material-ui/styles": "^4.9.10",
+    "@turf/turf": "^5.1.6",
     "commander": "^4.1.1",
+    "csv": "^5.3.2",
     "d3": "^5.16.0",
     "date-fns": "^2.12.0",
     "dotenv": "8.0.0",
@@ -111,6 +113,7 @@
     "moment": "^2.25.3",
     "multistream": "^4.0.0",
     "node-fetch": "^2.6.0",
+    "p-queue": "^6.6.1",
     "papaparse": "^5.2.0",
     "passport-local": "^1.0.0",
     "pg": "^8.0.3",
@@ -134,7 +137,8 @@
     "react-scripts": "^3.1.1",
     "request-promise-native": "^1.0.8",
     "sqlite3": "^4.1.1",
-    "uuid": "3.3.2"
+    "uuid": "3.3.2",
+    "wget-improved": "^3.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
