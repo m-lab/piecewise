@@ -119,7 +119,8 @@ export default function configServer(config) {
           await next();
         } else {
           log.debug('Admin is NOT authenticated.');
-          ctx.throw(401, 'Authentication failed.');
+          // ctx.throw(401, 'Authentication failed.');
+          ctx.redirect('/login');
         }
       }),
     )

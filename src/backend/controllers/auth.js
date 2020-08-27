@@ -75,7 +75,8 @@ export default function controller(users) {
         } else {
           ctx.session.maxAge = 'session';
         }
-        ctx.body = { success: true };
+        ctx.cookies.set('p_user', user.username, { httpOnly: false });
+        ctx.body = { success: true, user: user };
         return ctx.login(user);
       }
     })(ctx);
@@ -90,6 +91,7 @@ export default function controller(users) {
     if (ctx.isAuthenticated()) {
       await ctx.logout();
       ctx.session = null;
+      ctx.cookies.set('p_user', '');
       ctx.redirect('/');
     } else {
       ctx.body = { success: false };
@@ -126,7 +128,20 @@ export default function controller(users) {
    * @returns object|null 	User object or null
    */
   router.get('/users/:id', auth, async (ctx, next) => {
-    const user = await users.findById(ctx.params.id);
+    let user;
+
+    console.log('in fx!!!!!!!!!');
+
+    try {
+      if (!Number.isInteger(parseInt(ctx.params.id))) {
+        user = await users.findByUsername(ctx.params.id);
+      } else {
+        user = await users.findById(ctx.params.id);
+      }
+    } catch (err) {
+      ctx.throw(400, `Failed to parse query: ${err}`);
+    }
+
     if (user) {
       ctx.body = user;
     } else {

@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import Cookies from 'js-cookie';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { lazy, LazyBoundary } from 'react-imported-component';
 import Container from 'react-bootstrap/Container';
@@ -14,20 +16,83 @@ const ThankYou = lazy(() => import('./ThankYou.jsx'));
 const Survey = lazy(() => import('./Survey.jsx'));
 
 export default function App() {
-  return (
-    <Container>
-      <ErrorBoundary FallbackComponent={Error}>
-        <Switch>
-          <LazyBoundary fallback={Loading}>
-            <Route exact path="/" render={props => <Front {...props} />} />
-            <Route path="/login" render={props => <Login {...props} />} />
-            <Route path="/admin" render={props => <Dashboard {...props} />} />
-            <Route path="/thankyou" render={props => <ThankYou {...props} />} />
-            <Route path="/survey" render={props => <Survey {...props} />} />
-          </LazyBoundary>
-          <Redirect to="/" />
-        </Switch>
-      </ErrorBoundary>
-    </Container>
-  );
+  const [user, setUser] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  const processError = res => {
+    let errorString;
+    if (res.statusCode && res.error && res.message) {
+      errorString = `HTTP ${res.statusCode} ${res.error}: ${res.message}`;
+    } else if (res.statusCode && res.status) {
+      errorString = `HTTP ${res.statusCode}: ${res.status}`;
+    } else if (res.message) {
+      errorString = res.message;
+    } else {
+      errorString = 'Error in response from server.';
+    }
+    return errorString;
+  };
+
+  // fetch api data
+  React.useEffect(() => {
+    let isMounted = true;
+    let userStatus;
+    const username = Cookies.get('p_user');
+    if (username) {
+      // TODO: Add separate case for admin
+      fetch(`api/v1/users/${username}`)
+        .then(usersResponse => {
+          userStatus = usersResponse.status;
+          return usersResponse.json();
+        })
+        .then(users => {
+          if (isMounted) {
+            if (userStatus === 200) {
+              setUser(users.data[0]);
+              console.log('data: ', users.data);
+              return users.data[0];
+            } else {
+              const error = processError(users);
+              throw new Error(error);
+            }
+          }
+          return;
+        })
+        .catch(error => {
+          setError(error);
+          console.error(error.name + error.message);
+          // setIsLoaded(true);
+        });
+      return () => {
+        isMounted = false;
+      };
+    }
+  }, []);
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  } else {
+    return (
+      <Container>
+        <ErrorBoundary FallbackComponent={Error}>
+          <Switch>
+            <LazyBoundary fallback={Loading}>
+              <Route path="/" exact component={Front} />
+              <Route path="/login" render={props => <Login {...props} />} />
+              <Route
+                path="/admin"
+                render={props => <Dashboard {...props} user={user} />}
+              />
+              <Route
+                path="/thankyou"
+                render={props => <ThankYou {...props} />}
+              />
+              <Route path="/survey" render={props => <Survey {...props} />} />
+            </LazyBoundary>
+            <Redirect to="/" />
+          </Switch>
+        </ErrorBoundary>
+      </Container>
+    );
+  }
 }

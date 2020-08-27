@@ -14,6 +14,10 @@ const defaults = {
     user: process.env.PIECEWISE_ADMIN_USERNAME || 'admin',
     password: process.env.PIECEWISE_ADMIN_PASSWORD,
   },
+  viewer: {
+    user: process.env.PIECEWISE_VIEWER_USERNAME || 'viewer',
+    password: process.env.PIECEWISE_VIEWER_PASSWORD,
+  },
   cfaccess: {
     audience: process.env.PIECEWISE_CFACCESS_AUDIENCE,
     url: process.env.PIECEWISE_CFACCESS_URL,
@@ -184,16 +188,28 @@ export default program
   .description(process.env.npm_package_description)
   .version(process.env.npm_package_version)
   .option(
-    '--username <username>',
+    '--admin_username <username>',
     'Admin username',
     validateUser,
     defaults.admin.user,
   )
   .option(
-    '--password <password>',
+    '--admin_password <password>',
     'Admin password',
     validatePassword,
     defaults.admin.password,
+  )
+  .option(
+    '--viewer_username <username>',
+    'Viewer username',
+    validateUser,
+    defaults.viewer.user,
+  )
+  .option(
+    '--viewer_password <password>',
+    'Viewer password',
+    validatePassword,
+    defaults.viewer.password,
   )
   .option(
     '-p, --port <number>',

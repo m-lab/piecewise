@@ -125,7 +125,6 @@ export default function Basic() {
   };
 
   useEffect(() => {
-    console.log(favicon);
     downloadSettings()
       .then(data => {
         if (data) {

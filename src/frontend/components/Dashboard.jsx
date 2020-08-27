@@ -17,8 +17,11 @@ import FormTab from './dashboard/FormTab.jsx';
 import MapTab from './dashboard/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
-export default function NavTabs() {
+export default function NavTabs(props) {
+  const { user } = props;
   const [inputs, setInputs] = useState({});
+
+  console.log('props: ', props);
 
   // update styles according to settings
   const primary = {
