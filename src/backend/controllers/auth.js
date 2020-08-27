@@ -1,7 +1,11 @@
 import passport from 'koa-passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as OAuth2Strategy } from 'passport-oauth2';
 import Router from '@koa/router';
 import auth from '../middleware/auth.js';
+import { getLogger } from '../log.js';
+
+const log = getLogger('backend:controllers:auth');
 
 /**
  * Initialize the user auth controller
@@ -9,8 +13,9 @@ import auth from '../middleware/auth.js';
  * @param {Object} users - User model
  * @returns {Object} Auth controller Koa router
  */
-export default function controller(users) {
+export default function controller(users, config) {
   const router = new Router();
+  log.debug('Authentication strategy: ', config.authStrategy);
 
   /**
    * Serialize user
@@ -44,37 +49,40 @@ export default function controller(users) {
    * @param {string} password - Password
    * @param {function} done - 'Done' callback
    */
-  passport.use(
-    new LocalStrategy(async (username, password, done) => {
-      try {
-        const user = await users.findByUsername(username);
-        if (username === user.username && password === user.password) {
-          done(null, user);
-        } else {
-          done(null, false);
-        }
-      } catch (err) {
-        done(err);
-      }
-    }),
-  );
-
-  passport.use(
-    new OAuth2Strategy(
-      {
-        authorizationURL: 'https://www.fixme.com/oauth2/authorize',
-        tokenURL: 'https://www.fixme.com/oauth2/token',
-        clientID: FIXME_CLIENT_ID,
-        clientSecret: FIXME_CLIENT_SECRET,
-        callbackURL: 'http://localhost:3000/auth/fixme/callback',
-      },
-    async function(accessToken, refreshToken, profile, done) {
+  if (config.authStrategy === 'oauth2') {
+    passport.use(
+      new OAuth2Strategy(
+        {
+          authorizationURL: config.oauthAuthUrl,
+          tokenURL: config.oauthTokenUrl,
+          clientID: config.oauthClientId,
+          clientSecret: config.oauthClientSecret,
+          callbackURL: config.oauthCallbackUrl,
+        },
+        async (accessToken, refreshToken, profile, done) => {
+          try {
+            const user = await users.findByUsername(profile.username);
+            log.debug('oauth2 profile: ', profile);
+            if (
+              profile.username === user.username &&
+              profile.password === user.password
+            ) {
+              done(null, user);
+            } else {
+              done(null, false);
+            }
+          } catch (err) {
+            done(err);
+          }
+        },
+      ),
+    );
+  } else {
+    passport.use(
+      new LocalStrategy(async (username, password, done) => {
         try {
-          const user = await users.findByUsername(profile.username);
-          if (
-            profile.username === user.username &&
-            profile.password === user.password
-          ) {
+          const user = await users.findByUsername(username);
+          if (username === user.username && password === user.password) {
             done(null, user);
           } else {
             done(null, false);
@@ -82,9 +90,9 @@ export default function controller(users) {
         } catch (err) {
           done(err);
         }
-      },
-    ),
-  );
+      }),
+    );
+  }
 
   /**
    * Login user.
@@ -92,7 +100,7 @@ export default function controller(users) {
    * @param {Object} ctx - Koa context object
    */
   router.post('/login', async ctx => {
-    return passport.authenticate('oauth2', (err, user) => {
+    return passport.authenticate(config.authStrategy, (err, user) => {
       if (!user) {
         ctx.body = { success: false };
         ctx.throw(401, 'Authentication failed.');
@@ -162,6 +170,35 @@ export default function controller(users) {
     }
     await next();
   });
+
+  /**
+   * Get oauth2 status.
+   *
+   * @param {Object} ctx - Koa context object
+   */
+  router.get('/oauth2/enabled', async ctx => {
+    ctx.body = { status: config.authStrategy === 'oauth2' };
+  });
+
+  /**
+   * Initiate oauth2 login.
+   *
+   * @param {Object} ctx - Koa context object
+   */
+  router.get('/oauth2/login', passport.authenticate('oauth2'));
+
+  /**
+   * Receive oauth2 callback.
+   *
+   * @param {Object} ctx - Koa context object
+   */
+  router.get(
+    '/oauth2/callback',
+    passport.authenticate('oauth2', {
+      successRedirect: '/admin',
+      failureRedirect: '/',
+    }),
+  );
 
   return router;
 }

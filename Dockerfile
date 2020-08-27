@@ -39,6 +39,7 @@ EXPOSE 3000
 WORKDIR /app
 
 COPY --from=build /src .
+COPY ./docker-entrypoint.sh .
 
 HEALTHCHECK --interval=5s \
             --timeout=5s \
