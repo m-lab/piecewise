@@ -21,9 +21,7 @@ export default class FormManager {
           .select('*')
           .where({ id: parseInt(id) });
 
-        console.log('***NEW FORM***:', form);
         form = { fields: JSON.stringify(form.fields) };
-        console.log('***NEW FORM JSON***:', form);
         if (Array.isArray(existing) && existing.length > 0) {
           await trx('forms')
             .update(form)

@@ -12,6 +12,8 @@ const authWrapper = () => {
 
   roles.use('access private pages', ctx => ctx.isAuthenticated());
 
+  roles.use('access admin pages', ctx => ctx.state.user[0].role === 1);
+
   return roles;
 };
 

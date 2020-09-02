@@ -49,4 +49,11 @@ export default class User {
       },
     ];
   }
+
+  /**
+   * Stub for Oauth2 authentication
+   */
+  async findOrCreateUser(user) {
+    return user;
+  }
 }
