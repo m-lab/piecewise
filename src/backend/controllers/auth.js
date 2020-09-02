@@ -59,14 +59,11 @@ export default function controller(users, config) {
           clientSecret: config.oauthClientSecret,
           callbackURL: config.oauthCallbackUrl,
         },
-        async (accessToken, refreshToken, profile, done) => {
+        async (accessToken, refreshToken, params, profile, done) => {
           try {
-            const user = await users.findByUsername(profile.username);
-            log.debug('oauth2 profile: ', profile);
-            if (
-              profile.username === user.username &&
-              profile.password === user.password
-            ) {
+            const user = await users.findOrCreateUser(params.data[0].user);
+            if (user) {
+              log.debug('Authenticated user via OAuth2');
               done(null, user);
             } else {
               done(null, false);
@@ -198,6 +195,7 @@ export default function controller(users, config) {
       successRedirect: '/admin',
       failureRedirect: '/',
     }),
+    async ctx => ctx.redirect('/admin'),
   );
 
   return router;
