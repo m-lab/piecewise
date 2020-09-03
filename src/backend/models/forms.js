@@ -84,7 +84,10 @@ export default class FormManager {
         }
       });
 
-    return rows.map(r => ({ ...r, fields: JSON.parse(r.fields) }));
+    return rows.map(r => ({
+      ...r,
+      fields: r.fields ? JSON.parse(r.fields) : {},
+    }));
   }
 
   async findById(id) {
@@ -102,7 +105,7 @@ export default class FormManager {
         .where({ id: parseInt(id) })
         .first();
     }
-    return { ...form, fields: JSON.parse(form.fields) };
+    return { ...form, fields: form.fields ? JSON.parse(form.fields) : {} };
   }
 
   async findAll() {
