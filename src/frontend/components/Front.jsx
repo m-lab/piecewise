@@ -165,7 +165,7 @@ export default function Basic() {
           To get the most accurate location data, we ask you to allow your
           browser to share your location. This is not essential but it is very
           helpful for creating more accurate maps. Depending on your browser,
-          you&lsquoll see a window similar to the images below, requesting your
+          you&apos;ll see a window similar to the images below, requesting your
           consent to share your location. If you are using Private Browsing mode
           or Incognito mode, you may need to disable that preference for this
           website.
