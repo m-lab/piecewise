@@ -1,4 +1,5 @@
 import { UnprocessableError } from '../../common/errors.js';
+import { isString } from '../../common/utils.js';
 import { getLogger } from '../log.js';
 
 const log = getLogger('backend:models:form');
@@ -90,7 +91,7 @@ export default class FormManager {
     log.debug('Rows: ', rows);
     return rows.map(r => ({
       ...r,
-      fields: r.fields ? JSON.parse(r.fields) : {},
+      fields: isString(r.fields) ? JSON.parse(r.fields) : r.fields,
     }));
   }
 
@@ -110,7 +111,10 @@ export default class FormManager {
         .first();
     }
     log.debug('Form: ', form);
-    return { ...form, fields: form.fields ? JSON.parse(form.fields) : {} };
+    return {
+      ...form,
+      fields: isString(form.fields) ? JSON.parse(form.fields) : form.fields,
+    };
   }
 
   async findAll() {
