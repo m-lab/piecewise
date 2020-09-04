@@ -1,5 +1,6 @@
 // base imports
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash/core';
 
 // Bootstrap imports
@@ -17,11 +18,44 @@ import FormTab from './dashboard/FormTab.jsx';
 import MapTab from './dashboard/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
-export default function NavTabs(props) {
-  const { user } = props;
-  const [inputs, setInputs] = useState({});
+function UserTabs(props) {
+  const { user, inputs, handleSettings } = props;
+  if (user === 'admin') {
+    return (
+      <Tabs defaultActiveKey="form">
+        <Tab eventKey="form" title="Form">
+          <FormTab />
+        </Tab>
+        <Tab eventKey="settings" title="Settings">
+          <SettingsTab defaults={inputs} setDefaults={handleSettings} />
+        </Tab>
+        <Tab eventKey="data" title="Data">
+          <DataTab />
+        </Tab>
+        <Tab eventKey="map" title="Map">
+          <MapTab />
+        </Tab>
+      </Tabs>
+    );
+  } else if (user === 'viewer') {
+    return (
+      <Tabs defaultActiveKey="form">
+        <Tab eventKey="data" title="Data">
+          <DataTab />
+        </Tab>
+        <Tab eventKey="map" title="Map">
+          <MapTab />
+        </Tab>
+      </Tabs>
+    );
+  } else {
+    return null;
+  }
+}
 
-  console.log('props: ', props);
+export default function NavTabs(props) {
+  const { user } = props.location.state.user || props;
+  const [inputs, setInputs] = useState({});
 
   // update styles according to settings
   const primary = {
@@ -102,22 +136,22 @@ export default function NavTabs(props) {
       </Row>
       <Row className={'mt-4'}>
         <Col>
-          <Tabs defaultActiveKey="form">
-            <Tab eventKey="form" title="Form">
-              <FormTab />
-            </Tab>
-            <Tab eventKey="settings" title="Settings">
-              <SettingsTab defaults={inputs} setDefaults={handleSettings} />
-            </Tab>
-            <Tab eventKey="data" title="Data">
-              <DataTab />
-            </Tab>
-            <Tab eventKey="map" title="Map">
-              <MapTab />
-            </Tab>
-          </Tabs>
+          <UserTabs
+            user={user}
+            inputs={inputs}
+            handleSettings={handleSettings}
+          />
         </Col>
       </Row>
     </Container>
   );
 }
+
+NavTabs.propTypes = {
+  history: PropTypes.object,
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      user: PropTypes.string,
+    }),
+  }),
+};

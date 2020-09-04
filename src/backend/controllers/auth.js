@@ -130,7 +130,9 @@ export default function controller(users) {
   router.get('/users/:id', auth, async (ctx, next) => {
     let user;
 
-    console.log('in fx!!!!!!!!!');
+    console.log('*************************');
+    console.log(ctx.params);
+    console.log('*************************');
 
     try {
       if (!Number.isInteger(parseInt(ctx.params.id))) {

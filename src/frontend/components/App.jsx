@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Cookies from 'js-cookie';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { lazy, LazyBoundary } from 'react-imported-component';
@@ -42,10 +41,12 @@ export default function App() {
       // TODO: Add separate case for admin
       fetch(`api/v1/users/${username}`)
         .then(usersResponse => {
+          console.log('user res: ', usersResponse);
           userStatus = usersResponse.status;
           return usersResponse.json();
         })
         .then(users => {
+          console.log('users: ', users);
           if (isMounted) {
             if (userStatus === 200) {
               setUser(users.data[0]);
