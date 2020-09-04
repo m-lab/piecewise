@@ -1,4 +1,7 @@
 import { UnprocessableError } from '../../common/errors.js';
+import { getLogger } from '../log.js';
+
+const log = getLogger('backend:models:form');
 
 export default class FormManager {
   constructor(db) {
@@ -84,6 +87,7 @@ export default class FormManager {
         }
       });
 
+    log.debug('Rows: ', rows);
     return rows.map(r => ({
       ...r,
       fields: r.fields ? JSON.parse(r.fields) : {},
@@ -105,6 +109,7 @@ export default class FormManager {
         .where({ id: parseInt(id) })
         .first();
     }
+    log.debug('Form: ', form);
     return { ...form, fields: form.fields ? JSON.parse(form.fields) : {} };
   }
 
