@@ -21,7 +21,7 @@ import defaultLogo from '../../common/assets/favicon.ico';
 
 export default function Basic() {
   const history = useHistory();
-  /* eslint no-unused-vars: 0 */
+  /* eslint-disable no-unused-vars */
   const [favicon, setFavicon] = useState(
     document.querySelector('[rel="shortcut icon"]'),
   );

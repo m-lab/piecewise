@@ -1,5 +1,5 @@
 import React from 'react';
-/* eslint-disable import/no-extraneous-dependencies*/
+/* eslint-disable node/no-extraneous-import*/
 import Cookies from 'js-cookie';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { lazy, LazyBoundary } from 'react-imported-component';
