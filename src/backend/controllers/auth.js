@@ -134,7 +134,6 @@ export default function controller(users, thisUser) {
    */
   router.get('/users/:id', thisUser.can('access private pages'), async ctx => {
     let user;
-
     try {
       if (!Number.isInteger(parseInt(ctx.params.id))) {
         user = await users.findByUsername(ctx.params.id);

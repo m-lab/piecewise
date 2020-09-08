@@ -47,7 +47,7 @@ export default function App() {
         .then(user => {
           if (isMounted) {
             if (userStatus === 200) {
-              return setUser(user.username);
+              return setUser(user.role);
             } else {
               const error = processError(user);
               throw new Error(error);

@@ -19,12 +19,14 @@ export default class User {
         id: 1,
         username: config.admin_username,
         password: config.admin_password,
+        role: 'admin',
       };
     } else if (id === 2) {
       return {
         id: 2,
         username: config.viewer_username,
         password: config.viewer_password,
+        role: 'viewer',
       };
     }
   }
@@ -42,12 +44,14 @@ export default class User {
         id: 1,
         username: config.admin_username,
         password: config.admin_password,
+        role: 'admin',
       };
     } else if (username === 'viewer') {
       return {
         id: 2,
         username: config.viewer_username,
         password: config.viewer_password,
+        role: 'viewer',
       };
     }
   }
@@ -62,11 +66,13 @@ export default class User {
         id: 1,
         username: config.admin_username,
         password: config.admin_password,
+        role: 'admin',
       },
       {
         id: 2,
         username: config.viewer_username,
         password: config.viewer_password,
+        role: 'viewer',
       },
     ];
   }

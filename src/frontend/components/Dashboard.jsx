@@ -40,7 +40,7 @@ function UserTabs(props) {
     );
   } else if (user === 'viewer') {
     return (
-      <Tabs defaultActiveKey="form">
+      <Tabs defaultActiveKey="data">
         <Tab eventKey="data" title="Data">
           <DataTab />
         </Tab>
