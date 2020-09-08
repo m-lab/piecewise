@@ -41,19 +41,15 @@ export default function App() {
       // TODO: Add separate case for admin
       fetch(`api/v1/users/${username}`)
         .then(usersResponse => {
-          console.log('user res: ', usersResponse);
           userStatus = usersResponse.status;
           return usersResponse.json();
         })
-        .then(users => {
-          console.log('users: ', users);
+        .then(user => {
           if (isMounted) {
             if (userStatus === 200) {
-              setUser(users.data[0]);
-              console.log('data: ', users.data);
-              return users.data[0];
+              return setUser(user.username);
             } else {
-              const error = processError(users);
+              const error = processError(user);
               throw new Error(error);
             }
           }

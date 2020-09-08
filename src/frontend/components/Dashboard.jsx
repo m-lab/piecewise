@@ -20,6 +20,7 @@ import SettingsTab from './dashboard/SettingsTab.jsx';
 
 function UserTabs(props) {
   const { user, inputs, handleSettings } = props;
+  console.log('user: ', user);
   if (user === 'admin') {
     return (
       <Tabs defaultActiveKey="form">
@@ -49,12 +50,17 @@ function UserTabs(props) {
       </Tabs>
     );
   } else {
-    return null;
+    return (
+      <div>
+        You are not authorized to view this page. If this is in error, contact
+        an administrator.
+      </div>
+    );
   }
 }
 
-export default function NavTabs(props) {
-  const { user } = props.location.state.user || props;
+export default function Dashboard(props) {
+  const user = props.user || props.location.state.user;
   const [inputs, setInputs] = useState({});
 
   // update styles according to settings
@@ -147,8 +153,9 @@ export default function NavTabs(props) {
   );
 }
 
-NavTabs.propTypes = {
+Dashboard.propTypes = {
   history: PropTypes.object,
+  user: PropTypes.string,
   location: PropTypes.shape({
     state: PropTypes.shape({
       user: PropTypes.string,

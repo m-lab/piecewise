@@ -50,7 +50,7 @@ export default function configServer(config) {
 
   // Setup our API handlers
   const userModel = new Users();
-  const auth = AuthController(userModel);
+  const auth = AuthController(userModel, authz);
   const settingsModel = new Settings(db);
   const settings = new SettingsController(settingsModel, authz);
   const subModel = new Submissions(db);

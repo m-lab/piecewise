@@ -9,7 +9,7 @@ import auth from '../middleware/auth.js';
  * @param {Object} users - User model
  * @returns {Object} Auth controller Koa router
  */
-export default function controller(users) {
+export default function controller(users, thisUser) {
   const router = new Router();
 
   /**
@@ -115,24 +115,25 @@ export default function controller(users) {
    * @param {Object} auth - Authentication middleware
    * @param {Object} ctx - Koa context object
    */
-  router.get('/users', auth, async (ctx, next) => {
-    const allUsers = await users.findAll();
-    ctx.body = allUsers;
-    await next();
-  });
+  router.get(
+    '/users',
+    thisUser.can('access private pages'),
+    async (ctx, next) => {
+      const allUsers = await users.findAll();
+      ctx.body = allUsers;
+      await next();
+    },
+  );
 
   /**
    * Get single user
    *
-   * @param integer
+   * @param {Object} auth - Authentication middleware
+   * @param {Object} ctx - Koa context object
    * @returns object|null 	User object or null
    */
-  router.get('/users/:id', auth, async (ctx, next) => {
+  router.get('/users/:id', thisUser.can('access private pages'), async ctx => {
     let user;
-
-    console.log('*************************');
-    console.log(ctx.params);
-    console.log('*************************');
 
     try {
       if (!Number.isInteger(parseInt(ctx.params.id))) {
@@ -150,7 +151,6 @@ export default function controller(users) {
       ctx.status = 404;
       ctx.body = `User with id ${ctx.params.id} was not found.`;
     }
-    await next();
   });
 
   return router;
