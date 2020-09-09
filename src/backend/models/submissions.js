@@ -1,4 +1,5 @@
 import { BadRequestError } from '../../common/errors.js';
+import { isString } from '../../common/utils.js';
 
 export default class SubManager {
   constructor(db) {
@@ -41,7 +42,10 @@ export default class SubManager {
           await trx('form_submissions').insert(inserts);
         }
       });
-      return submissions.map(s => ({ ...s, fields: JSON.parse(s.fields) }));
+      return submissions.map(s => ({
+        ...s,
+        fields: isString(s.fields) ? JSON.parse(s.fields) : s.fields,
+      }));
     } catch (err) {
       throw new BadRequestError('Failed to create submission: ', err);
     }
