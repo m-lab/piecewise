@@ -20,8 +20,7 @@ import SettingsTab from './dashboard/SettingsTab.jsx';
 
 function UserTabs(props) {
   const { user, inputs, handleSettings } = props;
-  console.log('user: ', user);
-  if (user === 'admin') {
+  if (user === 'admins') {
     return (
       <Tabs defaultActiveKey="form">
         <Tab eventKey="form" title="Form">
@@ -38,7 +37,7 @@ function UserTabs(props) {
         </Tab>
       </Tabs>
     );
-  } else if (user === 'viewer') {
+  } else if (user === 'viewers') {
     return (
       <Tabs defaultActiveKey="data">
         <Tab eventKey="data" title="Data">
