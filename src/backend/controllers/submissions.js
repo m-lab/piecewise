@@ -137,7 +137,7 @@ export default function controller(submissions, thisUser) {
 
   router.put(
     '/submissions/:id',
-    thisUser.can('access private pages'),
+    thisUser.can('access admin pages'),
     async ctx => {
       log.debug(`Updating submission ${ctx.params.id}.`);
       let updated;
@@ -164,7 +164,7 @@ export default function controller(submissions, thisUser) {
 
   router.delete(
     '/submissions/:id',
-    thisUser.can('access private pages'),
+    thisUser.can('access admin pages'),
     async ctx => {
       log.debug(`Deleting submission ${ctx.params.id}.`);
       let submission;
