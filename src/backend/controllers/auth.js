@@ -70,6 +70,7 @@ export default function controller(users, thisUser) {
         ctx.body = { success: false };
         ctx.throw(401, 'Authentication failed.');
       } else {
+        ctx.state.user = user;
         if (ctx.request.body.remember === 'true') {
           ctx.session.maxAge = 86400000; // 1 day
         } else {

@@ -17,15 +17,15 @@ export default class User {
     if (id === 1) {
       return {
         id: 1,
-        username: config.admin_username,
-        password: config.admin_password,
+        username: config.adminUsername,
+        password: config.adminPassword,
         role: 'admins',
       };
     } else if (id === 2) {
       return {
         id: 2,
-        username: config.viewer_username,
-        password: config.viewer_password,
+        username: config.viewerUsername,
+        password: config.viewerPassword,
         role: 'viewers',
       };
     }
@@ -39,19 +39,19 @@ export default class User {
   // eslint-disable-next-line no-unused-vars
   async findByUsername(username) {
     // Just in case we add other methods, but right now only 1 user
-    if (username === 'admin') {
+    if (username === config.adminUsername) {
       return {
         id: 1,
-        username: config.admin_username,
-        password: config.admin_password,
-        role: 'admin',
+        username: config.adminUsername,
+        password: config.adminPassword,
+        role: 'admins',
       };
-    } else if (username === 'viewer') {
+    } else if (username === config.viewerUsername) {
       return {
         id: 2,
-        username: config.viewer_username,
-        password: config.viewer_password,
-        role: 'viewer',
+        username: config.viewerUsername,
+        password: config.viewerPassword,
+        role: 'viewers',
       };
     }
   }
@@ -64,16 +64,22 @@ export default class User {
     return [
       {
         id: 1,
-        username: config.admin_username,
-        password: config.admin_password,
-        role: 'admin',
+        username: config.adminUsername,
+        password: config.adminPassword,
+        role: 'admins',
       },
       {
         id: 2,
-        username: config.viewer_username,
-        password: config.viewer_password,
-        role: 'viewer',
+        username: config.viewerUsername,
+        password: config.viewerPassword,
+        role: 'viewers',
       },
     ];
+  }
+
+  async isMemberOf(group, uid) {
+    if (group === 'admins' && uid === 1) return true;
+    if (group === 'viewers' && uid === 2) return true;
+    return false;
   }
 }

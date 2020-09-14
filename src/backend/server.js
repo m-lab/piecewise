@@ -37,7 +37,7 @@ export default function configServer(config) {
   log4js.configure({
     appenders: { console: { type: 'stdout', layout: { type: 'colored' } } },
     categories: {
-      default: { appenders: ['console'], level: config.log_level },
+      default: { appenders: ['console'], level: config.logLevel },
     },
   });
   server.use(log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' }));
@@ -45,11 +45,11 @@ export default function configServer(config) {
   const log = log4js.getLogger('backend:server');
 
   // Setup our authorization middleware
-  const authz = authHandler();
+  const userModel = new Users();
+  const authz = authHandler(userModel);
   server.use(authz.middleware());
 
   // Setup our API handlers
-  const userModel = new Users();
   const auth = AuthController(userModel, authz);
   const settingsModel = new Settings(db);
   const settings = new SettingsController(settingsModel, authz);

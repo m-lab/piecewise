@@ -23,7 +23,7 @@ const authWrapper = groups => {
     log.debug('Checking if user can access admin pages.');
     if (!ctx.isAuthenticated()) return false;
 
-    return groups.isMemberOf('admins', ctx.state.user[0].id);
+    return groups.isMemberOf('admins', ctx.state.user.id);
   });
 
   return roles;

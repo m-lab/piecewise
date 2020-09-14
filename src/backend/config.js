@@ -188,25 +188,25 @@ export default program
   .description(process.env.npm_package_description)
   .version(process.env.npm_package_version)
   .option(
-    '--admin_username <username>',
+    '--admin-username <username>',
     'Admin username',
     validateUser,
     defaults.admin.user,
   )
   .option(
-    '--admin_password <password>',
+    '--admin-password <password>',
     'Admin password',
     validatePassword,
     defaults.admin.password,
   )
   .option(
-    '--viewer_username <username>',
+    '--viewer-username <username>',
     'Viewer username',
     validateUser,
     defaults.viewer.user,
   )
   .option(
-    '--viewer_password <password>',
+    '--viewer-password <password>',
     'Viewer password',
     validatePassword,
     defaults.viewer.password,
@@ -218,7 +218,7 @@ export default program
     defaults.server.port,
   )
   .option(
-    '-l, --log_level <level>',
+    '-l, --log-level <level>',
     'Logging verbosity',
     validateLoglevel,
     defaults.loglevel,
