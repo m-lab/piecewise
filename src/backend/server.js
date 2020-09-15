@@ -50,7 +50,7 @@ export default function configServer(config) {
   server.use(authz.middleware());
 
   // Setup our API handlers
-  const auth = AuthController(userModel, authz);
+  const auth = AuthController(userModel, config, authz);
   const settingsModel = new Settings(db);
   const settings = new SettingsController(settingsModel, authz);
   const subModel = new Submissions(db);
@@ -119,8 +119,8 @@ export default function configServer(config) {
           await next();
         } else {
           log.debug('Admin is NOT authenticated.');
-          // ctx.throw(401, 'Authentication failed.');
-          ctx.redirect('/login');
+          ctx.throw(401, 'Authentication failed.');
+          //ctx.redirect('/login');
         }
       }),
     )

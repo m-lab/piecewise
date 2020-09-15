@@ -82,4 +82,11 @@ export default class User {
     if (group === 'viewers' && uid === 2) return true;
     return false;
   }
+
+  /**
+   * Stub for Oauth2 authentication
+   */
+  async findOrCreateUser(user) {
+    return user;
+  }
 }

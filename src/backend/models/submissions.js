@@ -154,7 +154,6 @@ export default class SubManager {
       .select('*')
       .where({ id: parseInt(id) })
       .first();
-    console.log('***SUBMISSION***:', submission);
     return { ...submission, fields: JSON.parse(submission.fields) };
   }
 

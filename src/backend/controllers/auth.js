@@ -1,7 +1,11 @@
 import passport from 'koa-passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as OAuth2Strategy } from 'passport-oauth2';
 import Router from '@koa/router';
 import auth from '../middleware/auth.js';
+import { getLogger } from '../log.js';
+
+const log = getLogger('backend:controllers:auth');
 
 /**
  * Initialize the user auth controller
@@ -9,8 +13,9 @@ import auth from '../middleware/auth.js';
  * @param {Object} users - User model
  * @returns {Object} Auth controller Koa router
  */
-export default function controller(users, thisUser) {
+export default function controller(users, config, thisUser) {
   const router = new Router();
+  log.debug('Authentication strategy: ', config.authStrategy);
 
   /**
    * Serialize user
@@ -44,20 +49,47 @@ export default function controller(users, thisUser) {
    * @param {string} password - Password
    * @param {function} done - 'Done' callback
    */
-  passport.use(
-    new LocalStrategy(async (username, password, done) => {
-      try {
-        const user = await users.findByUsername(username);
-        if (username === user.username && password === user.password) {
-          done(null, user);
-        } else {
-          done(null, false);
+  if (config.authStrategy === 'oauth2') {
+    passport.use(
+      new OAuth2Strategy(
+        {
+          authorizationURL: config.oauthAuthUrl,
+          tokenURL: config.oauthTokenUrl,
+          clientID: config.oauthClientId,
+          clientSecret: config.oauthClientSecret,
+          callbackURL: config.oauthCallbackUrl,
+        },
+        async (accessToken, refreshToken, params, profile, done) => {
+          try {
+            const user = await users.findOrCreateUser(params.data[0].user);
+            if (user) {
+              log.debug('Authenticated user via OAuth2');
+              done(null, user);
+            } else {
+              done(null, false);
+            }
+          } catch (err) {
+            done(err);
+          }
+        },
+      ),
+    );
+  } else {
+    passport.use(
+      new LocalStrategy(async (username, password, done) => {
+        try {
+          const user = await users.findByUsername(username);
+          if (username === user.username && password === user.password) {
+            done(null, user);
+          } else {
+            done(null, false);
+          }
+        } catch (err) {
+          done(err);
         }
-      } catch (err) {
-        done(err);
-      }
-    }),
-  );
+      }),
+    );
+  }
 
   /**
    * Login user.
@@ -65,7 +97,7 @@ export default function controller(users, thisUser) {
    * @param {Object} ctx - Koa context object
    */
   router.post('/login', async ctx => {
-    return passport.authenticate('local', (err, user) => {
+    return passport.authenticate(config.authStrategy, (err, user) => {
       if (!user) {
         ctx.body = { success: false };
         ctx.throw(401, 'Authentication failed.');
@@ -133,25 +165,60 @@ export default function controller(users, thisUser) {
    * @param {Object} ctx - Koa context object
    * @returns object|null 	User object or null
    */
-  router.get('/users/:id', thisUser.can('access private pages'), async ctx => {
-    let user;
-    try {
-      if (!Number.isInteger(parseInt(ctx.params.id))) {
-        user = await users.findByUsername(ctx.params.id);
-      } else {
-        user = await users.findById(ctx.params.id);
+  router.get(
+    '/users/:id',
+    thisUser.can('access private pages'),
+    async (ctx, next) => {
+      let user;
+      try {
+        if (!Number.isInteger(parseInt(ctx.params.id))) {
+          user = await users.findByUsername(ctx.params.id);
+        } else {
+          user = await users.findById(ctx.params.id);
+        }
+      } catch (err) {
+        ctx.throw(400, `Failed to parse query: ${err}`);
       }
-    } catch (err) {
-      ctx.throw(400, `Failed to parse query: ${err}`);
-    }
 
-    if (user) {
-      ctx.body = user;
-    } else {
-      ctx.status = 404;
-      ctx.body = `User with id ${ctx.params.id} was not found.`;
-    }
+      if (user) {
+        ctx.body = user;
+      } else {
+        ctx.status = 404;
+        ctx.body = `User with id ${ctx.params.id} was not found.`;
+      }
+      await next();
+    },
+  );
+
+  /**
+   * Get oauth2 status.
+   *
+   * @param {Object} ctx - Koa context object
+   */
+  router.get('/oauth2/enabled', async ctx => {
+    ctx.body = { status: config.authStrategy === 'oauth2' };
   });
+
+  /**
+   * Initiate oauth2 login.
+   *
+   * @param {Object} ctx - Koa context object
+   */
+  router.get('/oauth2/login', passport.authenticate('oauth2'));
+
+  /**
+   * Receive oauth2 callback.
+   *
+   * @param {Object} ctx - Koa context object
+   */
+  router.get(
+    '/oauth2/callback',
+    passport.authenticate('oauth2', {
+      successRedirect: '/admin',
+      failureRedirect: '/',
+    }),
+    async ctx => ctx.redirect('/admin'),
+  );
 
   return router;
 }
