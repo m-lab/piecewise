@@ -1,4 +1,3 @@
-import _ from 'lodash/core';
 import { validate } from '../../common/schemas/user.js';
 import { BadRequestError } from '../../common/errors.js';
 import config from '../config.js';
