@@ -2,7 +2,6 @@ import passport from 'koa-passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as OAuth2Strategy } from 'passport-oauth2';
 import Router from '@koa/router';
-import auth from '../middleware/auth.js';
 import { getLogger } from '../log.js';
 
 const log = getLogger('backend:controllers:auth');
@@ -13,7 +12,7 @@ const log = getLogger('backend:controllers:auth');
  * @param {Object} users - User model
  * @returns {Object} Auth controller Koa router
  */
-export default function controller(users, config) {
+export default function controller(users, config, thisUser) {
   const router = new Router();
   log.debug('Authentication strategy: ', config.authStrategy);
 
@@ -58,10 +57,12 @@ export default function controller(users, config) {
           clientID: config.oauthClientId,
           clientSecret: config.oauthClientSecret,
           callbackURL: config.oauthCallbackUrl,
+          scope: 'auth',
         },
         async (accessToken, refreshToken, params, profile, done) => {
           try {
             const user = await users.findOrCreateUser(params.data[0].user);
+            log.debug('passport.use, username: ', user);
             if (user) {
               log.debug('Authenticated user via OAuth2');
               done(null, user);
@@ -102,12 +103,14 @@ export default function controller(users, config) {
         ctx.body = { success: false };
         ctx.throw(401, 'Authentication failed.');
       } else {
+        ctx.state.user = user;
         if (ctx.request.body.remember === 'true') {
           ctx.session.maxAge = 86400000; // 1 day
         } else {
           ctx.session.maxAge = 'session';
         }
-        ctx.body = { success: true };
+        ctx.cookies.set('p_user', user.username, { httpOnly: false });
+        ctx.body = { success: true, user: user };
         return ctx.login(user);
       }
     })(ctx);
@@ -122,6 +125,7 @@ export default function controller(users, config) {
     if (ctx.isAuthenticated()) {
       await ctx.logout();
       ctx.session = null;
+      ctx.cookies.set('p_user', '');
       ctx.redirect('/');
     } else {
       ctx.body = { success: false };
@@ -135,9 +139,13 @@ export default function controller(users, config) {
    * @param {Object} auth - Authentication middleware
    * @param {Object} ctx - Koa context object
    */
-  router.get('/authenticated', auth, async ctx => {
-    ctx.body = { msg: 'Authenticated', user: ctx.state.user };
-  });
+  router.get(
+    '/authenticated',
+    thisUser.can('access private pages'),
+    async ctx => {
+      ctx.body = { msg: 'Authenticated', user: ctx.state.user };
+    },
+  );
 
   /**
    * Get all users.
@@ -145,27 +153,36 @@ export default function controller(users, config) {
    * @param {Object} auth - Authentication middleware
    * @param {Object} ctx - Koa context object
    */
-  router.get('/users', auth, async (ctx, next) => {
+  router.get('/users', thisUser.can('access private pages'), async ctx => {
     const allUsers = await users.findAll();
     ctx.body = allUsers;
-    await next();
   });
 
   /**
    * Get single user
    *
-   * @param integer
+   * @param {Object} auth - Authentication middleware
+   * @param {Object} ctx - Koa context object
    * @returns object|null 	User object or null
    */
-  router.get('/users/:id', auth, async (ctx, next) => {
-    const user = await users.findById(ctx.params.id);
+  router.get('/users/:id', thisUser.can('access private pages'), async ctx => {
+    let user;
+    try {
+      if (!Number.isInteger(parseInt(ctx.params.id))) {
+        user = await users.findByUsername(ctx.params.id);
+      } else {
+        user = await users.findById(ctx.params.id);
+      }
+    } catch (err) {
+      ctx.throw(400, `Failed to parse query: ${err}`);
+    }
+
     if (user) {
       ctx.body = user;
     } else {
       ctx.status = 404;
       ctx.body = `User with id ${ctx.params.id} was not found.`;
     }
-    await next();
   });
 
   /**
@@ -189,14 +206,33 @@ export default function controller(users, config) {
    *
    * @param {Object} ctx - Koa context object
    */
-  router.get(
-    '/oauth2/callback',
-    passport.authenticate('oauth2', {
-      successRedirect: '/admin',
-      failureRedirect: '/',
-    }),
-    async ctx => ctx.redirect('/admin'),
-  );
+  //router.get(
+  //  '/oauth2/callback',
+  //  passport.authenticate('oauth2', {
+  //    successRedirect: '/admin',
+  //    failureRedirect: '/',
+  //  }),
+  //);
+  router.get('/oauth2/callback', async ctx => {
+    return passport.authenticate('oauth2', (err, user) => {
+      if (!user) {
+        ctx.body = { success: false };
+        ctx.throw(401, 'Authentication failed.');
+      } else {
+        ctx.state.user = user;
+        if (ctx.request.body.remember === 'true') {
+          ctx.session.maxAge = 86400000; // 1 day
+        } else {
+          ctx.session.maxAge = 'session';
+        }
+        ctx.cookies.set('p_user', user.username, { httpOnly: false });
+        ctx.body = { success: true, user: user };
+        log.debug('OAuth2 Callback user:', user);
+        ctx.login(user);
+        return ctx.redirect('/admin');
+      }
+    })(ctx);
+  });
 
   return router;
 }

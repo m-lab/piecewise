@@ -45,12 +45,12 @@ export default function configServer(config) {
   const log = log4js.getLogger('backend:server');
 
   // Setup our authorization middleware
-  const authz = authHandler();
+  const userModel = new Users(db);
+  const authz = authHandler(userModel);
   server.use(authz.middleware());
 
   // Setup our API handlers
-  const userModel = new Users();
-  const auth = AuthController(userModel, config);
+  const auth = AuthController(userModel, config, authz);
   const settingsModel = new Settings(db);
   const settings = new SettingsController(settingsModel, authz);
   const subModel = new Submissions(db);
@@ -120,6 +120,7 @@ export default function configServer(config) {
         } else {
           log.debug('Admin is NOT authenticated.');
           ctx.throw(401, 'Authentication failed.');
+          //ctx.redirect('/login');
         }
       }),
     )

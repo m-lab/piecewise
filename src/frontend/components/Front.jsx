@@ -21,14 +21,15 @@ import defaultLogo from '../../common/assets/favicon.ico';
 
 export default function Basic() {
   const history = useHistory();
-  const [primary, setPrimary] = useState(css({ color: '#333' }));
-  const [secondary, setSecondary] = useState(
-    css({ backgroundColor: '#ccc !important', borderColor: '#ccc !important' }),
-  );
+  /* eslint-disable no-unused-vars */
   const [favicon, setFavicon] = useState(
     document.querySelector('[rel="shortcut icon"]'),
   );
   const [logo, setLogo] = useState(defaultLogo);
+  const [primary, setPrimary] = useState(css({ color: '#333' }));
+  const [secondary, setSecondary] = useState(
+    css({ backgroundColor: '#ccc !important', borderColor: '#ccc !important' }),
+  );
 
   // style rules
 
@@ -125,7 +126,6 @@ export default function Basic() {
   };
 
   useEffect(() => {
-    console.log(favicon);
     downloadSettings()
       .then(data => {
         if (data) {

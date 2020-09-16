@@ -1,10 +1,11 @@
 import 'babel-polyfill';
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { rehydrateMarks } from 'react-imported-component';
 import App from './components/App.jsx';
+import Loading from './components/Loading.jsx';
 
 export const hydrate = (app, element) => () => {
   ReactDOM.hydrate(app, element);
@@ -19,11 +20,13 @@ export const start = ({ isProduction, document, module, hydrate }) => {
   }
 
   const app = (
-    <HelmetProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </HelmetProvider>
+    <Suspense fallback={Loading}>
+      <HelmetProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </HelmetProvider>
+    </Suspense>
   );
 
   // In production, we want to hydrate instead of render

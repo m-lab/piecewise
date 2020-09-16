@@ -162,7 +162,6 @@ class Config extends Command {
   }
 
   parse(args) {
-    console.log('Parsing configuration.');
     super.parse(args);
     if (!this.cfaccess_url != !this.cfaccess_audience) {
       throw new Error(
@@ -176,7 +175,6 @@ class Config extends Command {
       this.oauthClientSecret &&
       this.oauthCallbackUrl
     ) {
-      console.log('Setting strategy to OAuth');
       this.authStrategy = 'oauth2';
     } else {
       if (
@@ -220,13 +218,13 @@ export default program
   .description(process.env.npm_package_description)
   .version(process.env.npm_package_version)
   .option(
-    '--username <username>',
+    '--admin-username <username>',
     'Admin username',
     validateUser,
     defaults.admin.user,
   )
   .option(
-    '--password <password>',
+    '--admin-password <password>',
     'Admin password',
     validatePassword,
     defaults.admin.password,

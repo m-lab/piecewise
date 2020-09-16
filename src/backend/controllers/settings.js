@@ -28,7 +28,7 @@ export default function controller(settings, thisUser) {
     }
   });
 
-  router.put('/settings', thisUser.can('access private pages'), async ctx => {
+  router.put('/settings', thisUser.can('access admin pages'), async ctx => {
     log.debug(`Updating settings.`);
     let setting;
     try {

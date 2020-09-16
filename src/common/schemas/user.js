@@ -2,28 +2,24 @@ import { UnprocessableError } from '../../common/errors.js';
 import Joi from '@hapi/joi';
 
 const schema = Joi.object({
-  username: Joi.string(),
-  password: Joi.string(),
   id: Joi.number(),
-  role: Joi.number(),
+  username: Joi.string(),
+  firstName: Joi.string().optional(),
+  lastName: Joi.string().optional(),
+  instance: Joi.number().optional(),
+  instance_name: Joi.string().optional(),
+  instance_domain: Joi.string().optional(),
+  role: Joi.number().optional(),
+  role_name: Joi.string(),
+  email: Joi.string().optional(),
+  phone: Joi.string().optional(),
+  extension: Joi.string().optional(),
+  isActive: Joi.number().optional(),
 });
 
-// schema for users editing their own account
-const userSchema = Joi.object({
-  username: Joi.string(),
-  password: Joi.string(),
-  id: Joi.number(),
-  role: Joi.number(),
-});
-
-export async function validate(data, user = false) {
+export async function validate(data) {
   try {
-    let value;
-    if (user) {
-      value = await userSchema.validateAsync(data);
-    } else {
-      value = await schema.validateAsync(data);
-    }
+    const value = await schema.validateAsync(data);
     return value;
   } catch (err) {
     throw new UnprocessableError('Unable to validate user JSON: ', err);

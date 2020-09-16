@@ -132,7 +132,7 @@ export default class SubManager {
         }
 
         if (end && end > start) {
-          queryBuilder.limit(end - start);
+          queryBuilder.limit(end - start + 1);
         }
       });
 

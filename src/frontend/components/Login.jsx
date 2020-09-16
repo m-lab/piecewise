@@ -70,18 +70,25 @@ export default function Login() {
     formData.append('password', password);
     formData.append('remember', remember);
     try {
-      const response = await fetch('/api/v1/login', {
+      await fetch('/api/v1/login', {
         method: 'POST',
         body: formData,
-      });
-      if (response.status === 200 || response.status === 201) {
-        setValidated(true);
-        setHelperText('Login successful.');
-        history.push('/admin');
-      } else {
-        setError(true);
-        setHelperText('Incorrect username or password.');
-      }
+      })
+        .then(response => response.json())
+        .then(results => {
+          if (results.success) {
+            setValidated(true);
+            setHelperText('Login successful.');
+            history.push({
+              pathname: '/admin',
+              state: { user: results.user.role },
+            });
+          } else {
+            setError(true);
+            setHelperText('Incorrect username or password.');
+          }
+          return;
+        });
     } catch (err) {
       setError(true);
       setHelperText('Could not connect to authentication server.');
