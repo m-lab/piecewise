@@ -45,7 +45,7 @@ export default function configServer(config) {
   const log = log4js.getLogger('backend:server');
 
   // Setup our authorization middleware
-  const userModel = new Users();
+  const userModel = new Users(db);
   const authz = authHandler(userModel);
   server.use(authz.middleware());
 

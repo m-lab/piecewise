@@ -14,10 +14,6 @@ const defaults = {
     user: process.env.PIECEWISE_ADMIN_USERNAME || 'admin',
     password: process.env.PIECEWISE_ADMIN_PASSWORD,
   },
-  viewer: {
-    user: process.env.PIECEWISE_VIEWER_USERNAME || 'viewer',
-    password: process.env.PIECEWISE_VIEWER_PASSWORD,
-  },
   cfaccess: {
     audience: process.env.PIECEWISE_CFACCESS_AUDIENCE,
     url: process.env.PIECEWISE_CFACCESS_URL,
@@ -166,7 +162,6 @@ class Config extends Command {
   }
 
   parse(args) {
-    console.log('Parsing configuration.');
     super.parse(args);
     if (!this.cfaccess_url != !this.cfaccess_audience) {
       throw new Error(
@@ -180,7 +175,6 @@ class Config extends Command {
       this.oauthClientSecret &&
       this.oauthCallbackUrl
     ) {
-      console.log('Setting strategy to OAuth');
       this.authStrategy = 'oauth2';
     } else {
       if (

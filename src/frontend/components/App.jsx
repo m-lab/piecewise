@@ -16,7 +16,7 @@ const ThankYou = lazy(() => import('./ThankYou.jsx'));
 const Survey = lazy(() => import('./Survey.jsx'));
 
 export default function App() {
-  const [user, setUser] = React.useState(null);
+  const [role, setRole] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   const processError = res => {
@@ -48,7 +48,7 @@ export default function App() {
         .then(user => {
           if (isMounted) {
             if (userStatus === 200) {
-              return setUser(user.role);
+              return setRole(user.role);
             } else {
               const error = processError(user);
               throw new Error(error);
@@ -79,7 +79,7 @@ export default function App() {
               <Route path="/login" render={props => <Login {...props} />} />
               <Route
                 path="/admin"
-                render={props => <Dashboard {...props} user={user} />}
+                render={props => <Dashboard {...props} role={role} />}
               />
               <Route
                 path="/thankyou"

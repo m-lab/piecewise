@@ -19,11 +19,14 @@ const authWrapper = groups => {
 
   roles.use('access private pages', ctx => ctx.isAuthenticated());
 
-  roles.use('access admin pages', ctx => {
+  roles.use('access admin pages', async ctx => {
     log.debug('Checking if user can access admin pages.');
     if (!ctx.isAuthenticated()) return false;
 
-    return groups.isMemberOf('admins', ctx.state.user.id);
+    const isAdmin = await groups.isMemberOf('admins', ctx.state.user.id);
+    const isEditor = await groups.isMemberOf('editors', ctx.state.user.id);
+
+    return isAdmin || isEditor;
   });
 
   return roles;

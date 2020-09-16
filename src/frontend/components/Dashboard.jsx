@@ -19,8 +19,8 @@ import MapTab from './dashboard/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
 function UserTabs(props) {
-  const { user, inputs, handleSettings } = props;
-  if (user === 'admins') {
+  const { role, inputs, handleSettings } = props;
+  if (role === 'admins' || role === 'editors') {
     return (
       <Tabs defaultActiveKey="form">
         <Tab eventKey="form" title="Form">
@@ -37,7 +37,7 @@ function UserTabs(props) {
         </Tab>
       </Tabs>
     );
-  } else if (user === 'viewers') {
+  } else if (role === 'viewers') {
     return (
       <Tabs defaultActiveKey="data">
         <Tab eventKey="data" title="Data">
@@ -59,7 +59,9 @@ function UserTabs(props) {
 }
 
 export default function Dashboard(props) {
-  const user = props.user || props.location.state.user;
+  console.log('*** props ***', props);
+  //const user = props.user || props.location.state.user;
+  const { role } = props;
   const [inputs, setInputs] = useState({});
 
   // update styles according to settings
@@ -142,7 +144,7 @@ export default function Dashboard(props) {
       <Row className={'mt-4'}>
         <Col>
           <UserTabs
-            user={user}
+            role={role}
             inputs={inputs}
             handleSettings={handleSettings}
           />
@@ -154,10 +156,10 @@ export default function Dashboard(props) {
 
 Dashboard.propTypes = {
   history: PropTypes.object,
-  user: PropTypes.string,
+  role: PropTypes.string,
   location: PropTypes.shape({
     state: PropTypes.shape({
-      user: PropTypes.string,
+      role: PropTypes.string,
     }),
   }),
 };
