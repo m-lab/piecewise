@@ -6,7 +6,7 @@ export function getLogger(namespace) {
   log4js.configure({
     appenders: { console: { type: 'stdout', layout: { type: 'colored' } } },
     categories: {
-      default: { appenders: ['console'], level: config.log_level },
+      default: { appenders: ['console'], level: config.logLevel },
     },
   });
   return log4js.getLogger(namespace);

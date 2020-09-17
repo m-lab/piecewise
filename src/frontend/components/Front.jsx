@@ -21,14 +21,15 @@ import defaultLogo from '../../common/assets/favicon.ico';
 
 export default function Basic() {
   const history = useHistory();
-  const [primary, setPrimary] = useState(css({ color: '#333' }));
-  const [secondary, setSecondary] = useState(
-    css({ backgroundColor: '#ccc !important', borderColor: '#ccc !important' }),
-  );
+  /* eslint-disable no-unused-vars */
   const [favicon, setFavicon] = useState(
     document.querySelector('[rel="shortcut icon"]'),
   );
   const [logo, setLogo] = useState(defaultLogo);
+  const [primary, setPrimary] = useState(css({ color: '#333' }));
+  const [secondary, setSecondary] = useState(
+    css({ backgroundColor: '#ccc !important', borderColor: '#ccc !important' }),
+  );
 
   // style rules
 
@@ -125,7 +126,6 @@ export default function Basic() {
   };
 
   useEffect(() => {
-    console.log(favicon);
     downloadSettings()
       .then(data => {
         if (data) {
@@ -165,7 +165,7 @@ export default function Basic() {
           To get the most accurate location data, we ask you to allow your
           browser to share your location. This is not essential but it is very
           helpful for creating more accurate maps. Depending on your browser,
-          you&lsquoll see a window similar to the images below, requesting your
+          you&apos;ll see a window similar to the images below, requesting your
           consent to share your location. If you are using Private Browsing mode
           or Incognito mode, you may need to disable that preference for this
           website.

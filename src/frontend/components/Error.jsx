@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/Alert';
 
-const Error = ({ error, componentStack, resetErrorBoundary }) => {
+export default function Error({ error, componentStack, resetErrorBoundary }) {
   return (
     <Alert
       key="error"
@@ -15,7 +15,7 @@ const Error = ({ error, componentStack, resetErrorBoundary }) => {
       <pre>{componentStack}</pre>
     </Alert>
   );
-};
+}
 
 Error.propTypes = {
   error: PropTypes.shape({
@@ -24,5 +24,3 @@ Error.propTypes = {
   componentStack: PropTypes.object,
   resetErrorBoundary: PropTypes.func,
 };
-
-export default Error;

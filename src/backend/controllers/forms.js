@@ -34,7 +34,7 @@ async function validate_query(query) {
 export default function controller(forms, thisUser) {
   const router = new Router();
 
-  router.post('/forms', thisUser.can('access private pages'), async ctx => {
+  router.post('/forms', thisUser.can('access admin pages'), async ctx => {
     log.debug('Adding new form.');
     let form;
     try {
@@ -123,7 +123,7 @@ export default function controller(forms, thisUser) {
     }
   });
 
-  router.put('/forms/:id', thisUser.can('access private pages'), async ctx => {
+  router.put('/forms/:id', thisUser.can('access admin pages'), async ctx => {
     log.debug(`Updating form ${ctx.params.id}.`);
     let updated;
 
@@ -147,30 +147,26 @@ export default function controller(forms, thisUser) {
     }
   });
 
-  router.delete(
-    '/forms/:id',
-    thisUser.can('access private pages'),
-    async ctx => {
-      log.debug(`Deleting form ${ctx.params.id}.`);
-      let form;
+  router.delete('/forms/:id', thisUser.can('access admin pages'), async ctx => {
+    log.debug(`Deleting form ${ctx.params.id}.`);
+    let form;
 
-      try {
-        form = await forms.delete(ctx.params.id);
-      } catch (err) {
-        log.error('HTTP 400 Error: ', err);
-        ctx.throw(400, `Failed to parse query: ${err}`);
-      }
+    try {
+      form = await forms.delete(ctx.params.id);
+    } catch (err) {
+      log.error('HTTP 400 Error: ', err);
+      ctx.throw(400, `Failed to parse query: ${err}`);
+    }
 
-      if (form > 0) {
-        ctx.response.status = 204;
-      } else {
-        log.error(
-          `HTTP 404 Error: That form with ID ${ctx.params.id} does not exist.`,
-        );
-        ctx.throw(404, `That form with ID ${ctx.params.id} does not exist.`);
-      }
-    },
-  );
+    if (form > 0) {
+      ctx.response.status = 204;
+    } else {
+      log.error(
+        `HTTP 404 Error: That form with ID ${ctx.params.id} does not exist.`,
+      );
+      ctx.throw(404, `That form with ID ${ctx.params.id} does not exist.`);
+    }
+  });
 
   return router;
 }

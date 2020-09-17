@@ -28,8 +28,19 @@ const defaults = {
     pool_max: process.env.PIECEWISE_DB_POOL_MAX || 10,
     timeout: process.env.PIECEWISE_DB_TIMEOUT || 0,
   },
+  oauth: {
+    auth_url: process.env.PIECEWISE_OAUTH_AUTH_URL,
+    token_url: process.env.PIECEWISE_OAUTH_TOKEN_URL,
+    client_id: process.env.PIECEWISE_OAUTH_CLIENT_ID,
+    client_secret: process.env.PIECEWISE_OAUTH_CLIENT_SECRET,
+    callback_url: process.env.PIECEWISE_OAUTH_CALLBACK_URL,
+  },
   server: {
     port: process.env.PIECEWISE_PORT || '3000',
+  },
+  viewer: {
+    user: process.env.PIECEWISE_VIEWER_USERNAME || 'viewer',
+    password: process.env.PIECEWISE_VIEWER_PASSWORD,
   },
 };
 
@@ -147,6 +158,7 @@ class Config extends Command {
     this.isDev = this.env === 'development';
     this.isTest = this.env === 'test';
     this.isProd = this.env === 'production';
+    this.authStrategy = 'local';
   }
 
   parse(args) {
@@ -155,6 +167,28 @@ class Config extends Command {
       throw new Error(
         'If using Cloudflare Access both the URL and the Audience must be specified.',
       );
+    }
+    if (
+      this.oauthAuthUrl &&
+      this.oauthTokenUrl &&
+      this.oauthClientId &&
+      this.oauthClientSecret &&
+      this.oauthCallbackUrl
+    ) {
+      this.authStrategy = 'oauth2';
+    } else {
+      if (
+        this.oauthAuthUrl ||
+        this.oauthTokenUrl ||
+        this.oauthClientId ||
+        this.oauthClientSecret ||
+        this.oauthCallbackUrl
+      ) {
+        throw new Error(
+          'If using Cloudflare Access both the URL and the Audience must be specified.',
+        );
+      }
+      return;
     }
   }
 
@@ -184,16 +218,28 @@ export default program
   .description(process.env.npm_package_description)
   .version(process.env.npm_package_version)
   .option(
-    '--username <username>',
+    '--admin-username <username>',
     'Admin username',
     validateUser,
     defaults.admin.user,
   )
   .option(
-    '--password <password>',
+    '--admin-password <password>',
     'Admin password',
     validatePassword,
     defaults.admin.password,
+  )
+  .option(
+    '--viewer-username <username>',
+    'Viewer username',
+    validateUser,
+    defaults.viewer.user,
+  )
+  .option(
+    '--viewer-password <password>',
+    'Viewer password',
+    validatePassword,
+    defaults.viewer.password,
   )
   .option(
     '-p, --port <number>',
@@ -202,7 +248,7 @@ export default program
     defaults.server.port,
   )
   .option(
-    '-l, --log_level <level>',
+    '-l, --log-level <level>',
     'Logging verbosity',
     validateLoglevel,
     defaults.loglevel,
@@ -240,6 +286,36 @@ export default program
     'Database password',
     validatePassword,
     defaults.db.password,
+  )
+  .option(
+    '--oauth-auth-url <url>',
+    'OAuth2 Authorization URL',
+    validateUrl,
+    defaults.oauth.auth_url,
+  )
+  .option(
+    '--oauth-token-url <url>',
+    'OAuth2 Token URL',
+    validateUrl,
+    defaults.oauth.token_url,
+  )
+  .option(
+    '--oauth-client-id <id>',
+    'OAuth2 Client ID',
+    validateToken,
+    defaults.oauth.client_id,
+  )
+  .option(
+    '--oauth-client-secret <secret>',
+    'OAuth2 Client Secret',
+    validateToken,
+    defaults.oauth.client_secret,
+  )
+  .option(
+    '--oauth-callback-url <url>',
+    'OAuth2 Callback URL',
+    validateUrl,
+    defaults.oauth.callback_url,
   )
   .option(
     '--cfaccess_url <url>',

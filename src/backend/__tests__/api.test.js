@@ -3,6 +3,16 @@ import config from '../config.js';
 import db from '../db.js';
 import server from '../server.js';
 
+beforeAll(() => {
+  config.adminPassword = config.adminPassword
+    ? !!config.adminPassword
+    : 'adminpass';
+
+  config.viewerPassword = config.viewerPassword
+    ? !!config.viewerPassword
+    : 'viewerpass';
+});
+
 describe('Authenticate to API', () => {
   let session;
   beforeEach(() => {
@@ -24,10 +34,20 @@ describe('Authenticate to API', () => {
       .expect(401);
   });
 
-  test('Authenticate successfully', async () => {
+  test('Authenticate successfully as admin', async () => {
     await session
       .post('/api/v1/login')
-      .send({ username: config.username, password: config.password })
+      .send({ username: config.adminUsername, password: config.adminPassword })
+      .expect(200);
+  });
+
+  test('Authenticate successfully as viewer', async () => {
+    await session
+      .post('/api/v1/login')
+      .send({
+        username: config.viewerUsername,
+        password: config.viewerPassword,
+      })
       .expect(200);
   });
 });

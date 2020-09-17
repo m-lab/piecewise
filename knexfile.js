@@ -50,7 +50,7 @@ if (config.isDev) {
   };
 } else {
   console.log('Loading database settings...');
-  const isDebug = config.log_level === 'debug';
+  const isDebug = config.logLevel === 'debug';
 
   // Needed sometimes when connecting to Heroku locally
   // Tip from https://www.shanestillwell.com/2018/06/29/setting-up-knex-project/
