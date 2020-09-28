@@ -50,4 +50,5 @@ ENV NODE_ENV=production
 
 USER node
 
-CMD ["./docker-entrypoint.sh"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["start"]
