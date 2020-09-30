@@ -1,0 +1,22 @@
+.marker {
+  background-color: #567890;
+  background-size: cover;
+  box-shadow: 2px 2px 2px #fff;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.mapboxgl-popup {
+  max-width: 200px;
+}
+
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.mapboxgl-canvas {
+  width: 100%;
+}

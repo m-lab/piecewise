@@ -1,4 +1,8 @@
 import { UnprocessableError } from '../../common/errors.js';
+import { isString } from '../../common/utils.js';
+import { getLogger } from '../log.js';
+
+const log = getLogger('backend:models:form');
 
 export default class FormManager {
   constructor(db) {
@@ -21,9 +25,7 @@ export default class FormManager {
           .select('*')
           .where({ id: parseInt(id) });
 
-        console.log('***NEW FORM***:', form);
         form = { fields: JSON.stringify(form.fields) };
-        console.log('***NEW FORM JSON***:', form);
         if (Array.isArray(existing) && existing.length > 0) {
           await trx('forms')
             .update(form)
@@ -86,7 +88,11 @@ export default class FormManager {
         }
       });
 
-    return rows.map(r => ({ ...r, fields: JSON.parse(r.fields) }));
+    log.debug('Rows: ', rows);
+    return rows.map(r => ({
+      ...r,
+      fields: isString(r.fields) ? JSON.parse(r.fields) : r.fields,
+    }));
   }
 
   async findById(id) {
@@ -104,7 +110,11 @@ export default class FormManager {
         .where({ id: parseInt(id) })
         .first();
     }
-    return { ...form, fields: JSON.parse(form.fields) };
+    log.debug('Form: ', form);
+    return {
+      ...form,
+      fields: isString(form.fields) ? JSON.parse(form.fields) : form.fields,
+    };
   }
 
   async findAll() {

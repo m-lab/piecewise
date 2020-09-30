@@ -116,6 +116,7 @@
     "p-queue": "^6.6.1",
     "papaparse": "^5.2.0",
     "passport-local": "^1.0.0",
+    "passport-oauth2": "^1.5.0",
     "pg": "^8.0.3",
     "pg-range": "^1.1.0",
     "popper.js": "^1.16.0",

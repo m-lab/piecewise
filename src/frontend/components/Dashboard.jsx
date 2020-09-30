@@ -1,5 +1,6 @@
 // base imports
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash/core';
 
 // Bootstrap imports
@@ -17,7 +18,50 @@ import FormTab from './dashboard/FormTab.jsx';
 import MapTab from './dashboard/MapTab/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
-export default function NavTabs() {
+function UserTabs(props) {
+  const { role, inputs, handleSettings } = props;
+  if (role === 'admins' || role === 'editors') {
+    return (
+      <Tabs defaultActiveKey="form">
+        <Tab eventKey="form" title="Form">
+          <FormTab />
+        </Tab>
+        <Tab eventKey="settings" title="Settings">
+          <SettingsTab defaults={inputs} setDefaults={handleSettings} />
+        </Tab>
+        <Tab eventKey="data" title="Data">
+          <DataTab />
+        </Tab>
+        <Tab eventKey="map" title="Map">
+          <MapTab />
+        </Tab>
+      </Tabs>
+    );
+  } else if (role === 'viewers') {
+    return (
+      <Tabs defaultActiveKey="data">
+        <Tab eventKey="data" title="Data">
+          <DataTab />
+        </Tab>
+        <Tab eventKey="map" title="Map">
+          <MapTab />
+        </Tab>
+      </Tabs>
+    );
+  } else {
+    return (
+      <div>
+        You are not authorized to view this page. If this is in error, contact
+        an administrator.
+      </div>
+    );
+  }
+}
+
+export default function Dashboard(props) {
+  console.log('*** props ***', props);
+  //const user = props.user || props.location.state.user;
+  const { role } = props;
   const [inputs, setInputs] = useState({});
 
   // update styles according to settings
@@ -101,22 +145,23 @@ export default function NavTabs() {
       </Row>
       <Row className={'mt-4'}>
         <Col>
-          <Tabs defaultActiveKey="map">
-            <Tab eventKey="form" title="Form">
-              <FormTab />
-            </Tab>
-            <Tab eventKey="settings" title="Settings">
-              <SettingsTab defaults={inputs} setDefaults={handleSettings} />
-            </Tab>
-            <Tab eventKey="data" title="Data">
-              <DataTab />
-            </Tab>
-            <Tab eventKey="map" title="Map">
-              <MapTab />
-            </Tab>
-          </Tabs>
+          <UserTabs
+            role={role}
+            inputs={inputs}
+            handleSettings={handleSettings}
+          />
         </Col>
       </Row>
     </div>
   );
 }
+
+Dashboard.propTypes = {
+  history: PropTypes.object,
+  role: PropTypes.string,
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      role: PropTypes.string,
+    }),
+  }),
+};

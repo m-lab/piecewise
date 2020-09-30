@@ -1,20 +1,18 @@
 #!/bin/sh
 
-TIMEOUT=15
+TRIES=15
 HOST="$PIECEWISE_DB_HOST"
 PORT="$PIECEWISE_DB_PORT"
-MIGRATED="/.MIGRATED"
+MIGRATED="/app/.MIGRATED"
 
 wait_for() {
-  for i in $(seq $TIMEOUT); do
+  echo "HOST: $HOST, PORT: $PORT"
+  for i in $(seq $TRIES); do
     nc -z "$HOST" "$PORT" >/dev/null 2>&1
 
     result=$?
     if [ $result -eq 0 ]; then
-      if [ $# -gt 0 ]; then
-        exec "$@"
-      fi
-      exit 0
+      return 0
     fi
     sleep 1
   done
@@ -28,6 +26,7 @@ if [ ! -f "$MIGRATED" ]; then
   npm run db:migrations
   npm run db:seeds
   touch "$MIGRATED"
+  sleep 1
 fi
 
 npm run start

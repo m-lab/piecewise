@@ -99,7 +99,7 @@ export default function SettingsTab(props) {
   const onEditorStateFooterChange = es => {
     setEditorStateFooter(es);
     const html = toHtml(es);
-    if (header !== html) {
+    if (footer !== html) {
       setFooter(html);
     }
   };
