@@ -71,26 +71,24 @@ export default function App() {
     return <div>Error: {error.message}</div>;
   } else {
     return (
-      <Container>
-        <ErrorBoundary FallbackComponent={Error}>
-          <Switch>
-            <LazyBoundary fallback={Loading}>
-              <Route path="/" exact component={Front} />
-              <Route path="/login" render={props => <Login {...props} />} />
-              <Route
-                path="/admin"
-                render={props => <Dashboard {...props} role={role} />}
-              />
-              <Route
-                path="/thankyou"
-                render={props => <ThankYou {...props} />}
-              />
-              <Route path="/survey" render={props => <Survey {...props} />} />
-            </LazyBoundary>
-            <Redirect to="/" />
-          </Switch>
-        </ErrorBoundary>
-      </Container>
+      <ErrorBoundary FallbackComponent={Error}>
+        <Switch>
+          <LazyBoundary fallback={Loading}>
+            <Route path="/" exact component={Front} />
+            <Route path="/login" render={props => <Login {...props} />} />
+            <Route
+              path="/admin"
+              render={props => <Dashboard {...props} role={role} />}
+            />
+            <Route
+              path="/thankyou"
+              render={props => <ThankYou {...props} />}
+            />
+            <Route path="/survey" render={props => <Survey {...props} />} />
+          </LazyBoundary>
+          <Redirect to="/" />
+        </Switch>
+      </ErrorBoundary>
     );
   }
 }

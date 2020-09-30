@@ -15,7 +15,7 @@ import Tabs from 'react-bootstrap/Tabs';
 // Local imports
 import DataTab from './dashboard/DataTab.jsx';
 import FormTab from './dashboard/FormTab.jsx';
-import MapTab from './dashboard/MapTab.jsx';
+import MapTab from './dashboard/MapTab/MapTab.jsx';
 import SettingsTab from './dashboard/SettingsTab.jsx';
 
 function UserTabs(props) {
@@ -128,16 +128,18 @@ export default function Dashboard(props) {
   }, []);
 
   return (
-    <Container>
+    <div>
       <Row>
         <Col>
           <Navbar expand="lg" variant="dark" style={primary}>
-            <Navbar.Brand>{inputs.title} | Dashboard</Navbar.Brand>
-            <Navbar.Collapse className="justify-content-end">
-              <Button href="/api/v1/logout" style={secondary}>
-                Logout
-              </Button>
-            </Navbar.Collapse>
+            <Container>
+              <Navbar.Brand>{inputs.title} | Dashboard</Navbar.Brand>
+              <Navbar.Collapse className="justify-content-end">
+                <Button href="/api/v1/logout" style={secondary}>
+                  Logout
+                </Button>
+              </Navbar.Collapse>
+            </Container>
           </Navbar>
         </Col>
       </Row>
@@ -150,7 +152,7 @@ export default function Dashboard(props) {
           />
         </Col>
       </Row>
-    </Container>
+    </div>
   );
 }
 
