@@ -3,7 +3,7 @@ import React from 'react';
 import Cookies from 'js-cookie';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { lazy, LazyBoundary } from 'react-imported-component';
-import Container from 'react-bootstrap/Container';
+// import Container from 'react-bootstrap/Container';
 import { ErrorBoundary } from 'react-error-boundary';
 import 'react-form-builder2/dist/app.css';
 import Error from './Error.jsx';
@@ -80,10 +80,7 @@ export default function App() {
               path="/admin"
               render={props => <Dashboard {...props} role={role} />}
             />
-            <Route
-              path="/thankyou"
-              render={props => <ThankYou {...props} />}
-            />
+            <Route path="/thankyou" render={props => <ThankYou {...props} />} />
             <Route path="/survey" render={props => <Survey {...props} />} />
           </LazyBoundary>
           <Redirect to="/" />

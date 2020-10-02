@@ -80,7 +80,6 @@ export default function MapTab() {
   useEffect(() => {
     if (!currentLayer) return;
 
-    console.log({ currentLayer });
     if (currentLayer.includes('_pct')) {
       setFillDomain([0, 1]);
     } else if (currentLayer === 'median_income') {
@@ -172,6 +171,7 @@ export default function MapTab() {
           <InfoPanel
             currentFeature={currentFeature}
             currentFeatureSubmissions={currentFeatureSubmissions}
+            currentGeography={currentGeography}
           />
         </div>
       </div>

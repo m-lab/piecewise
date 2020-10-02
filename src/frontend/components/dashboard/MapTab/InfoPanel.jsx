@@ -8,7 +8,6 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 
 import acs from './acs-5-yr.json';
-// import fcc477 from './fcc-477.json';
 
 import './MapTab.css';
 
@@ -82,6 +81,7 @@ const usStateFips = {
 export default function InfoPanel({
   currentFeature,
   currentFeatureSubmissions,
+  currentGeography,
 }) {
   const [demographics, setDemographics] = useState([]);
   const [featureName, setFeatureName] = useState('Feature name');
@@ -102,6 +102,8 @@ export default function InfoPanel({
   const [meanAdvertisedUp, setMeanAdvertisedUp] = useState('--');
   const [usStateName, setUSStateName] = useState('');
 
+  console.log({ currentFeature }, 'inside <InfoPanel />');
+
   useEffect(() => {
     if (!currentFeature) {
       setIsOpen(false);
@@ -111,7 +113,7 @@ export default function InfoPanel({
     const { properties } = currentFeature;
     const {
       fips,
-      name,
+      name: featureName,
       total_pop,
       white_pop,
       black_pop,
@@ -123,14 +125,19 @@ export default function InfoPanel({
       mean_max_ad_up,
       provider_count,
     } = properties;
-    const whitePct = formatPercent(white_pop / total_pop);
-    const blackPct = formatPercent(black_pop / total_pop);
-    const asianPct = formatPercent(asian_pop / total_pop);
-    const hispanicPct = formatPercent(hispanic_pop / total_pop);
-    const americanIndianPct = formatPercent(amerindian_pop / total_pop);
-    const demographics = `According to the Census, there are approximately <span class="dynamic-value">${formatNumber(
-      total_pop,
-    )}</span> people live in ${name} County. About <span class="dynamic-value">${whitePct}</span> of them are white, <span class="dynamic-value">${blackPct}</span> are Black, <span class="dynamic-value">${asianPct}</span> are Asian, <span class="dynamic-value">${hispanicPct}</span> are Hispanic, and <span class="dynamic-value">${americanIndianPct}</span> are American Indian. The median income is <span class="dynamic-value">${formatDollar(
+    const whitePct = white_pop ? formatPercent(white_pop / total_pop) : '-- %';
+    const blackPct = black_pop ? formatPercent(black_pop / total_pop) : '-- %';
+    const asianPct = asian_pop ? formatPercent(asian_pop / total_pop) : '-- %';
+    const hispanicPct = hispanic_pop
+      ? formatPercent(hispanic_pop / total_pop)
+      : '-- %';
+    const americanIndianPct = amerindian_pop
+      ? formatPercent(amerindian_pop / total_pop)
+      : '-- %';
+    let name = `${featureName}`;
+    const demographics = `According to the Census, there are approximately <span class="dynamic-value">${
+      total_pop ? formatNumber(total_pop) : '--'
+    }</span> people who live in ${name}. About <span class="dynamic-value">${whitePct}</span> of them are white, <span class="dynamic-value">${blackPct}</span> are Black, <span class="dynamic-value">${asianPct}</span> are Asian, <span class="dynamic-value">${hispanicPct}</span> are Hispanic, and <span class="dynamic-value">${americanIndianPct}</span> are American Indian. The median income is <span class="dynamic-value">${formatDollar(
       median_income,
     )}</span>.<sup>1</sup>`;
 
@@ -140,7 +147,7 @@ export default function InfoPanel({
     const acsMatch = acs.find(d => d.fips === fips);
 
     setDemographics(demographics);
-    setFeatureName(name);
+    setFeatureName(name || fips);
     setUSStateName(stateName);
     if (acsMatch) {
       setPercentHousesWithBroadband(
@@ -164,7 +171,11 @@ export default function InfoPanel({
     if (provider_count) setProviderCount(format(',.0s')(provider_count));
   }, [currentFeature]);
 
-  const geoUnit = usStateName === 'Louisiana' ? 'Parish' : 'County';
+  let geoUnit = 'County';
+
+  if (usStateName === 'Louisiana' && currentGeography === 'counties') {
+    geoUnit = 'Parish';
+  }
 
   const tabularData = [
     {
