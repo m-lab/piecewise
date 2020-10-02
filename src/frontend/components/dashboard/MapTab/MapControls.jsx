@@ -72,7 +72,7 @@ const MapControls = ({
           onChange={onGeographyChange}
           options={[
             { label: 'County boundaries', value: 'counties' },
-            { label: 'Census blocks', value: 'blocks' },
+            { label: 'Census tracts', value: 'tracts' },
           ]}
           value={currentGeography}
         />

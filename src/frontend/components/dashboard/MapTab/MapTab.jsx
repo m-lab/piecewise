@@ -172,6 +172,7 @@ export default function MapTab() {
           <InfoPanel
             currentFeature={currentFeature}
             currentFeatureSubmissions={currentFeatureSubmissions}
+            currentGeography={currentGeography}
           />
         </div>
       </div>

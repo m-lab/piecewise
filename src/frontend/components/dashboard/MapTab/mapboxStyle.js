@@ -18,7 +18,8 @@ const mbStyle = {
     },
     composite: {
       type: 'vector',
-      url: 'mapbox://jeremiak.4hjgevzj', //'mapbox://jeremiak.27hyzjbx',
+      // tiles: ['http://localhost:8080/data/piecewise/{z}/{x}/{y}.pbf'],
+      url: 'mapbox://jeremiak.apm7cltf',
     },
     streets: {
       type: 'vector',
@@ -42,30 +43,20 @@ const mbStyle = {
         'fill-color': '#1D2F6F',
       },
     },
-    // {
-    //   id: 'states-fill',
-    //   type: 'fill',
-    //   source: 'composite',
-    //   'source-layer': 'states',
-    //   paint: {
-    //     'fill-color': '#FAC748',
-    //   },
-    // },
-    // {
-    //   id: 'counties-fill',
-    //   type: 'fill',
-    //   source: 'composite',
-    //   'source-layer': 'counties',
-    //   paint: {
-    //     'fill-color': '#FAC748',
-    //     'fill-opacity': 0,
-    //   },
-    // },
     {
       id: 'counties-data',
       type: 'fill',
       source: 'composite',
       'source-layer': 'counties',
+      paint: {
+        'fill-color': '#ECE1CB',
+      },
+    },
+    {
+      id: 'tracts-data',
+      type: 'fill',
+      source: 'composite',
+      'source-layer': 'tracts',
       paint: {
         'fill-color': '#ECE1CB',
       },
@@ -108,6 +99,17 @@ const mbStyle = {
       },
     },
     {
+      id: 'tracts-stroke',
+      type: 'line',
+      source: 'composite',
+      'source-layer': 'tracts',
+      filter: ['==', ['get', 'name'], 'nosuchtract'],
+      paint: {
+        'line-color': '#1D2F6F',
+        'line-width': 0.25,
+      },
+    },
+    {
       id: 'states-stroke',
       type: 'line',
       source: 'composite',
@@ -118,11 +120,22 @@ const mbStyle = {
       },
     },
     {
-      id: 'clicked',
+      id: 'counties-clicked',
       type: 'line',
       source: 'composite',
       'source-layer': 'counties',
-      filter: ['==', ['get', 'name'], 'nosuchcounty'],
+      filter: ['==', ['get', 'name'], 'nosuchthing'],
+      paint: {
+        'line-color': '#F88DAD',
+        'line-width': 1.65,
+      },
+    },
+    {
+      id: 'tracts-clicked',
+      type: 'line',
+      source: 'composite',
+      'source-layer': 'tracts',
+      filter: ['==', ['get', 'name'], 'nosuchthing'],
       paint: {
         'line-color': '#F88DAD',
         'line-width': 1.65,
