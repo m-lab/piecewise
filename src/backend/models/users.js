@@ -16,22 +16,28 @@ export default class User {
   }
 
   async create(user) {
+    console.debug(`Creating user: ${user}`)
     try {
-      user = await validate(user);
-      return this._db.transaction(async trx => {
-        const query = {
-          username: user.username,
-          role_name: user.role_name,
-        };
+      const isValid = await validate(user);
 
-        log.debug('Inserting user');
-        await trx('users').insert(query);
+      if (isValid) {
+        return this._db.transaction(async trx => {
+          const query = {
+            username: user.username,
+            role_name: user.role_name,
+          };
 
-        return trx('users')
-          .select()
-          .where({ username: user.username })
-          .first();
-      });
+          log.debug('Inserting user');
+          await trx('users').insert(query);
+
+          return trx('users')
+            .select()
+            .where({ username: user.username })
+            .first();
+        });
+      } else {
+        throw new BadRequestError('User information is not valid.');
+      }
     } catch (err) {
       throw new BadRequestError('Failed to create user: ', err);
     }
@@ -39,23 +45,27 @@ export default class User {
 
   async update(user) {
     try {
-      user = await validate(user);
-      return this._db.transaction(async trx => {
-        const query = {
-          username: user.username,
-          role_name: user.role_name,
-        };
+      const isValid = await validate(user);
+      if (isValid) {
+        return this._db.transaction(async trx => {
+          const query = {
+            username: user.username,
+            role_name: user.role_name,
+          };
 
-        log.debug('Updating user');
-        await trx('users')
-          .update(query, ['id', 'username', 'role_name'])
-          .where({ username: user.username });
+          log.debug('Updating user');
+          await trx('users')
+            .update(query, ['id', 'username', 'role_name'])
+            .where({ username: user.username });
 
-        return trx('users')
-          .select()
-          .where({ username: user.username })
-          .first();
-      });
+          return trx('users')
+            .select()
+            .where({ username: user.username })
+            .first();
+        });
+      } else {
+        throw new BadRequestError('User information is not valid.');
+      }
     } catch (err) {
       throw new BadRequestError('Failed to create user: ', err);
     }
