@@ -16,11 +16,11 @@ export default class User {
   }
 
   async create(user) {
-    console.debug(`Creating user: ${user}`)
     try {
       const isValid = await validate(user);
 
       if (isValid) {
+        log.debug(`Creating user: ${user}`);
         return this._db.transaction(async trx => {
           const query = {
             username: user.username,
@@ -36,6 +36,7 @@ export default class User {
             .first();
         });
       } else {
+        log.debug(`Cannot create user`);
         throw new BadRequestError('User information is not valid.');
       }
     } catch (err) {
