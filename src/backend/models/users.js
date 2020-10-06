@@ -190,16 +190,20 @@ export default class User {
    */
   async findOrCreateUser(user) {
     log.debug('findOrCreateUser: ', user);
-    const exists = await this.findByUsername(user.username);
-    if (!exists) {
-      log.debug('User does not exist, creating');
-      return await this.create(user);
-    } else if (user.role_name !== exists.role) {
-      log.debug('User role has changed, updating');
-      return await this.update(user);
-    } else {
-      log.debug('Returning existing user');
-      return exists;
+    try {
+      const exists = await this.findByUsername(user.username);
+      if (!exists) {
+        log.debug('User does not exist, creating');
+        return await this.create(user);
+      } else if (user.role_name !== exists.role) {
+        log.debug('User role has changed, updating');
+        return await this.update(user);
+      } else {
+        log.debug('Returning existing user');
+        return exists;
+      }
+    } catch (err) {
+      throw new BadRequestError('Failed to create user: ', err);
     }
   }
 }
