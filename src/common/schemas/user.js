@@ -19,7 +19,8 @@ const schema = Joi.object({
 
 export async function validate(data) {
   try {
-    const value = await schema.validateAsync(data);
+    data = JSON.stringify(data);
+    const value = await schema.validateAsync(JSON.parse(data));
     return value;
   } catch (err) {
     throw new UnprocessableError('Unable to validate user JSON: ', err);
