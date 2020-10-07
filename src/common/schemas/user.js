@@ -10,7 +10,7 @@ const schema = Joi.object({
   lastName: Joi.string()
     .allow(null)
     .optional(),
-  instance: Joi.integer()
+  instance: Joi.number()
     .allow(null)
     .optional(),
   instance_name: Joi.string()

@@ -46,29 +46,32 @@ export default class User {
   }
 
   async update(user) {
+    let data;
     try {
-      const isValid = await validate(user);
-      if (isValid) {
-        const updated_user = await this._db.transaction(async trx => {
-          const query = {
-            username: user.username,
-            role_name: user.role_name,
-          };
+      data = await validate(user);
+    } catch (err) {
+      log.debug('Cannot update user: ', err);
+      throw new BadRequestError('User information is not valid: ', err);
+    }
+    try {
+      log.debug(`Updating user: ${user}`);
+      const updated_user = await this._db.transaction(async trx => {
+        const query = {
+          username: data.username,
+          role_name: data.role_name,
+        };
 
-          log.debug('Updating user');
-          await trx('users')
-            .update(query, ['id', 'username', 'role_name'])
-            .where({ username: user.username });
+        log.debug('Updating user');
+        await trx('users')
+          .update(query, ['id', 'username', 'role_name'])
+          .where({ username: data.username });
 
-          return trx('users')
-            .select()
-            .where({ username: user.username })
-            .first();
-        });
-        return updated_user;
-      } else {
-        throw new BadRequestError('User information is not valid.');
-      }
+        return trx('users')
+          .select()
+          .where({ username: data.username })
+          .first();
+      });
+      return updated_user;
     } catch (err) {
       throw new BadRequestError('Failed to create user: ', err);
     }
