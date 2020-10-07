@@ -21,7 +21,7 @@ export default class User {
 
       if (isValid) {
         log.debug(`Creating user: ${user}`);
-        return await this._db.transaction(async trx => {
+        const new_user = await this._db.transaction(async trx => {
           const query = {
             username: user.username,
             role_name: user.role_name,
@@ -35,6 +35,7 @@ export default class User {
             .where({ username: user.username })
             .first();
         });
+        return new_user;
       } else {
         log.debug(`Cannot create user`);
         throw new BadRequestError('User information is not valid.');
@@ -48,7 +49,7 @@ export default class User {
     try {
       const isValid = await validate(user);
       if (isValid) {
-        return await this._db.transaction(async trx => {
+        const updated_user = await this._db.transaction(async trx => {
           const query = {
             username: user.username,
             role_name: user.role_name,
@@ -64,6 +65,7 @@ export default class User {
             .where({ username: user.username })
             .first();
         });
+        return updated_user;
       } else {
         throw new BadRequestError('User information is not valid.');
       }
@@ -205,10 +207,12 @@ export default class User {
       const exists = await this.findByUsername(user.username);
       if (!exists) {
         log.debug('User does not exist, creating');
-        return await this.create(user);
+        const new_user = await this.create(user);
+        return new_user;
       } else if (user.role_name !== exists.role) {
         log.debug('User role has changed, updating');
-        return await this.update(user);
+        const updated_user = await this.update(user);
+        return updated_user;
       } else {
         log.debug('Returning existing user');
         return exists;
