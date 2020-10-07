@@ -32,7 +32,7 @@ const schema = Joi.object({
   extension: Joi.string()
     .allow(null)
     .optional(),
-  isActive: Joi.number()
+  isActive: Joi.boolean()
     .allow(null)
     .optional(),
 });
