@@ -17,30 +17,30 @@ export default class User {
 
   async create(user) {
     console.log('Attempting to create user:', user);
+    let data;
     try {
-      const isValid = await validate(user);
+      data = await validate(user);
+    } catch (err) {
+      log.debug('Cannot create user');
+      throw new BadRequestError('User information is not valid: ', err);
+    }
+    try {
+      log.debug(`Creating user: ${user}`);
+      const new_user = await this._db.transaction(async trx => {
+        const query = {
+          username: data.username,
+          role_name: data.role_name,
+        };
 
-      if (isValid) {
-        log.debug(`Creating user: ${user}`);
-        const new_user = await this._db.transaction(async trx => {
-          const query = {
-            username: user.username,
-            role_name: user.role_name,
-          };
+        log.debug('Inserting user');
+        await trx('users').insert(query);
 
-          log.debug('Inserting user');
-          await trx('users').insert(query);
-
-          return trx('users')
-            .select()
-            .where({ username: user.username })
-            .first();
-        });
-        return new_user;
-      } else {
-        log.debug(`Cannot create user`);
-        throw new BadRequestError('User information is not valid.');
-      }
+        return trx('users')
+          .select()
+          .where({ username: data.username })
+          .first();
+      });
+      return new_user;
     } catch (err) {
       throw new BadRequestError('Failed to create user: ', err);
     }
