@@ -205,10 +205,10 @@ export default class User {
       const exists = await this.findByUsername(user.username);
       if (!exists) {
         log.debug('User does not exist, creating');
-        return this.create(user);
+        return await this.create(user);
       } else if (user.role_name !== exists.role) {
         log.debug('User role has changed, updating');
-        return this.update(user);
+        return await this.update(user);
       } else {
         log.debug('Returning existing user');
         return exists;
