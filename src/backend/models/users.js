@@ -16,6 +16,7 @@ export default class User {
   }
 
   async create(user) {
+    console.log('Attempting to create user:', user);
     try {
       const isValid = await validate(user);
 
