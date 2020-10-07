@@ -21,7 +21,7 @@ export default class User {
 
       if (isValid) {
         log.debug(`Creating user: ${user}`);
-        return this._db.transaction(async trx => {
+        return await this._db.transaction(async trx => {
           const query = {
             username: user.username,
             role_name: user.role_name,
@@ -48,7 +48,7 @@ export default class User {
     try {
       const isValid = await validate(user);
       if (isValid) {
-        return this._db.transaction(async trx => {
+        return await this._db.transaction(async trx => {
           const query = {
             username: user.username,
             role_name: user.role_name,
