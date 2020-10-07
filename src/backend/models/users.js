@@ -16,12 +16,11 @@ export default class User {
   }
 
   async create(user) {
-    console.log('Attempting to create user:', user);
     let data;
     try {
       data = await validate(user);
     } catch (err) {
-      log.debug('Cannot create user');
+      log.debug('Cannot create user: ', err);
       throw new BadRequestError('User information is not valid: ', err);
     }
     try {
