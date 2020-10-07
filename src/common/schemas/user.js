@@ -6,7 +6,7 @@ const schema = Joi.object({
   username: Joi.string(),
   firstName: Joi.string().optional(),
   lastName: Joi.string().optional(),
-  instance: Joi.number().optional(),
+  instance: Joi.string().optional(),
   instance_name: Joi.string().optional(),
   instance_domain: Joi.string().optional(),
   role: Joi.number().optional(),
@@ -19,8 +19,7 @@ const schema = Joi.object({
 
 export async function validate(data) {
   try {
-    data = JSON.stringify(data);
-    const value = await schema.validateAsync(JSON.parse(data));
+    const value = await schema.validateAsync(data);
     return value;
   } catch (err) {
     throw new UnprocessableError('Unable to validate user JSON: ', err);
