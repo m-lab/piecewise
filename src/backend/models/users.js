@@ -16,12 +16,19 @@ export default class User {
   }
 
   async create(user) {
+    let data;
     try {
-      user = await validate(user);
-      return this._db.transaction(async trx => {
+      data = await validate(user);
+    } catch (err) {
+      log.debug('Cannot create user: ', err);
+      throw new BadRequestError('User information is not valid: ', err);
+    }
+    try {
+      log.debug(`Creating user: ${user}`);
+      const new_user = await this._db.transaction(async trx => {
         const query = {
-          username: user.username,
-          role_name: user.role_name,
+          username: data.username,
+          role_name: data.role_name,
         };
 
         log.debug('Inserting user');
@@ -29,33 +36,42 @@ export default class User {
 
         return trx('users')
           .select()
-          .where({ username: user.username })
+          .where({ username: data.username })
           .first();
       });
+      return new_user;
     } catch (err) {
       throw new BadRequestError('Failed to create user: ', err);
     }
   }
 
   async update(user) {
+    let data;
     try {
-      user = await validate(user);
-      return this._db.transaction(async trx => {
+      data = await validate(user);
+    } catch (err) {
+      log.debug('Cannot update user: ', err);
+      throw new BadRequestError('User information is not valid: ', err);
+    }
+    try {
+      log.debug(`Updating user: ${user}`);
+      const updated_user = await this._db.transaction(async trx => {
         const query = {
-          username: user.username,
-          role_name: user.role_name,
+          username: data.username,
+          role_name: data.role_name,
         };
 
         log.debug('Updating user');
         await trx('users')
           .update(query, ['id', 'username', 'role_name'])
-          .where({ username: user.username });
+          .where({ username: data.username });
 
         return trx('users')
           .select()
-          .where({ username: user.username })
+          .where({ username: data.username })
           .first();
       });
+      return updated_user;
     } catch (err) {
       throw new BadRequestError('Failed to create user: ', err);
     }
@@ -190,16 +206,22 @@ export default class User {
    */
   async findOrCreateUser(user) {
     log.debug('findOrCreateUser: ', user);
-    const exists = await this.findByUsername(user.username);
-    if (!exists) {
-      log.debug('User does not exist, creating');
-      return await this.create(user);
-    } else if (user.role_name !== exists.role) {
-      log.debug('User role has changed, updating');
-      return await this.update(user);
-    } else {
-      log.debug('Returning existing user');
-      return exists;
+    try {
+      const exists = await this.findByUsername(user.username);
+      if (!exists) {
+        log.debug('User does not exist, creating');
+        const new_user = await this.create(user);
+        return new_user;
+      } else if (user.role_name !== exists.role) {
+        log.debug('User role has changed, updating');
+        const updated_user = await this.update(user);
+        return updated_user;
+      } else {
+        log.debug('Returning existing user');
+        return exists;
+      }
+    } catch (err) {
+      throw new BadRequestError('Failed to create user: ', err);
     }
   }
 }
