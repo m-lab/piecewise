@@ -55,6 +55,24 @@ fcc-county.json: fcc-477.sqlite
 fcc-tract.json: fcc-477.sqlite
 	node scripts/process-fcc.js tract
 
+# download mlab statistics from gcs
+mlab/counties/.downloaded:
+	mkdir -p mlab/counties
+	node scripts/download-mlab.js counties
+	touch mlab/counties/.downloaded
+
+mlab/tracts/.downloaded:
+	mkdir -p mlab/tracts
+	node scripts/download-mlab.js tracts
+	touch mlab/tracts/.downloaded
+
+# and then summarize the mlab statistics	
+mlab-counties.json: mlab/counties/.downloaded
+	node scripts/process-mlab.js counties
+
+mlab-tracts.json: mlab/tracts/.downloaded
+	node scripts/process-mlab.js tracts
+
 # merge county data with census demographic information
 counties-geo-with-demographics.json: geographies/counties-geo.json census/county-demographics-acs-5.csv
 	mapshaper geographies/counties-geo.json \
@@ -78,32 +96,46 @@ counties-geo-with-census.json: counties-geo-with-demographics.json census/county
 		-o format=geojson \
 		counties-geo-with-census.json
 
-# and finally, merge in the fcc data. this file will have
-# census demographics, acs internet info, and fcc 477 data
+# merge the above county file with fcc 477 data
 counties-geo-with-census-fcc.json: counties-geo-with-census.json fcc-county.json
 	mapshaper counties-geo-with-census.json \
 		-join fcc-county.json keys=fips,geo_id field-types=fips:str,geo_id:str \
 		-o format=geojson \
 		counties-geo-with-census-fcc.json
 
+# and finally, merge in county level mlab data. this file will
+# have census demographics, acs internet info, fcc 477 data,
+# and mlab statistics
+counties-geo-with-census-fcc-mlab.json: counties-geo-with-census-fcc.json mlab-counties.json
+	mapshaper counties-geo-with-census-fcc.json \
+		-join mlab-counties.json keys=fips,geo_id field-types=fips:str,geo_id:str \
+		-o format=geojson \
+		counties-geo-with-census-fcc-mlab.json
 
+# and do the same thing for tracts
 tracts-geo-with-fcc.json: geographies/tracts-geo.json fcc-tract.json
 	mapshaper geographies/tracts-geo.json \
 		-join fcc-tract.json keys=fips,geo_id field-types=fips:str,geo_id:str \
 		-o format=geojson \
 		tracts-geo-with-fcc.json
 
+tracts-geo-with-fcc-mlab.json: tracts-geo-with-fcc.json mlab-tracts.json
+	mapshaper tracts-geo-with-fcc.json \
+		-join mlab-tracts.json keys=fips,geo_id field-types=fips:str,geo_id:str \
+		-o format=geojson \
+		tracts-geo-with-fcc-mlab.json
+
 # blocks.mbtiles: geographies/blocks/.downloaded
 # 	./scripts/combine-blocks.sh
 
-counties.mbtiles: counties-geo-with-census-fcc.json
-	tippecanoe -z12 -f -o counties.mbtiles -l counties counties-geo-with-census-fcc.json
+counties.mbtiles: counties-geo-with-census-fcc-mlab.json
+	tippecanoe -z12 -f -o counties.mbtiles -l counties counties-geo-with-census-fcc-mlab.json
 
 states.mbtiles:
 	tippecanoe -z12 -f -o states.mbtiles -l states geographies/states-geo.json
 
-tracts.mbtiles: tracts-geo-with-fcc.json
-	tippecanoe -z12 -f -o tracts.mbtiles -l tracts --no-tile-size-limit -x STATEFP10 -x COUNTYFP10 -x TRACTCE10 tracts-geo-with-fcc.json
+tracts.mbtiles: tracts-geo-with-fcc-mlab.json
+	tippecanoe -z12 -f -o tracts.mbtiles -l tracts --no-tile-size-limit -x STATEFP10 -x COUNTYFP10 -x TRACTCE10 tracts-geo-with-fcc-mlab.json
 
 piecewise.mbtiles: counties.mbtiles states.mbtiles tracts.mbtiles
 	tile-join -z10 -f -o piecewise.mbtiles counties.mbtiles states.mbtiles tracts.mbtiles
