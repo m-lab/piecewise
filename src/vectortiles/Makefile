@@ -137,5 +137,6 @@ states.mbtiles:
 tracts.mbtiles: tracts-geo-with-fcc-mlab.json
 	tippecanoe -z12 -f -o tracts.mbtiles -l tracts --no-tile-size-limit -x STATEFP10 -x COUNTYFP10 -x TRACTCE10 tracts-geo-with-fcc-mlab.json
 
-piecewise.mbtiles: counties.mbtiles states.mbtiles tracts.mbtiles
-	tile-join -z10 -f -o piecewise.mbtiles counties.mbtiles states.mbtiles tracts.mbtiles
+piecewise: counties.mbtiles states.mbtiles tracts.mbtiles
+	tile-join -pk -pC -z10 -f -e piecewise counties.mbtiles states.mbtiles tracts.mbtiles
+	gsutil -m cp -r piecewise gs://maptiles-mlab-sandbox

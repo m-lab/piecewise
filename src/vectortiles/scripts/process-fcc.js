@@ -9,7 +9,7 @@ const geographyType = args[2] || 'county'; // can also be "tract"
 
 let count = 0;
 const geographyColumn = `${geographyType}_fips`;
-let fipsLength = geographyType === 'county' ? 5 : 11
+let fipsLength = geographyType === 'county' ? 5 : 11;
 let isFirst = true;
 const outputFile = `fcc-${geographyType}.json`;
 const queue = new Queue({ concurrency: 50 });
@@ -70,18 +70,15 @@ async function processId(id, db) {
   writeStream.write('[');
   console.log(`Found ${ids.length} unique values for ${geographyColumn}`);
 
-  await db.each(
-    `SELECT DISTINCT ${geographyColumn} FROM rows;`,
-    (err, row) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
+  await db.each(`SELECT DISTINCT ${geographyColumn} FROM rows;`, (err, row) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
 
-      const id = row[geographyColumn];
-      queue.add(() => processId(id, db));
-    },
-  );
+    const id = row[geographyColumn];
+    queue.add(() => processId(id, db));
+  });
 
   await queue.onIdle();
   writeStream.write(']');

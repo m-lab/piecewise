@@ -12,7 +12,7 @@ function downloadBlocksForFips(fips) {
 
     download.on('error', function(err) {
       console.error(`Error downloading ${fips}:`, err);
-      console.error(`\t${url}`)
+      console.error(`\t${url}`);
       reject(err);
     });
 

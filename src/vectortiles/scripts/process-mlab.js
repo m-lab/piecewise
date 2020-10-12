@@ -57,8 +57,10 @@ glob(`mlab/${geographicLevel}/*.json`, async (err, files) => {
 
       return {
         [`${key}_total_dl_samples`]: totalDlSamples,
-        [`${key}_percent_over_audio_threshold`]: dlSamplesOverAudio / totalDlSamples,
-        [`${key}_percent_over_video_threshold`]: dlSamplesOverVideo / totalDlSamples,
+        [`${key}_percent_over_audio_threshold`]:
+          dlSamplesOverAudio / totalDlSamples,
+        [`${key}_percent_over_video_threshold`]:
+          dlSamplesOverVideo / totalDlSamples,
       };
     });
 
