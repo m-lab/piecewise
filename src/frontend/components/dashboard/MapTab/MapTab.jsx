@@ -13,10 +13,8 @@ import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 
 import InfoPanel from './InfoPanel.jsx';
-// import Legend from './Legend.jsx';
 import Map from './Map.jsx';
 import MapControls from './MapControls.jsx';
-// import SurveyResultsTable from './SurveyResultsTable';
 
 // custom styles
 import './MapTab.css';
