@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { pointsWithinPolygon } from '@turf/turf';
@@ -75,73 +75,88 @@ export default function Map({
     });
   };
 
-  const handleMapClick = e => {
-    const { x, y } = e.point;
-    const features = map.queryRenderedFeatures([x, y], {
-      layers: [`${currentGeography}-data`],
-    });
-    const clickedFeature = features[0];
+  const handleMapClick = useCallback(
+    e => {
+      if (!map) return;
+      const { x, y } = e.point;
+      const features = map.queryRenderedFeatures([x, y], {
+        layers: [`${currentGeography}-data`],
+      });
+      const clickedFeature = features[0];
 
-    if (!clickedFeature) return;
+      if (!clickedFeature) return;
 
-    console.log('props', clickedFeature.properties);
+      console.log('clicked feature props', clickedFeature.properties);
 
-    const { fips: clickedFeatureFips } = clickedFeature.properties;
-    const currentFeatureFips =
-      currentFeature && currentFeature.properties
-        ? currentFeature.properties.fips
-        : null;
+      const { fips: clickedFeatureFips } = clickedFeature.properties;
+      const currentFeatureFips =
+        currentFeature && currentFeature.properties
+          ? currentFeature.properties.fips
+          : null;
 
-    // console.log('map clicked', {
-    //   clickedFeatureFips,
-    //   currentFeatureFips,
-    //   currentFeature,
-    // });
+      // console.log('map clicked', {
+      //   clickedFeatureFips,
+      //   currentFeatureFips,
+      //   currentFeature,
+      // });
 
-    if (clickedFeatureFips === currentFeatureFips) {
-      setCurrentFeature(null);
-      map.setFilter('clicked', null);
-      return;
-    }
+      if (clickedFeatureFips === currentFeatureFips) {
+        setCurrentFeature(null);
+        map.setFilter(`${currentGeography}-clicked`, null);
+        return;
+      }
 
-    const clickedFeatureJSON = clickedFeature.toJSON();
-    // console.log({ clickedFeatureJSON, geojson });
-    setCurrentFeature(clickedFeatureJSON);
-    map.setFilter('clicked', ['==', ['get', 'fips'], clickedFeatureFips]);
+      const clickedFeatureJSON = clickedFeature.toJSON();
+      const submissionsWithin = pointsWithinPolygon(
+        geojson,
+        clickedFeatureJSON,
+      );
 
-    const submissionsWithin = pointsWithinPolygon(geojson, clickedFeatureJSON);
-    setCurrentFeatureSubmissions(submissionsWithin);
-  };
+      console.log({ clickedFeatureFips });
+      map.setFilter(`${currentGeography}-clicked`, [
+        '==',
+        ['get', 'fips'],
+        clickedFeatureFips,
+      ]);
+
+      setCurrentFeature(clickedFeatureJSON);
+      setCurrentFeatureSubmissions(submissionsWithin);
+    },
+    [map, currentGeography],
+  );
 
   // convert submission to geojson
-  useEffect(() => {
-    if (!submissions) return;
+  useEffect(
+    function convertSubmissionsDataToGeoJSON() {
+      if (!submissions) return;
 
-    // eslint-disable-next-line react/prop-types
-    const allPoints = submissions.map(point => ({
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [point.longitude, point.latitude],
-      },
-      properties: {
-        id: point.id,
-        isp_user: point.survey_service_type,
-        other_isp: point.survey_service_type_other,
-        cost_of_service: point.survey_current_cost,
-        advertised_download: point.survey_subscribe_download,
-        advertised_upload: point.survey_subscribe_upload,
-        actual_download: point.actual_download,
-        actual_upload: point.actual_upload,
-        min_rtt: point.min_rtt,
-      },
-    }));
+      // eslint-disable-next-line react/prop-types
+      const allPoints = submissions.map(point => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [point.longitude, point.latitude],
+        },
+        properties: {
+          id: point.id,
+          isp_user: point.survey_service_type,
+          other_isp: point.survey_service_type_other,
+          cost_of_service: point.survey_current_cost,
+          advertised_download: point.survey_subscribe_download,
+          advertised_upload: point.survey_subscribe_upload,
+          actual_download: point.actual_download,
+          actual_upload: point.actual_upload,
+          min_rtt: point.min_rtt,
+        },
+      }));
 
-    setGeojson({
-      type: 'FeatureCollection',
-      features: allPoints,
-    });
-  }, [submissions]);
+      setGeojson({
+        type: 'FeatureCollection',
+        features: allPoints,
+      });
+    },
+    [submissions],
+  );
 
   // load up the map, should just happen once in the beginning
   useEffect(() => {
@@ -158,8 +173,6 @@ export default function Map({
   // once the map is set up and loaded, set up the pointer events handlers
   useEffect(() => {
     if (!map) return;
-
-    map.on('click', handleMapClick);
 
     // Change the cursor to a pointer when the mouse is over the places layer.
     map.on('mouseenter', 'points', function() {
@@ -192,36 +205,55 @@ export default function Map({
     });
   }, [map]);
 
-  // change the outlines between counties and census blocks
-  useEffect(() => {
-    if (!map) return;
+  // add and update the click handler for the map
+  useEffect(
+    function updateMapClickHandler() {
+      console.log('updating map click handler');
+      if (!map) return;
 
-    ['counties', 'blocks'].forEach(layerId => {
-      const fillLayer = `${layerId}-fill`;
-      const strokeLayer = `${layerId}-stroke`;
+      map.on('click', handleMapClick);
+      return () => map.off('click', handleMapClick);
+    },
+    [map, currentGeography],
+  );
 
-      if (layerId !== currentGeography) {
-        map.setFilter(fillLayer, ['==', ['get', 'name'], 'nosuchthing']);
-        map.setFilter(strokeLayer, ['==', ['get', 'name'], 'nosuchthing']);
-      } else {
-        map.setFilter(fillLayer, null);
-        map.setFilter(strokeLayer, null);
-      }
-    });
-  }, [currentGeography]);
+  // change the outlines between counties and census tracts
+  useEffect(
+    function updateCurrentGeographyBoundaries() {
+      if (!map) return;
+
+      ['counties', 'tracts'].forEach(layerId => {
+        const clickedLayer = `${layerId}-clicked`;
+        const dataLayer = `${layerId}-data`;
+        const strokeLayer = `${layerId}-stroke`;
+
+        if (layerId !== currentGeography) {
+          map.setFilter(clickedLayer, ['==', ['get', 'name'], 'nosuchthing']);
+          map.setFilter(dataLayer, ['==', ['get', 'name'], 'nosuchthing']);
+          map.setFilter(strokeLayer, ['==', ['get', 'name'], 'nosuchthing']);
+        } else {
+          map.setFilter(dataLayer, null);
+          map.setFilter(strokeLayer, null);
+        }
+      });
+    },
+    [map, currentGeography],
+  );
 
   // update color of geographic units depending on which info is selected
   useEffect(() => {
     if (!map) return;
 
+    const layer = `${currentGeography}-data`;
+
     if (!currentLayer) {
-      map.setPaintProperty('counties-data', 'fill-color', '#ECE1CB');
+      map.setPaintProperty(layer, 'fill-color', '#ECE1CB');
       return;
     }
 
-    map.setPaintProperty('counties-data', 'fill-opacity', 1);
+    map.setPaintProperty(layer, 'fill-opacity', 1);
 
-    map.setPaintProperty('counties-data', 'fill-color', [
+    map.setPaintProperty(layer, 'fill-color', [
       'case',
       ['has', currentLayer],
       [
@@ -235,7 +267,7 @@ export default function Map({
       ],
       'white',
     ]);
-  }, [currentLayer, fillDomain, fillRange]);
+  }, [currentGeography, currentLayer, fillDomain, fillRange]);
 
   // update submission circles
   useEffect(() => {

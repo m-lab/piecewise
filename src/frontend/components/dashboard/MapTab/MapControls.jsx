@@ -72,7 +72,7 @@ const MapControls = ({
           onChange={onGeographyChange}
           options={[
             { label: 'County boundaries', value: 'counties' },
-            { label: 'Census blocks', value: 'blocks' },
+            { label: 'Census tracts', value: 'tracts' },
           ]}
           value={currentGeography}
         />
@@ -127,6 +127,16 @@ const MapControls = ({
               group: 'Internet speed',
               label: 'Median advertised max upload speed',
               value: 'mean_max_ad_up',
+            },
+            {
+              group: 'Internet speed',
+              label: 'Percent of tests sufficient for audio calls',
+              value: '2020_jan_jun_percent_over_audio_threshold',
+            },
+            {
+              group: 'Internet speed',
+              label: 'Percent of tests sufficient for video calls',
+              value: '2020_jan_jun_percent_over_video_threshold',
             },
             {
               group: 'Internet speed',

@@ -7,21 +7,24 @@ import { CSVLink } from 'react-csv';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 
-import acs from './acs-5-yr.json';
-// import fcc477 from './fcc-477.json';
-
 import './MapTab.css';
 
-const formatNumber = format(',');
-const formatPercent = format('.0%');
-const formatDollar = amount => {
-  if (isNaN(amount)) return '--';
-  return `$${formatNumber(amount)}`;
+const createFormatterThatHandlesNullValues = formatter => {
+  return value => {
+    if (!value && value !== 0) return '--';
+    if (isNaN(value)) return '--';
+    return formatter(value);
+  };
 };
-const formatMbps = amount => {
-  if (isNaN(amount)) return '--';
-  return `${format(',.2')(amount)} mbps`;
-};
+
+const formatNumber = createFormatterThatHandlesNullValues(format(','));
+const formatPercent = createFormatterThatHandlesNullValues(format('.0%'));
+const formatDollar = createFormatterThatHandlesNullValues(
+  amount => `$${formatNumber(amount)}`,
+);
+const formatMbps = createFormatterThatHandlesNullValues(
+  amount => `${format(',.2')(amount)} mbps`,
+);
 
 const usStateFips = {
   '10': 'Delaware',
@@ -82,89 +85,82 @@ const usStateFips = {
 export default function InfoPanel({
   currentFeature,
   currentFeatureSubmissions,
+  currentGeography,
 }) {
-  const [demographics, setDemographics] = useState([]);
-  const [featureName, setFeatureName] = useState('Feature name');
   const hasCurrentFeatureSubmissions =
     currentFeatureSubmissions.features &&
     currentFeatureSubmissions.features.length > 0;
   const [isOpen, setIsOpen] = useState(false);
   const [isTable, setIsTable] = useState(false);
-  const [percentHousesWithBroadband, setPercentHousesWithBroadband] = useState(
-    '--%',
-  );
-  const [
-    percentHousesWithoutInternet,
-    setPercentHousesWithoutInternet,
-  ] = useState('--%');
+
+  const [americanIndianPct, setAmericanIndianPct] = useState(null);
+  const [asianPct, setAsianPct] = useState(null);
+  const [blackPct, setBlackPct] = useState(null);
+  const [hispanicPct, setHispanicPct] = useState(null);
+  const [housesWithBroadbandPct, setHousesWithBroadbandPct] = useState(null);
+  const [housesWithoutInternetPct, setHousesWithoutInternetPct] = useState(null);
+  const [featureName, setFeatureName] = useState(null);
+  const [meanAdvertisedDown, setMeanAdvertisedDown] = useState(null);
+  const [meanAdvertisedUp, setMeanAdvertisedUp] = useState(null);
+  const [medianIncome, setMedianIncome] = useState(null);
   const [providerCount, setProviderCount] = useState(null);
-  const [meanAdvertisedDown, setMeanAdvertisedDown] = useState('--');
-  const [meanAdvertisedUp, setMeanAdvertisedUp] = useState('--');
+  const [totalPop, setTotalPop] = useState(null);
   const [usStateName, setUSStateName] = useState('');
+  const [whitePct, setWhitePct] = useState(null);
 
   useEffect(() => {
-    if (!currentFeature) {
+    if (!currentFeature || !currentFeature.properties) {
       setIsOpen(false);
       return;
     }
 
-    const { properties } = currentFeature;
     const {
       fips,
       name,
+      amerindian_pct,
+      asian_pct,
+      black_pct,
+      hispanic_pct,
+      households_with_broadband_pct,
+      households_without_internet_pct,
       total_pop,
-      white_pop,
-      black_pop,
-      asian_pop,
-      hispanic_pop,
-      amerindian_pop,
+      white_pct,
       median_income,
       mean_max_ad_down,
       mean_max_ad_up,
       provider_count,
-    } = properties;
-    const whitePct = formatPercent(white_pop / total_pop);
-    const blackPct = formatPercent(black_pop / total_pop);
-    const asianPct = formatPercent(asian_pop / total_pop);
-    const hispanicPct = formatPercent(hispanic_pop / total_pop);
-    const americanIndianPct = formatPercent(amerindian_pop / total_pop);
-    const demographics = `According to the Census, there are approximately <span class="dynamic-value">${formatNumber(
-      total_pop,
-    )}</span> people live in ${name} County. About <span class="dynamic-value">${whitePct}</span> of them are white, <span class="dynamic-value">${blackPct}</span> are Black, <span class="dynamic-value">${asianPct}</span> are Asian, <span class="dynamic-value">${hispanicPct}</span> are Hispanic, and <span class="dynamic-value">${americanIndianPct}</span> are American Indian. The median income is <span class="dynamic-value">${formatDollar(
-      median_income,
-    )}</span>.<sup>1</sup>`;
+    } = currentFeature.properties;
 
     const stateFips = fips.slice(0, 2);
     const stateName = usStateFips[stateFips];
 
-    const acsMatch = acs.find(d => d.fips === fips);
+    let featureName = '';
 
-    setDemographics(demographics);
-    setFeatureName(name);
-    setUSStateName(stateName);
-    if (acsMatch) {
-      setPercentHousesWithBroadband(
-        `${acsMatch.percent_households_with_broadband}%`,
-      );
-      setPercentHousesWithoutInternet(
-        `${acsMatch.percent_households_without_internet}%`,
-      );
+    if (stateName === 'Louisiana' && currentGeography === 'counties') {
+      featureName = `${name} Parish`;
+    } else if (currentGeography === 'counties') {
+      featureName = `${name} County`;
+    } else if (currentGeography === 'tracts') {
+      featureName = `Tract ${fips}`;
     }
 
-    console.log({
-      mean_max_ad_down,
-      mean_max_ad_up,
-      provider_count,
-    });
+    setAmericanIndianPct(amerindian_pct);
+    setAsianPct(asian_pct);
+    setBlackPct(black_pct);
+    setHispanicPct(hispanic_pct);
+    setHousesWithBroadbandPct(households_with_broadband_pct);
+    setHousesWithoutInternetPct(households_without_internet_pct);
+    setFeatureName(featureName);
+    setMedianIncome(median_income);
+    setMeanAdvertisedDown(mean_max_ad_down);
+    setMeanAdvertisedUp(mean_max_ad_up);
+    setProviderCount(provider_count);
+    setTotalPop(total_pop);
+    setUSStateName(stateName);
+    setWhitePct(white_pct);
 
     setIsOpen(true);
-    if (mean_max_ad_down)
-      setMeanAdvertisedDown(format(',.3s')(mean_max_ad_down));
-    if (mean_max_ad_up) setMeanAdvertisedUp(format(',.3s')(mean_max_ad_up));
-    if (provider_count) setProviderCount(format(',.0s')(provider_count));
   }, [currentFeature]);
-
-  const geoUnit = usStateName === 'Louisiana' ? 'Parish' : 'County';
 
   const tabularData = [
     {
@@ -243,7 +239,7 @@ export default function InfoPanel({
     <div className={`info-panel ${isOpen ? 'open' : ''}`}>
       <div className="info-panel-header">
         <h3>
-          {featureName} {geoUnit}, {usStateName}
+          {featureName}, {usStateName}
         </h3>
         <Button
           className="info-panel-close-control"
@@ -280,26 +276,50 @@ export default function InfoPanel({
         ))
       ) : (
         <React.Fragment>
-          <p dangerouslySetInnerHTML={{ __html: demographics }} />
+          <p>
+            According to the Census, there are approximately{' '}
+            <span className="dynamic-value">{formatNumber(totalPop)}</span>{' '}
+            people who live in {featureName}. About{' '}
+            <span className="dynamic-value">{formatPercent(whitePct)}</span> of
+            them are white,{' '}
+            <span className="dynamic-value">{formatPercent(blackPct)}</span> are
+            Black,{' '}
+            <span className="dynamic-value">{formatPercent(asianPct)}</span> are
+            Asian,{' '}
+            <span className="dynamic-value">{formatPercent(hispanicPct)}</span>{' '}
+            are Hispanic, and{' '}
+            <span className="dynamic-value">
+              {formatPercent(americanIndianPct)}
+            </span>{' '}
+            are American Indian. The median income is{' '}
+            <span className="dynamic-value">{formatDollar(medianIncome)}</span>.
+            <sup>1</sup>
+          </p>
           <p>
             It is estimated that{' '}
-            <span className="dynamic-value">{percentHousesWithBroadband}</span>{' '}
+            <span className="dynamic-value">
+              {formatPercent(housesWithBroadbandPct)}
+            </span>{' '}
             of the households have a broadband internet subscription, while{' '}
             <span className="dynamic-value">
-              {percentHousesWithoutInternet}
+              {formatPercent(housesWithoutInternetPct)}
             </span>{' '}
             of the households in the county have no internet subscription.
             <sup>2</sup>
           </p>
           <p>
             According to the FCC, there are{' '}
-            <span className="dynamic-value">{providerCount || '--'}</span>{' '}
+            <span className="dynamic-value">{formatNumber(providerCount)}</span>{' '}
             internet providers in the county and the median advertised download
             speed is{' '}
-            <span className="dynamic-value">{meanAdvertisedDown} mbps</span> and
-            the median advertised upload speed is{' '}
-            <span className="dynamic-value">{meanAdvertisedUp} mbps</span>.
-            <sup>3</sup>
+            <span className="dynamic-value">
+              {formatMbps(meanAdvertisedDown)}
+            </span>{' '}
+            and the median advertised upload speed is{' '}
+            <span className="dynamic-value">
+              {formatMbps(meanAdvertisedUp)}
+            </span>
+            .<sup>3</sup>
           </p>
           <p>
             The Measurement Lab has collected{' '}

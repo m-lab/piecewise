@@ -13,10 +13,8 @@ import Alert from 'react-bootstrap/Alert';
 import Container from 'react-bootstrap/Container';
 
 import InfoPanel from './InfoPanel.jsx';
-// import Legend from './Legend.jsx';
 import Map from './Map.jsx';
 import MapControls from './MapControls.jsx';
-// import SurveyResultsTable from './SurveyResultsTable';
 
 // custom styles
 import './MapTab.css';
@@ -80,7 +78,6 @@ export default function MapTab() {
   useEffect(() => {
     if (!currentLayer) return;
 
-    console.log({ currentLayer });
     if (currentLayer.includes('_pct')) {
       setFillDomain([0, 1]);
     } else if (currentLayer === 'median_income') {
@@ -172,6 +169,7 @@ export default function MapTab() {
           <InfoPanel
             currentFeature={currentFeature}
             currentFeatureSubmissions={currentFeatureSubmissions}
+            currentGeography={currentGeography}
           />
         </div>
       </div>

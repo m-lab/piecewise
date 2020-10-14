@@ -22,7 +22,7 @@ function UserTabs(props) {
   const { role, inputs, handleSettings } = props;
   if (role === 'admins' || role === 'editors') {
     return (
-      <Tabs defaultActiveKey="form">
+      <Tabs defaultActiveKey="map">
         <Tab eventKey="form" title="Form">
           <FormTab />
         </Tab>
