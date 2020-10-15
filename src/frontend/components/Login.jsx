@@ -81,7 +81,7 @@ export default function Login() {
             setHelperText('Login successful.');
             history.push({
               pathname: '/admin',
-              state: { user: results.user.role },
+              state: { role: results.user.role },
             });
           } else {
             setError(true);
