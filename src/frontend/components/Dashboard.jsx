@@ -32,9 +32,11 @@ function UserTabs(props) {
         <Tab eventKey="data" title="Data">
           <DataTab />
         </Tab>
-        <Tab eventKey="map" title="Map">
-          <MapTab />
-        </Tab>
+        {inputs.mapboxKey && (
+          <Tab eventKey="map" title="Map">
+            <MapTab mapboxKey={inputs.mapboxKey} />
+          </Tab>
+        )}
       </Tabs>
     );
   } else if (role === 'viewers') {
@@ -43,9 +45,11 @@ function UserTabs(props) {
         <Tab eventKey="data" title="Data">
           <DataTab />
         </Tab>
-        <Tab eventKey="map" title="Map">
-          <MapTab />
-        </Tab>
+        {inputs.mapboxKey && (
+          <Tab eventKey="map" title="Map">
+            <MapTab mapboxKey={inputs.mapboxKey} />
+          </Tab>
+        )}
       </Tabs>
     );
   } else {

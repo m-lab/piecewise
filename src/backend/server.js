@@ -52,7 +52,11 @@ export default function configServer(config) {
   // Setup our API handlers
   const auth = AuthController(userModel, config, authz);
   const settingsModel = new Settings(db);
-  const settings = new SettingsController(settingsModel, authz);
+  const settings = new SettingsController(
+    settingsModel,
+    authz,
+    config.mapboxKey,
+  );
   const subModel = new Submissions(db);
   const submissions = new SubController(subModel, authz);
   const formModel = new Forms(db);
@@ -79,7 +83,7 @@ export default function configServer(config) {
   server.context.onerror = errorHandler;
 
   // If we're running behind Cloudflare, set the access parameters.
-  if (config.cfaccess_url) {
+  if (config.cfaccessUrl) {
     server.use(async (ctx, next) => {
       let cfa = await cloudflareAccess();
       await cfa(ctx, next);

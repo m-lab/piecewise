@@ -5,7 +5,7 @@ import { getLogger } from '../log.js';
 
 const log = getLogger('backend:controllers:setting');
 
-export default function controller(settings, thisUser) {
+export default function controller(settings, thisUser, mapboxKey) {
   const router = new Router();
 
   router.get('/settings', async ctx => {
@@ -14,6 +14,9 @@ export default function controller(settings, thisUser) {
     try {
       setting = await settings.find();
       if (!_.isEmpty(setting)) {
+        if (mapboxKey) {
+          setting.mapboxKey = mapboxKey;
+        }
         ctx.response.body = { status: 'success', data: setting };
         ctx.response.status = 200;
       } else {

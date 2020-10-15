@@ -1,5 +1,6 @@
 // base imports
 import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import _ from 'lodash/core';
@@ -36,7 +37,8 @@ const mapStyles = {
 //   [-46, 72], // Northeast coordinates
 // ];
 
-export default function MapTab() {
+export default function MapTab(props) {
+  const { mapboxKey } = props;
   const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
   const [geojson, setGeojson] = useState(null);
@@ -113,7 +115,7 @@ export default function MapTab() {
         });
     }
 
-    mapboxgl.accessToken = process.env.PIECEWISE_MAPBOX_KEY;
+    mapboxgl.accessToken = mapboxKey;
     const initializeMap = ({ setMap, mapContainer }) => {
       const map = new mapboxgl.Map({
         container: mapContainer.current,
@@ -232,3 +234,7 @@ export default function MapTab() {
     </Container>
   );
 }
+
+MapTab.propTypes = {
+  mapboxKey: PropTypes.string.isRequired,
+};
