@@ -5,16 +5,16 @@ import { getLogger } from '../log.js';
 
 const log = getLogger('backend:middleware:cloudflare');
 
-function newJwt({ audience = config.cfaccess_audience }) {
+function newJwt({ audience = config.cfaccessAudience }) {
   // initialize the jwt middleware using CF specific params
   return jwt({
     audience,
-    issuer: config.cfaccess_url,
+    issuer: config.cfaccessUrl,
     cookie: 'CF_Authorization',
     algorithms: ['RS256'],
     debug: true,
     secret: jwks.koaJwtSecret({
-      jwksUri: `${config.cfaccess_url}/cdn-cgi/access/certs`,
+      jwksUri: `${config.cfaccessUrl}/cdn-cgi/access/certs`,
       cache: true,
       cacheMaxEntries: 5,
       cacheMaxAge: 36000000, // 10 hours
@@ -35,7 +35,7 @@ const cfAccessWrapper = async hosts => {
   }
   const middlewares = new Map();
   // At least make sure we have the default
-  middlewares.set(config.cfaccess_url, newJwt({}));
+  middlewares.set(config.cfaccessUrl, newJwt({}));
   if (Array.isArray(audiences) && audiences.length > 0) {
     audiences.forEach(({ host, audience }) => {
       if (host && audience) {

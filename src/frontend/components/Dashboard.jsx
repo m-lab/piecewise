@@ -32,9 +32,11 @@ function UserTabs(props) {
         <Tab eventKey="data" title="Data">
           <DataTab />
         </Tab>
-        <Tab eventKey="map" title="Map">
-          <MapTab />
-        </Tab>
+        {inputs.mapboxKey && (
+          <Tab eventKey="map" title="Map">
+            <MapTab mapboxKey={inputs.mapboxKey} />
+          </Tab>
+        )}
       </Tabs>
     );
   } else if (role === 'viewers') {
@@ -43,9 +45,11 @@ function UserTabs(props) {
         <Tab eventKey="data" title="Data">
           <DataTab />
         </Tab>
-        <Tab eventKey="map" title="Map">
-          <MapTab />
-        </Tab>
+        {inputs.mapboxKey && (
+          <Tab eventKey="map" title="Map">
+            <MapTab mapboxKey={inputs.mapboxKey} />
+          </Tab>
+        )}
       </Tabs>
     );
   } else {
@@ -60,8 +64,7 @@ function UserTabs(props) {
 
 export default function Dashboard(props) {
   console.log('*** props ***', props);
-  //const user = props.user || props.location.state.user;
-  const { role } = props;
+  const role = props.role ? props.role : props.location.state.role;
   const [inputs, setInputs] = useState({});
 
   // update styles according to settings

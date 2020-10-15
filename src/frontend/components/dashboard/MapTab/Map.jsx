@@ -8,7 +8,6 @@ import './MapTab.css';
 
 import mapboxStyle from './mapboxStyle';
 import MapTooltip from './MapTooltip.jsx';
-mapboxgl.accessToken = process.env.PIECEWISE_MAPBOX_KEY;
 
 // eslint-disable-next-line react/prop-types
 export default function Map({
@@ -18,6 +17,7 @@ export default function Map({
   currentTestAspect,
   fillDomain,
   fillRange,
+  mapboxKey,
   radiusDomain,
   radiusRange,
   setCurrentFeature,
@@ -32,6 +32,7 @@ export default function Map({
   const mapContainer = useRef(null);
 
   const initializeMap = ({ setMap, mapContainer }) => {
+    mapboxgl.accessToken = mapboxKey;
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: mapboxStyle,
