@@ -23,11 +23,6 @@ import './MapTab.css';
 
 import NC_DATA from './data.json';
 
-// const bounds = [
-//   [-167, 16], // Southwest coordinates
-//   [-46, 72], // Northeast coordinates
-// ];
-
 export default function MapTab() {
   const [currentFeature, setCurrentFeature] = useState(null);
   const [currentFeatureSubmissions, setCurrentFeatureSubmissions] = useState(
@@ -48,16 +43,17 @@ export default function MapTab() {
 
   // fetcher to get data from api
   const getjson = () => {
-    return Promise.resolve(NC_DATA);
-    // return fetch('/api/v1/submissions', {
-    //   method: 'GET',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Access-Control-Allow-Origin': url,
-    //   },
-    // }).then(response => {
-    //   return response.json();
-    // });
+    // return Promise.resolve(NC_DATA);
+    return fetch('/api/v1/submissions', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(async response => {
+      const json = await response.json();
+      return json.data;
+      // return NC_DATA;
+    });
   };
 
   // actually get the data

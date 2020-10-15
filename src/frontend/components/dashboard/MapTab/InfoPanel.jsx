@@ -98,7 +98,9 @@ export default function InfoPanel({
   const [blackPct, setBlackPct] = useState(null);
   const [hispanicPct, setHispanicPct] = useState(null);
   const [housesWithBroadbandPct, setHousesWithBroadbandPct] = useState(null);
-  const [housesWithoutInternetPct, setHousesWithoutInternetPct] = useState(null);
+  const [housesWithoutInternetPct, setHousesWithoutInternetPct] = useState(
+    null,
+  );
   const [featureName, setFeatureName] = useState(null);
   const [meanAdvertisedDown, setMeanAdvertisedDown] = useState(null);
   const [meanAdvertisedUp, setMeanAdvertisedUp] = useState(null);

@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { pointsWithinPolygon } from '@turf/turf';
+import { center, pointsWithinPolygon } from '@turf/turf';
 
 import './MapTab.css';
 
@@ -24,6 +24,10 @@ export default function Map({
   setCurrentFeatureSubmissions,
   submissions,
 }) {
+  // const [boundingBox, setBoundingBox] = useState([
+  //   [-167, 16], // Southwest coordinates
+  //   [-46, 72], // Northeast coordinates
+  // ]);
   const [geojson, setGeojson] = useState(null);
   const [map, setMap] = useState(null);
   const currentFeature = useRef(currentFeatureProp);
@@ -36,6 +40,12 @@ export default function Map({
       container: mapContainer.current,
       style: mapboxStyle,
     });
+
+    const centerPoint = center(geojson);
+    const centerCoordinates = centerPoint.geometry.coordinates;
+    console.log({ centerCoordinates });
+    map.setCenter(centerCoordinates);
+    map.setZoom(4);
 
     map.on('load', () => {
       setMap(map);
@@ -107,8 +117,19 @@ export default function Map({
       }
 
       const clickedFeatureJSON = clickedFeature.toJSON();
+
+      // it looks like some features don't have coordinates
+      // not sure what that's about but it shouldn't blow
+      // up the map
+      const geojsonWithCoordinates = {
+        type: 'FeatureCollection',
+        features: geojson.features.filter(
+          d => !d.geometry.coordinates.includes(null),
+        ),
+      };
+
       const submissionsWithin = pointsWithinPolygon(
-        geojson,
+        geojsonWithCoordinates,
         clickedFeatureJSON,
       );
 
@@ -149,11 +170,12 @@ export default function Map({
           min_rtt: point.min_rtt,
         },
       }));
-
-      setGeojson({
+      const featureCollection = {
         type: 'FeatureCollection',
         features: allPoints,
-      });
+      };
+
+      setGeojson(featureCollection);
     },
     [submissions],
   );
@@ -167,7 +189,7 @@ export default function Map({
       });
     }
 
-    window.XXX = map;
+    window.PIECEWISE_MAP = map;
   }, [geojson, map]);
 
   // once the map is set up and loaded, set up the pointer events handlers
