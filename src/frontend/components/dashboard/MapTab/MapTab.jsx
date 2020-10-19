@@ -6,6 +6,7 @@
 */
 
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Bootstrap imports
@@ -19,11 +20,9 @@ import MapControls from './MapControls.jsx';
 // custom styles
 import './MapTab.css';
 
-// const url = 'https://ilsr-nc.measuringbroadband.org/api/v1/submissions';
+// import NC_DATA from './data.json';
 
-import NC_DATA from './data.json';
-
-export default function MapTab() {
+export default function MapTab({ mapboxKey }) {
   const [currentFeature, setCurrentFeature] = useState(null);
   const [currentFeatureSubmissions, setCurrentFeatureSubmissions] = useState(
     [],
@@ -151,6 +150,7 @@ export default function MapTab() {
           currentTestAspect={currentSubmissionAspect}
           fillDomain={fillDomain}
           fillRange={fillRange}
+          mapboxKey={mapboxKey}
           radiusDomain={radiusDomain}
           radiusRange={radiusRange}
           onSubmissionHover={handleResultHover}
@@ -172,3 +172,6 @@ export default function MapTab() {
     </div>
   );
 }
+MapTab.propTypes = {
+  mapboxKey: PropTypes.string.isRequired,
+};

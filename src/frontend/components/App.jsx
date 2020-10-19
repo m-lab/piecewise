@@ -38,6 +38,7 @@ export default function App() {
     let isMounted = true;
     let userStatus;
     const username = Cookies.get('p_user');
+    console.log('username:', username);
     if (username) {
       // TODO: Add separate case for admin
       fetch(`api/v1/users/${username}`)

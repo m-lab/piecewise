@@ -28,6 +28,9 @@ const defaults = {
     pool_max: process.env.PIECEWISE_DB_POOL_MAX || 10,
     timeout: process.env.PIECEWISE_DB_TIMEOUT || 0,
   },
+  mapbox: {
+    key: process.env.PIECEWISE_MAPBOX_KEY,
+  },
   oauth: {
     auth_url: process.env.PIECEWISE_OAUTH_AUTH_URL,
     token_url: process.env.PIECEWISE_OAUTH_TOKEN_URL,
@@ -163,7 +166,7 @@ class Config extends Command {
 
   parse(args) {
     super.parse(args);
-    if (!this.cfaccess_url != !this.cfaccess_audience) {
+    if (!this.cfaccessUrl != !this.cfaccessAudience) {
       throw new Error(
         'If using Cloudflare Access both the URL and the Audience must be specified.',
       );
@@ -318,14 +321,20 @@ export default program
     defaults.oauth.callback_url,
   )
   .option(
-    '--cfaccess_url <url>',
+    '--cfaccess-url <url>',
     'Cloudflare Access URL',
     validateUrl,
     defaults.cfaccess.url,
   )
   .option(
-    '--cfaccess_audience <token>',
+    '--cfaccess-audience <token>',
     'Cloudflare Access Audience',
     validateToken,
     defaults.cfaccess.audience,
+  )
+  .option(
+    '--mapbox-key <key>',
+    'Mapbox API key',
+    validateToken,
+    defaults.mapbox.key,
   );
