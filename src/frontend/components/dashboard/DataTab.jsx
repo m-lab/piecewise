@@ -1,10 +1,10 @@
 // base imports
 import React, { useEffect, useState } from 'react';
-import { CSVLink } from 'react-csv';
 import _ from 'lodash/core';
 
 // Bootstrap imports
 import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -117,9 +117,9 @@ export default function DataTab() {
       </Row>
       <Row>
         <Col>
-          <CSVLink data={submissions ? submissions : ''} headers={headers}>
+          <Button variant="link" href={`/api/v1/submissions?format=csv`}>
             Export
-          </CSVLink>
+          </Button>
         </Col>
       </Row>
     </Container>
