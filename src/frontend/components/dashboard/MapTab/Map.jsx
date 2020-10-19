@@ -42,11 +42,13 @@ export default function Map({
       style: mapboxStyle,
     });
 
-    const centerPoint = center(geojson);
-    const centerCoordinates = centerPoint.geometry.coordinates;
-    console.log({ centerCoordinates });
-    map.setCenter(centerCoordinates);
-    map.setZoom(4);
+    if (geojson.features.length > 0) {
+      const centerPoint = center(geojson);
+      const centerCoordinates = centerPoint.geometry.coordinates;
+      console.log({ centerCoordinates });
+      map.setCenter(centerCoordinates);
+      map.setZoom(4);
+    }
 
     map.on('load', () => {
       setMap(map);

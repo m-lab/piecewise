@@ -23,7 +23,7 @@ const formatDollar = createFormatterThatHandlesNullValues(
   amount => `$${formatNumber(amount)}`,
 );
 const formatMbps = createFormatterThatHandlesNullValues(
-  amount => `${format(',.2')(amount)} mbps`,
+  amount => `${format(',.2r')(amount)} mbps`,
 );
 
 const usStateFips = {
@@ -147,13 +147,13 @@ export default function InfoPanel({
 
     if (stateName === 'Louisiana' && currentGeography === 'counties') {
       featureName = `${name} Parish`;
-      setGeoUnitSingular('county')
+      setGeoUnitSingular('county');
     } else if (currentGeography === 'counties') {
       featureName = `${name} County`;
-      setGeoUnitSingular('county')
+      setGeoUnitSingular('county');
     } else if (currentGeography === 'tracts') {
       featureName = `Tract ${fips}`;
-      setGeoUnitSingular('tract')
+      setGeoUnitSingular('tract');
     }
 
     setAmericanIndianPct(amerindian_pct);
