@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import moment from 'moment';
 import Joi from '@hapi/joi';
 import fetch from 'node-fetch';
+import Papa from 'papaparse';
 import { BadRequestError } from '../../common/errors.js';
 import {
   validateCreation,
@@ -21,6 +22,7 @@ const query_schema = Joi.object({
   asc: Joi.boolean(),
   from: Joi.string(),
   to: Joi.string(),
+  format: Joi.string(),
 });
 
 async function validate_query(query) {
@@ -89,11 +91,51 @@ export default function controller(submissions, thisUser) {
           to: to,
         });
 
-        ctx.response.body = {
-          statusCode: 200,
-          status: 'ok',
-          data: res,
-        };
+        if (query.format === 'csv') {
+          const columns = new Set();
+          columns.add('id');
+          columns.add('date');
+          columns.add('c2sRate');
+          columns.add('s2cRate');
+          columns.add('MinRTT');
+          columns.add('latitude');
+          columns.add('longitude');
+          columns.add('form_id');
+          const flat = res.map(row => {
+            const survey = {};
+            row.fields.forEach(field => {
+              const key =
+                'field_' +
+                field.label
+                  .trim()
+                  .replace(/\s+/g, '_')
+                  .replace(/\W/g, '')
+                  .toLowerCase();
+              columns.add(key);
+              return (survey[key] = field.value);
+            });
+            return {
+              id: row.id,
+              date: row.date,
+              c2sRate: row.c2sRate,
+              s2cRate: row.s2cRate,
+              MinRTT: row.MinRTT,
+              latitude: row.latitude,
+              longitude: row.longitude,
+              form_id: row.form_id,
+              ...survey,
+            };
+          });
+          const csv = Papa.unparse(flat, { columns: Array.from(columns) });
+          ctx.set('Content-disposition', `attachment; filename=piecewise.csv`);
+          ctx.body = csv;
+        } else {
+          ctx.response.body = {
+            statusCode: 200,
+            status: 'ok',
+            data: res,
+          };
+        }
         ctx.response.status = 200;
       } catch (err) {
         ctx.throw(400, `Failed to parse query: ${err}`);

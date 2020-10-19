@@ -1,10 +1,10 @@
 // base imports
 import React, { useEffect, useState } from 'react';
-import { CSVLink } from 'react-csv';
 import _ from 'lodash/core';
 
 // Bootstrap imports
 import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -87,11 +87,6 @@ export default function DataTab() {
                 {headers.map(header => (
                   <th key={header.key}>{header.label}</th>
                 ))}
-                {submissions[0].fields
-                  ? submissions[0].fields.map(field => (
-                      <th key={field.name}>{field.label}</th>
-                    ))
-                  : null}
               </tr>
             </thead>
             <tbody>
@@ -104,11 +99,6 @@ export default function DataTab() {
                   <td>{submission.MinRTT}</td>
                   <td>{submission.latitude}</td>
                   <td>{submission.longitude}</td>
-                  {submission.fields
-                    ? submission.fields.map(field => (
-                        <td key={field.name}>{field.value}</td>
-                      ))
-                    : null}
                 </tr>
               ))}
             </tbody>
@@ -117,9 +107,9 @@ export default function DataTab() {
       </Row>
       <Row>
         <Col>
-          <CSVLink data={submissions ? submissions : ''} headers={headers}>
-            Export
-          </CSVLink>
+          <Button variant="link" href={`/api/v1/submissions?format=csv`}>
+            Export all survey results
+          </Button>
         </Col>
       </Row>
     </Container>

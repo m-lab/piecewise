@@ -1,5 +1,8 @@
 import { BadRequestError } from '../../common/errors.js';
 import { isString } from '../../common/utils.js';
+import { getLogger } from '../log.js';
+
+const log = getLogger('backend:models:submissions');
 
 export default class SubManager {
   constructor(db) {
@@ -19,7 +22,7 @@ export default class SubManager {
           fids = await trx('forms')
             .select('*')
             .where({ id: parseInt(fid) });
-          if (fids.length === 0) {
+          if (fids.length < 1) {
             throw new BadRequestError('Invalid form ID.');
           }
         }
@@ -36,7 +39,7 @@ export default class SubManager {
 
         if (fids.length > 0) {
           const inserts = submissions.map(s => ({
-            fid: fid[0],
+            fid: fid,
             sid: s.id,
           }));
           await trx('form_submissions').insert(inserts);
@@ -138,11 +141,33 @@ export default class SubManager {
 
     return rows.map(r => {
       let fields = JSON.parse(r.fields);
-      let form_fields = JSON.parse(r.form_fields);
+      let form_fields = isString(r.form_fields)
+        ? JSON.parse(r.form_fields)
+        : r.form_fields;
+      log.debug('form_fields: ', form_fields);
+      log.debug('fields: ', fields);
       let merged_fields = fields.map(s => {
         for (let f of form_fields) {
           if (f.field_name && s.name === f.field_name) {
             s.label = f.label;
+            // This may be a multiple-choice type, we need to grab the value
+            if (
+              Array.isArray(s.value) &&
+              s.value.length > 0 &&
+              Array.isArray(f.options) &&
+              f.options.length > 0
+            ) {
+              const newValue = s.value
+                .map(k => {
+                  for (let o of f.options) {
+                    if (k === o.key) {
+                      return o.text;
+                    }
+                  }
+                })
+                .join(',');
+              s.value = newValue;
+            }
           }
         }
         return s;
