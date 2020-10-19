@@ -20,14 +20,7 @@ import MapControls from './MapControls.jsx';
 // custom styles
 import './MapTab.css';
 
-// const url = 'https://ilsr-nc.measuringbroadband.org/api/v1/submissions';
-
-import NC_DATA from './data.json';
-
-// const bounds = [
-//   [-167, 16], // Southwest coordinates
-//   [-46, 72], // Northeast coordinates
-// ];
+// import NC_DATA from './data.json';
 
 export default function MapTab({ mapboxKey }) {
   const [currentFeature, setCurrentFeature] = useState(null);
@@ -49,16 +42,17 @@ export default function MapTab({ mapboxKey }) {
 
   // fetcher to get data from api
   const getjson = () => {
-    return Promise.resolve(NC_DATA);
-    // return fetch('/api/v1/submissions', {
-    //   method: 'GET',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Access-Control-Allow-Origin': url,
-    //   },
-    // }).then(response => {
-    //   return response.json();
-    // });
+    // return Promise.resolve(NC_DATA);
+    return fetch('/api/v1/submissions', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(async response => {
+      const json = await response.json();
+      return json.data;
+      // return NC_DATA;
+    });
   };
 
   // actually get the data
