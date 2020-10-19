@@ -96,6 +96,7 @@ export default function InfoPanel({
   const [americanIndianPct, setAmericanIndianPct] = useState(null);
   const [asianPct, setAsianPct] = useState(null);
   const [blackPct, setBlackPct] = useState(null);
+  const [geoUnitSingular, setGeoUnitSingular] = useState(null);
   const [hispanicPct, setHispanicPct] = useState(null);
   const [housesWithBroadbandPct, setHousesWithBroadbandPct] = useState(null);
   const [housesWithoutInternetPct, setHousesWithoutInternetPct] = useState(
@@ -105,7 +106,10 @@ export default function InfoPanel({
   const [meanAdvertisedDown, setMeanAdvertisedDown] = useState(null);
   const [meanAdvertisedUp, setMeanAdvertisedUp] = useState(null);
   const [medianIncome, setMedianIncome] = useState(null);
+  const [overAudioPct, setOverAudioPct] = useState(null);
+  const [overVideoPct, setOverVideoPct] = useState(null);
   const [providerCount, setProviderCount] = useState(null);
+  const [totalDownSamples, setTotalDownSamples] = useState(null);
   const [totalPop, setTotalPop] = useState(null);
   const [usStateName, setUSStateName] = useState('');
   const [whitePct, setWhitePct] = useState(null);
@@ -131,6 +135,9 @@ export default function InfoPanel({
       mean_max_ad_down,
       mean_max_ad_up,
       provider_count,
+      ['2020_july_dec_total_dl_samples']: mlab_total_dl_samples,
+      ['2020_july_dec_percent_over_audio_threshold']: mlab_over_audio_pct,
+      ['2020_july_dec_percent_over_video_threshold']: mlab_over_video_pct,
     } = currentFeature.properties;
 
     const stateFips = fips.slice(0, 2);
@@ -140,10 +147,13 @@ export default function InfoPanel({
 
     if (stateName === 'Louisiana' && currentGeography === 'counties') {
       featureName = `${name} Parish`;
+      setGeoUnitSingular('county')
     } else if (currentGeography === 'counties') {
       featureName = `${name} County`;
+      setGeoUnitSingular('county')
     } else if (currentGeography === 'tracts') {
       featureName = `Tract ${fips}`;
+      setGeoUnitSingular('tract')
     }
 
     setAmericanIndianPct(amerindian_pct);
@@ -156,7 +166,10 @@ export default function InfoPanel({
     setMedianIncome(median_income);
     setMeanAdvertisedDown(mean_max_ad_down);
     setMeanAdvertisedUp(mean_max_ad_up);
+    setOverAudioPct(mlab_over_audio_pct);
+    setOverVideoPct(mlab_over_video_pct);
     setProviderCount(provider_count);
+    setTotalDownSamples(mlab_total_dl_samples);
     setTotalPop(total_pop);
     setUSStateName(stateName);
     setWhitePct(white_pct);
@@ -312,8 +325,8 @@ export default function InfoPanel({
           <p>
             According to the FCC, there are{' '}
             <span className="dynamic-value">{formatNumber(providerCount)}</span>{' '}
-            internet providers in the county and the median advertised download
-            speed is{' '}
+            internet providers in the {geoUnitSingular} and the median
+            advertised download speed is{' '}
             <span className="dynamic-value">
               {formatMbps(meanAdvertisedDown)}
             </span>{' '}
@@ -325,14 +338,18 @@ export default function InfoPanel({
           </p>
           <p>
             The Measurement Lab has collected{' '}
-            <span className="dynamic-value">--</span> internet speed tests in
-            the county, and the median download speed is{' '}
+            <span className="dynamic-value">
+              {formatNumber(totalDownSamples)}
+            </span>{' '}
+            internet speed tests in the {geoUnitSingular} since July 2020, and
+            the median download speed is{' '}
             <span className="dynamic-value">-- mbps</span> while the median
             upload speed is <span className="dynamic-value">-- mbps</span>.
-            About <span className="dynamic-value">-- %</span> of the tests did
-            not have sufficient bandwidth for audio calls and{' '}
-            <span className="dynamic-value">-- %</span> would not have enabled a
-            video call.<sup>4</sup>
+            About{' '}
+            <span className="dynamic-value">{formatPercent(overAudioPct)}</span>{' '}
+            of the tests did not have sufficient bandwidth for audio calls and{' '}
+            <span className="dynamic-value">{formatPercent(overVideoPct)}</span>{' '}
+            would not have enabled a video call.<sup>4</sup>
           </p>
         </React.Fragment>
       )}
@@ -403,7 +420,7 @@ export default function InfoPanel({
           <li>2010 Decennial Census</li>
           <li>2018 5-year American Community Survey</li>
           <li>FCC 477 data published June 2019</li>
-          <li>Measurement Lab</li>
+          <li>Measurement Lab, collected since July 2020</li>
         </ol>
       </div>
     </div>
