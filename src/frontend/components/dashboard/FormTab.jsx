@@ -153,23 +153,6 @@ export default function FormTab() {
       field_name: 'text_area_',
     },
     {
-      key: 'Rating',
-      canHaveAnswer: true,
-      name: 'Rating',
-      label: 'Placeholder Label',
-      icon: 'fa fa-star',
-      field_name: 'rating_',
-    },
-    {
-      key: 'DatePicker',
-      canDefaultToday: true,
-      canReadOnly: true,
-      name: 'Date',
-      icon: 'fa fa-calendar',
-      label: 'Placeholder Label',
-      field_name: 'date_picker_',
-    },
-    {
       key: 'Range',
       name: 'Range',
       icon: 'fa fa-sliders-h',
