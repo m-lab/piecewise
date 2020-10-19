@@ -140,7 +140,7 @@ export default class SubManager {
       });
 
     return rows.map(r => {
-      let fields = JSON.parse(r.fields);
+      let fields = isString(r.fields) ? JSON.parse(r.fields) : r.fields;
       let form_fields = isString(r.form_fields)
         ? JSON.parse(r.form_fields)
         : r.form_fields;
@@ -183,7 +183,12 @@ export default class SubManager {
       .select('*')
       .where({ id: parseInt(id) })
       .first();
-    return { ...submission, fields: JSON.parse(submission.fields) };
+    return {
+      ...submission,
+      fields: isString(submission.fields)
+        ? JSON.parse(submission.fields)
+        : submission.fields,
+    };
   }
 
   async findAll() {
