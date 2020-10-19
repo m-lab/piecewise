@@ -87,11 +87,6 @@ export default function DataTab() {
                 {headers.map(header => (
                   <th key={header.key}>{header.label}</th>
                 ))}
-                {submissions[0].fields
-                  ? submissions[0].fields.map(field => (
-                      <th key={field.name}>{field.label}</th>
-                    ))
-                  : null}
               </tr>
             </thead>
             <tbody>
@@ -104,11 +99,6 @@ export default function DataTab() {
                   <td>{submission.MinRTT}</td>
                   <td>{submission.latitude}</td>
                   <td>{submission.longitude}</td>
-                  {submission.fields
-                    ? submission.fields.map(field => (
-                        <td key={field.name}>{field.value}</td>
-                      ))
-                    : null}
                 </tr>
               ))}
             </tbody>
@@ -118,7 +108,7 @@ export default function DataTab() {
       <Row>
         <Col>
           <Button variant="link" href={`/api/v1/submissions?format=csv`}>
-            Export
+            Export all survey results
           </Button>
         </Col>
       </Row>
