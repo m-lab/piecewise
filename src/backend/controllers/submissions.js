@@ -92,6 +92,15 @@ export default function controller(submissions, thisUser) {
         });
 
         if (query.format === 'csv') {
+          const columns = new Set();
+          columns.add('id');
+          columns.add('date');
+          columns.add('c2sRate');
+          columns.add('s2cRate');
+          columns.add('MinRTT');
+          columns.add('latitude');
+          columns.add('longitude');
+          columns.add('form_id');
           const flat = res.map(row => {
             const survey = {};
             row.fields.forEach(field => {
@@ -102,6 +111,7 @@ export default function controller(submissions, thisUser) {
                   .replace(/\s+/g, '_')
                   .replace(/\W/g, '')
                   .toLowerCase();
+              columns.add(key);
               return (survey[key] = field.value);
             });
             return {
@@ -116,7 +126,7 @@ export default function controller(submissions, thisUser) {
               ...survey,
             };
           });
-          const csv = Papa.unparse(flat);
+          const csv = Papa.unparse(flat, { columns: Array.from(columns) });
           ctx.set('Content-disposition', `attachment; filename=piecewise.csv`);
           ctx.body = csv;
         } else {
