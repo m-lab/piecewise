@@ -47,6 +47,7 @@ PIECEWISE_DB_PASSWORD     # Postgres password
 PIECEWISE_DB_POOL_MIN     # Postgres minimum connections (default: 0)
 PIECEWISE_DB_POOL_MAX     # Postgres max connections (default: 10)
 PIECEWISE_DB_TIMEOUT      # Postgres connection timeout (default: 0)
+PIECEWISE_MAPBOX_KEY      # Mapbox API key
 
 # OAuth2 (Optional, see below)
 PIECEWISE_OAUTH_AUTH_URL  # The OAuth2 authorization endpoint to connect to
@@ -57,8 +58,8 @@ PIECEWISE_OAUTH_CALLBACK_URL  # URL at which this PIECEWISE instance can be reac
 ```
 
 Additionally, we use the semi-standard `NODE_ENV` variable for defining test,
-staging, and production. In development mode Piecewise uses sqlite3, but uses in
-production.
+staging, and production. In development mode Piecewise uses sqlite3, but uses
+Postgres in production.
 
 ## Deployment
 
@@ -97,6 +98,9 @@ npm run start
 ```
 
 (use `npm run start:dev` to run in development mode)
+
+Additionally, components can be built or started individually using for example
+`npm run build:backend`, etc. See commands in the `package.json` file for more commands.
 
 ### Docker
 
