@@ -42,15 +42,14 @@ export default function Map({
       style: mapboxStyle,
     });
 
-    if (geojson.features.length > 0) {
-      const centerPoint = center(geojson);
-      const centerCoordinates = centerPoint.geometry.coordinates;
-      console.log({ centerCoordinates });
-      map.setCenter(centerCoordinates);
-      map.setZoom(4);
-    }
-
     map.on('load', () => {
+      if (geojson.features.length > 0) {
+        const centerPoint = center(geojson);
+        const centerCoordinates = centerPoint.geometry.coordinates;
+        map.setCenter(centerCoordinates);
+        map.setZoom(4);
+      }
+
       setMap(map);
       map.resize();
 
@@ -106,12 +105,6 @@ export default function Map({
         currentFeature && currentFeature.properties
           ? currentFeature.properties.fips
           : null;
-
-      // console.log('map clicked', {
-      //   clickedFeatureFips,
-      //   currentFeatureFips,
-      //   currentFeature,
-      // });
 
       if (clickedFeatureFips === currentFeatureFips) {
         setCurrentFeature(null);
@@ -192,6 +185,8 @@ export default function Map({
       });
     }
 
+    // attach a global variable to make it easier to
+    // access the map when debugging
     window.PIECEWISE_MAP = map;
   }, [geojson, map]);
 

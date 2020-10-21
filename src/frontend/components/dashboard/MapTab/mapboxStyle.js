@@ -3,9 +3,9 @@ import streets from './mapboxStreets';
 const mbStyle = {
   version: 8,
   name: 'piecewise',
-  center: [-79.165551, 34.98174],
+  center: [-98, 38],
   maxZoom: 12,
-  zoom: 6,
+  zoom: 3,
   bearing: 0,
   pitch: 0,
   sprite:

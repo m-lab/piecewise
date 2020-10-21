@@ -105,6 +105,8 @@ export default function InfoPanel({
   const [featureName, setFeatureName] = useState(null);
   const [meanAdvertisedDown, setMeanAdvertisedDown] = useState(null);
   const [meanAdvertisedUp, setMeanAdvertisedUp] = useState(null);
+  const [medianDownload, setMedianDownload] = useState(null);
+  const [medianUpload, setMedianUpload] = useState(null);
   const [medianIncome, setMedianIncome] = useState(null);
   const [overAudioPct, setOverAudioPct] = useState(null);
   const [overVideoPct, setOverVideoPct] = useState(null);
@@ -135,9 +137,11 @@ export default function InfoPanel({
       mean_max_ad_down,
       mean_max_ad_up,
       provider_count,
-      ['2020_july_dec_total_dl_samples']: mlab_total_dl_samples,
+      ['2020_july_dec_median_dl']: mlab_median_download,
+      ['2020_july_dec_median_ul']: mlab_median_upload,
       ['2020_july_dec_percent_over_audio_threshold']: mlab_over_audio_pct,
       ['2020_july_dec_percent_over_video_threshold']: mlab_over_video_pct,
+      ['2020_july_dec_total_dl_samples']: mlab_total_dl_samples,
     } = currentFeature.properties;
 
     const stateFips = fips.slice(0, 2);
@@ -163,7 +167,9 @@ export default function InfoPanel({
     setHousesWithBroadbandPct(households_with_broadband_pct);
     setHousesWithoutInternetPct(households_without_internet_pct);
     setFeatureName(featureName);
+    setMedianDownload(mlab_median_download);
     setMedianIncome(median_income);
+    setMedianUpload(mlab_median_upload);
     setMeanAdvertisedDown(mean_max_ad_down);
     setMeanAdvertisedUp(mean_max_ad_up);
     setOverAudioPct(mlab_over_audio_pct);
@@ -343,8 +349,9 @@ export default function InfoPanel({
             </span>{' '}
             internet speed tests in the {geoUnitSingular} since July 2020, and
             the median download speed is{' '}
-            <span className="dynamic-value">-- mbps</span> while the median
-            upload speed is <span className="dynamic-value">-- mbps</span>.
+            <span className="dynamic-value">{formatMbps(medianDownload)}</span>{' '}
+            while the median upload speed is{' '}
+            <span className="dynamic-value">{formatMbps(medianUpload)}</span>.
             About{' '}
             <span className="dynamic-value">{formatPercent(overAudioPct)}</span>{' '}
             of the tests did not have sufficient bandwidth for audio calls and{' '}
