@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const { nest } = require('d3');
+const { median, nest } = require('d3');
 const glob = require('glob');
 const { default: Queue } = require('p-queue');
 
@@ -37,14 +37,26 @@ glob(`mlab/${geographicLevel}/*.json`, async (err, files) => {
     const analyzed = grouped.map(grouped => {
       const { key, values } = grouped;
 
-      let totalDlSamples = 0;
+      const dates = new Set();
+      const dlMedians = [];
+      const ulMedians = [];
       let dlSamplesOverAudio = 0;
       let dlSamplesOverVideo = 0;
+      let totalDlSamples = 0;
+      let totalUlSamples = 0;
 
       values.forEach(v => {
-        const { bucket_min, dl_samples } = v;
+        const {
+          bucket_min,
+          date,
+          dl_samples,
+          download_MED,
+          ul_samples,
+          upload_MED,
+        } = v;
 
         totalDlSamples += dl_samples;
+        totalUlSamples += ul_samples;
 
         if (bucket_min > 2.5) {
           dlSamplesOverAudio += dl_samples;
@@ -53,10 +65,19 @@ glob(`mlab/${geographicLevel}/*.json`, async (err, files) => {
         if (bucket_min > 10) {
           dlSamplesOverVideo += dl_samples;
         }
+
+        if (dates.has(date)) return;
+
+        dlMedians.push(download_MED);
+        ulMedians.push(upload_MED);
+        dates.add(date);
       });
 
       return {
+        [`${key}_median_dl`]: median(dlMedians),
+        [`${key}_median_ul`]: median(ulMedians),
         [`${key}_total_dl_samples`]: totalDlSamples,
+        [`${key}_total_ul_samples`]: totalUlSamples,
         [`${key}_percent_over_audio_threshold`]:
           dlSamplesOverAudio / totalDlSamples,
         [`${key}_percent_over_video_threshold`]:
