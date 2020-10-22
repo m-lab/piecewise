@@ -55,7 +55,9 @@ const MapControls = ({
     } else if (
       currentLayer &&
       (currentLayer.includes('max_ad') ||
-        currentLayer.includes('provider_count'))
+        currentLayer.includes('provider_count') ||
+        currentLayer.includes('median_dl') ||
+        currentLayer.includes('median_ul'))
     ) {
       setFillFormatter(',');
     } else {
@@ -115,33 +117,38 @@ const MapControls = ({
             },
             {
               group: 'Internet speed',
-              label: 'Number of internet providers',
+              label: 'Number of internet providers (FCC)',
               value: 'provider_count',
             },
             {
               group: 'Internet speed',
-              label: 'Median advertised download speed',
+              label: 'Median advertised download speed (FCC)',
               value: 'mean_max_ad_down',
             },
             {
               group: 'Internet speed',
-              label: 'Median advertised max upload speed',
+              label: 'Median advertised max upload speed (FCC)',
               value: 'mean_max_ad_up',
             },
             {
               group: 'Internet speed',
-              label: 'Percent of tests sufficient for audio calls',
-              value: '2020_jan_jun_percent_over_audio_threshold',
+              label: 'Measured median download speed (MLab)',
+              value: '2020_july_dec_median_dl',
             },
             {
               group: 'Internet speed',
-              label: 'Percent of tests sufficient for video calls',
-              value: '2020_jan_jun_percent_over_video_threshold',
+              label: 'Measured median upload speed (MLab)',
+              value: '2020_july_dec_median_ul',
             },
             {
               group: 'Internet speed',
-              label: 'NDT median speed',
-              value: 'blocks',
+              label: 'Percent of tests sufficient for audio calls (MLab)',
+              value: '2020_july_dec_percent_over_audio_threshold',
+            },
+            {
+              group: 'Internet speed',
+              label: 'Percent of tests sufficient for video calls (MLab)',
+              value: '2020_july_dec_percent_over_video_threshold',
             },
           ]}
           value={currentLayer}
@@ -159,7 +166,9 @@ const MapControls = ({
                       {currentLayer === 'median_income' && i === 0 ? '$' : ''}
                       {format(fillFormatter)(d)}
                       {currentLayer &&
-                      currentLayer.includes('max_ad') &&
+                      (currentLayer.includes('max_ad') ||
+                        currentLayer.includes('median_dl') ||
+                        currentLayer.includes('median_ul')) &&
                       i === fillLegendSteps.length - 1
                         ? 'mbps'
                         : ''}

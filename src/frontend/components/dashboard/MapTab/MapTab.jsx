@@ -77,7 +77,11 @@ export default function MapTab({ mapboxKey }) {
       setFillDomain([0, 1]);
     } else if (currentLayer === 'median_income') {
       setFillDomain([0, 100000]);
-    } else if (currentLayer.includes('max_ad')) {
+    } else if (
+      currentLayer.includes('max_ad') ||
+      currentLayer.includes('median_dl') ||
+      currentLayer.includes('median_ul')
+    ) {
       setFillDomain([0, 1000]);
     } else if (currentLayer.includes('provider_count')) {
       setFillDomain([0, 50]);
