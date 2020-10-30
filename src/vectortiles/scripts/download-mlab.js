@@ -16,7 +16,7 @@ const geographicLevel = args[2] || 'counties'; // can also be "tracts"
 const rootGsUrl = `gs://statistics-mlab-sandbox/v0/NA/US/${geographicLevel}`;
 
 async function download(fips) {
-  const cmd = `gsutil cp ${rootGsUrl}/${fips}/histogram_daily_stats.json mlab/${geographicLevel}/${fips}.json`;
+  const cmd = `gsutil cp ${rootGsUrl}/${fips}/2020/histogram_daily_stats.json mlab/${geographicLevel}/${fips}.json`;
   try {
     console.log(`Downloading JSON file (FIPS: ${fips})`);
     await exec(cmd);
