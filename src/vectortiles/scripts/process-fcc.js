@@ -26,7 +26,8 @@ function mean(arr) {
 
 async function processId(id, db) {
   count += 1;
-  const query = `SELECT * FROM rows WHERE ${geographyColumn} = ${id};`;
+  const query = `SELECT * FROM rows WHERE ${geographyColumn} = "${id}";`;
+
   const downs = [];
   const ups = [];
   const providers = new Set();
