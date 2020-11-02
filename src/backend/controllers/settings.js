@@ -17,6 +17,9 @@ export default function controller(settings, thisUser, mapboxKey) {
         if (mapboxKey) {
           setting.mapboxKey = mapboxKey;
         }
+        if (Buffer.isBuffer(setting.logo)) {
+          setting.logo = setting.logo.toString();
+        }
         ctx.response.body = { status: 'success', data: setting };
         ctx.response.status = 200;
       } else {
