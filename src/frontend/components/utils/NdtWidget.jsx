@@ -119,9 +119,6 @@ export default function NdtWidget(props) {
   };
 
   const success = position => {
-    document.getElementById('latitude').value = position.coords.latitude;
-    document.getElementById('longitude').value = position.coords.longitude;
-
     setLocation({
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
