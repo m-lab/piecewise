@@ -31,6 +31,9 @@ const defaults = {
   mapbox: {
     key: process.env.PIECEWISE_MAPBOX_KEY,
   },
+  google: {
+    key: process.env.PIECEWISE_GOOGLE_KEY,
+  },
   oauth: {
     auth_url: process.env.PIECEWISE_OAUTH_AUTH_URL,
     token_url: process.env.PIECEWISE_OAUTH_TOKEN_URL,
@@ -331,6 +334,12 @@ export default program
     'Cloudflare Access Audience',
     validateToken,
     defaults.cfaccess.audience,
+  )
+  .option(
+    '--google-key <key>',
+    'Google Maps API key',
+    validateToken,
+    defaults.google.key,
   )
   .option(
     '--mapbox-key <key>',
