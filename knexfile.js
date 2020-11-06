@@ -18,7 +18,10 @@ const _migrations_pg = {
 
 const _migrations_sqlite3 = {
   tableName: MIGRATIONS_TABLE,
-  directory: COMMON_MIGRATIONS_PATH,
+  directory: [
+    path.join(DB_PATH, 'migrations', 'sqlite3'),
+    COMMON_MIGRATIONS_PATH,
+  ],
 };
 
 const _seeds = {
