@@ -44,7 +44,15 @@ export default function Map({
 
     map.on('load', () => {
       if (geojson.features.length > 0) {
-        const centerPoint = center(geojson);
+        const featuresWithCoordinates = geojson.features.filter(d => {
+          const { coordinates } = d.geometry;
+          if (coordinates.includes(null)) return false;
+          return true;
+        });
+        const centerPoint = center({
+          type: 'FeatureCollection',
+          features: featuresWithCoordinates,
+        });
         const centerCoordinates = centerPoint.geometry.coordinates;
         map.setCenter(centerCoordinates);
         map.setZoom(4);
