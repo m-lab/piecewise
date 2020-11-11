@@ -43,7 +43,7 @@ export default function Map({
     });
 
     map.on('load', () => {
-      if (geojson.features.length > 0) {
+      try {
         const featuresWithCoordinates = geojson.features.filter(d => {
           const { coordinates } = d.geometry;
           if (coordinates.includes(null)) return false;
@@ -56,6 +56,8 @@ export default function Map({
         const centerCoordinates = centerPoint.geometry.coordinates;
         map.setCenter(centerCoordinates);
         map.setZoom(4);
+      } catch (e) {
+        console.error('Problem centering map', e);
       }
 
       setMap(map);

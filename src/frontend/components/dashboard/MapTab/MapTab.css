@@ -45,7 +45,7 @@
   padding: 1.5rem;
   position: absolute;
   top: 2rem;
-  width: 450px;
+  width: 500px;
   z-index: 20;
 }
 
@@ -64,11 +64,6 @@ ul.legend-rects {
   padding-left: 0;
 }
 
-.legend-circles {
-  align-items: center;
-  justify-content: space-between;
-}
-
 .legend-circles li {
   align-items: center;
   display: flex;
@@ -79,6 +74,7 @@ ul.legend-rects {
   background-color: rgba(94, 66, 166, .6);
   border: 1px solid rgb(47, 35, 77);
   display: inline-block;
+  margin: 0 .75rem;
 }
 
 .legend-circle-label {
@@ -99,7 +95,7 @@ ul.legend-rects {
   height: 1.8rem;
   justify-content: center;
   position: relative;
-  width: 1.8rem;
+  width: 3.6rem;
 }
 
 .legend-rect-label {

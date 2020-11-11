@@ -73,7 +73,10 @@ export default function MapTab({ mapboxKey }) {
   useEffect(() => {
     if (!currentLayer) return;
 
-    if (currentLayer.includes('_pct')) {
+    if (
+      currentLayer.includes('_pct') ||
+      currentLayer.includes('_percent_over')
+    ) {
       setFillDomain([0, 1]);
     } else if (currentLayer === 'median_income') {
       setFillDomain([0, 100000]);
