@@ -49,21 +49,21 @@ glob(`mlab/${geographicLevel}/*.json`, async (err, files) => {
         const {
           bucket_min,
           date,
-          dl_samples,
+          dl_samples_bucket,
           download_MED,
-          ul_samples,
+          ul_samples_bucket,
           upload_MED,
         } = v;
 
-        totalDlSamples += dl_samples;
-        totalUlSamples += ul_samples;
+        totalDlSamples += dl_samples_bucket;
+        totalUlSamples += ul_samples_bucket;
 
         if (bucket_min > 2.5) {
-          dlSamplesOverAudio += dl_samples;
+          dlSamplesOverAudio += dl_samples_bucket;
         }
 
         if (bucket_min > 10) {
-          dlSamplesOverVideo += dl_samples;
+          dlSamplesOverVideo += dl_samples_bucket;
         }
 
         if (dates.has(date)) return;
