@@ -86,13 +86,9 @@ counties-geo-with-demographics.json: geographies/counties-geo.json census/county
 		counties-geo-with-demographics.json
 
 # merge the above county file with acs internet info
-counties-geo-with-census.json: counties-geo-with-demographics.json census/county-internet-acs-5.json
+counties-geo-with-census.json: counties-geo-with-demographics.json census/county-internet-acs-5.csv
 	mapshaper counties-geo-with-demographics.json \
-		-join census/county-internet-acs-5.json keys=fips,fips field-types=fips:str,fips:str \
-		-each 'households_with_broadband_pct=percent_households_with_broadband / 100, delete percent_households_with_broadband' \
-		-each 'households_without_internet_pct=percent_households_without_internet / 100, delete percent_households_without_internet' \
-		-each 'households_with_broadband_moe=moe_households_with_broadband / 100, delete moe_households_with_broadband' \
-		-each 'households_without_internet_moe=moe_households_without_internet / 100, delete moe_households_without_internet' \
+		-join census/county-internet-acs-5.csv keys=fips,fips field-types=fips:str,fips:str \
 		-o format=geojson \
 		counties-geo-with-census.json
 
@@ -113,8 +109,28 @@ counties-geo-with-census-fcc-mlab.json: counties-geo-with-census-fcc.json mlab-c
 		counties-geo-with-census-fcc-mlab.json
 
 # and do the same thing for tracts
-tracts-geo-with-fcc.json: geographies/tracts-geo.json fcc-tract.json
+
+# merge tract data with census demographic information
+tracts-geo-with-demographics.json: geographies/tracts-geo.json census/tract-demographics-acs-5.csv
 	mapshaper geographies/tracts-geo.json \
+		-join census/tract-demographics-acs-5.csv keys=fips,geo_id field-types=fips:str,geo_id:str \
+		-each 'white_pct=white_pop / total_pop' \
+		-each 'black_pct=black_pop / total_pop' \
+		-each 'asian_pct=asian_pop / total_pop' \
+		-each 'hispanic_pct=hispanic_pop / total_pop' \
+		-each 'amerindian_pct=amerindian_pop / total_pop' \
+		-o format=geojson \
+		tracts-geo-with-demographics.json
+
+tracts-geo-with-census.json: tracts-geo-with-demographics.json census/tract-internet-acs-5.csv
+	mapshaper tracts-geo-with-demographics.json \
+		-join census/tract-internet-acs-5.csv keys=fips,fips field-types=fips:str,fips:str \
+		-o format=geojson \
+		tracts-geo-with-census.json
+
+# and now with FCC
+tracts-geo-with-fcc.json: tracts-geo-with-census.json fcc-tract.json
+	mapshaper tracts-geo-with-census.json \
 		-join fcc-tract.json keys=fips,geo_id field-types=fips:str,geo_id:str \
 		-o format=geojson \
 		tracts-geo-with-fcc.json
