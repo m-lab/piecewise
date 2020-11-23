@@ -161,6 +161,9 @@ To restore:
 cat <backup file>.sql | docker exec -t <name of postgres container> pg_dumpall -c -U <database user, default piecewise > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
 ```
 
+## Administration & Use
+A [brief guide](https://github.com/m-lab/piecewise/wiki/Administrator-Guide) to using the Piecewise application's features is provided in the wiki.
+
 ## License
 
 Piecewise is an open-source software project licensed under the Apache License
