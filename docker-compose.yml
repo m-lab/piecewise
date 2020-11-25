@@ -11,13 +11,14 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-      PIECEWISE_VIZ_LOG_LEVEL: ${PIECEWISE_VIZ_LOG_LEVEL:-debug}
-      PIECEWISE_VIZ_HOST: ${PIECEWISE_VIZ_HOST:-0.0.0.0}
-      PIECEWISE_VIZ_PORT: ${PIECEWISE_VIZ_PORT:-3000}
-      PIECEWISE_VIZ_DB_HOST: ${PIECEWISE_VIZ_DB_USER:-piecewise-db}
-      PIECEWISE_VIZ_DB_USER: ${PIECEWISE_VIZ_DB_USER:-piecewise}
-      PIECEWISE_VIZ_DB_PASSWORD: ${PIECEWISE_VIZ_DB_PASSWORD:-piecewise}
-      PIECEWISE_VIZ_DB_DATABASE: ${PIECEWISE_VIZ_DB_DATABASE:-piecewise}
+      PIECEWISE_LOG_LEVEL: ${PIECEWISE_LOG_LEVEL:-debug}
+      PIECEWISE_HOST: ${PIECEWISE_HOST:-0.0.0.0}
+      PIECEWISE_PORT: ${PIECEWISE_PORT:-3000}
+      PIECEWISE_DB_HOST: ${PIECEWISE_DB_USER:-piecewise-db}
+      PIECEWISE_DB_PORT: ${PIECEWISE_DB_PORT:-5432}
+      PIECEWISE_DB_USER: ${PIECEWISE_DB_USER:-piecewise}
+      PIECEWISE_DB_PASSWORD: ${PIECEWISE_DB_PASSWORD:-piecewise}
+      PIECEWISE_DB_DATABASE: ${PIECEWISE_DB_DATABASE:-piecewise}
 
   piecewise-db:
     image: postgres:12-alpine
@@ -27,9 +28,9 @@ services:
       - piecewise-private
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: ${PIECEWISE_VIZ_DB_USER:-piecewise}
-      POSTGRES_PASSWORD: ${PIECEWISE_VIZ_DB_PASSWORD:-piecewise}
-      POSTGRES_DB: ${PIECEWISE_VIZ_DB_DATABASE:-piecewise}
+      POSTGRES_USER: ${PIECEWISE_DB_USER:-piecewise}
+      POSTGRES_PASSWORD: ${PIECEWISE_DB_PASSWORD:-piecewise}
+      POSTGRES_DB: ${PIECEWISE_DB_DATABASE:-piecewise}
 
 volumes:
   piecewise-db_data: {}
