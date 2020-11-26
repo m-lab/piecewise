@@ -117,3 +117,12 @@ dev.sqlite3
 
 # test database
 test.sqlite3
+
+# vectortile development process
+vectortiles/*tracts*
+vectortiles/*sqlite3
+vectortiles/*-geo*.json
+vectortiles/*mbtiles
+vectortiles/fcc*
+vectortiles/mlab*
+vectortiles/piecewise*
