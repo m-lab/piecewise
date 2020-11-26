@@ -57,6 +57,9 @@ PIECEWISE_OAUTH_CLIENT_SECRET # Secret authenticating this Piecewise instance
 PIECEWISE_OAUTH_CALLBACK_URL  # URL at which this PIECEWISE instance can be reached (generally https://<domain>/api/v1/oauth2/callback)
 ```
 
+All new deployments should at least provide a value for the variable PIECEWISE_ADMIN_PASSWORD 
+to allow initial login and post deployment configuration.
+
 Additionally, we use the semi-standard `NODE_ENV` variable for defining test,
 staging, and production. In development mode Piecewise uses sqlite3, but uses
 Postgres in production.
@@ -121,18 +124,20 @@ If this is the first time you've run it on this system, you'll want to run the
 database migrations to initialize the database:
 
 ```
-docker-compose run piecewise npm run db:migrations
+docker-compose exec piecewise npm run db:migrations
 ```
 
 and then optionally seed the database with a default admin user:
 
 ```
-docker-compose run piecewise npm run db:seeds
+docker-compose exec piecewise npm run db:seeds
 ```
 
 By default, it runs on [http://localhost:3000](http://localhost:3000), but you
 can place it behind a proxy such as [Nginx](https://nginx.com) in order to
 provide TLS support and other features.
+
+Once your instance is deployed, access the administrative pages to configure your instance at: http:/localhost:3000/login 
 
 ## OAuth2 Support
 
