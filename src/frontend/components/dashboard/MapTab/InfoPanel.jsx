@@ -254,6 +254,36 @@ export default function InfoPanel({
         },
       ],
     },
+    {
+      group: 'MLab internet speed information',
+      rows: [
+        {
+          label: 'Total speed tests',
+          data: 'properties.2020_july_dec_total_dl_samples',
+          formatter: formatNumber,
+        },
+        {
+          label: 'Median download speed',
+          data: 'properties.2020_july_dec_median_dl',
+          formatter: formatMbps,
+        },
+        {
+          label: 'Median upload speed',
+          data: 'properties.2020_july_dec_median_ul',
+          formatter: formatMbps,
+        },
+        {
+          label: 'Percent of tests capable of audio chat',
+          data: 'properties.2020_july_dec_percent_over_audio_threshold',
+          formatter: formatPercent,
+        },
+        {
+          label: 'Percent of tests capable of video chat',
+          data: 'properties.2020_july_dec_percent_over_video_threshold',
+          formatter: formatPercent,
+        },
+      ],
+    },
   ];
 
   return (
