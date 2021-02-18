@@ -14,7 +14,6 @@ export default function GoogleMaps(props) {
   const [latitude, setLatitude] = React.useState('');
   const [longitude, setLongitude] = React.useState('');
   const history = useHistory();
-  const apiKey = googleKey;
 
   let map, marker, infowindow, instructions;
   window.goodaddress = false;
