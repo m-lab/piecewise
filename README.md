@@ -64,6 +64,19 @@ Additionally, we use the semi-standard `NODE_ENV` variable for defining test,
 staging, and production. In development mode Piecewise uses sqlite3, but uses
 Postgres in production.
 
+### Using the Google Map API (2021-02-18) 
+
+The location lookup changed in Feb. 2021 to use the Google Maps API to provide
+an address lookup and pin drop feature. This method is much more precise than
+the general method used previously. 
+
+Currently you must obtain your Google Maps API key, limit its scope, and add
+the key to
+[`src/frontend/index.html`](https://github.com/m-lab/piecewise/blob/master/src/frontend/index.html)
+prior to building and deploying your Piecewise container app.
+
+**TODO**: [#209 - Enable Google Maps API key use from .env](https://github.com/m-lab/piecewise/issues/209)
+
 ## Deployment
 
 ### Standalone
