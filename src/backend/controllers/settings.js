@@ -5,7 +5,7 @@ import { getLogger } from '../log.js';
 
 const log = getLogger('backend:controllers:setting');
 
-export default function controller(settings, thisUser, mapboxKey) {
+export default function controller(settings, thisUser, mapboxKey, googleKey) {
   const router = new Router();
 
   router.get('/settings', async ctx => {
@@ -16,6 +16,9 @@ export default function controller(settings, thisUser, mapboxKey) {
       if (!_.isEmpty(setting)) {
         if (mapboxKey) {
           setting.mapboxKey = mapboxKey;
+        }
+        if (googleKey) {
+          setting.googleKey = googleKey;
         }
         if (Buffer.isBuffer(setting.logo)) {
           setting.logo = setting.logo.toString();
