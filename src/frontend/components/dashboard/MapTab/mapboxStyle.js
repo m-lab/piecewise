@@ -5,7 +5,7 @@ const mbStyle = {
   name: 'piecewise',
   center: [-98, 38],
   maxZoom: 12,
-  zoom: 3,
+  zoom: 4,
   bearing: 0,
   pitch: 0,
   glyphs: 'mapbox://fonts/m-lab/{fontstack}/{range}.pbf',
