@@ -12,7 +12,7 @@ const mbStyle = {
   sources: {
     ocean: {
       type: 'vector',
-      url: 'mapbox://mapbox.mapbox-streets-v8.water',
+      url: 'mapbox://m-lab.55e3s949',
     },
     composite: {
       type: 'vector',
