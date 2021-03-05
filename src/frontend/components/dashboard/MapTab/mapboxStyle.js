@@ -5,16 +5,14 @@ const mbStyle = {
   name: 'piecewise',
   center: [-98, 38],
   maxZoom: 12,
-  zoom: 3,
+  zoom: 4,
   bearing: 0,
   pitch: 0,
-  sprite:
-    'mapbox://sprites/jeremiak/cke0fpv9f1dds19pjx1sli5qs/ck2u8j60r58fu0sgyxrigm3cu',
-  glyphs: 'mapbox://fonts/jeremiak/{fontstack}/{range}.pbf',
+  glyphs: 'mapbox://fonts/m-lab/{fontstack}/{range}.pbf',
   sources: {
     ocean: {
       type: 'vector',
-      url: 'mapbox://jeremiak.dgy1ahhh',
+      url: 'mapbox://m-lab.55e3s949',
     },
     composite: {
       type: 'vector',
