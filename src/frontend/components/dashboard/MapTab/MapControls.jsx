@@ -133,22 +133,22 @@ const MapControls = ({
             {
               group: 'Internet speed',
               label: 'Measured median download speed (MLab)',
-              value: '2020_july_dec_median_dl',
+              value: '2019_july_dec_median_dl',
             },
             {
               group: 'Internet speed',
               label: 'Measured median upload speed (MLab)',
-              value: '2020_july_dec_median_ul',
+              value: '2019_july_dec_median_ul',
             },
             {
               group: 'Internet speed',
               label: 'Percent of tests sufficient for audio calls (MLab)',
-              value: '2020_july_dec_percent_over_audio_threshold',
+              value: '2019_july_dec_percent_over_audio_threshold',
             },
             {
               group: 'Internet speed',
               label: 'Percent of tests sufficient for video calls (MLab)',
-              value: '2020_july_dec_percent_over_video_threshold',
+              value: '2019_july_dec_percent_over_video_threshold',
             },
           ]}
           value={currentLayer}
