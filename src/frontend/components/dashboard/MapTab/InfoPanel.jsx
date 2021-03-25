@@ -137,11 +137,11 @@ export default function InfoPanel({
       mean_max_ad_down,
       mean_max_ad_up,
       provider_count,
-      ['2020_july_dec_median_dl']: mlab_median_download,
-      ['2020_july_dec_median_ul']: mlab_median_upload,
-      ['2020_july_dec_percent_over_audio_threshold']: mlab_over_audio_pct,
-      ['2020_july_dec_percent_over_video_threshold']: mlab_over_video_pct,
-      ['2020_july_dec_total_dl_samples']: mlab_total_dl_samples,
+      ['2019_july_dec_median_dl']: mlab_median_download,
+      ['2019_july_dec_median_ul']: mlab_median_upload,
+      ['2019_july_dec_percent_over_audio_threshold']: mlab_over_audio_pct,
+      ['2019_july_dec_percent_over_video_threshold']: mlab_over_video_pct,
+      ['2019_july_dec_total_dl_samples']: mlab_total_dl_samples,
     } = currentFeature.properties;
 
     const stateFips = fips.slice(0, 2);
