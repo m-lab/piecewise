@@ -85,7 +85,7 @@ export default function MapTab({ mapboxKey }) {
       currentLayer.includes('median_dl') ||
       currentLayer.includes('median_ul')
     ) {
-      setFillDomain([0, 1000]);
+      setFillDomain([0, 250]);
     } else if (currentLayer.includes('provider_count')) {
       setFillDomain([0, 50]);
     }
