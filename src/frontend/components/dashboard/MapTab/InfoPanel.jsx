@@ -377,7 +377,8 @@ export default function InfoPanel({
             <span className="dynamic-value">
               {formatNumber(totalDownSamples)}
             </span>{' '}
-            internet speed tests in the {geoUnitSingular} between July-December 2019, and the median download speed is{' '}
+            internet speed tests in the {geoUnitSingular} between July-December
+            2019, and the median download speed is{' '}
             <span className="dynamic-value">{formatMbps(medianDownload)}</span>{' '}
             while the median upload speed is{' '}
             <span className="dynamic-value">{formatMbps(medianUpload)}</span>.
@@ -455,8 +456,8 @@ export default function InfoPanel({
         <ol>
           <li>2010 Decennial Census</li>
           <li>2018 5-year American Community Survey</li>
-          <li>FCC 477 data published December 2019</li>
-          <li>Measurement Lab, collected between July - December 2019</li>
+          <li>FCC 477 data published in December 2019</li>
+          <li>Measurement Lab, NDT tests collected between July - December 2019</li>
         </ol>
       </div>
     </div>
