@@ -7,10 +7,10 @@ class ToggleSwitch extends Component {
         <input
           type="checkbox"
           className="toggle-switch-checkbox"
-          name={this.props.Name}
-          id={this.props.Name}
+          name="toggleSwitch"
+          id="toggleSwitch"
         />
-        <label className="toggle-switch-label" htmlFor={this.props.Name}>
+        <label className="toggle-switch-label" htmlFor="toggleSwitch">
           <span className="toggle-switch-inner" />
           <span className="toggle-switch-switch" />
         </label>
