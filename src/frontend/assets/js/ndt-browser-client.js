@@ -531,6 +531,9 @@ NDTjs.prototype.ndtMetaTest = function(ndtSocket) {
       ndtSocket.send(
         that.makeNdtMessage(that.TEST_MSG, 'client.os.name:NDTjs'),
       );
+      ndtSocket.send(
+        that.makeNdtMessage(that.TEST_MSG, 'client.application:piecewise'),
+      );
       ndtSocket.send(that.makeNdtMessage(that.TEST_MSG, ''));
       state = 'WAIT_FOR_TEST_FINALIZE';
       return false;
