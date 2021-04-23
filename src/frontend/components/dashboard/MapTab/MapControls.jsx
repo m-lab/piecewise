@@ -7,6 +7,8 @@ import Form from 'react-bootstrap/Form';
 import MapSelectControl from './MapSelectControl';
 import './MapTab.css';
 
+import ToggleSwitch from './ToggleSwitch/ToggleSwitch';
+
 const formatPercentString = '.0%';
 
 const MapControls = ({
@@ -65,7 +67,9 @@ const MapControls = ({
     }
   }, [currentLayer]);
 
-  return (
+  return (    
+    <div id="controls-container">
+    <ToggleSwitch Name='map-controls' />
     <div className="map-controls">
       <div>
         <MapSelectControl
@@ -239,6 +243,7 @@ const MapControls = ({
           </React.Fragment>
         )}
       </div>
+    </div>
     </div>
   );
 };
