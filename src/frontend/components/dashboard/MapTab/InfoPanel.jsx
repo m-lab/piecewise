@@ -377,7 +377,8 @@ export default function InfoPanel({
             <span className="dynamic-value">
               {formatNumber(totalDownSamples)}
             </span>{' '}
-            internet speed tests in the {geoUnitSingular} between January-June 2020, and the median download speed is{' '}
+            internet speed tests in the {geoUnitSingular} between January-June
+            2020, and the median download speed is{' '}
             <span className="dynamic-value">{formatMbps(medianDownload)}</span>{' '}
             while the median upload speed is{' '}
             <span className="dynamic-value">{formatMbps(medianUpload)}</span>.
