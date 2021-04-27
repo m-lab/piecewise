@@ -8,7 +8,7 @@ const mbStyle = {
   zoom: 4,
   bearing: 0,
   pitch: 0,
-  glyphs: 'mapbox://fonts/m0lab/{fontstack}/{range}.pbf',
+  glyphs: 'mapbox://fonts/m-lab/{fontstack}/{range}.pbf',
   sources: {
     ocean: {
       type: 'vector',
