@@ -137,11 +137,11 @@ export default function InfoPanel({
       mean_max_ad_down,
       mean_max_ad_up,
       provider_count,
-      ['2019_july_dec_median_dl']: mlab_median_download,
-      ['2019_july_dec_median_ul']: mlab_median_upload,
-      ['2019_july_dec_percent_over_audio_threshold']: mlab_over_audio_pct,
-      ['2019_july_dec_percent_over_video_threshold']: mlab_over_video_pct,
-      ['2019_july_dec_total_dl_samples']: mlab_total_dl_samples,
+      ['2020_jan_jun_median_dl']: mlab_median_download,
+      ['2020_jan_jun_median_ul']: mlab_median_upload,
+      ['2020_jan_jun_percent_over_audio_threshold']: mlab_over_audio_pct,
+      ['2020_jan_jun_percent_over_video_threshold']: mlab_over_video_pct,
+      ['2020_jan_jun_total_dl_samples']: mlab_total_dl_samples,
     } = currentFeature.properties;
 
     const stateFips = fips.slice(0, 2);
@@ -259,27 +259,27 @@ export default function InfoPanel({
       rows: [
         {
           label: 'Total speed tests',
-          data: 'properties.2019_july_dec_total_dl_samples',
+          data: 'properties.2020_jan_jun_total_dl_samples',
           formatter: formatNumber,
         },
         {
           label: 'Median download speed',
-          data: 'properties.2019_july_dec_median_dl',
+          data: 'properties.2020_jan_jun_median_dl',
           formatter: formatMbps,
         },
         {
           label: 'Median upload speed',
-          data: 'properties.2019_july_dec_median_ul',
+          data: 'properties.2020_jan_jun_median_ul',
           formatter: formatMbps,
         },
         {
           label: 'Percent of tests capable of audio chat',
-          data: 'properties.2019_july_dec_percent_over_audio_threshold',
+          data: 'properties.2020_jan_jun_percent_over_audio_threshold',
           formatter: formatPercent,
         },
         {
           label: 'Percent of tests capable of video chat',
-          data: 'properties.2019_july_dec_percent_over_video_threshold',
+          data: 'properties.2020_jan_jun_percent_over_video_threshold',
           formatter: formatPercent,
         },
       ],
@@ -377,8 +377,8 @@ export default function InfoPanel({
             <span className="dynamic-value">
               {formatNumber(totalDownSamples)}
             </span>{' '}
-            internet speed tests in the {geoUnitSingular} between July-December
-            2019, and the median download speed is{' '}
+            internet speed tests in the {geoUnitSingular} between January-June
+            2020, and the median download speed is{' '}
             <span className="dynamic-value">{formatMbps(medianDownload)}</span>{' '}
             while the median upload speed is{' '}
             <span className="dynamic-value">{formatMbps(medianUpload)}</span>.
@@ -456,8 +456,8 @@ export default function InfoPanel({
         <ol>
           <li>2010 Decennial Census</li>
           <li>2018 5-year American Community Survey</li>
-          <li>FCC 477 data published in December 2019</li>
-          <li>Measurement Lab, NDT tests collected between July - December 2019</li>
+          <li>FCC 477 data published June 2020</li>
+          <li>Measurement Lab, collected between January - June 2020</li>
         </ol>
       </div>
     </div>
