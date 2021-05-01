@@ -96,7 +96,6 @@ export default function NdtWidget(props) {
   const [progress, setProgress] = useState(null);
   const [location, setLocation] = useState({});
   const [results, setResults] = useState({});
-  const [server, server] = useState({});
 
   const onProgress = (msg, percent) => {
     if (msg === 'Test complete') {
@@ -220,10 +219,7 @@ export default function NdtWidget(props) {
       </Row>
       <Row>
         <Col>{text}</Col>
-      </Row>
-      <Row>
-        <Col>{server}</Col>
-      </Row>      
+      </Row>    
     </Container>
   );
 }
