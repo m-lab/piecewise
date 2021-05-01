@@ -145,7 +145,7 @@ export default function Basic() {
   const handleSubmit = event => {
     event.preventDefault();
     history.push({
-      pathname: '/geocoder',
+      pathname: '/survey',
       state: { settings: settings, locationConsent: locationConsent },
     });
   };
