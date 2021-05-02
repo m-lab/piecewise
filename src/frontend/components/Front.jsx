@@ -82,7 +82,7 @@ export default function Basic() {
   };
 
   // handle geolocation consent
-  const [locationConsent, setLocationConsent] = useState(false);
+  const [locationConsent, setLocationConsent] = useState(true);
   // site settings
   const [settings, setSettings] = useState({});
 
@@ -145,7 +145,7 @@ export default function Basic() {
   const handleSubmit = event => {
     event.preventDefault();
     history.push({
-      pathname: '/geocoder',
+      pathname: '/survey',
       state: { settings: settings, locationConsent: locationConsent },
     });
   };
@@ -195,6 +195,26 @@ export default function Basic() {
           </Col>
         </Row>
         <Form onSubmit={handleSubmit}>
+          <fieldset>
+            <Form.Group>
+              <Form.Label>Do you want to use your browser location?</Form.Label>
+              <Form.Check
+                type="radio"
+                name="location"
+                id="location-yes"
+                label="Use my browser location"
+                onChange={() => setLocationConsent(true)}
+                defaultChecked
+              />
+              <Form.Check
+                type="radio"
+                name="location"
+                id="location-no"
+                label="Do not use my location"
+                onChange={() => setLocationConsent(false)}
+              />
+            </Form.Group>
+          </fieldset>
           <Form.Group {...location}>
             <Form.Check.Input required type="checkbox" id="consent" />
             <Form.Check.Label>

@@ -219,7 +219,7 @@ export default function NdtWidget(props) {
       </Row>
       <Row>
         <Col>{text}</Col>
-      </Row>
+      </Row>    
     </Container>
   );
 }
