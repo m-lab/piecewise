@@ -66,6 +66,7 @@
     "@hapi/joi": "^17.1.1",
     "@koa/cors": "2.2.3",
     "@koa/router": "^8.0.6",
+    "@m-lab/ndt7": "^0.0.4",
     "@material-ui/core": "^4.9.10",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/pickers": "^3.2.10",
