@@ -10,7 +10,7 @@ import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
 
 // module imports
-import NDTjs from '../../assets/js/ndt-browser-client.js';
+import ndt7 from '../../assets/js/ndt7.js';
 
 const NDT_STATUS_LABELS = {
   preparing_s2c: 'Preparing download',
@@ -161,16 +161,6 @@ export default function NdtWidget(props) {
   };
 
   useEffect(() => {
-    let mlabNsUrl;
-    if (process.env.NODE_ENV === 'production') {
-      console.info('In production mode, querying MLab NS.');
-      mlabNsUrl = 'https://mlab-ns.appspot.com/ndt_ssl?format=json';
-    } else {
-      console.info(
-        'In development mode, proxying MLab NS request for CORS reasons.',
-      );
-      mlabNsUrl = '/api/v1/mlabns';
-    }
 
     if (locationConsent) {
       if (window.isSecureContext && 'geolocation' in navigator) {
@@ -182,25 +172,44 @@ export default function NdtWidget(props) {
       }
     }
 
-    fetch(mlabNsUrl)
-      .then(res => {
-        console.debug('Raw response: ', res);
-        if (res.status === 200) {
-          return res.json();
-        } else {
-          throw new Error(`Error ${res.status}: ${res.statusText}`);
-        }
-      })
-      .then(data => {
-        console.debug('Received response from MLab NS: ', data);
-        const meter = new NdtHandler(onProgress);
-        runNdt({ server: data.fqdn, meter: meter });
-        return data;
-      })
-      .catch(err => {
-        console.error('M-Lab NS lookup failed: ', err.message);
-        window.alert('M-Lab NS lookup failed. Please refresh the page.');
-      });
+    const meter = new NdtHandler(onProgress);
+
+    // Load ndt7 download/upload workers as Blobs.
+    ndt7.test(
+      {
+        userAcceptedDataPolicy: true,
+        downloadworkerfile: '/static/js/ndt7-download-worker.js',
+        uploadworkerfile: '/static/js/ndt7-upload-worker.js',
+      },
+      {
+        serverChosen: function(server) {
+          console.log('Testing to:', {
+            machine: server.machine,
+            locations: server.location,
+          });
+        },
+        downloadComplete: function(data) {
+          // (bytes/second) * (bits/byte) / (megabits/bit) = Mbps
+          const serverBw = data.LastServerMeasurement.BBRInfo.BW * 8 / 1000000;
+          const clientGoodput = data.LastClientMeasurement.MeanClientMbps;
+          console.log(
+              `Download test is complete:
+      Instantaneous server bottleneck bandwidth estimate: ${serverBw} Mbps
+      Mean client goodput: ${clientGoodput} Mbps`);
+        },
+        uploadComplete: function(data) {
+          // TODO: used actual upload duration for rate calculation.
+          // bytes * (bits/byte() * (megabits/bit) * (1/seconds) = Mbps
+          const serverBw =
+              data.LastServerMeasurement.TCPInfo.BytesReceived * 8 / 1000000 / 10;
+          const clientGoodput = data.LastClientMeasurement.MeanClientMbps;
+          console.log(
+              `Upload test is complete:
+      Mean server throughput: ${serverBw} Mbps
+      Mean client goodput: ${clientGoodput} Mbps`);
+        },
+      },
+    );
   }, []);
 
   useEffect(() => {
