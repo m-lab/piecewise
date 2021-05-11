@@ -13,15 +13,8 @@ import Spinner from 'react-bootstrap/Spinner';
 import ndt7 from '../../assets/js/ndt7.js';
 
 const NDT_STATUS_LABELS = {
-  preparing_s2c: 'Preparing download',
-  preparing_c2s: 'Preparing upload',
   running_s2c: 'Measuring download speed',
   running_c2s: 'Measuring upload speed',
-  finished_s2c: 'Finished download',
-  finished_c2s: 'Finished upload',
-  preparing_meta: 'Preparing metadata',
-  running_meta: 'Sending metadata',
-  finished_meta: 'Finished metadata',
   finished_all: 'Test complete',
 };
 
@@ -66,27 +59,6 @@ class NdtHandler {
   onerror(msg) {
     this.event(`Error: ${NDT_STATUS_LABELS[msg]}!`);
   }
-}
-
-function runNdt({
-  server,
-  port = '3010',
-  protocol = 'wss',
-  path = '/ndt_protocol',
-  meter,
-  updateInterval = 1000,
-}) {
-  const NDT_client = new NDTjs(
-    server,
-    port,
-    protocol,
-    path,
-    meter,
-    updateInterval,
-  );
-
-  console.log('server: ', server);
-  NDT_client.startTest();
 }
 
 export default function NdtWidget(props) {
@@ -173,6 +145,9 @@ export default function NdtWidget(props) {
     }
 
     const meter = new NdtHandler(onProgress);
+    const TIME_EXPECTED = 10;
+
+    let minRTT, c2sRateKbps, s2cRateKbps;
 
     // Load ndt7 download/upload workers as Blobs.
     ndt7.test(
@@ -182,13 +157,23 @@ export default function NdtWidget(props) {
         uploadworkerfile: '/static/js/ndt7-upload-worker.js',
       },
       {
-        serverChosen: function(server) {
+        serverChosen: (server) => {
           console.log('Testing to:', {
             machine: server.machine,
             locations: server.location,
           });
         },
+        downloadMeasurement: (data) => {
+          if (data.Source === 'client') {
+            setProgress((data.Data.ElapsedTime / TIME_EXPECTED * 100).toFixed(2));
+            setText("Measuring download speed... " + data.Data.MeanClientMbps.toFixed(2) + " Mb/s");
+          }
+        },
         downloadComplete: function(data) {
+          setProgress(100);
+          setText("Download test complete");
+          s2cRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
+          minRTT = (data.LastServerMeasurement.TCPInfo.MinRTT / 1000);
           // (bytes/second) * (bits/byte) / (megabits/bit) = Mbps
           const serverBw = data.LastServerMeasurement.BBRInfo.BW * 8 / 1000000;
           const clientGoodput = data.LastClientMeasurement.MeanClientMbps;
@@ -197,19 +182,34 @@ export default function NdtWidget(props) {
       Instantaneous server bottleneck bandwidth estimate: ${serverBw} Mbps
       Mean client goodput: ${clientGoodput} Mbps`);
         },
-        uploadComplete: function(data) {
+        uploadMeasurement: (data) => {
+          if (data.Source === 'client') {
+            setProgress((data.Data.ElapsedTime / TIME_EXPECTED * 100).toFixed(2));
+            setText("Measuring upload speed... " + data.Data.MeanClientMbps.toFixed(2) + " Mb/s");
+          }
+        },
+        uploadComplete: (data) => {
+          setProgress(100);
+          setText("Upload test complete");
+          c2sRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
           // TODO: used actual upload duration for rate calculation.
           // bytes * (bits/byte() * (megabits/bit) * (1/seconds) = Mbps
           const serverBw =
               data.LastServerMeasurement.TCPInfo.BytesReceived * 8 / 1000000 / 10;
-          const clientGoodput = data.LastClientMeasurement.MeanClientMbps;
           console.log(
               `Upload test is complete:
       Mean server throughput: ${serverBw} Mbps
-      Mean client goodput: ${clientGoodput} Mbps`);
+      Mean client goodput: ${c2sRateKbps} Mbps`);
         },
       },
-    );
+    ).then(() => {
+      setText("Test complete");
+      setResults({
+        MinRTT: minRTT,
+        c2sRate: c2sRateKbps,
+        s2cRate: s2cRateKbps,
+      })
+    });
   }, []);
 
   useEffect(() => {
