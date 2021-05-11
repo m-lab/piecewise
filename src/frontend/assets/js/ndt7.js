@@ -149,7 +149,7 @@
       });
 
       // If the worker takes 10 seconds, kill it and return an error code.
-      setTimeout(() => worker.resolve(2), 10000);
+      setTimeout(() => worker.resolve(0), 10000);
 
       // This is how the worker communicates back to the main thread of
       // execution.  The MsgTpe of `ev` determines which callback the message
