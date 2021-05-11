@@ -202,7 +202,12 @@ export default function NdtWidget(props) {
       Mean client goodput: ${c2sRateKbps} Mbps`);
         },
       },
-    ).then(() => {
+    ).then((exitcode) => {
+      if (exitcode != 0) {
+        setText("There was an error during the test. Please try again later.");
+        return
+      }
+
       setText("Test complete");
       setResults({
         MinRTT: minRTT,
