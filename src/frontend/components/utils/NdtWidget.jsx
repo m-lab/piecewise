@@ -12,55 +12,6 @@ import Spinner from 'react-bootstrap/Spinner';
 // module imports
 import ndt7 from '../../assets/js/ndt7.js';
 
-const NDT_STATUS_LABELS = {
-  running_s2c: 'Measuring download speed',
-  running_c2s: 'Measuring upload speed',
-  finished_all: 'Test complete',
-};
-
-class NdtHandler {
-  constructor(callback) {
-    this.cb = callback;
-    this.state = undefined;
-    this.time_switched = undefined;
-  }
-
-  event(msg, info) {
-    console.debug(`EVENT: msg: ${msg}, info: ${info}`);
-    this.cb(msg, info);
-  }
-
-  onstart() {
-    this.event('Connecting...');
-  }
-
-  onstatechange(msg) {
-    this.state = msg;
-    this.time_switched = new Date().getTime();
-    this.event(`${NDT_STATUS_LABELS[msg]}...`);
-  }
-
-  onprogress() {
-    let progress_percentage;
-    const time_in_progress = new Date().getTime() - this.time_switched;
-
-    if (this.state === 'running_s2c' || this.state === 'running_c2s') {
-      progress_percentage =
-        time_in_progress < 10000 ? time_in_progress / 10000 : 1;
-      const progress_label = NDT_STATUS_LABELS[this.state];
-      this.event(progress_label, (progress_percentage * 100).toFixed(0));
-    }
-  }
-
-  onfinish(results) {
-    this.event(`${NDT_STATUS_LABELS[this.state]}`, results);
-  }
-
-  onerror(msg) {
-    this.event(`Error: ${NDT_STATUS_LABELS[msg]}!`);
-  }
-}
-
 export default function NdtWidget(props) {
   // handle NDT test
   const { onFinish, locationConsent } = props;
@@ -68,20 +19,6 @@ export default function NdtWidget(props) {
   const [progress, setProgress] = useState(null);
   const [location, setLocation] = useState({});
   const [results, setResults] = useState({});
-
-  const onProgress = (msg, percent) => {
-    if (msg === 'Test complete') {
-      setText(msg);
-      setResults({
-        MinRTT: percent.MinRTT,
-        c2sRate: percent.c2sRate,
-        s2cRate: percent.s2cRate,
-      });
-      return;
-    }
-    if (msg) setText(msg);
-    if (percent) setProgress(percent);
-  };
 
   // check location consent
   const error = error => {
@@ -144,12 +81,9 @@ export default function NdtWidget(props) {
       }
     }
 
-    const meter = new NdtHandler(onProgress);
     const TIME_EXPECTED = 10;
-
     let minRTT, c2sRateKbps, s2cRateKbps;
 
-    // Load ndt7 download/upload workers as Blobs.
     ndt7.test(
       {
         userAcceptedDataPolicy: true,
@@ -192,7 +126,6 @@ export default function NdtWidget(props) {
           setProgress(100);
           setText("Upload test complete");
           c2sRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
-          // TODO: used actual upload duration for rate calculation.
           // bytes * (bits/byte() * (megabits/bit) * (1/seconds) = Mbps
           const serverBw =
               data.LastServerMeasurement.TCPInfo.BytesReceived * 8 / 1000000 / 10;
