@@ -1,4 +1,4 @@
-/* eslint-env browser, node, worker */
+/* eslint-disable */
 
 // Node doesn't have WebSocket defined, so it needs this library.
 if (typeof WebSocket === 'undefined') {
