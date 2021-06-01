@@ -138,7 +138,7 @@ export default function NdtWidget(props) {
     ).then((exitcode) => {
       if (exitcode != 0) {
         setText("There was an error during the test. Please try again later.");
-        return
+        return;
       }
 
       setText("Test complete");
@@ -147,6 +147,11 @@ export default function NdtWidget(props) {
         c2sRate: c2sRateKbps,
         s2cRate: s2cRateKbps,
       })
+
+      return;
+    }).catch(() => {
+      setText("There was an error during the test. Please try again later.");
+      return;
     });
   }, []);
 
