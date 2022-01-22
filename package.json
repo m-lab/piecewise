@@ -113,7 +113,7 @@
     "minimist": "^1.2.5",
     "moment": "^2.25.3",
     "multistream": "^4.0.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.1.1",
     "p-queue": "^6.6.1",
     "papaparse": "^5.2.0",
     "passport-local": "^1.0.0",
