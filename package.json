@@ -139,7 +139,7 @@
     "react-scripts": "^3.4.3",
     "request-promise-native": "^1.0.8",
     "sqlite": "^4.0.14",
-    "sqlite3": "^5.0.0",
+    "sqlite3": "^5.0.3",
     "toastr": "^2.1.4",
     "uuid": "3.3.2",
     "wget-improved": "^3.2.1"
