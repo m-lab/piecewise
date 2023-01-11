@@ -88,7 +88,7 @@
     "http-errors": "^1.7.3",
     "jquery": "^3.5.1",
     "jwks-rsa": "^1.8.0",
-    "knex": "^0.21.1",
+    "knex": "^2.4.0",
     "knex-migrate": "^1.7.4",
     "koa": "2.7.0",
     "koa-404-handler": "0.0.2",
