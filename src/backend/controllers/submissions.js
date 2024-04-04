@@ -177,32 +177,31 @@ export default function controller(submissions, thisUser) {
     },
   );
 
-  router.put(
-    '/submissions/:id',
-    thisUser.can('access admin pages'),
-    async ctx => {
-      log.debug(`Updating submission ${ctx.params.id}.`);
-      let updated;
-      try {
-        const data = await validateUpdate(ctx.request.body.data);
-        updated = await submissions.update(ctx.params.id, data[0]);
-      } catch (err) {
-        log.error('HTTP 400 Error: ', err);
-        ctx.throw(400, `Failed to parse query: ${err}`);
-      }
+  router.put('/submissions/:id', async ctx => {
+    let updated;
+    const submissionId = ctx?.params?.id || -1;
+    log.debug(`Updating submission ${submissionId}.`);
 
-      if (updated) {
-        ctx.response.status = 204;
-      } else {
-        ctx.response.body = {
-          statusCode: 201,
-          status: 'created',
-          data: { id: ctx.params.id },
-        };
-        ctx.response.status = 201;
-      }
-    },
-  );
+    try {
+      const data = await validateUpdate(ctx.request.body.data);
+
+      updated = await submissions.update(submissionId, data[0]);
+    } catch (err) {
+      log.error('HTTP 400 Error: ', err);
+      ctx.throw(400, `Failed to parse query: ${err}`);
+    }
+
+    if (updated) {
+      ctx.response.status = 204;
+    } else {
+      ctx.response.body = {
+        statusCode: 201,
+        status: 'created',
+        data: { id: submissionId },
+      };
+      ctx.response.status = 201;
+    }
+  });
 
   router.delete(
     '/submissions/:id',

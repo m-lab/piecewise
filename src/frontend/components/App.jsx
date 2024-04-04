@@ -9,6 +9,7 @@ import 'react-form-builder2/dist/app.css';
 import Error from './Error.jsx';
 
 const Front = lazy(() => import('./Front.jsx'));
+const GoogleMaps = lazy(() => import('./GoogleMaps.jsx'));
 const Loading = lazy(() => import('./Loading.jsx'));
 const Login = lazy(() => import('./Login.jsx'));
 const Dashboard = lazy(() => import('./Dashboard.jsx'));
@@ -83,6 +84,10 @@ export default function App() {
             />
             <Route path="/thankyou" render={props => <ThankYou {...props} />} />
             <Route path="/survey" render={props => <Survey {...props} />} />
+            <Route
+              path="/geocoder"
+              render={props => <GoogleMaps {...props} />}
+            />
           </LazyBoundary>
           <Redirect to="/" />
         </Switch>

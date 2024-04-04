@@ -70,7 +70,6 @@ export default function NdtWidget(props) {
   };
 
   useEffect(() => {
-
     if (locationConsent) {
       if (window.isSecureContext && 'geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(success, error);
@@ -84,75 +83,97 @@ export default function NdtWidget(props) {
     const TIME_EXPECTED = 10;
     let minRTT, c2sRateKbps, s2cRateKbps;
 
-    ndt7.test(
-      {
-        userAcceptedDataPolicy: true,
-        downloadworkerfile: '/static/js/ndt7-download-worker.js',
-        uploadworkerfile: '/static/js/ndt7-upload-worker.js',
-      },
-      {
-        serverChosen: (server) => {
-          console.log('Testing to:', {
-            machine: server.machine,
-            locations: server.location,
-          });
+    ndt7
+      .test(
+        {
+          userAcceptedDataPolicy: true,
+          downloadworkerfile: '/static/js/ndt7-download-worker.js',
+          uploadworkerfile: '/static/js/ndt7-upload-worker.js',
         },
-        downloadMeasurement: (data) => {
-          if (data.Source === 'client') {
-            setProgress((data.Data.ElapsedTime / TIME_EXPECTED * 100).toFixed(2));
-            setText("Measuring download speed... " + data.Data.MeanClientMbps.toFixed(2) + " Mb/s");
-          }
-        },
-        downloadComplete: function(data) {
-          setProgress(100);
-          setText("Download test complete");
-          s2cRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
-          minRTT = (data.LastServerMeasurement.TCPInfo.MinRTT / 1000);
-          // (bytes/second) * (bits/byte) / (megabits/bit) = Mbps
-          const serverBw = data.LastServerMeasurement.BBRInfo.BW * 8 / 1000000;
-          const clientGoodput = data.LastClientMeasurement.MeanClientMbps;
-          console.log(
+        {
+          serverChosen: server => {
+            console.log('Testing to:', {
+              machine: server.machine,
+              locations: server.location,
+            });
+          },
+          downloadMeasurement: data => {
+            if (data.Source === 'client') {
+              setProgress(
+                ((data.Data.ElapsedTime / TIME_EXPECTED) * 100).toFixed(2),
+              );
+              setText(
+                'Measuring download speed... ' +
+                  data.Data.MeanClientMbps.toFixed(2) +
+                  ' Mb/s',
+              );
+            }
+          },
+          downloadComplete: function(data) {
+            setProgress(100);
+            setText('Download test complete');
+            s2cRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
+            minRTT = data.LastServerMeasurement.TCPInfo.MinRTT / 1000;
+            // (bytes/second) * (bits/byte) / (megabits/bit) = Mbps
+            const serverBw =
+              (data.LastServerMeasurement.BBRInfo.BW * 8) / 1000000;
+            const clientGoodput = data.LastClientMeasurement.MeanClientMbps;
+            console.log(
               `Download test is complete:
       Instantaneous server bottleneck bandwidth estimate: ${serverBw} Mbps
-      Mean client goodput: ${clientGoodput} Mbps`);
-        },
-        uploadMeasurement: (data) => {
-          if (data.Source === 'client') {
-            setProgress((data.Data.ElapsedTime / TIME_EXPECTED * 100).toFixed(2));
-            setText("Measuring upload speed... " + data.Data.MeanClientMbps.toFixed(2) + " Mb/s");
-          }
-        },
-        uploadComplete: (data) => {
-          setProgress(100);
-          setText("Upload test complete");
-          c2sRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
-          // bytes * (bits/byte() * (megabits/bit) * (1/seconds) = Mbps
-          const serverBw =
-              data.LastServerMeasurement.TCPInfo.BytesReceived * 8 / 1000000 / 10;
-          console.log(
+      Mean client goodput: ${clientGoodput} Mbps`,
+            );
+          },
+          uploadMeasurement: data => {
+            if (data.Source === 'client') {
+              setProgress(
+                ((data.Data.ElapsedTime / TIME_EXPECTED) * 100).toFixed(2),
+              );
+              setText(
+                'Measuring upload speed... ' +
+                  data.Data.MeanClientMbps.toFixed(2) +
+                  ' Mb/s',
+              );
+            }
+          },
+          uploadComplete: data => {
+            setProgress(100);
+            setText('Upload test complete');
+            c2sRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
+            // bytes * (bits/byte() * (megabits/bit) * (1/seconds) = Mbps
+            const serverBw =
+              (data.LastServerMeasurement.TCPInfo.BytesReceived * 8) /
+              1000000 /
+              10;
+            console.log(
               `Upload test is complete:
       Mean server throughput: ${serverBw} Mbps
-      Mean client goodput: ${c2sRateKbps} Mbps`);
+      Mean client goodput: ${c2sRateKbps} Mbps`,
+            );
+          },
         },
-      },
-    ).then((exitcode) => {
-      if (exitcode != 0) {
-        setText("There was an error during the test. Please try again later.");
+      )
+      .then(exitcode => {
+        if (exitcode != 0) {
+          setText(
+            'There was an error during the test. Please try again later.',
+          );
+          return;
+        }
+
+        setText('Test complete');
+        setResults({
+          MinRTT: minRTT,
+          c2sRate: c2sRateKbps,
+          s2cRate: s2cRateKbps,
+        });
+
         return;
-      }
-
-      setText("Test complete");
-      setResults({
-        MinRTT: minRTT,
-        c2sRate: c2sRateKbps,
-        s2cRate: s2cRateKbps,
       })
-
-      return;
-    }).catch(() => {
-      setText("There was an error during the test. Please try again later.");
-      return;
-    });
+      .catch(() => {
+        setText('There was an error during the test. Please try again later.');
+        return;
+      });
   }, []);
 
   useEffect(() => {
@@ -171,7 +192,7 @@ export default function NdtWidget(props) {
       </Row>
       <Row>
         <Col>{text}</Col>
-      </Row>    
+      </Row>
     </Container>
   );
 }

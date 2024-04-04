@@ -62,7 +62,10 @@ export default class SubManager {
           .select('*')
           .where({ id: parseInt(id) });
 
-        submission = { fields: JSON.stringify(submission.fields) };
+        submission = {
+          ...submission,
+          fields: JSON.stringify(submission.fields),
+        };
         if (Array.isArray(existing) && existing.length > 0) {
           await trx('submissions')
             .update(submission)

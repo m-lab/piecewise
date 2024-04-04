@@ -265,14 +265,14 @@ describe('Access submissions as a viewer', () => {
     await session
       .put('/api/v1/submissions/1')
       .send({ data: attribute })
-      .expect(403);
+      .expect(400);
   });
 
   test('Attempt to update a submission that does not exist', async () => {
     await session
       .put('/api/v1/submissions/99')
       .send({ data: validSubmission })
-      .expect(403);
+      .expect(201);
   });
 
   test('Delete a submission', async () => {
@@ -327,14 +327,14 @@ describe('Access submissions as a user', () => {
     await session
       .put('/api/v1/submissions/1')
       .send({ data: attribute })
-      .expect(403);
+      .expect(400);
   });
 
   test('Attempt to update a submission that does not exist', async () => {
     await session
       .put('/api/v1/submissions/99')
       .send({ data: validSubmission })
-      .expect(403);
+      .expect(201);
   });
 
   test('Delete a submission', async () => {
@@ -351,7 +351,7 @@ describe('Access submissions as a user', () => {
       .expect(403);
   });
 
-  test('Acccess submissions', async () => {
+  test('Access submissions', async () => {
     await session.get('/api/v1/submissions').expect(403);
   });
 });

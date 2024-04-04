@@ -10,27 +10,15 @@ import Row from 'react-bootstrap/Row';
 
 // module imports
 import Loading from './Loading.jsx';
-import NdtWidget from './utils/NdtWidget.jsx';
 
 export default function Survey(props) {
   const settings = props.location.state.settings;
-  const locationConsent = props.location.state.locationConsent;
+
+  const latitude = props.location.state.latitude;
+  const longitude = props.location.state.longitude;
   const [form, setForm] = React.useState(null);
   const [formId, setFormId] = React.useState();
-  const [location, setLocation] = React.useState({});
-  const [results, setResults] = React.useState({});
-  const [testsComplete, setTestsComplete] = React.useState(false);
   const [submitButton, setSubmitButton] = React.useState(null);
-
-  const onFinish = (finished, results, location) => {
-    if (finished) {
-      setTestsComplete(true);
-      setResults(results);
-      setLocation(location);
-    } else {
-      setTestsComplete(false);
-    }
-  };
 
   const processError = errorMessage => {
     let text = `We're sorry, your request didn't go through. Please send the message below to the support team and we'll try to fix things as soon as we can.`;
@@ -48,11 +36,11 @@ export default function Survey(props) {
       },
       body: JSON.stringify({
         data: {
-          c2sRate: results.c2sRate,
-          s2cRate: results.s2cRate,
-          MinRTT: results.MinRTT,
-          latitude: location.latitude,
-          longitude: location.longitude,
+          c2sRate: 0,
+          s2cRate: 0,
+          MinRTT: 0,
+          latitude: latitude,
+          longitude: longitude,
           fields: formData,
         },
       }),
@@ -66,8 +54,9 @@ export default function Survey(props) {
           props.history.push({
             pathname: '/thankyou',
             state: {
-              results: results,
-              settings: settings,
+              data,
+              settings,
+              locationConsent: props.location.state.locationConsent,
             },
           });
           return data;
@@ -122,17 +111,7 @@ export default function Survey(props) {
           console.error('error:', error);
         });
     }
-
-    if (submitButton) {
-      submitButton.classList.add('disabled');
-      submitButton.disabled = true;
-    }
-
-    if (testsComplete) {
-      submitButton.classList.remove('disabled');
-      submitButton.disabled = false;
-    }
-  }, [testsComplete, form, submitButton]);
+  }, [form, submitButton]);
 
   if (!form) {
     return <Loading />;
@@ -166,11 +145,6 @@ export default function Survey(props) {
             }
           `}
         </style>
-        {testsComplete ? (
-          <div>You may now submit your survey to see your results.</div>
-        ) : (
-          <NdtWidget onFinish={onFinish} locationConsent={locationConsent} />
-        )}
         <Row>
           <Col>
             <ReactFormGenerator
@@ -191,7 +165,8 @@ Survey.propTypes = {
   location: PropTypes.shape({
     state: PropTypes.shape({
       settings: PropTypes.object.isRequired,
-      locationConsent: PropTypes.bool.isRequired,
+      latitude: PropTypes.string.isRequired,
+      longitude: PropTypes.string.isRequired,
     }),
   }),
 };
