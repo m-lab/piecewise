@@ -2,7 +2,7 @@
   "name": "piecewise",
   "version": "2.0.0",
   "description": "A dynamic standalone webapp for submitting a form with M-Lab test data.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "contributors": [
     "Josh King <josh@throneless.tech",
     "Rae Gaines <rae@throneless.tech"
