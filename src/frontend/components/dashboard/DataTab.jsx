@@ -13,9 +13,9 @@ import Table from 'react-bootstrap/Table';
 const headers = [
   { label: 'id', key: 'id' },
   { label: 'Date', key: 'date' },
-  { label: 'Download Speed', key: 'c2sRate' },
-  { label: 'Upload Speed', key: 's2cRate' },
-  { label: 'Latency', key: 'MinRTT' },
+  { label: 'Download Speed (Mbps)', key: 's2cRate' },
+  { label: 'Upload Speed (Mbps)', key: 'c2sRate' },
+  { label: 'Latency (ms)', key: 'MinRTT' },
   { label: 'Latitude', key: 'latitude' },
   { label: 'Longitude', key: 'longitude' },
 ];

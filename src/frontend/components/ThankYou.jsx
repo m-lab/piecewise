@@ -34,13 +34,13 @@ export default function ThankYou(props) {
       <Row className={'mb-4'}>
         <Col md={{ span: 6 }}>
           <div>
-            <strong>Download Speed:</strong>{' '}
-            {(results.s2cRate / 1000).toFixed(2)} Mb/s
-          </div>
-          <div>
-            <strong>Upload Speed:</strong> {(results.c2sRate / 1000).toFixed(2)}{' '}
-            Mb/s
-          </div>
+						<strong>Download Speed:</strong>{' '}
+						{Number(results.s2cRate).toFixed(2)} Mb/s
+					</div>
+					<div>
+						<strong>Upload Speed:</strong>{' '}
+						{Number(results.c2sRate).toFixed(2)} Mb/s
+					</div>
           <div>
             <strong>Latency:</strong> {results.MinRTT} ms
           </div>

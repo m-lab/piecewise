@@ -95,8 +95,8 @@ export default function controller(submissions, thisUser) {
           const columns = new Set();
           columns.add('id');
           columns.add('date');
-          columns.add('c2sRate');
-          columns.add('s2cRate');
+          columns.add('c2sRateMbps');
+					columns.add('s2cRateMbps');
           columns.add('MinRTT');
           columns.add('latitude');
           columns.add('longitude');
@@ -117,8 +117,8 @@ export default function controller(submissions, thisUser) {
             return {
               id: row.id,
               date: row.date,
-              c2sRate: row.c2sRate,
-              s2cRate: row.s2cRate,
+              c2sRateMbps: row.c2sRate,
+  						s2cRateMbps: row.s2cRate,
               MinRTT: row.MinRTT,
               latitude: row.latitude,
               longitude: row.longitude,

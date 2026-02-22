@@ -82,7 +82,7 @@ export default function NdtWidget(props) {
     }
 
     const TIME_EXPECTED = 10;
-    let minRTT, c2sRateKbps, s2cRateKbps;
+    let minRTT, c2sRateMbps, s2cRateMbps;
 
     ndt7.test(
       {
@@ -106,7 +106,7 @@ export default function NdtWidget(props) {
         downloadComplete: function(data) {
           setProgress(100);
           setText("Download test complete");
-          s2cRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
+          s2cRateMbps = data.LastClientMeasurement.MeanClientMbps;
           minRTT = (data.LastServerMeasurement.TCPInfo.MinRTT / 1000);
           // (bytes/second) * (bits/byte) / (megabits/bit) = Mbps
           const serverBw = data.LastServerMeasurement.BBRInfo.BW * 8 / 1000000;
@@ -125,7 +125,7 @@ export default function NdtWidget(props) {
         uploadComplete: (data) => {
           setProgress(100);
           setText("Upload test complete");
-          c2sRateKbps = data.LastClientMeasurement.MeanClientMbps * 1000;
+          c2sRateMbps = data.LastClientMeasurement.MeanClientMbps;
           // bytes * (bits/byte() * (megabits/bit) * (1/seconds) = Mbps
           const serverBw =
               data.LastServerMeasurement.TCPInfo.BytesReceived * 8 / 1000000 / 10;
@@ -144,8 +144,8 @@ export default function NdtWidget(props) {
       setText("Test complete");
       setResults({
         MinRTT: minRTT,
-        c2sRate: c2sRateKbps,
-        s2cRate: s2cRateKbps,
+        c2sRate: c2sRateMbps,
+        s2cRate: s2cRateMbps,
       })
 
       return;
@@ -171,7 +171,7 @@ export default function NdtWidget(props) {
       </Row>
       <Row>
         <Col>{text}</Col>
-      </Row>    
+      </Row>
     </Container>
   );
 }
